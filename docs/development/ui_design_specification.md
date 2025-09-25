@@ -57,11 +57,17 @@ graph LR
 
 ```dart
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/material.dart';
 
 class AppTheme {
+  // 1Panel的品牌蓝色作为主色调
+  static const Color primaryBrandColor = Color(0xFF0854C1);
+  
   static ThemeData getTheme(ColorScheme? dynamicColorScheme) {
+    // 如果没有动态色彩，使用1Panel品牌色作为种子色创建颜色方案
+    // Material You允许用户自定义颜色，体现个性化特点
     final colorScheme = dynamicColorScheme ?? ColorScheme.fromSeed(
-      seedColor: Colors.blue,
+      seedColor: primaryBrandColor,
     );
     
     return ThemeData(
@@ -70,8 +76,7 @@ class AppTheme {
       // 其他主题配置
     );
   }
-}
-```
+}```
 
 ### 3.2 静态色彩
 
@@ -79,14 +84,18 @@ class AppTheme {
 
 #### 3.2.1 品牌色彩
 
+1Panel的主要色调是蓝色（品牌色），以下是品牌色彩规范：
+
 | 色彩 | 用途 | 十六进制 | RGB |
 |------|------|----------|-----|
-| 主品牌色 | 主要按钮、重要元素 | #1976D2 | 25, 118, 210 |
+| 主品牌色 | 主要按钮、重要元素 | #0854C1 | 8, 84, 193 |
 | 辅助品牌色 | 次要按钮、装饰元素 | #03DAC6 | 3, 218, 198 |
 | 强调色 | 强调、通知 | #FF4081 | 255, 64, 129 |
 | 警告色 | 警告、错误 | #FFC107 | 255, 193, 7 |
 | 成功色 | 成功、确认 | #4CAF50 | 76, 175, 80 |
 | 错误色 | 错误、危险 | #F44336 | 244, 67, 54 |
+
+我们保留了MDUI3的莫奈色系作为预置色彩，同时Material You允许用户自定义颜色，体现个性化特点。
 
 #### 3.2.2 中性色彩
 
@@ -122,8 +131,9 @@ class AppTheme {
 ```dart
 class AppTheme {
   static ThemeData getDarkTheme(ColorScheme? dynamicColorScheme) {
+    // 深色模式下也使用1Panel品牌色作为种子色
     final colorScheme = dynamicColorScheme ?? ColorScheme.fromSeed(
-      seedColor: Colors.blue,
+      seedColor: primaryBrandColor,
       brightness: Brightness.dark,
     );
     
@@ -138,102 +148,102 @@ class AppTheme {
 
 ## 4. 排版系统
 
-### 4.1 字体族
+### 4.1 字体规范
 
-#### 4.1.1 主要字体
+参考 Material You 设计规范，定义应用中使用的字体样式。应用字体将使用用户设备的系统字体，以提供一致的用户体验。
 
-- **中文字体**：思源黑体（Source Han Sans）
-- **英文字体**：Roboto
-- **代码字体**：Roboto Mono
-
-#### 4.1.2 字体实现
+#### 4.1.1 字体样式
 
 ```dart
 class AppTypography {
+  // 使用 Material You 推荐的字体样式，不指定 fontFamily 以使用系统默认字体
   static const TextStyle headlineLarge = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 32,
+    fontSize: 32.0,
     letterSpacing: 0,
   );
   
   static const TextStyle headlineMedium = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 28,
+    fontSize: 28.0,
     letterSpacing: 0,
   );
   
   static const TextStyle headlineSmall = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 24,
+    fontSize: 24.0,
     letterSpacing: 0,
   );
   
   static const TextStyle titleLarge = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 22,
+    fontSize: 22.0,
     letterSpacing: 0,
   );
   
   static const TextStyle titleMedium = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w500,
-    fontSize: 16,
+    fontSize: 16.0,
     letterSpacing: 0.15,
   );
   
   static const TextStyle titleSmall = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w500,
-    fontSize: 14,
+    fontSize: 14.0,
     letterSpacing: 0.1,
   );
   
   static const TextStyle bodyLarge = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 16,
+    fontSize: 16.0,
     letterSpacing: 0.5,
   );
   
   static const TextStyle bodyMedium = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: 14.0,
     letterSpacing: 0.25,
   );
   
   static const TextStyle bodySmall = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: 12.0,
     letterSpacing: 0.4,
   );
   
   static const TextStyle labelLarge = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w500,
-    fontSize: 14,
+    fontSize: 14.0,
     letterSpacing: 0.1,
   );
   
   static const TextStyle labelMedium = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w500,
-    fontSize: 12,
+    fontSize: 12.0,
     letterSpacing: 0.5,
   );
   
   static const TextStyle labelSmall = TextStyle(
-    fontFamily: 'SourceHanSans',
     fontWeight: FontWeight.w500,
-    fontSize: 11,
+    fontSize: 11.0,
     letterSpacing: 0.5,
   );
+  
+  // 代码字体保留 Roboto Mono
+  static const TextStyle code = TextStyle(
+    fontFamily: 'Roboto Mono',
+    fontWeight: FontWeight.w400,
+    fontSize: 14.0,
+    letterSpacing: 0,
+  );
 }
+```
+
+#### 4.1.2 使用指南
+
+- 应用中的所有文本都应使用上述定义的字体样式
+- `code` 样式仅用于代码显示
+- 所有其他文本样式将使用用户设备的系统字体
 ```
 
 ### 4.2 文本样式指南
