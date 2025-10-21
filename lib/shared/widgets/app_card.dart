@@ -27,15 +27,22 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Card(
-      color: backgroundColor,
+      color: backgroundColor ?? colorScheme.surface,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: colorScheme.outline.withOpacity(0.1),
+          width: 1,
+        ),
       ),
-      elevation: 1,
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: padding ?? const EdgeInsets.all(16),
           child: Column(
@@ -46,7 +53,10 @@ class AppCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       title,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   if (trailing != null) trailing!,
@@ -54,11 +64,21 @@ class AppCard extends StatelessWidget {
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: 4),
-                subtitle!,
+                DefaultTextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ) ?? TextStyle(),
+                  child: subtitle!,
+                ),
               ],
               if (child != null) ...[
                 const SizedBox(height: 16),
-                child!,
+                DefaultTextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                  ) ?? TextStyle(),
+                  child: child!,
+                ),
               ],
             ],
           ),

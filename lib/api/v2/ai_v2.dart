@@ -136,7 +136,7 @@ class AIV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: PageResult<OllamaModel>.fromJson(response.data as Map<String, dynamic>, (json) => OllamaModel.fromJson(json as Map<String, dynamic>)),
+      data: PageResult<OllamaModel>.fromJson(response.data, (json) => OllamaModel.fromJson(json as Map<String, dynamic>)),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,

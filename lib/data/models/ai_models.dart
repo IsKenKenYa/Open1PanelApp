@@ -123,6 +123,70 @@ class OllamaModelName {
   }
 }
 
+class GPUInfo {
+  final String? fanSpeed;
+  final String? gpuUtil;
+  final int? index;
+  final String? maxPowerLimit;
+  final String? memTotal;
+  final String? memUsed;
+  final String? memoryUsage;
+  final String? performanceState;
+  final String? powerDraw;
+  final String? powerUsage;
+  final String? productName;
+  final String? temperature;
+
+  GPUInfo({
+    this.fanSpeed,
+    this.gpuUtil,
+    this.index,
+    this.maxPowerLimit,
+    this.memTotal,
+    this.memUsed,
+    this.memoryUsage,
+    this.performanceState,
+    this.powerDraw,
+    this.powerUsage,
+    this.productName,
+    this.temperature,
+  });
+
+  factory GPUInfo.fromJson(Map<String, dynamic> json) {
+    return GPUInfo(
+      fanSpeed: json['fanSpeed'],
+      gpuUtil: json['gpuUtil'],
+      index: json['index'],
+      maxPowerLimit: json['maxPowerLimit'],
+      memTotal: json['memTotal'],
+      memUsed: json['memUsed'],
+      memoryUsage: json['memoryUsage'],
+      performanceState: json['performanceState'],
+      powerDraw: json['powerDraw'],
+      powerUsage: json['powerUsage'],
+      productName: json['productName'],
+      temperature: json['temperature'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (fanSpeed != null) 'fanSpeed': fanSpeed,
+      if (gpuUtil != null) 'gpuUtil': gpuUtil,
+      if (index != null) 'index': index,
+      if (maxPowerLimit != null) 'maxPowerLimit': maxPowerLimit,
+      if (memTotal != null) 'memTotal': memTotal,
+      if (memUsed != null) 'memUsed': memUsed,
+      if (memoryUsage != null) 'memoryUsage': memoryUsage,
+      if (performanceState != null) 'performanceState': performanceState,
+      if (powerDraw != null) 'powerDraw': powerDraw,
+      if (powerUsage != null) 'powerUsage': powerUsage,
+      if (productName != null) 'productName': productName,
+      if (temperature != null) 'temperature': temperature,
+    };
+  }
+}
+
 class ForceDelete {
   final List<int> ids;
   final bool forceDelete;

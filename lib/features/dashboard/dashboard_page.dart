@@ -160,11 +160,18 @@ class _ResourceItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Row(
       children: [
         Expanded(
           flex: 3,
-          child: Text(title),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
         ),
         Expanded(
           flex: 2,
@@ -172,7 +179,7 @@ class _ResourceItem extends StatelessWidget {
             value,
             textAlign: TextAlign.end,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: color,
             ),
           ),
@@ -196,6 +203,8 @@ class _QuickActionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () {
@@ -206,13 +215,27 @@ class _QuickActionItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: colorScheme.outline.withOpacity(0.1),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color),
+            Icon(
+              icon, 
+              color: color,
+              size: 24,
+            ),
             const SizedBox(height: 8),
-            Text(label),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
+              ),
+            ),
           ],
         ),
       ),
@@ -234,6 +257,8 @@ class _ActivityItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -243,10 +268,18 @@ class _ActivityItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 4),
-              Text(description),
+              Text(
+                description,
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),
@@ -254,7 +287,7 @@ class _ActivityItem extends StatelessWidget {
         Text(
           time,
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: colorScheme.onSurfaceVariant.withOpacity(0.7),
             fontSize: 12,
           ),
         ),

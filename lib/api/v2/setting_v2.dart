@@ -34,7 +34,7 @@ class SettingV2Api {
   /// 获取系统基本信息
   /// @return 系统信息
   Future<Response> getSystemInfo() async {
-    return await _client.get('/settings/system');
+    return await _client.get('/dashboard/base/os');
   }
 
   /// 获取系统时间

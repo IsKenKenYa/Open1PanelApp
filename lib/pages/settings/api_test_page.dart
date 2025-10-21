@@ -15,9 +15,9 @@ class _ApiTestPageState extends State<ApiTestPage> {
   bool _isLoading = false;
   ApiConfig? _currentConfig;
   String _testResult = '';
-  String _selectedEndpoint = '/api/v2/system/info';
+  String _selectedEndpoint = '/api/v2/dashboard/base/os';
   final List<String> _endpoints = [
-    '/api/v2/system/info',
+    '/api/v2/dashboard/base/os',
     '/api/v2/system/host',
     '/api/v2/system/load',
     '/api/v2/apps',

@@ -5,7 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanelapp_app/core/i18n/app_localizations.dart';
 import 'ai_provider.dart';
+import '../../core/services/logger/logger_service.dart';
 
 /// AI模块主页面
 class AIPage extends StatefulWidget {
@@ -33,15 +35,16 @@ class _AIPageState extends State<AIPage> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI管理'),
+        title: Text(localizations.aiManagement),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: '模型管理'),
-            Tab(text: 'GPU信息'),
-            Tab(text: '域名绑定'),
+          tabs: [
+            Tab(text: localizations.ollamaModels),
+            Tab(text: localizations.gpuInfo),
+            Tab(text: localizations.domainBinding),
           ],
         ),
       ),
@@ -63,8 +66,19 @@ class OllamaModelPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final aiProvider = Provider.of<AIProvider>(context);
+    try {
+      final aiProvider = Provider.of<AIProvider>(context);
+      final localizations = AppLocalizations.of(context)!;
+      return _buildModelPage(context, aiProvider);
+    } catch (e) {
+      appLogger.eWithPackage('ai.model', '获取AIProvider失败: $e');
+      final localizations = AppLocalizations.of(context)!;
+      return _buildErrorPage(localizations.configLoadError);
+    }
+  }
 
+  Widget _buildModelPage(BuildContext context, AIProvider aiProvider) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
@@ -72,10 +86,10 @@ class OllamaModelPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: '搜索模型',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: localizations.ollamaModels,
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
               ),
               onSubmitted: (value) {
                 aiProvider.searchOllamaModels(
@@ -97,7 +111,7 @@ class OllamaModelPage extends StatelessWidget {
                       aiProvider.syncOllamaModels();
                     },
                     icon: const Icon(Icons.sync),
-                    label: const Text('同步模型'),
+                    label: Text(localizations.ollamaModels),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -107,7 +121,7 @@ class OllamaModelPage extends StatelessWidget {
                       _showCreateModelDialog(context, aiProvider);
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('创建模型'),
+                    label: Text('${localizations.ollamaModels} ${localizations.create}'),
                   ),
                 ),
               ],
@@ -138,7 +152,7 @@ class OllamaModelPage extends StatelessWidget {
                                   pageSize: 10,
                                 );
                               },
-                              child: const Text('重试'),
+                              child: Text(localizations.retry),
                             ),
                           ],
                         ),
@@ -183,21 +197,21 @@ class OllamaModelPage extends StatelessWidget {
                                   }
                                 },
                                 itemBuilder: (context) => [
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                     value: 'load',
-                                    child: Text('加载'),
+                                    child: Text(localizations.load),
                                   ),
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                     value: 'close',
-                                    child: Text('关闭'),
+                                    child: Text(localizations.close),
                                   ),
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                     value: 'recreate',
-                                    child: Text('重新创建'),
+                                    child: Text('${localizations.recreate} ${localizations.ollamaModels}'),
                                   ),
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                     value: 'delete',
-                                    child: Text('删除'),
+                                    child: Text(localizations.delete),
                                   ),
                                 ],
                               ),
@@ -211,31 +225,61 @@ class OllamaModelPage extends StatelessWidget {
     );
   }
 
+  Widget _buildErrorPage(String errorMessage) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              errorMessage,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // 可以在这里添加重试逻辑，比如导航到服务器配置页面
+                appLogger.iWithPackage('ai.model', '用户点击重试按钮');
+              },
+              child: Text(localizations.retry),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// 显示创建模型对话框
   void _showCreateModelDialog(BuildContext context, AIProvider aiProvider) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController taskIdController = TextEditingController();
+    final localizations = AppLocalizations.of(context)!;
+
+    appLogger.dWithPackage('ai.model', '显示创建模型对话框');
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('创建模型'),
+        title: Text('${localizations.create} ${localizations.ollamaModels}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: '模型名称',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: '${localizations.ollamaModels} ${localizations.name}',
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: taskIdController,
-              decoration: const InputDecoration(
-                labelText: '任务ID (可选)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: '${localizations.taskId} (${localizations.optional})',
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
@@ -243,11 +287,13 @@ class OllamaModelPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+            child: Text(localizations.cancel),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
+                appLogger.iWithPackage('ai.model', '创建Ollama模型: ${nameController.text}');
+                
                 aiProvider.createOllamaModel(
                   name: nameController.text,
                   taskId: taskIdController.text.isNotEmpty
@@ -257,7 +303,7 @@ class OllamaModelPage extends StatelessWidget {
                 Navigator.of(context).pop();
               }
             },
-            child: const Text('创建'),
+            child: Text(localizations.create),
           ),
         ],
       ),
@@ -271,19 +317,22 @@ class OllamaModelPage extends StatelessWidget {
     int modelId,
   ) {
     bool forceDelete = false;
+    final localizations = AppLocalizations.of(context)!;
+
+    appLogger.wWithPackage('ai.model', '显示删除模型对话框，模型ID: $modelId');
 
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('删除模型'),
+          title: Text('${localizations.delete} ${localizations.ollamaModels}'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('确定要删除此模型吗？'),
+              Text('${localizations.confirm} ${localizations.delete} ${localizations.ollamaModels}?'),
               const SizedBox(height: 16),
               CheckboxListTile(
-                title: const Text('强制删除'),
+                title: Text('${localizations.force} ${localizations.delete}'),
                 value: forceDelete,
                 onChanged: (value) {
                   setState(() {
@@ -296,10 +345,12 @@ class OllamaModelPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
+              child: Text(localizations.cancel),
             ),
             ElevatedButton(
               onPressed: () {
+                appLogger.wWithPackage('ai.model', '删除Ollama模型，模型ID: $modelId，强制删除: $forceDelete');
+                
                 aiProvider.deleteOllamaModel(
                   ids: [modelId],
                   forceDelete: forceDelete,
@@ -310,7 +361,7 @@ class OllamaModelPage extends StatelessWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('删除'),
+              child: Text(localizations.delete),
             ),
           ],
         ),
@@ -325,8 +376,18 @@ class GpuInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final aiProvider = Provider.of<AIProvider>(context);
+    try {
+      final aiProvider = Provider.of<AIProvider>(context);
+      return _buildGpuInfoPage(context, aiProvider);
+    } catch (e) {
+      appLogger.eWithPackage('ai.gpu', '获取AIProvider失败: $e');
+      final localizations = AppLocalizations.of(context)!;
+      return _buildErrorPage(localizations.configLoadError);
+    }
+  }
 
+  Widget _buildGpuInfoPage(BuildContext context, AIProvider aiProvider) {
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
@@ -335,10 +396,11 @@ class GpuInfoPage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(
               onPressed: () {
+                appLogger.iWithPackage('ai.gpu', '刷新GPU信息');
                 aiProvider.loadGpuInfo();
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('刷新GPU信息'),
+              label: Text('${localizations.refresh} ${localizations.gpuInfo}'),
             ),
           ),
           // GPU信息列表
@@ -362,21 +424,21 @@ class GpuInfoPage extends StatelessWidget {
                                 aiProvider.clearError();
                                 aiProvider.loadGpuInfo();
                               },
-                              child: const Text('重试'),
+                              child: Text(localizations.retry),
                             ),
                           ],
                         ),
                       )
                     : aiProvider.gpuInfoList.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.info_outline, size: 64, color: Colors.blue),
-                                SizedBox(height: 16),
+                                const Icon(Icons.info_outline, size: 64, color: Colors.blue),
+                                const SizedBox(height: 16),
                                 Text(
-                                  '未找到GPU信息',
-                                  style: TextStyle(fontSize: 16),
+                                  '${localizations.notFound} ${localizations.gpuInfo}',
+                                  style: const TextStyle(fontSize: 16),
                                 ),
                               ],
                             ),
@@ -396,23 +458,23 @@ class GpuInfoPage extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'GPU ${gpu.index}',
+                                        '${localizations.gpu} ${gpu.index}',
                                         style: Theme.of(context).textTheme.titleLarge,
                                       ),
                                       const SizedBox(height: 8),
-                                      Text('名称: ${gpu.productName}'),
+                                      Text('${localizations.name}: ${gpu.productName}'),
                                       const SizedBox(height: 4),
-                                      Text('温度: ${gpu.temperature}°C'),
+                                      Text('${localizations.temperature}: ${gpu.temperature}°C'),
                                       const SizedBox(height: 4),
-                                      Text('风扇速度: ${gpu.fanSpeed}%'),
+                                      Text('${localizations.fanSpeed}: ${gpu.fanSpeed}%'),
                                       const SizedBox(height: 4),
-                                      Text('GPU使用率: ${gpu.gpuUtil}%'),
+                                      Text('${localizations.gpuUsage}: ${gpu.gpuUtil}%'),
                                       const SizedBox(height: 4),
-                                      Text('内存使用率: ${gpu.memoryUsage}%'),
+                                      Text('${localizations.memoryUsage}: ${gpu.memoryUsage}%'),
                                       const SizedBox(height: 4),
-                                      Text('总内存: ${gpu.memTotal} MB'),
+                                      Text('${localizations.totalMemory}: ${gpu.memTotal} MB'),
                                       const SizedBox(height: 4),
-                                      Text('已用内存: ${gpu.memUsed} MB'),
+                                      Text('${localizations.usedMemory}: ${gpu.memUsed} MB'),
                                     ],
                                   ),
                                 ),
@@ -424,189 +486,240 @@ class GpuInfoPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildErrorPage(String errorMessage) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              errorMessage,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // 可以在这里添加重试逻辑，比如导航到服务器配置页面
+                appLogger.iWithPackage('ai.gpu', '用户点击重试按钮');
+              },
+              child: const Text('重试'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// 域名绑定页面
-class DomainBindingPage extends StatelessWidget {
+class DomainBindingPage extends StatefulWidget {
   const DomainBindingPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final aiProvider = Provider.of<AIProvider>(context);
+  State<DomainBindingPage> createState() => _DomainBindingPageState();
+}
 
+class _DomainBindingPageState extends State<DomainBindingPage> {
+  final ApiService _apiService = ApiService();
+  List<DomainBinding> _domainBindings = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDomainBindings();
+  }
+
+  Future<void> _loadDomainBindings() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final response = await _apiService.get('/ai/domain-bindings');
+      setState(() {
+        _domainBindings = (response['data'] as List)
+            .map((item) => DomainBinding.fromJson(item))
+            .toList();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    
     return Scaffold(
-      body: Column(
+      appBar: AppBar(
+        title: Text(localizations.domainBinding),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? _buildErrorPage(context, localizations)
+              : _buildDomainBindingList(context, localizations),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showBindDomainDialog(context, localizations),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildErrorPage(BuildContext context, AppLocalizations localizations) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 操作按钮
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                _showBindDomainDialog(context, aiProvider);
-              },
-              icon: const Icon(Icons.link),
-              label: const Text('绑定域名'),
-            ),
-          ),
-          // 域名绑定信息
-          Expanded(
-            child: aiProvider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : aiProvider.errorMessage != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                            const SizedBox(height: 16),
-                            Text(
-                              aiProvider.errorMessage!,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () {
-                                aiProvider.clearError();
-                                // TODO: 获取应用安装ID
-                                // aiProvider.getBindDomain(appInstallId: '');
-                              },
-                              child: const Text('重试'),
-                            ),
-                          ],
-                        ),
-                      )
-                    : aiProvider.bindDomainInfo == null
-                        ? const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.info_outline, size: 64, color: Colors.blue),
-                                SizedBox(height: 16),
-                                Text(
-                                  '未绑定域名',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          )
-                        : Card(
-                            margin: const EdgeInsets.all(16.0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '域名绑定信息',
-                                    style: Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text('连接URL: ${aiProvider.bindDomainInfo!.connUrl}'),
-                                  const SizedBox(height: 8),
-                                  Text('ACME账户ID: ${aiProvider.bindDomainInfo!.acmeAccountID}'),
-                                  const SizedBox(height: 8),
-                                  Text('允许IP: ${aiProvider.bindDomainInfo!.allowIPs?.join(', ') ?? ''}'),
-                                  const SizedBox(height: 8),
-                                  Text('域名: ${aiProvider.bindDomainInfo!.domain}'),
-                                  const SizedBox(height: 8),
-                                  Text('SSL证书ID: ${aiProvider.bindDomainInfo!.sslID}'),
-                                  const SizedBox(height: 8),
-                                  Text('网站ID: ${aiProvider.bindDomainInfo!.websiteID}'),
-                                ],
-                              ),
-                            ),
-                          ),
+          Text(_error ?? localizations.unknownError),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _loadDomainBindings,
+            child: Text(localizations.retry),
           ),
         ],
       ),
     );
   }
 
-  /// 显示绑定域名对话框
-  void _showBindDomainDialog(BuildContext context, AIProvider aiProvider) {
-    final TextEditingController appInstallIdController = TextEditingController();
-    final TextEditingController domainController = TextEditingController();
-    final TextEditingController ipListController = TextEditingController();
-    final TextEditingController sslIdController = TextEditingController();
-    final TextEditingController websiteIdController = TextEditingController();
+  Widget _buildDomainBindingList(BuildContext context, AppLocalizations localizations) {
+    if (_domainBindings.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(localizations.notFound + ' ' + localizations.domainBinding),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => _showBindDomainDialog(context, localizations),
+              child: Text(localizations.domainBinding),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: _domainBindings.length,
+      itemBuilder: (context, index) {
+        final binding = _domainBindings[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ListTile(
+            title: Text(binding.domain),
+            subtitle: Text('${localizations.appId}: ${binding.appId}'),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _showDeleteBindingDialog(context, binding, localizations),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showBindDomainDialog(BuildContext context, AppLocalizations localizations) {
+    final TextEditingController _domainController = TextEditingController();
+    final TextEditingController _appIdController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('绑定域名'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: appInstallIdController,
-                decoration: const InputDecoration(
-                  labelText: '应用安装ID *',
-                  border: OutlineInputBorder(),
-                ),
+        title: Text(localizations.domainBinding),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _domainController,
+              decoration: InputDecoration(
+                labelText: localizations.domain,
+                hintText: 'example.com',
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: domainController,
-                decoration: const InputDecoration(
-                  labelText: '域名',
-                  border: OutlineInputBorder(),
-                ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _appIdController,
+              decoration: InputDecoration(
+                labelText: '${localizations.appId} *',
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: ipListController,
-                decoration: const InputDecoration(
-                  labelText: 'IP列表 (逗号分隔)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: sslIdController,
-                decoration: const InputDecoration(
-                  labelText: 'SSL证书ID',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: websiteIdController,
-                decoration: const InputDecoration(
-                  labelText: '网站ID',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+            onPressed: () => Navigator.pop(context),
+            child: Text(localizations.cancel),
           ),
           ElevatedButton(
-            onPressed: () {
-              if (appInstallIdController.text.isNotEmpty) {
-                aiProvider.bindDomain(
-                  appInstallId: int.tryParse(appInstallIdController.text) ?? 0,
-                  domain: domainController.text.isNotEmpty
-                      ? domainController.text
-                      : null,
-                  ipList: ipListController.text.isNotEmpty
-                      ? ipListController.text
-                      : null,
-                  sslId: sslIdController.text.isNotEmpty
-                      ? int.tryParse(sslIdController.text)
-                      : null,
-                  websiteId: websiteIdController.text.isNotEmpty
-                      ? int.tryParse(websiteIdController.text)
-                      : null,
+            onPressed: () async {
+              final domain = _domainController.text.trim();
+              final appId = _appIdController.text.trim();
+
+              if (domain.isEmpty || appId.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(localizations.requiredFields)),
                 );
-                Navigator.of(context).pop();
+                return;
+              }
+
+              try {
+                await _apiService.post('/ai/domain-bindings', {
+                  'domain': domain,
+                  'app_id': appId,
+                });
+                Navigator.pop(context);
+                _loadDomainBindings();
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(e.toString())),
+                );
               }
             },
-            child: const Text('绑定'),
+            child: Text(localizations.bind),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteBindingDialog(
+      BuildContext context, DomainBinding binding, AppLocalizations localizations) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(localizations.delete),
+        content: Text('${localizations.confirm} ${localizations.delete} ${binding.domain}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(localizations.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                await _apiService.delete('/ai/domain-bindings/${binding.id}');
+                Navigator.pop(context);
+                _loadDomainBindings();
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(e.toString())),
+                );
+              }
+            },
+            child: Text(localizations.delete),
           ),
         ],
       ),

@@ -54,6 +54,8 @@ dependencies:
   
   # Utilities
   intl: ^0.18.1  # Internationalization
+  flutter_localizations:
+    sdk: flutter  # Flutter官方国际化支持
   logger: ^2.0.2+1  # Logging
   equatable: ^2.0.5  # Equality checking
   

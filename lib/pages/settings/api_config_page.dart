@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
-
 import '../../../core/config/api_config.dart';
+import '../../../core/services/logger/logger_service.dart';
 
 class ApiConfigPage extends StatefulWidget {
   const ApiConfigPage({Key? key}) : super(key: key);
@@ -41,6 +41,8 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     });
 
     try {
+      appLogger.dWithPackage('api.config', '开始加载API配置');
+      
       final configs = await ApiConfigManager.getConfigs();
       final currentConfig = await ApiConfigManager.getCurrentConfig();
       
@@ -49,10 +51,14 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
         _currentConfig = currentConfig;
         _isLoading = false;
       });
+      
+      appLogger.dWithPackage('api.config', 'API配置加载成功，共${configs.length}个配置');
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
+      
+      appLogger.eWithPackage('api.config', '加载API配置失败', error: e);
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('加载配置失败: $e')),
@@ -70,6 +76,8 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     });
 
     try {
+      appLogger.iWithPackage('api.config', '开始保存API配置: ${_nameController.text}');
+      
       final config = ApiConfig(
         id: const Uuid().v4(),
         name: _nameController.text,
@@ -89,6 +97,8 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       
       _clearForm();
       
+      appLogger.iWithPackage('api.config', 'API配置保存成功: ${_nameController.text}');
+      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('配置保存成功')),
       );
@@ -97,6 +107,8 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
         _isLoading = false;
       });
       
+      appLogger.eWithPackage('api.config', '保存API配置失败: ${_nameController.text}', error: e);
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('保存配置失败: $e')),
       );
@@ -104,6 +116,10 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
   }
 
   Future<void> _deleteConfig(String id) async {
+    final config = _configs.firstWhere((c) => c.id == id);
+    
+    appLogger.wWithPackage('api.config', '删除API配置: ${config.name}');
+    
     setState(() {
       _isLoading = true;
     });
@@ -112,13 +128,17 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       await ApiConfigManager.deleteConfig(id);
       await _loadConfigs();
       
+      appLogger.wWithPackage('api.config', 'API配置删除成功: ${config.name}');
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('配置删除成功')),
+        SnackBar(content: Text('配置 "${config.name}" 删除成功')),
       );
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
+      
+      appLogger.eWithPackage('api.config', '删除API配置失败: ${config.name}', error: e);
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('删除配置失败: $e')),
@@ -127,6 +147,10 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
   }
 
   Future<void> _setCurrentConfig(String id) async {
+    final config = _configs.firstWhere((c) => c.id == id);
+    
+    appLogger.iWithPackage('api.config', '切换当前API配置: ${config.name}');
+    
     setState(() {
       _isLoading = true;
     });
@@ -135,13 +159,17 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       await ApiConfigManager.setCurrentConfig(id);
       await _loadConfigs();
       
+      appLogger.iWithPackage('api.config', 'API配置切换成功: ${config.name}');
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('切换配置成功')),
+        SnackBar(content: Text('已切换到配置 "${config.name}"')),
       );
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
+      
+      appLogger.eWithPackage('api.config', '切换API配置失败: ${config.name}', error: e);
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('切换配置失败: $e')),
