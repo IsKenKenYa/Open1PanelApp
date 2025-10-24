@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "mcp__Open1PanelMobile__read_project_oas_1x6l7x",
+      "mcp__Open1PanelMobile__refresh_project_oas_1x6l7x",
+      "mcp__Open1PanelMobile__read_project_oas_ref_resources_1x6l7x",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(flutter packages pub run build_runner build:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

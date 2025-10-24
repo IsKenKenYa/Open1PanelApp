@@ -1,11 +1,12 @@
 /// 1Panel V2 API - File 相关接口
-/// 
+///
 /// 此文件包含与文件管理相关的所有API接口，
 /// 包括文件的上传、下载、删除、编辑、查询等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/file_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/file_models.dart';
 
 class FileV2Api {
   final ApiClient _client;
@@ -13,97 +14,87 @@ class FileV2Api {
   FileV2Api(this._client);
 
   /// 获取文件列表
-  /// 
+  ///
   /// 获取指定目录下的文件列表
-  /// @param path 目录路径
-  /// @param search 搜索关键词（可选）
-  /// @param page 页码（可选，默认为1）
-  /// @param pageSize 每页数量（可选，默认为10）
+  /// @param request 文件搜索请求
   /// @return 文件列表
-  Future<Response> getFiles(String path, {
-    String? search,
-    int page = 1,
-    int pageSize = 10,
-  }) async {
-    final data = {
-      'path': path,
-      'page': page,
-      'pageSize': pageSize,
-      if (search != null) 'search': search,
-    };
-    return await _client.post('/files', data: data);
+  Future<Response<List<FileInfo>>> getFiles(FileSearch request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => FileInfo.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 创建目录
-  /// 
+  ///
   /// 创建一个新的目录
-  /// @param path 目录路径
+  /// @param request 文件创建请求
   /// @return 创建结果
-  Future<Response> createDirectory(String path) async {
-    final data = {
-      'path': path,
-    };
-    return await _client.post('/files/directory', data: data);
+  Future<Response> createDirectory(FileCreate request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/directory'),
+      data: request.toJson(),
+    );
   }
 
   /// 删除文件或目录
-  /// 
+  ///
   /// 删除指定的文件或目录
-  /// @param paths 文件或目录路径列表
-  /// @param force 是否强制删除
+  /// @param request 文件操作请求
   /// @return 删除结果
-  Future<Response> deleteFiles(List<String> paths, {bool force = false}) async {
-    final data = {
-      'paths': paths,
-      'force': force,
-    };
-    return await _client.post('/files/del', data: data);
+  Future<Response> deleteFiles(FileOperate request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/del'),
+      data: request.toJson(),
+    );
   }
 
   /// 重命名文件或目录
-  /// 
+  ///
   /// 重命名指定的文件或目录
-  /// @param oldPath 原路径
-  /// @param newPath 新路径
+  /// @param request 文件重命名请求
   /// @return 重命名结果
-  Future<Response> renameFile(String oldPath, String newPath) async {
-    final data = {
-      'oldPath': oldPath,
-      'newPath': newPath,
-    };
-    return await _client.post('/files/rename', data: data);
+  Future<Response> renameFile(FileRename request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/rename'),
+      data: request.toJson(),
+    );
   }
 
   /// 移动文件或目录
-  /// 
+  ///
   /// 移动指定的文件或目录
-  /// @param paths 要移动的文件或目录路径列表
-  /// @param targetPath 目标路径
+  /// @param request 文件移动请求
   /// @return 移动结果
-  Future<Response> moveFiles(List<String> paths, String targetPath) async {
-    final data = {
-      'paths': paths,
-      'targetPath': targetPath,
-    };
-    return await _client.post('/files/move', data: data);
+  Future<Response> moveFiles(FileMove request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/move'),
+      data: request.toJson(),
+    );
   }
 
   /// 复制文件或目录
-  /// 
+  ///
   /// 复制指定的文件或目录
-  /// @param paths 要复制的文件或目录路径列表
-  /// @param targetPath 目标路径
+  /// @param request 文件复制请求
   /// @return 复制结果
-  Future<Response> copyFiles(List<String> paths, String targetPath) async {
-    final data = {
-      'paths': paths,
-      'targetPath': targetPath,
-    };
-    return await _client.post('/files/copy', data: data);
+  Future<Response> copyFiles(FileCopy request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/copy'),
+      data: request.toJson(),
+    );
   }
 
   /// 上传文件
-  /// 
+  ///
   /// 上传文件到指定目录
   /// @param path 目标目录路径
   /// @param file 文件对象
@@ -113,100 +104,515 @@ class FileV2Api {
       'path': path,
       'file': file,
     });
-    return await _client.post('/files/upload', data: formData);
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/upload'),
+      data: formData,
+    );
   }
 
   /// 下载文件
-  /// 
+  ///
   /// 下载指定的文件
-  /// @param path 文件路径
+  /// @param request 文件下载请求
   /// @return 文件内容
-  Future<Response> downloadFile(String path) async {
-    final data = {
-      'path': path,
-    };
-    return await _client.post('/files/download', data: data);
+  Future<Response> downloadFile(FileDownload request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/download'),
+      data: request.toJson(),
+    );
   }
 
   /// 获取文件内容
-  /// 
+  ///
   /// 获取指定文件的内容
   /// @param path 文件路径
   /// @return 文件内容
-  Future<Response> getFileContent(String path) async {
+  Future<Response<String>> getFileContent(String path) async {
     final data = {
       'path': path,
     };
-    return await _client.post('/files/content', data: data);
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/content'),
+      data: data,
+    );
+    return Response(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 更新文件内容
-  /// 
+  ///
   /// 更新指定文件的内容
-  /// @param path 文件路径
-  /// @param content 文件内容
+  /// @param request 文件内容更新请求
   /// @return 更新结果
-  Future<Response> updateFileContent(String path, String content) async {
-    final data = {
-      'path': path,
-      'content': content,
-    };
-    return await _client.post('/files/content/update', data: data);
+  Future<Response> updateFileContent(FileContent request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/content/update'),
+      data: request.toJson(),
+    );
   }
 
   /// 压缩文件或目录
-  /// 
+  ///
   /// 压缩指定的文件或目录
-  /// @param paths 要压缩的文件或目录路径列表
-  /// @param targetPath 目标压缩文件路径
-  /// @param type 压缩类型（zip, tar, tar.gz）
+  /// @param request 文件压缩请求
   /// @return 压缩结果
-  Future<Response> compressFiles(List<String> paths, String targetPath, String type) async {
-    final data = {
-      'paths': paths,
-      'targetPath': targetPath,
-      'type': type,
-    };
-    return await _client.post('/files/compress', data: data);
+  Future<Response> compressFiles(FileCompress request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/compress'),
+      data: request.toJson(),
+    );
   }
 
   /// 解压文件
-  /// 
+  ///
   /// 解压指定的压缩文件
-  /// @param path 压缩文件路径
-  /// @param targetPath 目标目录路径
+  /// @param request 文件解压请求
   /// @return 解压结果
-  Future<Response> extractFile(String path, String targetPath) async {
-    final data = {
-      'path': path,
-      'targetPath': targetPath,
-    };
-    return await _client.post('/files/extract', data: data);
+  Future<Response> extractFile(FileExtract request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/extract'),
+      data: request.toJson(),
+    );
   }
 
   /// 获取文件权限
-  /// 
+  ///
   /// 获取指定文件的权限信息
   /// @param path 文件路径
   /// @return 文件权限
-  Future<Response> getFilePermission(String path) async {
+  Future<Response<FilePermission>> getFilePermission(String path) async {
     final data = {
       'path': path,
     };
-    return await _client.post('/files/permission', data: data);
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/permission'),
+      data: data,
+    );
+    return Response(
+      data: FilePermission.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 更新文件权限
-  /// 
+  ///
   /// 更新指定文件的权限
-  /// @param path 文件路径
-  /// @param permission 权限信息
+  /// @param request 文件权限更新请求
   /// @return 更新结果
-  Future<Response> updateFilePermission(String path, Map<String, dynamic> permission) async {
-    final data = {
-      'path': path,
-      'permission': permission,
-    };
-    return await _client.post('/files/permission/update', data: data);
+  Future<Response> updateFilePermission(FilePermission request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/permission/update'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 批量删除文件
+  ///
+  /// 批量删除文件或目录
+  /// @param request 批量删除请求
+  /// @return 删除结果
+  Future<Response> batchDeleteFiles(FileBatchOperate request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/batch/del'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 批量修改文件角色
+  ///
+  /// 批量修改文件或目录的角色
+  /// @param request 批量角色修改请求
+  /// @return 修改结果
+  Future<Response> batchChangeFileRole(FileBatchOperate request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/batch/role'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 检查文件
+  ///
+  /// 检查文件是否存在或可访问
+  /// @param request 文件检查请求
+  /// @return 检查结果
+  Future<Response<FileCheckResult>> checkFile(FileCheck request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/check'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileCheckResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 分块下载文件
+  ///
+  /// 分块下载大文件
+  /// @param request 分块下载请求
+  /// @return 分块内容
+  Future<Response<FileChunkData>> chunkDownload(FileChunkDownload request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/chunkdownload'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileChunkData.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 分块上传文件
+  ///
+  /// 分块上传大文件
+  /// @param request 分块上传请求
+  /// @return 上传结果
+  Future<Response<FileChunkResult>> chunkUpload(FileChunkUpload request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/chunkupload'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileChunkResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 收藏文件
+  ///
+  /// 收藏文件或目录
+  /// @param request 收藏请求
+  /// @return 收藏结果
+  Future<Response> favoriteFile(FileFavorite request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/favorite'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 取消收藏文件
+  ///
+  /// 取消收藏文件或目录
+  /// @param request 取消收藏请求
+  /// @return 取消结果
+  Future<Response> unfavoriteFile(FileUnfavorite request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/favorite/del'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 搜索收藏文件
+  ///
+  /// 搜索收藏的文件或目录
+  /// @param request 搜索请求
+  /// @return 收藏文件列表
+  Future<Response<List<FileInfo>>> searchFavoriteFiles(FileSearch request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/favorite/search'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => FileInfo.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 修改文件模式
+  ///
+  /// 修改文件或目录的访问模式
+  /// @param request 模式修改请求
+  /// @return 修改结果
+  Future<Response> changeFileMode(FileModeChange request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/mode'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 修改文件所有者
+  ///
+  /// 修改文件或目录的所有者
+  /// @param request 所有者修改请求
+  /// @return 修改结果
+  Future<Response> changeFileOwner(FileOwnerChange request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/owner'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 读取文件
+  ///
+  /// 读取文件内容
+  /// @param request 文件读取请求
+  /// @return 文件内容
+  Future<Response<String>> readFile(FileRead request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/read'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 清空回收站
+  ///
+  /// 清空回收站中的所有文件
+  /// @return 清空结果
+  Future<Response> clearRecycleBin() async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/recycle/clear'),
+    );
+  }
+
+  /// 减少回收站
+  ///
+  /// 减少回收站大小（删除最旧的文件）
+  /// @param request 减少请求
+  /// @return 减少结果
+  Future<Response<FileRecycleResult>> reduceRecycleBin(FileRecycleReduce request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/recycle/reduce'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileRecycleResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 搜索回收站
+  ///
+  /// 搜索回收站中的文件
+  /// @param request 搜索请求
+  /// @return 回收站文件列表
+  Future<Response<List<FileInfo>>> searchRecycleBin(FileSearch request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/recycle/search'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => FileInfo.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 获取回收站状态
+  ///
+  /// 获取回收站状态信息
+  /// @return 回收站状态
+  Future<Response<FileRecycleStatus>> getRecycleBinStatus() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/files/recycle/status'),
+    );
+    return Response(
+      data: FileRecycleStatus.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 保存文件
+  ///
+  /// 保存文件内容
+  /// @param request 文件保存请求
+  /// @return 保存结果
+  Future<Response> saveFile(FileSave request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/files/save'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 获取文件大小
+  ///
+  /// 获取文件或目录的大小
+  /// @param request 大小查询请求
+  /// @return 文件大小信息
+  Future<Response<FileSizeInfo>> getFileSize(FileSizeRequest request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/size'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileSizeInfo.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 获取文件树
+  ///
+  /// 获取目录的文件树结构
+  /// @param request 文件树请求
+  /// @return 文件树结构
+  Future<Response<FileTree>> getFileTree(FileTreeRequest request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/tree'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileTree.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 搜索上传文件
+  ///
+  /// 搜索已上传的文件
+  /// @param request 搜索请求
+  /// @return 上传文件列表
+  Future<Response<List<FileInfo>>> searchUploadedFiles(FileSearch request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/upload/search'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => FileInfo.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 使用Wget下载文件
+  ///
+  /// 使用Wget命令下载文件
+  /// @param request Wget下载请求
+  /// @return 下载结果
+  Future<Response<FileWgetResult>> wgetDownload(FileWgetRequest request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/wget'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileWgetResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 批量操作文件
+  ///
+  /// 批量执行文件操作
+  /// @param request 批量操作请求
+  /// @return 操作结果
+  Future<Response<FileBatchResult>> batchOperateFiles(FileBatchOperate request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/batch/operate'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileBatchResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 获取文件属性
+  ///
+  /// 获取文件或目录的详细属性
+  /// @param request 属性查询请求
+  /// @return 文件属性
+  Future<Response<FileProperties>> getFileProperties(FilePropertiesRequest request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/properties'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileProperties.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 创建文件链接
+  ///
+  /// 创建文件或目录的符号链接
+  /// @param request 链接创建请求
+  /// @return 创建结果
+  Future<Response<FileLinkResult>> createFileLink(FileLinkCreate request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/link/create'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileLinkResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 转换文件编码
+  ///
+  /// 转换文件内容的字符编码
+  /// @param request 编码转换请求
+  /// @return 转换结果
+  Future<Response<FileEncodingResult>> convertFileEncoding(FileEncodingConvert request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/encoding/convert'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileEncodingResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 文件搜索
+  ///
+  /// 在文件系统中搜索文件
+  /// @param request 搜索请求
+  /// @return 搜索结果
+  Future<Response<FileSearchResult>> searchInFiles(FileSearchInRequest request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/files/search/in'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: FileSearchResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 }

@@ -1,11 +1,13 @@
 /// 1Panel V2 API - Container 相关接口
-/// 
+///
 /// 此文件包含与容器管理相关的所有API接口，
 /// 包括容器的创建、删除、启动、停止、查询等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/container_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/container_models.dart';
+import '../../data/models/common_models.dart';
 
 class ContainerV2Api {
   final ApiClient _client;
@@ -13,163 +15,255 @@ class ContainerV2Api {
   ContainerV2Api(this._client);
 
   /// 创建容器
-  /// 
+  ///
   /// 创建一个新的容器
-  /// @param container 容器配置信息
+  /// @param request 容器操作请求
   /// @return 创建结果
-  Future<Response> createContainer(Map<String, dynamic> container) async {
-    return await _client.post('/containers/create', data: container);
+  Future<Response> createContainer(ContainerOperate request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/containers'),
+      data: request.toJson(),
+    );
   }
 
-  /// 删除容器
-  /// 
-  /// 删除指定的容器
-  /// @param ids 容器ID列表
-  /// @param force 是否强制删除
-  /// @return 删除结果
-  Future<Response> deleteContainer(List<String> ids, {bool force = false}) async {
-    final data = {
-      'ids': ids,
-      'force': force,
-    };
-    return await _client.post('/containers/del', data: data);
+  /// 操作容器（启动/停止/重启等）
+  ///
+  /// 对指定容器执行操作
+  /// @param request 容器操作请求
+  /// @return 操作结果
+  Future<Response> operateContainer(ContainerOperation request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/containers/operate'),
+      data: request.toJson(),
+    );
   }
 
   /// 启动容器
-  /// 
+  ///
   /// 启动指定的容器
-  /// @param ids 容器ID列表
+  /// @param names 容器名称列表
   /// @return 启动结果
-  Future<Response> startContainer(List<String> ids) async {
-    final data = {
-      'ids': ids,
-    };
-    return await _client.post('/containers/start', data: data);
+  Future<Response> startContainer(List<String> names) async {
+    return await operateContainer(ContainerOperation(
+      names: names,
+      operation: ContainerOperationType.start.value,
+    ));
   }
 
   /// 停止容器
-  /// 
+  ///
   /// 停止指定的容器
-  /// @param ids 容器ID列表
+  /// @param names 容器名称列表
   /// @param force 是否强制停止
   /// @return 停止结果
-  Future<Response> stopContainer(List<String> ids, {bool force = false}) async {
-    final data = {
-      'ids': ids,
-      'force': force,
-    };
-    return await _client.post('/containers/stop', data: data);
+  Future<Response> stopContainer(List<String> names, {bool force = false}) async {
+    return await operateContainer(ContainerOperation(
+      names: names,
+      operation: force ? ContainerOperationType.kill.value : ContainerOperationType.stop.value,
+    ));
   }
 
   /// 重启容器
-  /// 
+  ///
   /// 重启指定的容器
-  /// @param ids 容器ID列表
+  /// @param names 容器名称列表
   /// @return 重启结果
-  Future<Response> restartContainer(List<String> ids) async {
-    final data = {
-      'ids': ids,
-    };
-    return await _client.post('/containers/restart', data: data);
+  Future<Response> restartContainer(List<String> names) async {
+    return await operateContainer(ContainerOperation(
+      names: names,
+      operation: ContainerOperationType.restart.value,
+    ));
   }
 
   /// 暂停容器
-  /// 
+  ///
   /// 暂停指定的容器
-  /// @param ids 容器ID列表
+  /// @param names 容器名称列表
   /// @return 暂停结果
-  Future<Response> pauseContainer(List<String> ids) async {
-    final data = {
-      'ids': ids,
-    };
-    return await _client.post('/containers/pause', data: data);
+  Future<Response> pauseContainer(List<String> names) async {
+    return await operateContainer(ContainerOperation(
+      names: names,
+      operation: ContainerOperationType.pause.value,
+    ));
   }
 
   /// 恢复容器
-  /// 
+  ///
   /// 恢复指定的容器
-  /// @param ids 容器ID列表
+  /// @param names 容器名称列表
   /// @return 恢复结果
-  Future<Response> unpauseContainer(List<String> ids) async {
-    final data = {
-      'ids': ids,
-    };
-    return await _client.post('/containers/unpause', data: data);
+  Future<Response> unpauseContainer(List<String> names) async {
+    return await operateContainer(ContainerOperation(
+      names: names,
+      operation: ContainerOperationType.unpause.value,
+    ));
+  }
+
+  /// 删除容器
+  ///
+  /// 删除指定的容器
+  /// @param names 容器名称列表
+  /// @param force 是否强制删除
+  /// @return 删除结果
+  Future<Response> deleteContainer(List<String> names, {bool force = false}) async {
+    return await operateContainer(ContainerOperation(
+      names: names,
+      operation: ContainerOperationType.remove.value,
+    ));
+  }
+
+  /// 搜索容器
+  ///
+  /// 分页搜索容器列表
+  /// @param request 分页搜索请求
+  /// @return 容器列表
+  Future<Response<PageResult<ContainerInfo>>> searchContainers(PageContainer request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/containers/search'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: PageResult.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => ContainerInfo.fromJson(json as Map<String, dynamic>),
+      ),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取容器列表
-  /// 
+  ///
   /// 获取所有容器列表
-  /// @param search 搜索关键词（可选）
-  /// @param status 容器状态（可选）
-  /// @param page 页码（可选，默认为1）
-  /// @param pageSize 每页数量（可选，默认为10）
   /// @return 容器列表
-  Future<Response> getContainers({
-    String? search,
-    String? status,
-    int page = 1,
-    int pageSize = 10,
-  }) async {
-    final data = {
-      'page': page,
-      'pageSize': pageSize,
-      if (search != null) 'search': search,
-      if (status != null) 'status': status,
-    };
-    return await _client.post('/containers/search', data: data);
+  Future<Response<List<ContainerInfo>>> listContainers() async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/containers/list'),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => ContainerInfo.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取容器详情
-  /// 
+  ///
   /// 获取指定容器的详细信息
   /// @param id 容器ID
   /// @return 容器详情
-  Future<Response> getContainerDetail(String id) async {
-    return await _client.get('/containers/$id');
-  }
-
-  /// 获取容器日志
-  /// 
-  /// 获取指定容器的日志
-  /// @param id 容器ID
-  /// @param lines 日志行数（可选，默认为100）
-  /// @return 容器日志
-  Future<Response> getContainerLogs(String id, {int lines = 100}) async {
-    final data = {
-      'lines': lines,
-    };
-    return await _client.post('/containers/$id/logs', data: data);
+  Future<Response<ContainerInfo>> getContainerDetail(String id) async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/containers/$id'),
+    );
+    return Response(
+      data: ContainerInfo.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取容器统计信息
-  /// 
+  ///
   /// 获取指定容器的资源使用统计信息
   /// @param id 容器ID
   /// @return 容器统计信息
-  Future<Response> getContainerStats(String id) async {
-    return await _client.get('/containers/$id/stats');
+  Future<Response<ContainerStats>> getContainerStats(String id) async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/containers/stats/$id'),
+    );
+    return Response(
+      data: ContainerStats.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
-  /// 获取容器进程列表
-  /// 
-  /// 获取指定容器内运行的进程列表
-  /// @param id 容器ID
-  /// @return 容器进程列表
-  Future<Response> getContainerProcesses(String id) async {
-    return await _client.get('/containers/$id/top');
+  /// 获取容器列表统计信息
+  ///
+  /// 批量获取容器统计信息
+  /// @return 容器列表统计
+  Future<Response<List<ContainerListStats>>> listContainerStats() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/containers/list/stats'),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => ContainerListStats.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
-  /// 执行容器命令
-  /// 
-  /// 在指定容器内执行命令
-  /// @param id 容器ID
-  /// @param command 要执行的命令
-  /// @return 命令执行结果
-  Future<Response> execContainerCommand(String id, String command) async {
-    final data = {
-      'command': command,
-    };
-    return await _client.post('/containers/$id/exec', data: data);
+  /// 获取容器状态统计
+  ///
+  /// 获取容器状态统计信息
+  /// @return 容器状态统计
+  Future<Response<ContainerStatus>> getContainerStatus() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/containers/status'),
+    );
+    return Response(
+      data: ContainerStatus.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 升级容器
+  ///
+  /// 升级指定容器到新镜像
+  /// @param request 容器升级请求
+  /// @return 升级结果
+  Future<Response> upgradeContainer(ContainerUpgrade request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/containers/upgrade'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 重命名容器
+  ///
+  /// 重命名指定容器
+  /// @param request 容器重命名请求
+  /// @return 重命名结果
+  Future<Response> renameContainer(ContainerRename request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/containers/rename'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 提交容器为镜像
+  ///
+  /// 将指定容器提交为镜像
+  /// @param request 容器提交请求
+  /// @return 提交结果
+  Future<Response> commitContainer(ContainerCommit request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/containers/commit'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 清理容器资源
+  ///
+  /// 清理容器、镜像、卷等资源
+  /// @param request 清理请求
+  /// @return 清理结果
+  Future<Response> pruneContainers(ContainerPrune request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/containers/prune'),
+      data: request.toJson(),
+    );
   }
 }

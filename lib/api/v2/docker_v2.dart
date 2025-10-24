@@ -1,11 +1,12 @@
 /// 1Panel V2 API - Docker 相关接口
-/// 
+///
 /// 此文件包含与Docker管理相关的所有API接口，
 /// 包括Docker的安装、配置、容器管理、镜像管理等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/docker_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/docker_models.dart';
 
 class DockerV2Api {
   final ApiClient _client;
@@ -13,11 +14,19 @@ class DockerV2Api {
   DockerV2Api(this._client);
 
   /// 获取Docker状态
-  /// 
+  ///
   /// 获取Docker的当前状态
   /// @return Docker状态
-  Future<Response> getDockerStatus() async {
-    return await _client.get('/docker');
+  Future<Response<DockerStatus>> getDockerStatus() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/docker'),
+    );
+    return Response(
+      data: DockerStatus.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 安装Docker

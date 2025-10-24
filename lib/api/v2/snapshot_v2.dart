@@ -1,11 +1,12 @@
 /// 1Panel V2 API - Snapshot 相关接口
-/// 
+///
 /// 此文件包含与系统快照相关的所有API接口，
 /// 包括快照的创建、恢复、管理等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/snapshot_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/snapshot_models.dart';
 
 class SnapshotV2Api {
   final ApiClient _client;

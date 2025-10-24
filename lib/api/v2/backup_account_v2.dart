@@ -1,11 +1,12 @@
 /// 1Panel V2 API - Backup Account 相关接口
-/// 
+///
 /// 此文件包含与备份账户管理相关的所有API接口，
 /// 包括备份账户的创建、删除、更新、查询等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/backup_account_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/backup_account_models.dart';
 
 class BackupAccountV2Api {
   final ApiClient _client;
@@ -13,125 +14,235 @@ class BackupAccountV2Api {
   BackupAccountV2Api(this._client);
 
   /// 创建备份账户
-  /// 
+  ///
   /// 创建一个新的备份账户
-  /// @param account 备份账户配置信息
+  /// @param request 备份账户配置信息
   /// @return 创建结果
-  Future<Response> createBackupAccount(Map<String, dynamic> account) async {
-    return await _client.post('/backup/accounts', data: account);
+  Future<Response> createBackupAccount(BackupOperate request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/backups'),
+      data: request.toJson(),
+    );
   }
 
   /// 删除备份账户
-  /// 
+  ///
   /// 删除指定的备份账户
-  /// @param ids 备份账户ID列表
+  /// @param request 删除请求
   /// @return 删除结果
-  Future<Response> deleteBackupAccount(List<int> ids) async {
-    final data = {
-      'ids': ids,
-    };
-    return await _client.post('/backup/accounts/del', data: data);
+  Future<Response> deleteBackupAccount(OperateByID request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/backups/del'),
+      data: request.toJson(),
+    );
   }
 
-  /// 更新备份账户
-  /// 
-  /// 更新指定的备份账户
-  /// @param id 备份账户ID
-  /// @param account 更新的备份账户信息
-  /// @return 更新结果
-  Future<Response> updateBackupAccount(int id, Map<String, dynamic> account) async {
-    return await _client.post('/backup/accounts/$id/update', data: account);
+  /// 获取备份账户选项列表
+  ///
+  /// 获取所有可用的备份账户选项
+  /// @return 备份账户选项列表
+  Future<Response<List<BackupOption>>> getBackupAccountOptions() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/backups/options'),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => BackupOption.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
-  /// 获取备份账户列表
-  /// 
-  /// 获取所有备份账户列表
-  /// @param search 搜索关键词（可选）
-  /// @param type 备份账户类型（可选）
-  /// @param page 页码（可选，默认为1）
-  /// @param pageSize 每页数量（可选，默认为10）
-  /// @return 备份账户列表
-  Future<Response> getBackupAccounts({
-    String? search,
-    String? type,
-    int page = 1,
-    int pageSize = 10,
-  }) async {
-    final data = {
-      'page': page,
-      'pageSize': pageSize,
-      if (search != null) 'search': search,
-      if (type != null) 'type': type,
-    };
-    return await _client.post('/backup/accounts/search', data: data);
+  /// 获取本地备份目录
+  ///
+  /// 获取本地备份目录路径
+  /// @return 本地备份目录
+  Future<Response<String>> getLocalBackupDir() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/backups/local'),
+    );
+    return Response(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 备份系统数据
+  ///
+  /// 执行系统数据备份
+  /// @param request 备份请求
+  /// @return 备份结果
+  Future<Response> backupSystemData(CommonBackup request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/backups/backup'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 恢复系统数据
+  ///
+  /// 从备份恢复系统数据
+  /// @param request 恢复请求
+  /// @return 恢复结果
+  Future<Response> recoverSystemData(CommonRecover request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/backups/recover'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 从上传恢复系统数据
+  ///
+  /// 从上传的备份文件恢复系统数据
+  /// @param request 恢复请求
+  /// @return 恢复结果
+  Future<Response> recoverSystemDataFromUpload(CommonRecover request) async {
+    return await _client.post(
+      ApiConstants.buildApiPath('/backups/recover/byupload'),
+      data: request.toJson(),
+    );
+  }
+
+  /// 下载备份记录
+  ///
+  /// 下载指定的备份记录文件
+  /// @param request 下载请求
+  /// @return 下载结果
+  Future<Response<String>> downloadBackupRecord(DownloadRecord request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/backup/record/download'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 分页查询备份记录
+  ///
+  /// 分页查询备份记录列表
+  /// @param request 搜索请求
+  /// @return 备份记录列表
+  Future<Response<PageResult>> searchBackupRecords(RecordSearch request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/backups/record/search'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: PageResult.fromJson(response.data as Map<String, dynamic>, (json) => json),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 按定时任务分页查询备份记录
+  ///
+  /// 按定时任务分页查询备份记录列表
+  /// @param request 搜索请求
+  /// @return 备份记录列表
+  Future<Response<PageResult>> searchBackupRecordsByCronjob(RecordSearchByCronjob request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/backups/record/search/bycronjob'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: PageResult.fromJson(response.data as Map<String, dynamic>, (json) => json),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 加载备份记录大小
+  ///
+  /// 加载备份记录的文件大小信息
+  /// @param request 搜索请求
+  /// @return 备份记录大小列表
+  Future<Response<List<RecordFileSize>>> loadBackupRecordSizes(SearchForSize request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/backups/record/size'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => RecordFileSize.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取备份账户详情
-  /// 
+  ///
   /// 获取指定备份账户的详细信息
   /// @param id 备份账户ID
   /// @return 备份账户详情
-  Future<Response> getBackupAccountDetail(int id) async {
-    return await _client.get('/backup/accounts/$id');
+  Future<Response<BackupOperate>> getBackupAccountDetail(int id) async {
+    final response = await _client.get(
+      '${ApiConstants.buildApiPath('/backups')}/$id',
+    );
+    return Response(
+      data: BackupOperate.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 测试备份账户连接
-  /// 
+  ///
   /// 测试指定备份账户的连接
-  /// @param id 备份账户ID
+  /// @param request 备份账户配置
   /// @return 测试结果
-  Future<Response> testBackupAccount(int id) async {
-    return await _client.post('/backup/accounts/$id/test');
+  Future<Response<bool>> testBackupAccount(BackupOperate request) async {
+    try {
+      final response = await _client.post(
+        '${ApiConstants.buildApiPath('/backups')}/test',
+        data: request.toJson(),
+      );
+      return Response(
+        data: true, // 如果没有异常，则连接测试成功
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        requestOptions: response.requestOptions,
+      );
+    } catch (e) {
+      return Response(
+        data: false, // 连接测试失败
+        statusCode: 500,
+        statusMessage: 'Connection test failed',
+        requestOptions: _client.dio.options,
+      );
+    }
+  }
+}
+
+/// 分页结果基类
+class PageResult extends Equatable {
+  final List<dynamic> items;
+  final int total;
+
+  const PageResult({
+    required this.items,
+    required this.total,
+  });
+
+  factory PageResult.fromJson(Map<String, dynamic> json, Function(dynamic)? fromJsonT) {
+    return PageResult(
+      items: (json['items'] as List?) ?? [],
+      total: json['total'] as int? ?? 0,
+    );
   }
 
-  /// 获取备份账户类型列表
-  /// 
-  /// 获取所有支持的备份账户类型
-  /// @return 备份账户类型列表
-  Future<Response> getBackupAccountTypes() async {
-    return await _client.get('/backup/accounts/types');
-  }
-
-  /// 获取备份账户配置模板
-  /// 
-  /// 获取指定类型的备份账户配置模板
-  /// @param type 备份账户类型
-  /// @return 配置模板
-  Future<Response> getBackupAccountTemplate(String type) async {
-    final data = {
-      'type': type,
-    };
-    return await _client.post('/backup/accounts/template', data: data);
-  }
-
-  /// 验证备份账户配置
-  /// 
-  /// 验证备份账户配置是否正确
-  /// @param account 备份账户配置信息
-  /// @return 验证结果
-  Future<Response> validateBackupAccount(Map<String, dynamic> account) async {
-    return await _client.post('/backup/accounts/validate', data: account);
-  }
-
-  /// 获取备份账户使用情况
-  /// 
-  /// 获取指定备份账户的使用情况
-  /// @param id 备份账户ID
-  /// @return 使用情况
-  Future<Response> getBackupAccountUsage(int id) async {
-    return await _client.get('/backup/accounts/$id/usage');
-  }
-
-  /// 获取备份账户日志
-  /// 
-  /// 获取指定备份账户的日志
-  /// @param id 备份账户ID
-  /// @param lines 日志行数（可选，默认为100）
-  /// @return 备份账户日志
-  Future<Response> getBackupAccountLogs(int id, {int lines = 100}) async {
-    final data = {
-      'lines': lines,
-    };
-    return await _client.post('/backup/accounts/$id/logs', data: data);
-  }
+  @override
+  List<Object?> get props => [items, total];
 }

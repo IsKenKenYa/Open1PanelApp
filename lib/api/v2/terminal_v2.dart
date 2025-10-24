@@ -1,11 +1,12 @@
 /// 1Panel V2 API - Terminal 相关接口
-/// 
+///
 /// 此文件包含与终端管理相关的所有API接口，
 /// 包括终端连接、命令执行、会话管理等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/terminal_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/terminal_models.dart';
 
 class TerminalV2Api {
   final ApiClient _client;
@@ -13,68 +14,87 @@ class TerminalV2Api {
   TerminalV2Api(this._client);
 
   /// 创建终端会话
-  /// 
+  ///
   /// 创建一个新的终端会话
-  /// @param name 会话名称（可选）
-  /// @param type 终端类型（可选，默认为bash）
-  /// @param workingDirectory 工作目录（可选）
-  /// @return 创建结果
-  Future<Response> createTerminalSession({
-    String? name,
-    String type = 'bash',
-    String? workingDirectory,
-  }) async {
-    final data = {
-      if (name != null) 'name': name,
-      'type': type,
-      if (workingDirectory != null) 'workingDirectory': workingDirectory,
-    };
-    return await _client.post('/terminal/sessions', data: data);
+  /// @param request 终端会话创建请求
+  /// @return 会话信息
+  Future<Response<TerminalSession>> createTerminalSession(TerminalSessionCreate request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/terminal/sessions'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: TerminalSession.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取终端会话列表
-  /// 
+  ///
   /// 获取所有终端会话列表
   /// @return 会话列表
-  Future<Response> getTerminalSessions() async {
-    return await _client.get('/terminal/sessions');
+  Future<Response<List<TerminalSession>>> getTerminalSessions() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/terminal/sessions'),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => TerminalSession.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取终端会话详情
-  /// 
+  ///
   /// 获取指定终端会话的详细信息
   /// @param sessionId 会话ID
   /// @return 会话详情
-  Future<Response> getTerminalSessionDetail(String sessionId) async {
-    return await _client.get('/terminal/sessions/$sessionId');
+  Future<Response<TerminalSession>> getTerminalSessionDetail(String sessionId) async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/terminal/sessions/$sessionId'),
+    );
+    return Response(
+      data: TerminalSession.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 删除终端会话
-  /// 
+  ///
   /// 删除指定的终端会话
-  /// @param sessionId 会话ID
+  /// @param sessionIds 会话ID列表
   /// @return 删除结果
-  Future<Response> deleteTerminalSession(String sessionId) async {
-    return await _client.delete('/terminal/sessions/$sessionId');
+  Future<Response> deleteTerminalSession(List<String> sessionIds) async {
+    final operation = TerminalSessionOperate(sessionIds: sessionIds, operation: 'delete');
+    return await _client.post(
+      ApiConstants.buildApiPath('/terminal/sessions/delete'),
+      data: operation.toJson(),
+    );
   }
 
   /// 执行终端命令
-  /// 
+  ///
   /// 在指定的终端会话中执行命令
-  /// @param sessionId 会话ID
-  /// @param command 要执行的命令
-  /// @param timeout 超时时间（可选，单位：秒）
+  /// @param request 命令执行请求
   /// @return 执行结果
-  Future<Response> executeTerminalCommand({
-    required String sessionId,
-    required String command,
-    int? timeout,
-  }) async {
-    final data = {
-      'command': command,
-      if (timeout != null) 'timeout': timeout,
-    };
-    return await _client.post('/terminal/sessions/$sessionId/execute', data: data);
+  Future<Response<TerminalCommandResult>> executeTerminalCommand(TerminalCommandExecute request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/terminal/sessions/${request.sessionId}/execute'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: TerminalCommandResult.fromJson(response.data as Map<String, dynamic>),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取终端输出

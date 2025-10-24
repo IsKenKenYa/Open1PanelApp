@@ -39,6 +39,7 @@ dependencies:
   dio: ^5.4.3+1  # Powerful HTTP client for Dart
   retrofit: ^4.1.0  # Type-safe HTTP client
   json_annotation: ^4.8.1  # JSON serialization
+  crypto: ^3.0.3  # Cryptographic functions for MD5 hash generation
   
   # State Management
   provider: ^6.1.1  # State management
@@ -53,7 +54,7 @@ dependencies:
   shimmer: ^3.0.0  # Skeleton loaders
   
   # Utilities
-  intl: ^0.18.1  # Internationalization
+  intl: ^0.20.2  # Internationalization
   flutter_localizations:
     sdk: flutter  # Flutter官方国际化支持
   logger: ^2.0.2+1  # Logging

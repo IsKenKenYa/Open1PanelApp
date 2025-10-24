@@ -8,8 +8,8 @@ part of 'app_v2.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _AppV2Service implements AppV2Service {
-  _AppV2Service(
+class _AppV2Api implements AppV2Api {
+  _AppV2Api(
     this._dio, {
     this.baseUrl,
   });
@@ -19,21 +19,20 @@ class _AppV2Service implements AppV2Service {
   String? baseUrl;
 
   @override
-  Future<AppSearchResponse> searchApps(AppSearchRequest request) async {
+  Future<InvalidType> installApp(InvalidType request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
+    final _data = request;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<AppSearchResponse>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/search',
+              '/api/v2/apps/install',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -42,25 +41,212 @@ class _AppV2Service implements AppV2Service {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AppSearchResponse.fromJson(_result.data!);
+    final value = InvalidType.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<List<AppServiceResponse>> getAppServices(String key) async {
+  Future<void> uninstallApp(String appInstallId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v2/apps/uninstall/${appInstallId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+  }
+
+  @override
+  Future<void> updateApp(String appInstallId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v2/apps/update/${appInstallId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+  }
+
+  @override
+  Future<InvalidType> searchApps(InvalidType request) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = request;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/search',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = InvalidType.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<InvalidType> getAppList() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<AppServiceResponse>>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/services/${key}',
+              '/api/v2/apps/list',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = InvalidType.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<InvalidType> getAppDetail(
+    String appId,
+    String version,
+    String type,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/detail/${appId}/${version}/${type}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = InvalidType.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<InvalidType> getAppDetails(String id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/details/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = InvalidType.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<InvalidType> checkAppUpdate() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/checkupdate',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = InvalidType.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<List<InvalidType>> getIgnoredApps() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<InvalidType>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/ignored',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -70,128 +256,26 @@ class _AppV2Service implements AppV2Service {
               baseUrl,
             ))));
     var value = _result.data!
-        .map((dynamic i) =>
-            AppServiceResponse.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => InvalidType.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
 
   @override
-  Future<AppstoreConfigResponse> getAppstoreConfig() async {
+  Future<InvalidType> checkAppInstall(InvalidType request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AppstoreConfigResponse>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/store/config',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = AppstoreConfigResponse.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<void> updateAppstoreConfig(AppstoreUpdateRequest request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/store/update',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<void> syncLocalApps() async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/sync/local',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<void> syncRemoteApps() async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/sync/remote',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<AppInstall> installApp(AppInstallCreateRequest request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
+    final _data = request;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<AppInstall>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/install',
+              '/api/v2/apps/installed/check',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -200,55 +284,14 @@ class _AppV2Service implements AppV2Service {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AppInstall.fromJson(_result.data!);
+    final value = InvalidType.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<AppInstalledCheckResponse> checkAppInstalled(
-    String key,
-    String? name,
-  ) async {
+  Future<Map<String, dynamic>> getAppInstallConfig(String appInstallId) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'key': key,
-      r'name': name,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AppInstalledCheckResponse>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/installed/check',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = AppInstalledCheckResponse.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAppInstalledConf(
-    String key,
-    String? name,
-  ) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'key': key,
-      r'name': name,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -259,7 +302,7 @@ class _AppV2Service implements AppV2Service {
     )
             .compose(
               _dio.options,
-              '/apps/installed/conf',
+              '/api/v2/apps/installed/conf/${appInstallId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -274,20 +317,20 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<void> updateAppInstalledConfig(Map<String, dynamic> request) async {
+  Future<void> updateAppInstallConfig(Map<String, dynamic> request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(request);
     await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
+      method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/apps/installed/config/update',
+          '/api/v2/apps/installed/config/update',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -312,7 +355,7 @@ class _AppV2Service implements AppV2Service {
     )
             .compose(
               _dio.options,
-              '/apps/installed/conninfo/${key}',
+              '/api/v2/apps/installed/conninfo/${key}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -327,41 +370,20 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<PageResult<AppInstall>> getInstalledApps(
-    int page,
-    int pageSize,
-    bool? all,
-    String? name,
-    bool? sync,
-    List<String>? tags,
-    String? type,
-    bool? unused,
-    bool? update,
-  ) async {
+  Future<Map<String, dynamic>> checkAppUninstall(String appInstallId) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'page': page,
-      r'pageSize': pageSize,
-      r'all': all,
-      r'name': name,
-      r'sync': sync,
-      r'tags': tags,
-      r'type': type,
-      r'unused': unused,
-      r'update': update,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PageResult<AppInstall>>(Options(
+        _setStreamType<Map<String, dynamic>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/installed/list',
+              '/api/v2/apps/installed/delete/check/${appInstallId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -370,109 +392,17 @@ class _AppV2Service implements AppV2Service {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PageResult<AppInstall>.fromJson(
-      _result.data!,
-      (json) => AppInstall.fromJson(json as Map<String, dynamic>),
-    );
+    var value = _result.data!.map((k, dynamic v) =>
+        MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)));
     return value;
   }
 
   @override
-  Future<AppInstall> getInstalledAppDetail(int id) async {
+  Future<void> ignoreAppUpdate(InvalidType request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<AppInstall>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/installed/${id}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = AppInstall.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<void> deleteInstalledApp(
-    int id,
-    bool? deleteDB,
-    bool? deleteImage,
-    bool? deleteBackup,
-  ) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'deleteDB': deleteDB,
-      r'deleteImage': deleteImage,
-      r'deleteBackup': deleteBackup,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'DELETE',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/installed/${id}',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<void> updateInstalledApp(
-    int id,
-    Map<String, dynamic> request,
-  ) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request);
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'PUT',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/installed/${id}',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<void> operateInstalledApp(AppInstalledOperateRequest request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
+    final _data = request;
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'POST',
       headers: _headers,
@@ -480,7 +410,7 @@ class _AppV2Service implements AppV2Service {
     )
         .compose(
           _dio.options,
-          '/apps/installed/operate',
+          '/api/v2/apps/installed/ignore',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -492,130 +422,20 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<AppItem> getAppDetail(String key) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result =
-        await _dio.fetch<Map<String, dynamic>>(_setStreamType<AppItem>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/${key}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = AppItem.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<List<String>> getAppVersions(String key) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result =
-        await _dio.fetch<List<dynamic>>(_setStreamType<List<String>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/${key}/versions',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = _result.data!.cast<String>();
-    return value;
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAppParams(
-    String key,
-    String version,
-  ) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'version': version};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Map<String, dynamic>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/${key}/params',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!.map((k, dynamic v) =>
-        MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)));
-    return value;
-  }
-
-  @override
-  Future<void> ignoreAppUpgrade(Map<String, dynamic> request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request);
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/installed/ignore/upgrade',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<List<AppInstall>> getAppUpgradeInfo() async {
+  Future<List<InvalidType>> getInstalledApps() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<List<dynamic>>(_setStreamType<List<AppInstall>>(Options(
+        .fetch<List<dynamic>>(_setStreamType<List<InvalidType>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/installed/upgrade',
+              '/api/v2/apps/installed/list',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -625,162 +445,13 @@ class _AppV2Service implements AppV2Service {
               baseUrl,
             ))));
     var value = _result.data!
-        .map((dynamic i) => AppInstall.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => InvalidType.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
 
   @override
-  Future<Map<String, dynamic>> getAppUpdateInfo() async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Map<String, dynamic>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/checkupdate',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!.map((k, dynamic v) =>
-        MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)));
-    return value;
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAppDetailById(
-    int appId,
-    String version,
-    String type,
-  ) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Map<String, dynamic>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/detail/${appId}/${version}/${type}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!.map((k, dynamic v) =>
-        MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)));
-    return value;
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAppDetailsById(int id) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Map<String, dynamic>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/details/${id}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!.map((k, dynamic v) =>
-        MapEntry(k, dynamic.fromJson(v as Map<String, dynamic>)));
-    return value;
-  }
-
-  @override
-  Future<List<Map<String, dynamic>>> getIgnoredApps() async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<Map<String, dynamic>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/ignored',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            Map<String, dynamic>.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  Future<List<Map<String, dynamic>>> checkBeforeDeleteApp(
-      int appInstallId) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<Map<String, dynamic>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/apps/installed/delete/check/${appInstallId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            Map<String, dynamic>.fromJson(i as Map<String, dynamic>))
-        .toList();
-    return value;
-  }
-
-  @override
-  Future<int> getAppPort(Map<String, dynamic> request) async {
+  Future<int> loadAppPort(Map<String, dynamic> request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -793,7 +464,7 @@ class _AppV2Service implements AppV2Service {
     )
         .compose(
           _dio.options,
-          '/apps/installed/loadport',
+          '/api/v2/apps/installed/loadport',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -807,12 +478,11 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<void> operateApp(AppInstalledOperateRequest request) async {
+  Future<void> operateApp(InvalidType request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
+    final _data = request;
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'POST',
       headers: _headers,
@@ -820,7 +490,7 @@ class _AppV2Service implements AppV2Service {
     )
         .compose(
           _dio.options,
-          '/apps/installed/op',
+          '/api/v2/apps/installed/op',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -832,8 +502,7 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<Map<String, dynamic>> getAppParamsByInstallId(
-      String appInstallId) async {
+  Future<Map<String, dynamic>> getAppInstallParams(String appInstallId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -846,7 +515,7 @@ class _AppV2Service implements AppV2Service {
     )
             .compose(
               _dio.options,
-              '/apps/installed/params/${appInstallId}',
+              '/api/v2/apps/installed/params/${appInstallId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -861,72 +530,20 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<void> updateAppParams(Map<String, dynamic> request) async {
+  Future<InvalidType> searchInstalledApps(InvalidType request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request);
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/installed/params/update',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<void> changeAppPort(Map<String, dynamic> request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request);
-    await _dio.fetch<void>(_setStreamType<void>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/apps/installed/port/change',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        ))));
-  }
-
-  @override
-  Future<PageResult<AppInstall>> searchInstalledApps(
-      AppInstalledSearchRequest request) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PageResult<AppInstall>>(Options(
+    final _data = request;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/installed/search',
+              '/api/v2/apps/installed/search',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -935,15 +552,12 @@ class _AppV2Service implements AppV2Service {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PageResult<AppInstall>.fromJson(
-      _result.data!,
-      (json) => AppInstall.fromJson(json as Map<String, dynamic>),
-    );
+    final value = InvalidType.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<void> syncInstalledApps() async {
+  Future<void> syncAppStatus() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -955,7 +569,7 @@ class _AppV2Service implements AppV2Service {
     )
         .compose(
           _dio.options,
-          '/apps/installed/sync',
+          '/api/v2/apps/installed/sync',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -967,21 +581,20 @@ class _AppV2Service implements AppV2Service {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getAppUpdateVersions(
-      int appInstallId) async {
+  Future<List<InvalidType>> getAppUpdateVersions(String appInstallId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<Map<String, dynamic>>>(Options(
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<InvalidType>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/apps/installed/update/versions/${appInstallId}',
+              '/api/v2/apps/installed/update/versions/${appInstallId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -991,10 +604,137 @@ class _AppV2Service implements AppV2Service {
               baseUrl,
             ))));
     var value = _result.data!
-        .map((dynamic i) =>
-            Map<String, dynamic>.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => InvalidType.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
+  }
+
+  @override
+  Future<List<InvalidType>> getAppServices(String key) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<List<dynamic>>(_setStreamType<List<InvalidType>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/services/${key}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var value = _result.data!
+        .map((dynamic i) => InvalidType.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<InvalidType> getAppstoreConfig() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/apps/store/config',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = InvalidType.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<void> updateAppstoreConfig(InvalidType request) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = request;
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v2/apps/store/update',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+  }
+
+  @override
+  Future<void> syncLocalApps() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v2/apps/sync/local',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+  }
+
+  @override
+  Future<void> syncRemoteApps() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/v2/apps/sync/remote',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

@@ -51,6 +51,11 @@ app.*.map.json
 /unlinked.ds
 /unlinked_spec.ds
 
+# Analysis and logs
+/logs/
+/docs/v2_api_analysis.md
+/api_analysis_*
+
 # Android related
 **/android/**/gradle-wrapper.jar
 **/android/.gradle

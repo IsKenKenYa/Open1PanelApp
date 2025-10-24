@@ -1,11 +1,13 @@
 /// 1Panel V2 API - Logs 相关接口
-/// 
+///
 /// 此文件包含与日志管理相关的所有API接口，
 /// 包括系统日志、应用日志、安全日志等操作。
 
 import 'package:dio/dio.dart';
 import '../../core/network/api_client.dart';
-import '../models/logs_models.dart';
+import '../../core/config/api_constants.dart';
+import '../../data/models/logs_models.dart';
+import '../../data/models/common_models.dart';
 
 class LogsV2Api {
   final ApiClient _client;
@@ -13,48 +15,60 @@ class LogsV2Api {
   LogsV2Api(this._client);
 
   /// 获取系统日志
-  /// 
+  ///
   /// 获取系统日志
-  /// @param search 搜索关键词（可选）
-  /// @param level 日志级别（可选）
-  /// @param page 页码（可选，默认为1）
-  /// @param pageSize 每页数量（可选，默认为10）
+  /// @param request 日志搜索请求
   /// @return 系统日志
-  Future<Response> getSystemLogs({
-    String? search,
-    String? level,
-    int page = 1,
-    int pageSize = 10,
-  }) async {
-    final data = {
-      'page': page,
-      'pageSize': pageSize,
-      if (search != null) 'search': search,
-      if (level != null) 'level': level,
-    };
-    return await _client.post('/logs/system', data: data);
+  Future<Response<PageResult<LogInfo>>> getSystemLogs(LogSearch request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/logs/system'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: PageResult.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => LogInfo.fromJson(json as Map<String, dynamic>),
+      ),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取系统日志文件列表
-  /// 
+  ///
   /// 获取系统日志文件列表
   /// @return 系统日志文件列表
-  Future<Response> getSystemLogFiles() async {
-    return await _client.get('/logs/system/files');
+  Future<Response<List<LogFileInfo>>> getSystemLogFiles() async {
+    final response = await _client.get(
+      ApiConstants.buildApiPath('/logs/system/files'),
+    );
+    return Response(
+      data: (response.data as List?)
+          ?.map((item) => LogFileInfo.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取指定系统日志文件内容
-  /// 
+  ///
   /// 获取指定系统日志文件的内容
-  /// @param filename 日志文件名
-  /// @param lines 日志行数（可选，默认为100）
+  /// @param request 日志文件内容请求
   /// @return 日志内容
-  Future<Response> getSystemLogFileContent(String filename, {int lines = 100}) async {
-    final data = {
-      'filename': filename,
-      'lines': lines,
-    };
-    return await _client.post('/logs/system/file', data: data);
+  Future<Response<String>> getSystemLogFileContent(LogFileContent request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/logs/system/file'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 
   /// 获取应用日志
