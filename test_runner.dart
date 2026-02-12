@@ -1,0 +1,276 @@
+/// 1Panel V2 API 测试运行脚本
+///
+/// 跨平台Dart脚本，用于运行各种类型的测试
+/// 支持 Windows、macOS 和 Linux
+///
+/// 使用方法:
+/// dart run test_runner.dart [选项]
+///
+/// 选项:
+///   all           运行所有测试
+///   unit          仅运行单元测试
+///   integration   仅运行集成测试
+///   auth          运行认证测试
+///   ai            运行AI API测试
+///   app           运行App API测试
+///   toolbox       运行Toolbox API测试
+///   container     运行Container API测试
+///   database      运行Database API测试
+///   website       运行Website API测试
+///   coverage      运行测试并生成覆盖率报告
+///   help          显示帮助信息
+
+import 'dart:io';
+
+class TestRunner {
+  static const String reset = '\x1B[0m';
+  static const String red = '\x1B[31m';
+  static const String green = '\x1B[32m';
+  static const String yellow = '\x1B[33m';
+  static const String blue = '\x1B[34m';
+  static const String cyan = '\x1B[36m';
+
+  static void printColor(String message, String color) {
+    stdout.writeln('$color$message$reset');
+  }
+
+  static void printHeader(String title) {
+    stdout.writeln('');
+    stdout.writeln('$blue========================================$reset');
+    stdout.writeln('$blue$title$reset');
+    stdout.writeln('$blue========================================$reset');
+    stdout.writeln('');
+  }
+
+  static void printSuccess(String message) {
+    printColor('✅ $message', green);
+  }
+
+  static void printError(String message) {
+    printColor('❌ $message', red);
+  }
+
+  static void printWarning(String message) {
+    printColor('⚠️  $message', yellow);
+  }
+
+  static void printInfo(String message) {
+    printColor('ℹ️  $message', cyan);
+  }
+
+  static Future<int> runCommand(String command, List<String> args) async {
+    final result = await Process.run(command, args);
+    stdout.write(result.stdout);
+    stderr.write(result.stderr);
+    return result.exitCode;
+  }
+
+  static Future<void> runTests(String testPath, {String? description}) async {
+    if (description != null) {
+      printHeader(description);
+    }
+    
+    final exitCode = await runCommand('flutter', ['test', testPath, '--reporter=expanded']);
+    
+    if (exitCode == 0) {
+      printSuccess('测试通过');
+    } else {
+      printError('测试失败 (退出码: $exitCode)');
+    }
+  }
+
+  static Future<void> runAllTests() async {
+    printHeader('运行所有测试');
+    await runCommand('flutter', ['test', 'test/all_api_tests.dart', '--reporter=expanded']);
+  }
+
+  static Future<void> runUnitTests() async {
+    printHeader('运行单元测试');
+    await runTests('test/api/', description: 'API单元测试');
+    await runTests('test/auth/', description: '认证单元测试');
+  }
+
+  static Future<void> runIntegrationTests() async {
+    printHeader('运行集成测试');
+    await runTests('test/integration/', description: 'API集成测试');
+  }
+
+  static Future<void> runAuthTests() async {
+    printHeader('运行认证测试');
+    await runTests('test/auth/', description: 'Token认证测试');
+  }
+
+  static Future<void> runAiTests() async {
+    printHeader('运行AI API测试');
+    await runTests('test/api/ai_api_test.dart', description: 'AI API单元测试');
+    await runTests('test/integration/ai_api_integration_test.dart', description: 'AI API集成测试');
+  }
+
+  static Future<void> runAppTests() async {
+    printHeader('运行App API测试');
+    await runTests('test/api/app_api_test.dart', description: 'App API单元测试');
+  }
+
+  static Future<void> runToolboxTests() async {
+    printHeader('运行Toolbox API测试');
+    await runTests('test/api/toolbox_api_test.dart', description: 'Toolbox API单元测试');
+  }
+
+  static Future<void> runContainerTests() async {
+    printHeader('运行Container API测试');
+    await runTests('test/api/container_api_test.dart', description: 'Container API单元测试');
+  }
+
+  static Future<void> runDatabaseTests() async {
+    printHeader('运行Database API测试');
+    final file = File('test/api/database_api_test.dart');
+    if (await file.exists()) {
+      await runTests('test/api/database_api_test.dart', description: 'Database API单元测试');
+    } else {
+      printWarning('Database API测试文件不存在');
+    }
+  }
+
+  static Future<void> runWebsiteTests() async {
+    printHeader('运行Website API测试');
+    final file = File('test/api/website_api_test.dart');
+    if (await file.exists()) {
+      await runTests('test/api/website_api_test.dart', description: 'Website API单元测试');
+    } else {
+      printWarning('Website API测试文件不存在');
+    }
+  }
+
+  static Future<void> runCoverageTests() async {
+    printHeader('运行测试并生成覆盖率报告');
+    
+    printInfo('运行测试并收集覆盖率数据...');
+    final exitCode = await runCommand('flutter', ['test', '--coverage', '--reporter=expanded']);
+    
+    if (exitCode == 0) {
+      final coverageFile = File('coverage/lcov.info');
+      if (await coverageFile.exists()) {
+        printSuccess('覆盖率数据已生成: coverage/lcov.info');
+        stdout.writeln('');
+        printInfo('可以使用以下命令查看覆盖率报告:');
+        stdout.writeln('  genhtml coverage/lcov.info -o coverage/html');
+        stdout.writeln('  open coverage/html/index.html');
+      }
+    } else {
+      printError('测试失败，无法生成覆盖率报告');
+    }
+  }
+
+  static void printHelp() {
+    stdout.writeln('''
+1Panel V2 API 测试运行脚本
+
+用法: dart run test_runner.dart [选项]
+
+选项:
+  all           运行所有测试
+  unit          仅运行单元测试
+  integration   仅运行集成测试
+  auth          运行认证测试
+  ai            运行AI API测试
+  app           运行App API测试
+  toolbox       运行Toolbox API测试
+  container     运行Container API测试
+  database      运行Database API测试
+  website       运行Website API测试
+  coverage      运行测试并生成覆盖率报告
+  help          显示此帮助信息
+
+示例:
+  dart run test_runner.dart all          # 运行所有测试
+  dart run test_runner.dart unit         # 仅运行单元测试
+  dart run test_runner.dart ai           # 运行AI API测试
+
+环境变量配置:
+  复制 .env.example 为 .env 并填写以下配置:
+  - PANEL_BASE_URL: 1Panel服务器地址
+  - PANEL_API_KEY: API密钥
+  - RUN_INTEGRATION_TESTS: 是否运行集成测试 (true/false)
+  - RUN_DESTRUCTIVE_TESTS: 是否运行破坏性测试 (true/false)
+
+注意:
+  1Panel OpenAPI 仅支持 API密钥 认证方式
+  Token = md5('1panel' + API-Key + UnixTimestamp)
+''');
+  }
+
+  static Future<bool> checkEnv() async {
+    final envFile = File('.env');
+    if (!await envFile.exists()) {
+      printWarning('.env 文件不存在');
+      stdout.writeln('请复制 .env.example 为 .env 并填写配置');
+      stdout.writeln('');
+      stdout.writeln('  cp .env.example .env');
+      stdout.writeln('');
+      
+      stdout.write('是否继续运行测试? (y/n): ');
+      final input = stdin.readLineSync();
+      if (input?.toLowerCase() != 'y') {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+Future<void> main(List<String> args) async {
+  final option = args.isNotEmpty ? args[0] : 'help';
+
+  // 检查环境配置
+  if (option != 'help') {
+    if (!await TestRunner.checkEnv()) {
+      exit(1);
+    }
+  }
+
+  switch (option) {
+    case 'all':
+      await TestRunner.runAllTests();
+      break;
+    case 'unit':
+      await TestRunner.runUnitTests();
+      break;
+    case 'integration':
+      await TestRunner.runIntegrationTests();
+      break;
+    case 'auth':
+      await TestRunner.runAuthTests();
+      break;
+    case 'ai':
+      await TestRunner.runAiTests();
+      break;
+    case 'app':
+      await TestRunner.runAppTests();
+      break;
+    case 'toolbox':
+      await TestRunner.runToolboxTests();
+      break;
+    case 'container':
+      await TestRunner.runContainerTests();
+      break;
+    case 'database':
+      await TestRunner.runDatabaseTests();
+      break;
+    case 'website':
+      await TestRunner.runWebsiteTests();
+      break;
+    case 'coverage':
+      await TestRunner.runCoverageTests();
+      break;
+    case 'help':
+    case '--help':
+    case '-h':
+      TestRunner.printHelp();
+      break;
+    default:
+      TestRunner.printError('未知选项: $option');
+      stdout.writeln('');
+      TestRunner.printHelp();
+      exit(1);
+  }
+}
