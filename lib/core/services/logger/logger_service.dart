@@ -39,7 +39,7 @@ class AppLogger {
         lineLength: LoggerConfig.lineLength,
         colors: LoggerConfig.enableColors,
         printEmojis: LoggerConfig.enableEmojis,
-        printTime: LoggerConfig.enableTimeStamps,
+        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
       level: logLevel,
       filter: _CustomLogFilter(),
@@ -89,6 +89,42 @@ class AppLogger {
     _logMessage(Level.fatal, '【Open1PanelMobile】$message', error: error, stackTrace: stackTrace);
   }
 
+  /// 带包名的Trace级别日志
+  void tWithPackage(String packageName, dynamic message, {dynamic error, StackTrace? stackTrace}) {
+    if (!kReleaseMode) {
+      _logMessage(Level.trace, '[$packageName] $message', error: error, stackTrace: stackTrace);
+    }
+  }
+
+  /// 带包名的Debug级别日志
+  void dWithPackage(String packageName, dynamic message, {dynamic error, StackTrace? stackTrace}) {
+    if (!kReleaseMode) {
+      _logMessage(Level.debug, '[$packageName] $message', error: error, stackTrace: stackTrace);
+    }
+  }
+
+  /// 带包名的Info级别日志
+  void iWithPackage(String packageName, dynamic message, {dynamic error, StackTrace? stackTrace}) {
+    if (!kReleaseMode) {
+      _logMessage(Level.info, '[$packageName] $message', error: error, stackTrace: stackTrace);
+    }
+  }
+
+  /// 带包名的Warning级别日志
+  void wWithPackage(String packageName, dynamic message, {dynamic error, StackTrace? stackTrace}) {
+    _logMessage(Level.warning, '[$packageName] $message', error: error, stackTrace: stackTrace);
+  }
+
+  /// 带包名的Error级别日志
+  void eWithPackage(String packageName, dynamic message, {dynamic error, StackTrace? stackTrace}) {
+    _logMessage(Level.error, '[$packageName] $message', error: error, stackTrace: stackTrace);
+  }
+
+  /// 带包名的Fatal级别日志
+  void fWithPackage(String packageName, dynamic message, {dynamic error, StackTrace? stackTrace}) {
+    _logMessage(Level.fatal, '[$packageName] $message', error: error, stackTrace: stackTrace);
+  }
+
   void _logMessage(Level level, dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
     _logger?.log(level, message, error: error, stackTrace: stackTrace);
@@ -107,3 +143,6 @@ class _CustomLogFilter extends LogFilter {
     return true;
   }
 }
+
+/// 全局日志实例
+final AppLogger appLogger = AppLogger();

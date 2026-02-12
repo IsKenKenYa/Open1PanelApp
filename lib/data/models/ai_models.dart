@@ -123,7 +123,7 @@ class OllamaModelName {
   }
 }
 
-class GPUInfo {
+class GpuInfo {
   final String? fanSpeed;
   final String? gpuUtil;
   final int? index;
@@ -137,7 +137,7 @@ class GPUInfo {
   final String? productName;
   final String? temperature;
 
-  GPUInfo({
+  GpuInfo({
     this.fanSpeed,
     this.gpuUtil,
     this.index,
@@ -152,8 +152,8 @@ class GPUInfo {
     this.temperature,
   });
 
-  factory GPUInfo.fromJson(Map<String, dynamic> json) {
-    return GPUInfo(
+  factory GpuInfo.fromJson(Map<String, dynamic> json) {
+    return GpuInfo(
       fanSpeed: json['fanSpeed'],
       gpuUtil: json['gpuUtil'],
       index: json['index'],
@@ -188,11 +188,13 @@ class GPUInfo {
 }
 
 class OllamaModel {
+  final int? id;
   final String? name;
   final String? size;
   final String? modified;
 
   OllamaModel({
+    this.id,
     this.name,
     this.size,
     this.modified,
@@ -200,14 +202,16 @@ class OllamaModel {
 
   factory OllamaModel.fromJson(Map<String, dynamic> json) {
     return OllamaModel(
-      name: json['name'],
-      size: json['size'],
-      modified: json['modified'],
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      size: json['size'] as String?,
+      modified: json['modified'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (size != null) 'size': size,
       if (modified != null) 'modified': modified,

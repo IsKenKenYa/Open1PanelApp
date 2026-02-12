@@ -49,11 +49,11 @@ class AIV2Api {
   ///
   /// 获取系统中的GPU或XPU信息
   /// @return GPU/XPU信息
-  Future<Response<List<GPUInfo>>> loadGpuInfo() async {
+  Future<Response<List<GpuInfo>>> loadGpuInfo() async {
     final response = await _client.get(ApiConstants.buildApiPath('/ai/gpu/load'));
     return Response(
       data: (response.data as List?)
-              ?.map((i) => GPUInfo.fromJson(i))
+              ?.map((i) => GpuInfo.fromJson(i))
               .toList() ??
           [],
       statusCode: response.statusCode,

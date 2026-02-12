@@ -167,31 +167,33 @@ class OllamaModelPage extends StatelessWidget {
                               vertical: 8.0,
                             ),
                             child: ListTile(
-                              title: Text(model.name),
-                              subtitle: Text(model.id.toString()),
+                              title: Text(model.name ?? ''),
+                              subtitle: Text(model.size ?? ''),
                               trailing: PopupMenuButton<String>(
                                 onSelected: (value) {
+                                  final modelName = model.name ?? '';
+                                  final modelId = model.id ?? 0;
                                   switch (value) {
                                     case 'load':
                                       aiProvider.loadOllamaModel(
-                                        name: model.name,
+                                        name: modelName,
                                       );
                                       break;
                                     case 'close':
                                       aiProvider.closeOllamaModel(
-                                        name: model.name,
+                                        name: modelName,
                                       );
                                       break;
                                     case 'delete':
                                       _showDeleteModelDialog(
                                         context,
                                         aiProvider,
-                                        model.id,
+                                        modelId,
                                       );
                                       break;
                                     case 'recreate':
                                       aiProvider.recreateOllamaModel(
-                                        name: model.name,
+                                        name: modelName,
                                       );
                                       break;
                                   }

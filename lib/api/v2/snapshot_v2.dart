@@ -1,35 +1,28 @@
-/// 1Panel V2 API - Snapshot 相关接口
-///
-/// 此文件包含与系统快照相关的所有API接口，
-/// 包括快照的创建、恢复、管理等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
 import '../../data/models/snapshot_models.dart';
+import '../../data/models/common_models.dart';
 
 class SnapshotV2Api {
   final DioClient _client;
 
   SnapshotV2Api(this._client);
 
-  /// 创建快照
-  Future<Response<void>> createSnapshot(SnapshotCreate request) async {
+  Future<Response<void>> createSnapshot(SnapshotCreateRequest request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot'),
       data: request.toJson(),
     );
   }
 
-  /// 删除快照
-  Future<Response<void>> deleteSnapshot(SnapshotDelete request) async {
+  Future<Response<void>> deleteSnapshot(OperateByID request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot/del'),
       data: request.toJson(),
     );
   }
 
-  /// 更新快照描述
   Future<Response<void>> updateSnapshotDescription(SnapshotDescriptionUpdate request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot/description/update'),
@@ -37,7 +30,6 @@ class SnapshotV2Api {
     );
   }
 
-  /// 导入快照
   Future<Response<void>> importSnapshot(SnapshotImport request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot/import'),
@@ -45,7 +37,6 @@ class SnapshotV2Api {
     );
   }
 
-  /// 加载快照
   Future<Response<Map<String, dynamic>>> loadSnapshot() async {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/settings/snapshot/load'),
@@ -58,22 +49,19 @@ class SnapshotV2Api {
     );
   }
 
-  /// 恢复快照
-  Future<Response<void>> recoverSnapshot(SnapshotRecover request) async {
+  Future<Response<void>> recoverSnapshot(SnapshotRecoverRequest request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot/recover'),
       data: request.toJson(),
     );
   }
 
-  /// 重建快照
   Future<Response<void>> recreateSnapshot() async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot/recreate'),
     );
   }
 
-  /// 回滚快照
   Future<Response<void>> rollbackSnapshot(SnapshotRollback request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/settings/snapshot/rollback'),
@@ -81,7 +69,6 @@ class SnapshotV2Api {
     );
   }
 
-  /// 搜索快照
   Future<Response<PageResult<SnapshotInfo>>> searchSnapshots(SearchWithPage request) async {
     final response = await _client.post<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/settings/snapshot/search'),
@@ -97,4 +84,32 @@ class SnapshotV2Api {
       requestOptions: response.requestOptions,
     );
   }
+}
+
+class SnapshotDescriptionUpdate {
+  final int id;
+  final String description;
+
+  const SnapshotDescriptionUpdate({
+    required this.id,
+    required this.description,
+  });
+
+  Map<String, dynamic> toJson() => {'id': id, 'description': description};
+}
+
+class SnapshotImport {
+  final String path;
+
+  const SnapshotImport({required this.path});
+
+  Map<String, dynamic> toJson() => {'path': path};
+}
+
+class SnapshotRollback {
+  final int id;
+
+  const SnapshotRollback({required this.id});
+
+  Map<String, dynamic> toJson() => {'id': id};
 }

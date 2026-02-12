@@ -237,30 +237,30 @@ class BatchDelete extends Equatable {
 
 /// 强制删除模型
 class ForceDelete extends Equatable {
-  final int id;
-  final bool force;
+  final List<int> ids;
+  final bool forceDelete;
 
   const ForceDelete({
-    required this.id,
-    this.force = false,
+    required this.ids,
+    this.forceDelete = false,
   });
 
   factory ForceDelete.fromJson(Map<String, dynamic> json) {
     return ForceDelete(
-      id: json['id'] as int,
-      force: json['force'] as bool? ?? false,
+      ids: (json['ids'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+      forceDelete: json['forceDelete'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'force': force,
+      'ids': ids,
+      'forceDelete': forceDelete,
     };
   }
 
   @override
-  List<Object?> get props => [id, force];
+  List<Object?> get props => [ids, forceDelete];
 }
 
 /// 按名称操作模型

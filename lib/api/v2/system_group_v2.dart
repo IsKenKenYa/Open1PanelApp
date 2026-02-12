@@ -1,8 +1,3 @@
-/// 1Panel V2 API - SystemGroup 相关接口
-///
-/// 此文件包含与系统分组管理相关的所有API接口，
-/// 包括分组的创建、删除、更新、查询等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
@@ -14,30 +9,27 @@ class SystemGroupV2Api {
 
   SystemGroupV2Api(this._client);
 
-  /// 获取分组列表
-  Future<Response<List<SystemGroupInfo>>> getGroups() async {
+  Future<Response<List<GroupInfo>>> getGroups() async {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/core/groups'),
     );
     final data = response.data?['data'] as List?;
     return Response(
-      data: data?.map((e) => SystemGroupInfo.fromJson(e as Map<String, dynamic>)).toList() ?? [],
+      data: data?.map((e) => GroupInfo.fromJson(e as Map<String, dynamic>)).toList() ?? [],
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
     );
   }
 
-  /// 删除分组
-  Future<Response<void>> deleteGroup(GroupDelete request) async {
+  Future<Response<void>> deleteGroup(OperateByID request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/core/groups/del'),
       data: request.toJson(),
     );
   }
 
-  /// 搜索分组
-  Future<Response<PageResult<SystemGroupInfo>>> searchGroups(SearchWithPage request) async {
+  Future<Response<PageResult<GroupInfo>>> searchGroups(SearchWithPage request) async {
     final response = await _client.post<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/core/groups/search'),
       data: request.toJson(),
@@ -45,7 +37,7 @@ class SystemGroupV2Api {
     return Response(
       data: PageResult.fromJson(
         response.data?['data'] as Map<String, dynamic>? ?? {},
-        (dynamic item) => SystemGroupInfo.fromJson(item as Map<String, dynamic>),
+        (dynamic item) => GroupInfo.fromJson(item as Map<String, dynamic>),
       ),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
@@ -53,11 +45,24 @@ class SystemGroupV2Api {
     );
   }
 
-  /// 更新分组
-  Future<Response<void>> updateGroup(GroupUpdate request) async {
+  Future<Response<void>> updateGroup(SystemGroupUpdate request) async {
     return await _client.post(
       ApiConstants.buildApiPath('/core/groups/update'),
       data: request.toJson(),
     );
   }
+}
+
+class SystemGroupUpdate {
+  final int id;
+  final String name;
+  final String type;
+
+  const SystemGroupUpdate({
+    required this.id,
+    required this.name,
+    required this.type,
+  });
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'type': type};
 }

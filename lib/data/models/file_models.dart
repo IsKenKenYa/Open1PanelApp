@@ -274,19 +274,19 @@ class FileCopy extends Equatable {
 class FileUpload extends Equatable {
   final String path;
   final String? fileName;
-  final bool? override;
+  final bool? shouldOverride;
 
   const FileUpload({
     required this.path,
     this.fileName,
-    this.override,
+    this.shouldOverride,
   });
 
   factory FileUpload.fromJson(Map<String, dynamic> json) {
     return FileUpload(
       path: json['path'] as String,
       fileName: json['fileName'] as String?,
-      override: json['override'] as bool?,
+      shouldOverride: json['override'] as bool?,
     );
   }
 
@@ -294,12 +294,12 @@ class FileUpload extends Equatable {
     return {
       'path': path,
       'fileName': fileName,
-      'override': override,
+      'override': shouldOverride,
     };
   }
 
   @override
-  List<Object?> get props => [path, fileName, override];
+  List<Object?> get props => [path, fileName, shouldOverride];
 }
 
 /// 文件下载模型

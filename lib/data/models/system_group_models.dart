@@ -1,11 +1,5 @@
-/// 1Panel V2 API - System Group 相关数据模型
-///
-/// 此文件包含系统组管理相关的所有数据模型，
-/// 包括组的创建、更新、查询等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
-/// 创建组请求模型
 class GroupCreate extends Equatable {
   final int? id;
   final String name;
@@ -37,7 +31,6 @@ class GroupCreate extends Equatable {
   List<Object?> get props => [id, name, type];
 }
 
-/// 更新组请求模型
 class GroupUpdate extends GroupCreate {
   final bool? isDefault;
 
@@ -70,7 +63,6 @@ class GroupUpdate extends GroupCreate {
   List<Object?> get props => [...super.props, isDefault];
 }
 
-/// 搜索组请求模型
 class GroupSearch extends Equatable {
   final String type;
 
@@ -94,64 +86,16 @@ class GroupSearch extends Equatable {
   List<Object?> get props => [type];
 }
 
-/// 按ID操作请求模型
-class OperateByID extends Equatable {
-  final int id;
-
-  const OperateByID({
-    required this.id,
-  });
-
-  factory OperateByID.fromJson(Map<String, dynamic> json) {
-    return OperateByID(
-      id: json['id'] as int,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-    };
-  }
-
-  @override
-  List<Object?> get props => [id];
-}
-
-/// 按类型操作响应模型
-class OperateByType extends Equatable {
-  final String type;
-
-  const OperateByType({
-    required this.type,
-  });
-
-  factory OperateByType.fromJson(Map<String, dynamic> json) {
-    return OperateByType(
-      type: json['type'] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-    };
-  }
-
-  @override
-  List<Object?> get props => [type];
-}
-
-/// 组信息模型
-class GroupInfo extends OperateByType {
+class GroupInfo extends Equatable {
   final int? id;
   final String? name;
+  final String type;
   final bool? isDefault;
 
   const GroupInfo({
     this.id,
     this.name,
-    required super.type,
+    required this.type,
     this.isDefault,
   });
 
@@ -164,13 +108,13 @@ class GroupInfo extends OperateByType {
     );
   }
 
-  @override
   Map<String, dynamic> toJson() {
-    final json = super.toJson();
-    if (id != null) json['id'] = id;
-    if (name != null) json['name'] = name;
-    if (isDefault != null) json['isDefault'] = isDefault;
-    return json;
+    return {
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      'type': type,
+      if (isDefault != null) 'isDefault': isDefault,
+    };
   }
 
   @override

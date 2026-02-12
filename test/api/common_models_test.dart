@@ -118,27 +118,27 @@ void main() {
     group('ForceDelete测试', () {
       test('应该正确序列化和反序列化', () {
         final model = ForceDelete(
-          id: 1,
-          force: true,
+          ids: [1, 2, 3],
+          forceDelete: true,
         );
 
         final json = model.toJson();
         final restored = ForceDelete.fromJson(json);
 
-        expect(restored.id, equals(1));
-        expect(restored.force, isTrue);
+        expect(restored.ids, equals([1, 2, 3]));
+        expect(restored.forceDelete, isTrue);
       });
 
-      test('应该使用默认force值', () {
+      test('应该使用默认forceDelete值', () {
         final model = ForceDelete(
-          id: 1,
+          ids: [1],
         );
 
         final json = model.toJson();
         final restored = ForceDelete.fromJson(json);
 
-        expect(restored.id, equals(1));
-        expect(restored.force, isFalse);
+        expect(restored.ids, equals([1]));
+        expect(restored.forceDelete, isFalse);
       });
     });
 

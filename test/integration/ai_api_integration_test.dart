@@ -178,7 +178,7 @@ void main() {
     });
 
     test('应该能够删除Ollama模型', skip: TestEnvironment.skipDestructive(), () async {
-      final request = ForceDelete(id: 999999);
+      final request = ForceDelete(ids: [999999]);
 
       try {
         final response = await api.deleteOllamaModel(request);

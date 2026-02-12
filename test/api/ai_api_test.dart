@@ -141,9 +141,9 @@ void main() {
       });
     });
 
-    group('GPUInfo模型测试', () {
+    group('GpuInfo模型测试', () {
       test('应该正确创建实例', () {
-        final model = GPUInfo(
+        final model = GpuInfo(
           index: 0,
           productName: 'NVIDIA GeForce RTX 3090',
           temperature: '65',
@@ -176,7 +176,7 @@ void main() {
           'memUsed': '16384 MiB',
         };
 
-        final model = GPUInfo.fromJson(json);
+        final model = GpuInfo.fromJson(json);
         final restoredJson = model.toJson();
 
         expect(model.index, equals(0));

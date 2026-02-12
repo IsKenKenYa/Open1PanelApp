@@ -6,6 +6,7 @@
 import 'package:flutter/foundation.dart';
 import '../../api/v2/ai_v2.dart';
 import '../../data/models/ai_models.dart';
+import '../../data/models/common_models.dart';
 
 /// AI状态管理类
 class AIProvider with ChangeNotifier {
