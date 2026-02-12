@@ -668,3 +668,221 @@ class SystemInfo extends Equatable {
         databaseCount,
       ];
 }
+
+/// 命令信息模型
+class CommandInfo extends Equatable {
+  final String? command;
+  final String? groupBelong;
+  final int? groupID;
+  final int? id;
+  final String? name;
+  final String? type;
+
+  const CommandInfo({
+    this.command,
+    this.groupBelong,
+    this.groupID,
+    this.id,
+    this.name,
+    this.type,
+  });
+
+  factory CommandInfo.fromJson(Map<String, dynamic> json) {
+    return CommandInfo(
+      command: json['command'] as String?,
+      groupBelong: json['groupBelong'] as String?,
+      groupID: json['groupID'] as int?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      type: json['type'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'command': command,
+      'groupBelong': groupBelong,
+      'groupID': groupID,
+      'id': id,
+      'name': name,
+      'type': type,
+    };
+  }
+
+  @override
+  List<Object?> get props => [command, groupBelong, groupID, id, name, type];
+}
+
+/// 命令操作模型
+class CommandOperate extends Equatable {
+  final String command;
+  final String? groupBelong;
+  final int? groupID;
+  final int? id;
+  final String name;
+  final String? type;
+
+  const CommandOperate({
+    required this.command,
+    this.groupBelong,
+    this.groupID,
+    this.id,
+    required this.name,
+    this.type,
+  });
+
+  factory CommandOperate.fromJson(Map<String, dynamic> json) {
+    return CommandOperate(
+      command: json['command'] as String,
+      groupBelong: json['groupBelong'] as String?,
+      groupID: json['groupID'] as int?,
+      id: json['id'] as int?,
+      name: json['name'] as String,
+      type: json['type'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'command': command,
+      'groupBelong': groupBelong,
+      'groupID': groupID,
+      'id': id,
+      'name': name,
+      'type': type,
+    };
+  }
+
+  @override
+  List<Object?> get props => [command, groupBelong, groupID, id, name, type];
+}
+
+/// 命令树形模型
+class CommandTree extends Equatable {
+  final List<CommandTree>? children;
+  final String? label;
+  final String? value;
+
+  const CommandTree({
+    this.children,
+    this.label,
+    this.value,
+  });
+
+  factory CommandTree.fromJson(Map<String, dynamic> json) {
+    return CommandTree(
+      children: (json['children'] as List<dynamic>?)
+          ?.map((e) => CommandTree.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      label: json['label'] as String?,
+      value: json['value'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'children': children?.map((e) => e.toJson()).toList(),
+      'label': label,
+      'value': value,
+    };
+  }
+
+  @override
+  List<Object?> get props => [children, label, value];
+}
+
+/// 脚本操作模型
+class ScriptOperate extends Equatable {
+  final String? description;
+  final String? groups;
+  final int? id;
+  final bool? isInteractive;
+  final String? name;
+  final String? script;
+
+  const ScriptOperate({
+    this.description,
+    this.groups,
+    this.id,
+    this.isInteractive,
+    this.name,
+    this.script,
+  });
+
+  factory ScriptOperate.fromJson(Map<String, dynamic> json) {
+    return ScriptOperate(
+      description: json['description'] as String?,
+      groups: json['groups'] as String?,
+      id: json['id'] as int?,
+      isInteractive: json['isInteractive'] as bool?,
+      name: json['name'] as String?,
+      script: json['script'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+      'groups': groups,
+      'id': id,
+      'isInteractive': isInteractive,
+      'name': name,
+      'script': script,
+    };
+  }
+
+  @override
+  List<Object?> get props => [description, groups, id, isInteractive, name, script];
+}
+
+/// 脚本选项模型
+class ScriptOptions extends Equatable {
+  final int? id;
+  final String? name;
+
+  const ScriptOptions({
+    this.id,
+    this.name,
+  });
+
+  factory ScriptOptions.fromJson(Map<String, dynamic> json) {
+    return ScriptOptions(
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+
+  @override
+  List<Object?> get props => [id, name];
+}
+
+/// 通过IDs操作模型
+class OperateByIDs extends Equatable {
+  final List<int> ids;
+
+  const OperateByIDs({
+    required this.ids,
+  });
+
+  factory OperateByIDs.fromJson(Map<String, dynamic> json) {
+    return OperateByIDs(
+      ids: (json['ids'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ids': ids,
+    };
+  }
+
+  @override
+  List<Object?> get props => [ids];
+}

@@ -187,212 +187,54 @@ class GPUInfo {
   }
 }
 
-class ForceDelete {
-  final List<int> ids;
-  final bool forceDelete;
+class OllamaModel {
+  final String? name;
+  final String? size;
+  final String? modified;
 
-  ForceDelete({
-    required this.ids,
-    this.forceDelete = false,
+  OllamaModel({
+    this.name,
+    this.size,
+    this.modified,
   });
 
-  factory ForceDelete.fromJson(Map<String, dynamic> json) {
-    return ForceDelete(
-      ids: List<int>.from(json['ids'] ?? []),
-      forceDelete: json['forceDelete'] ?? false,
+  factory OllamaModel.fromJson(Map<String, dynamic> json) {
+    return OllamaModel(
+      name: json['name'],
+      size: json['size'],
+      modified: json['modified'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'ids': ids,
-      'forceDelete': forceDelete,
-    };
-  }
-}
-
-class SearchWithPage {
-  final int page;
-  final int pageSize;
-  final String? info;
-
-  SearchWithPage({
-    required this.page,
-    required this.pageSize,
-    this.info,
-  });
-
-  factory SearchWithPage.fromJson(Map<String, dynamic> json) {
-    return SearchWithPage(
-      page: json['page'] ?? 1,
-      pageSize: json['pageSize'] ?? 10,
-      info: json['info'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'page': page,
-      'pageSize': pageSize,
-      if (info != null) 'info': info,
-    };
-  }
-}
-
-class PageResult<T> {
-  final List<T> items;
-  final int total;
-
-  PageResult({
-    required this.items,
-    required this.total,
-  });
-
-  factory PageResult.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
-  ) {
-    return PageResult<T>(
-      items: (json['items'] as List?)
-              ?.map((i) => fromJsonT(i))
-              .toList() ??
-          [],
-      total: json['total'] ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson(Object Function(T value) toJsonT) {
-    return {
-      'items': items.map((i) => toJsonT(i)).toList(),
-      'total': total,
+      if (name != null) 'name': name,
+      if (size != null) 'size': size,
+      if (modified != null) 'modified': modified,
     };
   }
 }
 
 class OllamaModelDropList {
-  final int id;
-  final String name;
+  final String? label;
+  final String? value;
 
   OllamaModelDropList({
-    required this.id,
-    required this.name,
+    this.label,
+    this.value,
   });
 
   factory OllamaModelDropList.fromJson(Map<String, dynamic> json) {
     return OllamaModelDropList(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
+      label: json['label'],
+      value: json['value'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
-    };
-  }
-}
-
-class OllamaModel {
-  final int id;
-  final String name;
-  final String model;
-  final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  OllamaModel({
-    required this.id,
-    required this.name,
-    required this.model,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  factory OllamaModel.fromJson(Map<String, dynamic> json) {
-    return OllamaModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      model: json['model'] ?? '',
-      status: json['status'] ?? '',
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'model': model,
-      'status': status,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
-  }
-}
-
-class GpuInfo {
-  final String? fanSpeed;
-  final String? gpuUtil;
-  final int? index;
-  final String? maxPowerLimit;
-  final String? memTotal;
-  final String? memUsed;
-  final String? memoryUsage;
-  final String? performanceState;
-  final String? powerDraw;
-  final String? powerUsage;
-  final String? productName;
-  final String? temperature;
-
-  GpuInfo({
-    this.fanSpeed,
-    this.gpuUtil,
-    this.index,
-    this.maxPowerLimit,
-    this.memTotal,
-    this.memUsed,
-    this.memoryUsage,
-    this.performanceState,
-    this.powerDraw,
-    this.powerUsage,
-    this.productName,
-    this.temperature,
-  });
-
-  factory GpuInfo.fromJson(Map<String, dynamic> json) {
-    return GpuInfo(
-      fanSpeed: json['fanSpeed'],
-      gpuUtil: json['gpuUtil'],
-      index: json['index'],
-      maxPowerLimit: json['maxPowerLimit'],
-      memTotal: json['memTotal'],
-      memUsed: json['memUsed'],
-      memoryUsage: json['memoryUsage'],
-      performanceState: json['performanceState'],
-      powerDraw: json['powerDraw'],
-      powerUsage: json['powerUsage'],
-      productName: json['productName'],
-      temperature: json['temperature'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      if (fanSpeed != null) 'fanSpeed': fanSpeed,
-      if (gpuUtil != null) 'gpuUtil': gpuUtil,
-      if (index != null) 'index': index,
-      if (maxPowerLimit != null) 'maxPowerLimit': maxPowerLimit,
-      if (memTotal != null) 'memTotal': memTotal,
-      if (memUsed != null) 'memUsed': memUsed,
-      if (memoryUsage != null) 'memoryUsage': memoryUsage,
-      if (performanceState != null) 'performanceState': performanceState,
-      if (powerDraw != null) 'powerDraw': powerDraw,
-      if (powerUsage != null) 'powerUsage': powerUsage,
-      if (productName != null) 'productName': productName,
-      if (temperature != null) 'temperature': temperature,
+      if (label != null) 'label': label,
+      if (value != null) 'value': value,
     };
   }
 }
