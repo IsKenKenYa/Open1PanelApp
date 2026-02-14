@@ -21,7 +21,7 @@
     "AI": { "endpoints": 10, "priority": "P1", "implemented": 0, "tested": 0, "docs": 0 },
     "Container Image": { "endpoints": 10, "priority": "P1", "implemented": 0, "tested": 0, "docs": 0 },
     "Host": { "endpoints": 10, "priority": "P1", "implemented": 0, "tested": 0, "docs": 0 },
-    "OpenResty": { "endpoints": 10, "priority": "P1", "implemented": 0, "tested": 0, "docs": 0 },
+    "OpenResty": { "endpoints": 10, "priority": "P1", "implemented": 0, "tested": 0, "docs": 10 },
     "Database": { "endpoints": 9, "priority": "P0", "implemented": 0, "tested": 0, "docs": 0 },
     "Database PostgreSQL": { "endpoints": 9, "priority": "P0", "implemented": 0, "tested": 0, "docs": 0 },
     "Command": { "endpoints": 8, "priority": "P1", "implemented": 0, "tested": 0, "docs": 0 },
