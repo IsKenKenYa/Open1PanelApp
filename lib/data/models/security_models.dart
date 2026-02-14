@@ -1,8 +1,3 @@
-/// Security management data models for 1Panel V2 API
-///
-/// This file contains all data models related to security management,
-/// including intrusion detection, security scans, access control, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Security scan request model

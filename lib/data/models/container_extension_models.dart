@@ -1,8 +1,3 @@
-/// Container management extension data models for 1Panel V2 API
-///
-/// This file contains additional container-related models for image management,
-/// network management, volume management, registry management, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Container image model

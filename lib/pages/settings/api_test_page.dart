@@ -5,10 +5,10 @@ import '../../../core/config/api_config.dart';
 import '../../../core/network/dio_client.dart';
 
 class ApiTestPage extends StatefulWidget {
-  const ApiTestPage({Key? key}) : super(key: key);
+  const ApiTestPage({super.key});
 
   @override
-  _ApiTestPageState createState() => _ApiTestPageState();
+  State<ApiTestPage> createState() => _ApiTestPageState();
 }
 
 class _ApiTestPageState extends State<ApiTestPage> {
@@ -75,7 +75,7 @@ class _ApiTestPageState extends State<ApiTestPage> {
         _testResult = '请求成功!\n\n状态码: ${response.statusCode}\n\n响应数据:\n${_formatJson(response.data)}';
         _isLoading = false;
       });
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       setState(() {
         _testResult = '请求失败!\n\n错误类型: ${e.type}\n\n错误信息: ${e.message}\n\n响应数据:\n${e.response?.data ?? '无响应数据'}';
         _isLoading = false;
@@ -155,7 +155,7 @@ class _ApiTestPageState extends State<ApiTestPage> {
                           ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
-                            value: _selectedEndpoint,
+                            initialValue: _selectedEndpoint,
                             decoration: const InputDecoration(
                               labelText: '选择API端点',
                               border: OutlineInputBorder(),

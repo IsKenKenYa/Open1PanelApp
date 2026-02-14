@@ -1,7 +1,3 @@
-/// Website group data models for 1Panel V2 API
-///
-/// This file contains data models for website group management.
-
 import 'package:equatable/equatable.dart';
 
 /// Website group model

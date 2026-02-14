@@ -1,8 +1,3 @@
-/// Process management data models for 1Panel V2 API
-///
-/// This file contains all data models related to process management,
-/// including process monitoring, process control, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Process status enumeration

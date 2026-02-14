@@ -1,8 +1,3 @@
-/// Settings management data models for 1Panel V2 API
-///
-/// This file contains all data models related to system settings,
-/// including configuration management, preferences, etc.
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 

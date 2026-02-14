@@ -1,8 +1,3 @@
-/// 1Panel V2 API - File 相关数据模型
-///
-/// 此文件包含文件管理相关的所有数据模型，
-/// 包括文件的创建、更新、查询等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
 /// 文件搜索模型

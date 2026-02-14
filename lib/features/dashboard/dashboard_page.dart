@@ -1,7 +1,3 @@
-/// 仪表盘页面
-/// 
-/// 此文件定义仪表盘页面，显示系统概览和实时监控数据。
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
@@ -23,6 +19,7 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     // 页面加载时获取数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       context.read<DashboardProvider>().loadData();
     });
   }
@@ -400,7 +397,7 @@ class _ResourceItem extends StatelessWidget {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: percent! / 100,
-            backgroundColor: color.withOpacity(0.1),
+            backgroundColor: color.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ],
@@ -609,7 +606,7 @@ class _ActivityCard extends StatelessWidget {
                 return _ActivityItem(
                   title: activity.title,
                   description: activity.description,
-                  time: _formatTimeAgo(activity.time),
+                  time: _formatTimeAgo(context, activity.time),
                   type: activity.type,
                 );
               }).toList(),
@@ -617,7 +614,7 @@ class _ActivityCard extends StatelessWidget {
     );
   }
 
-  String _formatTimeAgo(DateTime time) {
+  String _formatTimeAgo(BuildContext context, DateTime time) {
     final l10n = context.l10n;
     final now = DateTime.now();
     final diff = now.difference(time);
@@ -711,7 +708,6 @@ class _ActivityItem extends StatelessWidget {
         color = Colors.red;
         break;
       case ActivityType.info:
-      default:
         iconData = Icons.info;
         color = Colors.blue;
         break;

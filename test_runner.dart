@@ -1,25 +1,3 @@
-/// 1Panel V2 API 测试运行脚本
-///
-/// 跨平台Dart脚本，用于运行各种类型的测试
-/// 支持 Windows、macOS 和 Linux
-///
-/// 使用方法:
-/// dart run test_runner.dart [选项]
-///
-/// 选项:
-///   all           运行所有测试
-///   unit          仅运行单元测试
-///   integration   仅运行集成测试
-///   auth          运行认证测试
-///   ai            运行AI API测试
-///   app           运行App API测试
-///   toolbox       运行Toolbox API测试
-///   container     运行Container API测试
-///   database      运行Database API测试
-///   website       运行Website API测试
-///   coverage      运行测试并生成覆盖率报告
-///   help          显示帮助信息
-
 import 'dart:io';
 
 class TestRunner {

@@ -1,15 +1,10 @@
-/// Setting API客户端测试
-///
-/// 测试SettingV2Api客户端的所有方法
-/// 复用现有的SettingV2Api代码
-
-import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../api_client_test_base.dart';
 import '../core/test_config_manager.dart';
-import '../../lib/api/v2/setting_v2.dart';
-import '../../lib/core/network/dio_client.dart';
-import '../../lib/data/models/setting_models.dart';
+import 'package:onepanelapp_app/api/v2/setting_v2.dart';
+import 'package:onepanelapp_app/core/network/dio_client.dart';
+import 'package:onepanelapp_app/data/models/setting_models.dart';
 
 void main() {
   late DioClient client;
@@ -31,12 +26,12 @@ void main() {
 
   group('Setting API客户端测试', () {
     test('配置验证 - API密钥已配置', () {
-      print('\n========================================');
-      print('Setting API测试配置');
-      print('========================================');
-      print('服务器地址: ${TestEnvironment.baseUrl}');
-      print('API密钥: ${hasApiKey ? "已配置" : "未配置"}');
-      print('========================================\n');
+      debugPrint('\n========================================');
+      debugPrint('Setting API测试配置');
+      debugPrint('========================================');
+      debugPrint('服务器地址: ${TestEnvironment.baseUrl}');
+      debugPrint('API密钥: ${hasApiKey ? "已配置" : "未配置"}');
+      debugPrint('========================================\n');
       
       expect(hasApiKey, isTrue, reason: 'API密钥应该已配置');
     });
@@ -44,7 +39,7 @@ void main() {
     group('getSystemSettings - 获取系统设置', () {
       test('应该成功获取系统设置', () async {
         if (!hasApiKey) {
-          print('⚠️  跳过测试: API密钥未配置');
+          debugPrint('⚠️  跳过测试: API密钥未配置');
           return;
         }
 
@@ -54,19 +49,18 @@ void main() {
         expect(response.data, isNotNull);
         expect(response.data, isA<SettingInfo>());
 
-        final settings = response.data!;
-        print('\n========================================');
-        print('✅ 系统设置测试成功');
-        print('========================================');
-        print('系统设置已获取');
-        print('========================================\n');
+        debugPrint('\n========================================');
+        debugPrint('✅ 系统设置测试成功');
+        debugPrint('========================================');
+        debugPrint('系统设置已获取');
+        debugPrint('========================================\n');
       });
     });
 
     group('getTerminalSettings - 获取终端设置', () {
       test('应该成功获取终端设置', () async {
         if (!hasApiKey) {
-          print('⚠️  跳过测试: API密钥未配置');
+          debugPrint('⚠️  跳过测试: API密钥未配置');
           return;
         }
 
@@ -76,19 +70,18 @@ void main() {
         expect(response.data, isNotNull);
         expect(response.data, isA<TerminalInfo>());
 
-        final settings = response.data!;
-        print('\n========================================');
-        print('✅ 终端设置测试成功');
-        print('========================================');
-        print('终端设置已获取');
-        print('========================================\n');
+        debugPrint('\n========================================');
+        debugPrint('✅ 终端设置测试成功');
+        debugPrint('========================================');
+        debugPrint('终端设置已获取');
+        debugPrint('========================================\n');
       });
     });
 
     group('getInterfaceSettings - 获取界面设置', () {
       test('应该成功获取界面设置', () async {
         if (!hasApiKey) {
-          print('⚠️  跳过测试: API密钥未配置');
+          debugPrint('⚠️  跳过测试: API密钥未配置');
           return;
         }
 
@@ -98,16 +91,16 @@ void main() {
         expect(response.data, isNotNull);
         expect(response.data, isA<InterfaceInfo>());
 
-        print('\n========================================');
-        print('✅ 界面设置测试成功');
-        print('========================================\n');
+        debugPrint('\n========================================');
+        debugPrint('✅ 界面设置测试成功');
+        debugPrint('========================================\n');
       });
     });
 
     group('MFA相关API', () {
       test('loadMfaInfo - 应该成功加载MFA信息', () async {
         if (!hasApiKey) {
-          print('⚠️  跳过测试: API密钥未配置');
+          debugPrint('⚠️  跳过测试: API密钥未配置');
           return;
         }
 
@@ -124,19 +117,19 @@ void main() {
         expect(response.data, isA<MfaOtp>());
 
         final otp = response.data!;
-        print('\n========================================');
-        print('✅ MFA信息加载成功');
-        print('========================================');
-        print('Secret: ${otp.secret}');
-        print('QR Image: ${otp.qrImage != null ? "已生成" : "未生成"}');
-        print('========================================\n');
+        debugPrint('\n========================================');
+        debugPrint('✅ MFA信息加载成功');
+        debugPrint('========================================');
+        debugPrint('Secret: ${otp.secret}');
+        debugPrint('QR Image: ${otp.qrImage != null ? "已生成" : "未生成"}');
+        debugPrint('========================================\n');
       });
     });
 
     group('generateApiKey - 生成API密钥', () {
       test('应该成功生成API密钥', () async {
         if (!hasApiKey) {
-          print('⚠️  跳过测试: API密钥未配置');
+          debugPrint('⚠️  跳过测试: API密钥未配置');
           return;
         }
 
@@ -145,9 +138,9 @@ void main() {
         expect(response.statusCode, equals(200));
         expect(response.data, isNotNull);
 
-        print('\n========================================');
-        print('✅ API密钥生成测试成功');
-        print('========================================\n');
+        debugPrint('\n========================================');
+        debugPrint('✅ API密钥生成测试成功');
+        debugPrint('========================================\n');
       });
     });
   });
@@ -155,7 +148,7 @@ void main() {
   group('Setting API性能测试', () {
     test('getSystemSettings响应时间应该小于3秒', () async {
       if (!hasApiKey) {
-        print('⚠️  跳过测试: API密钥未配置');
+        debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
       }
 
@@ -169,7 +162,7 @@ void main() {
 
     test('getTerminalSettings响应时间应该小于3秒', () async {
       if (!hasApiKey) {
-        print('⚠️  跳过测试: API密钥未配置');
+        debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
       }
 

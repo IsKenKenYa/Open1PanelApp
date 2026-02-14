@@ -70,10 +70,11 @@ class BaseComponent {
   }
 
   Future<void> ensurePermission(String permission) async {
-    if (_permissionResolver == null) {
+    final resolver = _permissionResolver;
+    if (resolver == null) {
       return;
     }
-    final allowed = await _permissionResolver!(permission);
+    final allowed = await resolver(permission);
     if (!allowed) {
       throw Exception('权限不足');
     }

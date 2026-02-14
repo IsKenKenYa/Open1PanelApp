@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Container Compose 相关接口
-///
-/// 此文件包含与容器编排相关的所有API接口，
-/// 包括Compose项目的创建、删除、启动、停止、查询等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

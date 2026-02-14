@@ -1,7 +1,3 @@
-/// Task log data models for 1Panel V2 API
-///
-/// This file contains data models for task log management.
-
 import 'package:equatable/equatable.dart';
 
 /// Task log model

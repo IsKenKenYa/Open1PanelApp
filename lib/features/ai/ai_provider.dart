@@ -1,8 +1,3 @@
-/// AI模块状态管理
-/// 
-/// 此文件包含AI功能相关的状态管理逻辑，
-/// 用于管理AI功能的状态，如模型列表、GPU信息等。
-
 import 'package:flutter/foundation.dart';
 import '../../api/v2/ai_v2.dart';
 import '../../data/models/ai_models.dart';

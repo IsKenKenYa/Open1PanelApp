@@ -1,8 +1,3 @@
-/// App store data models for 1Panel V2 API
-///
-/// This file contains all data models related to app store management,
-/// including applications, installations, updates, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// App information model

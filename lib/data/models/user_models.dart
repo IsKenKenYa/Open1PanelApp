@@ -1,8 +1,3 @@
-/// User management data models for 1Panel V2 API
-///
-/// This file contains all data models related to user management,
-/// including authentication, authorization, roles, permissions, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// User status enumeration

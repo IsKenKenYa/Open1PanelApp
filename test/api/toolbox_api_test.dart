@@ -1,11 +1,6 @@
-/// Toolbox API 单元测试
-///
-/// 测试Toolbox模块的所有API接口
-
 import 'package:flutter_test/flutter_test.dart';
 import '../test_helper.dart';
-import '../../lib/data/models/toolbox_models.dart';
-import '../../lib/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/toolbox_models.dart';
 
 void main() {
   setUpAll(() async {

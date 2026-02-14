@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Container 相关数据模型
-///
-/// 此文件包含容器管理相关的所有数据模型，
-/// 包括容器的创建、更新、查询等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
 /// 容器操作模型
@@ -1551,7 +1546,7 @@ class NetworkCreate extends Equatable {
       internal: json['internal'] as bool?,
       attachable: json['attachable'] as bool?,
       ipam: (json['ipam'] as List?)?.cast<String>(),
-      labels: (json['labels'] as Map<String, dynamic>)?.cast<String, String>(),
+      labels: (json['labels'] as Map<String, dynamic>?)?.cast<String, String>(),
       enableIPv6: json['enableIPv6'] as bool?,
     );
   }
@@ -1598,8 +1593,8 @@ class VolumeCreate extends Equatable {
     return VolumeCreate(
       name: json['name'] as String,
       driver: json['driver'] as String?,
-      driverOpts: (json['driverOpts'] as Map<String, dynamic>)?.cast<String, String>(),
-      labels: (json['labels'] as Map<String, dynamic>)?.cast<String, String>(),
+      driverOpts: (json['driverOpts'] as Map<String, dynamic>?)?.cast<String, String>(),
+      labels: (json['labels'] as Map<String, dynamic>?)?.cast<String, String>(),
     );
   }
 

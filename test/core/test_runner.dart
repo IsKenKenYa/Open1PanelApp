@@ -1,8 +1,5 @@
-/// 测试运行器
-///
-/// 提供统一的测试执行和报告生成功能
-
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'test_config_manager.dart';
 
@@ -17,9 +14,9 @@ class TestRunner {
   TestRunner._internal();
 
   void startSuite(String suiteName) {
-    print('\n========================================');
-    print('开始测试套件: $suiteName');
-    print('========================================\n');
+    debugPrint('\n========================================');
+    debugPrint('开始测试套件: $suiteName');
+    debugPrint('========================================\n');
   }
 
   void endSuite(String suiteName, {required int passed, required int failed, required int skipped}) {
@@ -32,24 +29,24 @@ class TestRunner {
     );
     _results.add(result);
 
-    print('\n----------------------------------------');
-    print('测试套件完成: $suiteName');
-    print('通过: $passed, 失败: $failed, 跳过: $skipped');
-    print('----------------------------------------\n');
+    debugPrint('\n----------------------------------------');
+    debugPrint('测试套件完成: $suiteName');
+    debugPrint('通过: $passed, 失败: $failed, 跳过: $skipped');
+    debugPrint('----------------------------------------\n');
   }
 
   void startAllTests() {
     _startTime = DateTime.now();
     _results.clear();
-    print('\n╔════════════════════════════════════════╗');
-    print('║     1Panel V2 API 测试开始            ║');
-    print('╚════════════════════════════════════════╝\n');
-    print('测试环境配置:');
-    print('  服务器: ${TestEnvironment.baseUrl}');
-    print('  API版本: ${TestEnvironment.apiVersion}');
-    print('  集成测试: ${TestEnvironment.runIntegrationTests ? '启用' : '禁用'}');
-    print('  破坏性测试: ${TestEnvironment.runDestructiveTests ? '启用' : '禁用'}');
-    print('');
+    debugPrint('\n╔════════════════════════════════════════╗');
+    debugPrint('║     1Panel V2 API 测试开始            ║');
+    debugPrint('╚════════════════════════════════════════╝\n');
+    debugPrint('测试环境配置:');
+    debugPrint('  服务器: ${TestEnvironment.baseUrl}');
+    debugPrint('  API版本: ${TestEnvironment.apiVersion}');
+    debugPrint('  集成测试: ${TestEnvironment.runIntegrationTests ? '启用' : '禁用'}');
+    debugPrint('  破坏性测试: ${TestEnvironment.runDestructiveTests ? '启用' : '禁用'}');
+    debugPrint('');
   }
 
   void endAllTests() {
@@ -63,32 +60,32 @@ class TestRunner {
     final totalSkipped = _results.fold(0, (sum, r) => sum + r.skipped);
     final totalTests = totalPassed + totalFailed + totalSkipped;
 
-    print('\n╔════════════════════════════════════════╗');
-    print('║     1Panel V2 API 测试报告            ║');
-    print('╚════════════════════════════════════════╝\n');
+    debugPrint('\n╔════════════════════════════════════════╗');
+    debugPrint('║     1Panel V2 API 测试报告            ║');
+    debugPrint('╚════════════════════════════════════════╝\n');
 
-    print('测试概要:');
-    print('  开始时间: ${_startTime?.toIso8601String() ?? 'N/A'}');
-    print('  结束时间: ${_endTime?.toIso8601String() ?? 'N/A'}');
+    debugPrint('测试概要:');
+    debugPrint('  开始时间: ${_startTime?.toIso8601String() ?? 'N/A'}');
+    debugPrint('  结束时间: ${_endTime?.toIso8601String() ?? 'N/A'}');
     final duration = _startTime != null && _endTime != null
         ? _endTime!.difference(_startTime!)
         : Duration.zero;
-    print('  持续时间: ${duration.inSeconds}秒');
-    print('');
-    print('测试统计:');
-    print('  总测试数: $totalTests');
-    print('  ✅ 通过: $totalPassed');
-    print('  ❌ 失败: $totalFailed');
-    print('  ⏭️  跳过: $totalSkipped');
-    print('  通过率: ${totalTests > 0 ? (totalPassed / totalTests * 100).toStringAsFixed(2) : 0}%');
-    print('');
+    debugPrint('  持续时间: ${duration.inSeconds}秒');
+    debugPrint('');
+    debugPrint('测试统计:');
+    debugPrint('  总测试数: $totalTests');
+    debugPrint('  ✅ 通过: $totalPassed');
+    debugPrint('  ❌ 失败: $totalFailed');
+    debugPrint('  ⏭️  跳过: $totalSkipped');
+    debugPrint('  通过率: ${totalTests > 0 ? (totalPassed / totalTests * 100).toStringAsFixed(2) : 0}%');
+    debugPrint('');
 
-    print('各模块测试结果:');
+    debugPrint('各模块测试结果:');
     for (final result in _results) {
       final status = result.failed > 0 ? '❌' : (result.skipped > 0 ? '⚠️' : '✅');
-      print('  $status ${result.suiteName}: ${result.passed}/${result.passed + result.failed + result.skipped}');
+      debugPrint('  $status ${result.suiteName}: ${result.passed}/${result.passed + result.failed + result.skipped}');
     }
-    print('');
+    debugPrint('');
 
     _saveReport(totalTests, totalPassed, totalFailed, totalSkipped, duration);
   }
@@ -145,9 +142,9 @@ class TestRunner {
       buffer.writeln('*报告生成时间: ${DateTime.now().toIso8601String()}*');
 
       await reportFile.writeAsString(buffer.toString());
-      print('测试报告已保存到: ${reportFile.path}');
+      debugPrint('测试报告已保存到: ${reportFile.path}');
     } catch (e) {
-      print('保存测试报告失败: $e');
+      debugPrint('保存测试报告失败: $e');
     }
   }
 
@@ -175,40 +172,40 @@ class TestSuiteResult {
 
 class TestLogger {
   static void info(String message) {
-    print('[INFO] $message');
+    debugPrint('[INFO] $message');
   }
 
   static void success(String message) {
-    print('[SUCCESS] ✅ $message');
+    debugPrint('[SUCCESS] ✅ $message');
   }
 
   static void error(String message) {
-    print('[ERROR] ❌ $message');
+    debugPrint('[ERROR] ❌ $message');
   }
 
   static void warning(String message) {
-    print('[WARNING] ⚠️ $message');
+    debugPrint('[WARNING] ⚠️ $message');
   }
 
   static void skip(String message) {
-    print('[SKIP] ⏭️ $message');
+    debugPrint('[SKIP] ⏭️ $message');
   }
 
   static void testStart(String testName) {
-    print('  ▶ $testName');
+    debugPrint('  ▶ $testName');
   }
 
   static void testPass(String testName) {
-    print('    ✅ 通过: $testName');
+    debugPrint('    ✅ 通过: $testName');
   }
 
   static void testFail(String testName, String error) {
-    print('    ❌ 失败: $testName');
-    print('       错误: $error');
+    debugPrint('    ❌ 失败: $testName');
+    debugPrint('       错误: $error');
   }
 
   static void testSkip(String testName, String reason) {
-    print('    ⏭️ 跳过: $testName ($reason)');
+    debugPrint('    ⏭️ 跳过: $testName ($reason)');
   }
 }
 

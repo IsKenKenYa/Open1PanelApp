@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Toolbox 模块
-///
-/// 此文件包含Toolbox相关的所有API接口，
-/// 包括Clam病毒扫描、Device设备管理、Fail2ban入侵防护、FTP管理等功能。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

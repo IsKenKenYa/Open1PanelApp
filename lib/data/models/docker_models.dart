@@ -1,8 +1,3 @@
-/// Docker management data models for 1Panel V2 API
-///
-/// This file contains Docker-related data models for Docker daemon management,
-/// including Docker status, configuration, and operations.
-
 import 'package:equatable/equatable.dart';
 
 /// Docker status model

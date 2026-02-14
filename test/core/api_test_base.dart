@@ -1,11 +1,3 @@
-/// API测试基类
-///
-/// 提供所有API测试的通用功能和方法
-///
-/// 重要说明:
-/// 1Panel OpenAPI 仅支持 API密钥 认证方式
-/// Token = md5('1panel' + API-Key + UnixTimestamp)
-
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
@@ -18,7 +10,7 @@ abstract class ApiTestBase {
   late String baseUrl;
   late String apiKey;
 
-  setUpAll() async {
+  Future<void> setUpAll() async {
     await TestEnvironment.initialize();
     baseUrl = TestEnvironment.baseUrl;
     apiKey = TestEnvironment.apiKey;
@@ -34,7 +26,7 @@ abstract class ApiTestBase {
     ));
   }
 
-  tearDownAll() {
+  void tearDownAll() {
     dio.close();
   }
 

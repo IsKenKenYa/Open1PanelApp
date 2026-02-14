@@ -1,8 +1,3 @@
-/// File transfer data models for 1Panel V2 API
-///
-/// This file contains all data models related to file upload/download operations,
-/// including chunked uploads, progress tracking, transfer management, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Upload type enumeration

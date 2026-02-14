@@ -1,15 +1,3 @@
-/// 1Panel V2 API 全量测试入口
-///
-/// 运行所有API模块的单元测试和集成测试
-///
-/// 使用方法:
-/// 1. 复制 .env.example 为 .env
-/// 2. 在 .env 中填写服务器URL和API密钥
-/// 3. 运行测试:
-///    dart run test_runner.dart all
-///    或
-///    flutter test test/all_api_tests.dart
-
 import 'package:flutter_test/flutter_test.dart';
 import 'core/test_config_manager.dart';
 import 'core/test_runner.dart';

@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Backup Account 相关数据模型
-///
-/// 此文件包含备份账户管理相关的所有数据模型，
-/// 包括备份账户的创建、更新、查询等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
 /// 备份账户操作模型

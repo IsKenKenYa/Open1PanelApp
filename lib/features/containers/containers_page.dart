@@ -1,8 +1,3 @@
-/// 容器管理页面
-/// 
-/// 此文件定义容器管理页面，管理Docker容器和镜像。
-/// 遵循Material You Design 3设计规范
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../shared/widgets/app_card.dart';
@@ -129,23 +124,25 @@ class _ContainersPageState extends State<ContainersPage>
     String containerId,
     ContainersProvider provider,
   ) {
+    final parentContext = context;
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+      context: parentContext,
+      builder: (dialogContext) => AlertDialog(
         icon: const Icon(Icons.delete_outline, color: Colors.red),
         title: const Text('删除容器'),
         content: const Text('确定要删除这个容器吗？此操作不可撤销。'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('取消'),
           ),
           FilledButton(
             onPressed: () async {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               final success = await provider.deleteContainer(containerId);
-              if (success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+              if (!parentContext.mounted) return;
+              if (success) {
+                ScaffoldMessenger.of(parentContext).showSnackBar(
                   const SnackBar(content: Text('容器已删除')),
                 );
               }
@@ -165,23 +162,25 @@ class _ContainersPageState extends State<ContainersPage>
     String imageId,
     ContainersProvider provider,
   ) {
+    final parentContext = context;
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+      context: parentContext,
+      builder: (dialogContext) => AlertDialog(
         icon: const Icon(Icons.delete_outline, color: Colors.red),
         title: const Text('删除镜像'),
         content: const Text('确定要删除这个镜像吗？此操作不可撤销。'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('取消'),
           ),
           FilledButton(
             onPressed: () async {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               final success = await provider.deleteImage(imageId);
-              if (success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+              if (!parentContext.mounted) return;
+              if (success) {
+                ScaffoldMessenger.of(parentContext).showSnackBar(
                   const SnackBar(content: Text('镜像已删除')),
                 );
               }
@@ -346,7 +345,7 @@ class _ContainersTab extends StatelessWidget {
                     onDelete: () => onDelete(container.id ?? ''),
                   ),
                 );
-              }).toList(),
+              }),
           ],
         ),
       ),
@@ -424,7 +423,7 @@ class _ImagesTab extends StatelessWidget {
                     onDelete: () => onDelete(image.id ?? ''),
                   ),
                 );
-              }).toList(),
+              }),
           ],
         ),
       ),
@@ -740,7 +739,7 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
@@ -777,7 +776,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

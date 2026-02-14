@@ -1,8 +1,3 @@
-/// 应用卡片组件
-/// 
-/// 此文件定义应用中使用的通用卡片组件，
-/// 用于展示相关信息的集合，如服务器信息、应用列表等。
-
 import 'package:flutter/material.dart';
 
 class AppCard extends StatelessWidget {

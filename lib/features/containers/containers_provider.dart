@@ -1,7 +1,3 @@
-/// 容器管理状态管理
-///
-/// 管理Docker容器和镜像数据
-
 import 'package:flutter/foundation.dart';
 import '../../data/models/container_models.dart';
 import '../../data/models/container_extension_models.dart';
@@ -103,7 +99,7 @@ class ContainersProvider extends ChangeNotifier {
       // 计算统计
       int running = 0, stopped = 0, paused = 0;
       for (final container in containers) {
-        switch (container.state?.toLowerCase()) {
+        switch (container.state.toLowerCase()) {
           case 'running':
             running++;
             break;

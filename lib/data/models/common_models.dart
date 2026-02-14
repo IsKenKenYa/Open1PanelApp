@@ -1,7 +1,3 @@
-/// 1Panel V2 API - 通用数据模型
-///
-/// 此文件包含多个API模块共享的通用数据模型。
-
 import 'package:equatable/equatable.dart';
 
 /// 通过ID操作模型

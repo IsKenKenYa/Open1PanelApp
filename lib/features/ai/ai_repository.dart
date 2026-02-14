@@ -1,8 +1,3 @@
-/// AI模块数据仓库
-/// 
-/// 此文件包含AI功能相关的数据访问逻辑，
-/// 用于封装数据源，提供统一的数据访问接口。
-
 import 'package:dio/dio.dart';
 import '../../api/v2/ai_v2.dart';
 import '../../data/models/ai_models.dart';

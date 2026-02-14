@@ -1,8 +1,3 @@
-/// System recovery data models for 1Panel V2 API
-///
-/// This file contains all data models related to system recovery operations,
-/// including disaster recovery, system restore points, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Recovery point model

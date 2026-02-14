@@ -1,8 +1,3 @@
-/// LDAP management data models for 1Panel V2 API
-///
-/// This file contains all data models related to LDAP authentication,
-/// including LDAP configuration, user synchronization, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// LDAP configuration model

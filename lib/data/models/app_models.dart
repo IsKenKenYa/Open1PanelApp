@@ -1,5 +1,3 @@
-/// 1Panel V2 API - 应用相关数据模型
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'app_models.g.dart';
@@ -541,18 +539,10 @@ class PageResult<T> {
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
   ) {
-    return PageResult<T>(
-      items: (json['items'] as List)
-          .map((item) => fromJsonT(item))
-          .toList(),
-      total: json['total'],
-    );
+    return _$PageResultFromJson(json, fromJsonT);
   }
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) {
-    return {
-      'items': items.map(toJsonT).toList(),
-      'total': total,
-    };
+    return _$PageResultToJson(this, toJsonT);
   }
 }

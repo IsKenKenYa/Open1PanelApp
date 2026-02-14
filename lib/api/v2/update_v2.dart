@@ -1,12 +1,6 @@
-/// 1Panel V2 API - Update 相关接口
-///
-/// 此文件包含与系统更新相关的所有API接口，
-/// 包括系统更新、版本管理等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
-import '../../data/models/update_models.dart';
 
 class UpdateV2Api {
   final DioClient _client;

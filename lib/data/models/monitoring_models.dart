@@ -1,8 +1,3 @@
-/// Monitoring and metrics data models for 1Panel V2 API
-///
-/// This file contains all data models related to system monitoring,
-/// including resource usage, performance metrics, alerts, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Metric type enumeration

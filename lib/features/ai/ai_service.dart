@@ -1,8 +1,3 @@
-/// AI模块服务类
-/// 
-/// 此文件包含AI相关的业务逻辑，
-/// 包括Ollama模型管理、GPU信息获取、域名绑定等功能。
-
 import 'package:dio/dio.dart';
 import '../../api/v2/ai_v2.dart';
 import '../../data/models/ai_models.dart';

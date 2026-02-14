@@ -1,16 +1,11 @@
-/// Database API客户端测试
-///
-/// 测试DatabaseV2Api客户端的所有方法
-/// 复用现有的DatabaseV2Api代码
-
-import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../api_client_test_base.dart';
 import '../core/test_config_manager.dart';
-import '../../lib/api/v2/database_v2.dart';
-import '../../lib/core/network/dio_client.dart';
-import '../../lib/data/models/database_models.dart';
-import '../../lib/data/models/common_models.dart';
+import 'package:onepanelapp_app/api/v2/database_v2.dart';
+import 'package:onepanelapp_app/core/network/dio_client.dart';
+import 'package:onepanelapp_app/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/database_models.dart';
 
 void main() {
   late DioClient client;
@@ -32,12 +27,12 @@ void main() {
 
   group('Database API客户端测试', () {
     test('配置验证 - API密钥已配置', () {
-      print('\n========================================');
-      print('Database API测试配置');
-      print('========================================');
-      print('服务器地址: ${TestEnvironment.baseUrl}');
-      print('API密钥: ${hasApiKey ? "已配置" : "未配置"}');
-      print('========================================\n');
+      debugPrint('\n========================================');
+      debugPrint('Database API测试配置');
+      debugPrint('========================================');
+      debugPrint('服务器地址: ${TestEnvironment.baseUrl}');
+      debugPrint('API密钥: ${hasApiKey ? "已配置" : "未配置"}');
+      debugPrint('========================================\n');
       
       expect(hasApiKey, isTrue, reason: 'API密钥应该已配置');
     });
@@ -45,7 +40,7 @@ void main() {
     group('searchDatabases - 搜索数据库', () {
       test('应该成功获取数据库列表', () async {
         if (!hasApiKey) {
-          print('⚠️  跳过测试: API密钥未配置');
+          debugPrint('⚠️  跳过测试: API密钥未配置');
           return;
         }
 
@@ -60,20 +55,20 @@ void main() {
         expect(response.data, isA<PageResult<DatabaseInfo>>());
 
         final result = response.data!;
-        print('\n========================================');
-        print('✅ 数据库列表测试成功');
-        print('========================================');
-        print('总数: ${result.total}');
-        print('当前页: ${result.items?.length ?? 0} 个数据库');
-        
-        if (result.items != null && result.items!.isNotEmpty) {
-          print('\n数据库列表:');
-          for (var i = 0; i < (result.items!.length > 5 ? 5 : result.items!.length); i++) {
-            final db = result.items![i];
-            print('  - ${db.name} (${db.type}) - ${db.status}');
+        debugPrint('\n========================================');
+        debugPrint('✅ 数据库列表测试成功');
+        debugPrint('========================================');
+        debugPrint('总数: ${result.total}');
+        debugPrint('当前页: ${result.items.length} 个数据库');
+
+        if (result.items.isNotEmpty) {
+          debugPrint('\n数据库列表:');
+          for (var i = 0; i < (result.items.length > 5 ? 5 : result.items.length); i++) {
+            final db = result.items[i];
+            debugPrint('  - ${db.name} (${db.type}) - ${db.status}');
           }
         }
-        print('========================================\n');
+        debugPrint('========================================\n');
       });
     });
   });
@@ -81,7 +76,7 @@ void main() {
   group('Database API性能测试', () {
     test('searchDatabases响应时间应该小于3秒', () async {
       if (!hasApiKey) {
-        print('⚠️  跳过测试: API密钥未配置');
+        debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
       }
 

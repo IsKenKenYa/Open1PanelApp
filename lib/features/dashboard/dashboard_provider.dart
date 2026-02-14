@@ -1,7 +1,3 @@
-/// Dashboard状态管理
-///
-/// 管理仪表盘数据，包括系统信息、资源使用情况、最近活动等
-
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../api/v2/dashboard_v2.dart';

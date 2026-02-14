@@ -1,10 +1,6 @@
-/// Command & Script API 单元测试
-///
-/// 测试命令管理和脚本库模块的所有API接口
-
 import 'package:flutter_test/flutter_test.dart';
 import '../test_helper.dart';
-import '../../lib/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/common_models.dart';
 
 void main() {
   setUpAll(() async {
@@ -254,7 +250,7 @@ echo "执行完成"''';
     });
 
     test('Command应该处理很长的命令', () {
-      final longCommand = 'echo "' + 'a' * 10000 + '"';
+      final longCommand = 'echo "${'a' * 10000}"';
       final model = CommandInfo(
         id: 1,
         name: '长命令',
@@ -284,13 +280,13 @@ echo "执行完成"''';
     test('Script应该处理特殊字符', () {
       final model = ScriptOperate(
         name: '特殊字符脚本',
-        script: '#!/bin/bash\necho "<>&\'\"',
+        script: '#!/bin/bash\necho "<>&\'"',
       );
 
       final json = model.toJson();
       final restored = ScriptOperate.fromJson(json);
 
-      expect(restored.script, equals('#!/bin/bash\necho "<>&\'\"'));
+      expect(restored.script, equals('#!/bin/bash\necho "<>&\'"'));
     });
 
     test('Script应该处理Unicode字符', () {
@@ -307,7 +303,7 @@ echo "执行完成"''';
     });
 
     test('Script应该处理长脚本', () {
-      final longScript = 'echo "' + 'a' * 10000 + '"';
+      final longScript = 'echo "${'a' * 10000}"';
       final model = ScriptOperate(
         name: '长脚本',
         script: longScript,

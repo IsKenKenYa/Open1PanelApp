@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import '../../data/models/app_models.dart';
-import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
 
 /// 1Panel V2 API - 应用管理接口

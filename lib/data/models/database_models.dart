@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Database 相关数据模型
-///
-/// 此文件包含数据库管理相关的所有数据模型，
-/// 包括数据库的创建、更新、查询等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
 /// 数据库创建模型
@@ -487,7 +482,7 @@ enum DatabaseStatus {
   installing('installing', '安装中'),
   creating('creating', '创建中'),
   deleting('deleting', '删除中'),
-  backing_up('backing_up', '备份中'),
+  backingUp('backing_up', '备份中'),
   restoring('restoring', '恢复中');
 
   const DatabaseStatus(this.value, this.displayName);

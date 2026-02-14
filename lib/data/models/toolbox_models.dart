@@ -1,7 +1,3 @@
-/// Toolbox模块数据模型
-///
-/// 包含Clam病毒扫描、Device设备管理、Fail2ban入侵防护、FTP管理等模型定义
-
 import 'package:equatable/equatable.dart';
 
 /// Clam扫描创建请求

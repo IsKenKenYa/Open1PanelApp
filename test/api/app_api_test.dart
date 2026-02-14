@@ -1,11 +1,7 @@
-/// App API 单元测试
-///
-/// 测试App模块的所有数据模型
-
 import 'package:flutter_test/flutter_test.dart';
 import '../core/test_config_manager.dart';
 import '../core/mock_api_responses.dart';
-import '../../lib/data/models/app_models.dart';
+import 'package:onepanelapp_app/data/models/app_models.dart';
 
 void main() {
   setUpAll(() async {

@@ -1,8 +1,3 @@
-/// 1Panel V2 API - AI 相关接口
-///
-/// 此文件包含与AI功能相关的所有API接口，
-/// 包括Ollama模型管理、GPU信息获取、域名绑定等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

@@ -1,7 +1,3 @@
-/// Terminal management data models for 1Panel V2 API
-///
-/// This file contains data models for terminal session management.
-
 import 'package:equatable/equatable.dart';
 
 /// Terminal session create request model

@@ -1,8 +1,3 @@
-/// License management data models for 1Panel V2 API
-///
-/// This file contains all data models related to license management,
-/// including license validation, activation, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// License information model

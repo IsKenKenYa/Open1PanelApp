@@ -1,8 +1,3 @@
-/// Backup management data models for 1Panel V2 API
-///
-/// This file contains all data models related to backup operations,
-/// including backup plans, schedules, restoration, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Backup plan model

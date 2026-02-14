@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../services/logger/logger_service.dart';
 import '../config/api_constants.dart';
 import 'network_exceptions.dart';
@@ -35,11 +35,6 @@ class DioClient {
     );
   }
 
-  /// 创建基础配置
-  BaseOptions _createBaseOptions(String? baseUrl) {
-    return _createBaseOptionsStatic(baseUrl);
-  }
-
   /// 添加拦截器
   void _addInterceptors() {
     _dio.interceptors.add(_authInterceptor);
@@ -66,7 +61,7 @@ class DioClient {
       }
     } catch (e) {
       // 忽略日志错误
-      print('[$level] $message');
+      debugPrint('[$level] $message');
     }
   }
 

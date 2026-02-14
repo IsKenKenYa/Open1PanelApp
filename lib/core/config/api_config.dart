@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +16,7 @@ class ApiConfig {
     required this.apiKey,
     this.isDefault = false,
     DateTime? lastUsed,
-  }) : this.lastUsed = lastUsed ?? DateTime.now();
+  }) : lastUsed = lastUsed ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {

@@ -18,7 +18,10 @@ class _MonitoringPageState extends State<MonitoringPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => context.read<MonitoringProvider>().load());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<MonitoringProvider>().load();
+    });
   }
 
   @override

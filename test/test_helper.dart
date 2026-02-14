@@ -1,15 +1,11 @@
-/// 测试辅助工具类
-///
-/// 提供测试所需的基础功能和工具方法
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/network/dio_client.dart';
-import '../lib/core/config/api_constants.dart';
+import 'package:onepanelapp_app/core/network/dio_client.dart';
 
 /// 测试配置类
 class TestConfig {
@@ -27,12 +23,12 @@ class TestConfig {
         _env = _parseEnv(content);
       } else {
         _env = {};
-        print('Warning: .env file not found, using default values');
+        debugPrint('Warning: .env file not found, using default values');
       }
       _initialized = true;
     } catch (e) {
       _env = {};
-      print('Error loading .env file: $e');
+      debugPrint('Error loading .env file: $e');
       _initialized = true;
     }
   }

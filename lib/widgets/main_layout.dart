@@ -1,7 +1,3 @@
-/// 应用主布局组件
-/// 
-/// 此文件定义应用的主布局组件，包含底部标签栏和侧边菜单。
-
 import 'package:flutter/material.dart';
 import '../widgets/navigation/app_bottom_navigation_bar.dart';
 import '../widgets/navigation/app_drawer.dart';

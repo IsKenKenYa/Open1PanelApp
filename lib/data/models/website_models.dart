@@ -1,8 +1,3 @@
-/// Website management data models for 1Panel V2 API
-///
-/// This file contains all data models related to website management,
-/// including domains, SSL certificates, website configurations, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Website creation request model

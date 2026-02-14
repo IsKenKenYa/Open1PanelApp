@@ -1,8 +1,3 @@
-/// 网站管理页面
-/// 
-/// 此文件定义网站管理页面，管理网站和域名。
-/// 遵循Material You Design 3设计规范
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../shared/widgets/app_card.dart';
@@ -22,14 +17,13 @@ class _WebsitesPageState extends State<WebsitesPage> {
     super.initState();
     // 页面加载时获取数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       context.read<WebsitesProvider>().loadWebsites();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    
     return MainLayout(
       currentIndex: 3,
       child: Scaffold(
@@ -104,7 +98,7 @@ class _WebsitesPageState extends State<WebsitesPage> {
                             onDelete: () => _showDeleteDialog(context, website, provider),
                           ),
                         );
-                      }).toList(),
+                      }),
                   ],
                 ),
               ),
@@ -127,23 +121,25 @@ class _WebsitesPageState extends State<WebsitesPage> {
     dynamic website,
     WebsitesProvider provider,
   ) {
+    final parentContext = context;
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+      context: parentContext,
+      builder: (dialogContext) => AlertDialog(
         icon: const Icon(Icons.delete_outline, color: Colors.red),
         title: const Text('删除网站'),
         content: Text('确定要删除 ${website.primaryDomain ?? '此网站'} 吗？此操作不可撤销。'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('取消'),
           ),
           FilledButton(
             onPressed: () async {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               final success = await provider.deleteWebsite(website.id ?? 0);
-              if (success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+              if (!parentContext.mounted) return;
+              if (success) {
+                ScaffoldMessenger.of(parentContext).showSnackBar(
                   const SnackBar(content: Text('网站已删除')),
                 );
               }
@@ -483,7 +479,7 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
@@ -520,7 +516,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

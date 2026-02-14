@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Website 相关接口
-///
-/// 此文件包含与网站管理相关的所有API接口，
-/// 包括网站的创建、删除、更新、查询等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

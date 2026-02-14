@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Dashboard 相关接口
-///
-/// 此文件包含与系统仪表板相关的所有API接口，
-/// 包括系统监控、性能指标、主机状态等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

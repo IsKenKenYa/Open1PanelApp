@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Container 相关接口
-///
-/// 此文件包含与容器管理相关的所有API接口，
-/// 包括容器的创建、删除、启动、停止、查询等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
@@ -29,12 +24,6 @@ class _Parser {
     return {};
   }
 
-  /// 从1Panel API响应中提取data字段（List类型）
-  static List<T> extractListData<T>(Response<List<dynamic>> response, T Function(Map<String, dynamic>) fromJson) {
-    final body = response.data!;
-    return body.map((item) => fromJson(item as Map<String, dynamic>)).toList();
-  }
-
   static List<T> extractListDataFromMap<T>(Response<Map<String, dynamic>> response, T Function(Map<String, dynamic>) fromJson) {
     final body = response.data!;
     final data = body['data'];
@@ -48,11 +37,6 @@ class _Parser {
       }
     }
     return [];
-  }
-
-  /// 从1Panel API响应中提取data字段（原始List）
-  static List<Map<String, dynamic>> extractRawListData(Response<List<dynamic>> response) {
-    return response.data?.map((item) => item as Map<String, dynamic>).toList() ?? [];
   }
 
   static List<Map<String, dynamic>> extractRawListDataFromMap(Response<Map<String, dynamic>> response) {
@@ -462,7 +446,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, (json) => json as Map<String, dynamic>),
+      data: _Parser.extractPageData(response, (json) => json),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -514,7 +498,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, (json) => json as Map<String, dynamic>),
+      data: _Parser.extractPageData(response, (json) => json),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -558,7 +542,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, (json) => json as Map<String, dynamic>),
+      data: _Parser.extractPageData(response, (json) => json),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,

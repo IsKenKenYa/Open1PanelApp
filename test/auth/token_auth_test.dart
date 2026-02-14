@@ -1,8 +1,3 @@
-/// Token认证机制白盒测试
-///
-/// 测试1Panel自定义Token的生成和验证机制
-/// Token格式: md5('1panel' + API-Key + UnixTimestamp)
-
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -206,7 +201,7 @@ void main() {
 
       test('错误的Token应该验证失败', () {
         final headers = TokenGenerator.generateAuthHeaders(testApiKey);
-        final wrongToken = headers['1Panel-Token']!.substring(0, 31) + 'x';
+        final wrongToken = '${headers['1Panel-Token']!.substring(0, 31)}x';
         final timestamp = headers['1Panel-Timestamp']!;
 
         final expectedToken = TokenGenerator.generateToken(testApiKey, int.parse(timestamp));

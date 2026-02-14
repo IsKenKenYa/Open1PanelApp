@@ -1,8 +1,3 @@
-/// 1Panel V2 API - AI 相关数据模型
-/// 
-/// 此文件包含与AI功能相关的所有数据模型定义，
-/// 包括Ollama模型管理、GPU信息获取、域名绑定等操作的数据结构。
-
 class OllamaBindDomain {
   final int appInstallID;
   final String domain;

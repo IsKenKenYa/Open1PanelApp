@@ -1,12 +1,6 @@
-/// 1Panel V2 API - OpenResty 相关接口
-///
-/// 此文件包含与OpenResty管理相关的所有API接口，
-/// 包括OpenResty的安装、配置、管理等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
-import '../../data/models/openresty_models.dart';
 
 class OpenRestyV2Api {
   final DioClient _client;

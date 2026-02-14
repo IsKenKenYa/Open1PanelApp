@@ -1,8 +1,3 @@
-/// OpenResty management data models for 1Panel V2 API
-///
-/// This file contains OpenResty-related data models for Nginx/OpenResty management,
-/// including configuration, status, and operations.
-
 import 'package:equatable/equatable.dart';
 
 /// OpenResty status model

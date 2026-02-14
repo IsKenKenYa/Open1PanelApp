@@ -1,7 +1,3 @@
-/// Update management data models for 1Panel V2 API
-///
-/// This file contains data models for system update management.
-
 import 'package:equatable/equatable.dart';
 
 /// Update info model

@@ -1,13 +1,9 @@
-/// API客户端测试基类
-///
-/// 提供所有API客户端测试的通用功能，复用现有的DioClient和API类
-
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'core/test_config_manager.dart';
-import '../lib/core/network/dio_client.dart';
-import '../lib/core/config/api_constants.dart';
+import 'package:onepanelapp_app/core/network/dio_client.dart';
 
 /// API客户端测试基类
 ///
@@ -69,30 +65,30 @@ abstract class ApiClientTestBase {
 
   /// 打印测试信息
   void logTestInfo(String testName, {Map<String, dynamic>? params}) {
-    print('\n========================================');
-    print('测试: $testName');
+    debugPrint('\n========================================');
+    debugPrint('测试: $testName');
     if (params != null && params.isNotEmpty) {
-      print('参数: ${jsonEncode(params)}');
+      debugPrint('参数: ${jsonEncode(params)}');
     }
-    print('========================================');
+    debugPrint('========================================');
   }
 
   /// 打印响应信息
   void logResponseInfo(Response? response) {
     if (response == null) {
-      print('响应: null');
+      debugPrint('响应: null');
       return;
     }
-    print('状态码: ${response.statusCode}');
+    debugPrint('状态码: ${response.statusCode}');
     if (response.data != null) {
       final dataStr = response.data.toString();
       if (dataStr.length > 500) {
-        print('响应数据: ${dataStr.substring(0, 500)}...');
+        debugPrint('响应数据: ${dataStr.substring(0, 500)}...');
       } else {
-        print('响应数据: ${jsonEncode(response.data)}');
+        debugPrint('响应数据: ${jsonEncode(response.data)}');
       }
     }
-    print('========================================\n');
+    debugPrint('========================================\n');
   }
 
   /// 跳过条件检查
@@ -182,7 +178,7 @@ class TestPerformanceTimer {
     if (_duration != null) {
       final ms = _duration!.inMilliseconds;
       final status = ms < 1000 ? '✅' : (ms < 3000 ? '⚠️' : '❌');
-      print('$status $_name: ${ms}ms');
+      debugPrint('$status $_name: ${ms}ms');
     }
   }
 
@@ -226,24 +222,24 @@ class TestResultCollector {
     final skipped = _results.where((r) => r.skipped).length;
     final total = _results.length;
 
-    print('\n');
-    print('╔════════════════════════════════════════════════════════════╗');
-    print('║                    测试结果汇总                            ║');
-    print('╠════════════════════════════════════════════════════════════╣');
-    print('║ 总测试数: $total');
-    print('║ ✅ 通过: $passed');
-    print('║ ❌ 失败: $failed');
-    print('║ ⏭️  跳过: $skipped');
-    print('║ 通过率: ${total > 0 ? (passed / total * 100).toStringAsFixed(1) : 0}%');
-    print('╚════════════════════════════════════════════════════════════╝');
+    debugPrint('\n');
+    debugPrint('╔════════════════════════════════════════════════════════════╗');
+    debugPrint('║                    测试结果汇总                            ║');
+    debugPrint('╠════════════════════════════════════════════════════════════╣');
+    debugPrint('║ 总测试数: $total');
+    debugPrint('║ ✅ 通过: $passed');
+    debugPrint('║ ❌ 失败: $failed');
+    debugPrint('║ ⏭️  跳过: $skipped');
+    debugPrint('║ 通过率: ${total > 0 ? (passed / total * 100).toStringAsFixed(1) : 0}%');
+    debugPrint('╚════════════════════════════════════════════════════════════╝');
 
     if (failed > 0) {
-      print('\n失败的测试:');
+      debugPrint('\n失败的测试:');
       for (final result in _results.where((r) => !r.passed)) {
-        print('  ❌ ${result.testName}: ${result.error}');
+        debugPrint('  ❌ ${result.testName}: ${result.error}');
       }
     }
-    print('\n');
+    debugPrint('\n');
   }
 
   List<TestResultItem> get results => List.unmodifiable(_results);

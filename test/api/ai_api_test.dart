@@ -1,13 +1,8 @@
-/// AI API 单元测试
-///
-/// 测试AI模块的所有数据模型和API接口
-
 import 'package:flutter_test/flutter_test.dart';
 import '../core/test_config_manager.dart';
 import '../core/mock_api_responses.dart';
-import '../../lib/data/models/ai_models.dart';
-import '../../lib/data/models/mcp_models.dart';
-import '../../lib/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/ai_models.dart';
+import 'package:onepanelapp_app/data/models/mcp_models.dart';
 
 void main() {
   setUpAll(() async {

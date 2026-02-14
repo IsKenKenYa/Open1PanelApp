@@ -1,12 +1,5 @@
-/// 测试配置管理器
-///
-/// 提供统一的测试配置管理，支持从.env文件加载配置
-///
-/// 重要说明:
-/// 1Panel OpenAPI 仅支持 API密钥 认证方式
-/// 不支持用户名密码登录认证
-
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class TestConfigManager {
@@ -52,10 +45,10 @@ class TestConfigManager {
           }
         }
       } else {
-        print('Warning: .env file not found, using default values');
+        debugPrint('Warning: .env file not found, using default values');
       }
     } catch (e) {
-      print('Error loading .env file: $e');
+      debugPrint('Error loading .env file: $e');
     }
 
     return config;
@@ -102,7 +95,7 @@ class TestConfigManager {
     }
 
     if (missingKeys.isNotEmpty) {
-      print('Warning: Missing or invalid configuration for: ${missingKeys.join(', ')}');
+      debugPrint('Warning: Missing or invalid configuration for: ${missingKeys.join(', ')}');
     }
   }
 }

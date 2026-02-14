@@ -1,12 +1,6 @@
-/// 1Panel V2 API - 认证相关接口
-///
-/// 此文件包含与用户认证相关的所有API接口，
-/// 包括登录、登出、验证码、多因素认证等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
-import '../../data/models/common_models.dart';
 
 class AuthV2Api {
   final DioClient _client;

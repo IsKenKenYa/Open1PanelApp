@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Snapshot 相关数据模型
-///
-/// 此文件包含与系统快照相关的所有数据模型，
-/// 包括快照的创建、恢复、管理等操作。
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 

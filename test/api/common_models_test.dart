@@ -1,9 +1,5 @@
-/// Common Models 单元测试
-///
-/// 测试通用数据模型和Command/Script相关模型
-
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/common_models.dart';
 
 void main() {
   group('通用模型测试', () {
@@ -448,7 +444,7 @@ echo "结束"''';
     });
 
     test('Script应该处理长脚本', () {
-      final longScript = 'echo "' + 'a' * 10000 + '"';
+      final longScript = 'echo "${'a' * 10000}"';
       final model = ScriptOperate(
         name: '长脚本',
         script: longScript,

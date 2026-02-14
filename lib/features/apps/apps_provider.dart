@@ -1,7 +1,3 @@
-/// 应用管理状态管理
-///
-/// 管理应用商店和已安装应用数据
-
 import 'package:flutter/foundation.dart';
 import '../../data/models/app_models.dart';
 import 'app_service.dart';

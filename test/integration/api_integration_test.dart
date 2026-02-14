@@ -1,27 +1,23 @@
-/// API 集成测试套件
-///
-/// 测试API模块的端到端功能，需要真实的服务器环境
-
 import 'package:flutter_test/flutter_test.dart';
 import '../test_helper.dart';
-import '../../lib/api/v2/toolbox_v2.dart';
-import '../../lib/api/v2/command_v2.dart';
-import '../../lib/api/v2/ai_v2.dart';
-import '../../lib/data/models/toolbox_models.dart';
-import '../../lib/data/models/common_models.dart';
-import '../../lib/data/models/mcp_models.dart';
-import '../../lib/core/network/dio_client.dart';
+import 'package:onepanelapp_app/api/v2/ai_v2.dart';
+import 'package:onepanelapp_app/api/v2/command_v2.dart';
+import 'package:onepanelapp_app/api/v2/toolbox_v2.dart';
+import 'package:onepanelapp_app/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/mcp_models.dart';
+import 'package:onepanelapp_app/data/models/toolbox_models.dart';
 
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   await setupTestEnvironment();
 
-  TestApiClient? apiClient;
-  ToolboxV2Api? toolboxApi;
-  CommandV2Api? commandApi;
-  AIV2Api? aiApi;
+  late final TestApiClient apiClient;
+  late final ToolboxV2Api toolboxApi;
+  late final CommandV2Api commandApi;
+  late final AIV2Api aiApi;
 
-  if (SkipConditions.skipNoApiKey() == null) {
+  final hasApiKey = SkipConditions.skipNoApiKey() == null;
+  if (hasApiKey) {
     apiClient = TestApiClient(
       baseUrl: TestConfig.baseUrl,
       apiKey: TestConfig.apiKey,
@@ -32,7 +28,9 @@ Future<void> main() async {
   }
 
   tearDownAll(() async {
-    apiClient?.dispose();
+    if (hasApiKey) {
+      apiClient.dispose();
+    }
     await teardownTestEnvironment();
   });
 
@@ -41,7 +39,7 @@ Future<void> main() async {
       '应该能够连接到服务器',
       skip: SkipConditions.skipIntegration() ?? SkipConditions.skipNoApiKey(),
       () async {
-      final response = await apiClient!.authenticatedGet('/api/v2/health');
+      final response = await apiClient.authenticatedGet('/api/v2/health');
       expect(response.statusCode, anyOf(equals(200), equals(404)));
       },
     );
@@ -60,49 +58,49 @@ Future<void> main() async {
 
   group('Toolbox API集成测试', () {
     test('应该能够获取设备基础信息', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getDeviceBaseInfo();
+      final response = await toolboxApi.getDeviceBaseInfo();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
     });
 
     test('应该能够获取Fail2ban基础信息', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getFail2banBaseInfo();
+      final response = await toolboxApi.getFail2banBaseInfo();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
     });
 
     test('应该能够获取FTP基础信息', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getFtpBaseInfo();
+      final response = await toolboxApi.getFtpBaseInfo();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
     });
 
     test('应该能够获取清理数据列表', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getCleanData();
+      final response = await toolboxApi.getCleanData();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isA<List>());
     });
 
     test('应该能够获取清理树形结构', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getCleanTree();
+      final response = await toolboxApi.getCleanTree();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isA<List>());
     });
 
     test('应该能够获取设备用户列表', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getDeviceUsers();
+      final response = await toolboxApi.getDeviceUsers();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isA<List>());
     });
 
     test('应该能够获取时区选项', skip: SkipConditions.skipIntegration(), () async {
-      final response = await toolboxApi!.getDeviceZoneOptions();
+      final response = await toolboxApi.getDeviceZoneOptions();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isA<List>());
@@ -110,7 +108,7 @@ Future<void> main() async {
 
     test('应该能够搜索Clam扫描任务', skip: SkipConditions.skipIntegration(), () async {
       final request = PageRequest(page: 1, pageSize: 10);
-      final response = await toolboxApi!.searchClam(request);
+      final response = await toolboxApi.searchClam(request);
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -118,7 +116,7 @@ Future<void> main() async {
 
     test('应该能够搜索FTP账户', skip: SkipConditions.skipIntegration(), () async {
       final request = FtpSearch(page: 1, pageSize: 10);
-      final response = await toolboxApi!.searchFtp(request);
+      final response = await toolboxApi.searchFtp(request);
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -126,7 +124,7 @@ Future<void> main() async {
 
     test('应该能够搜索Fail2ban记录', skip: SkipConditions.skipIntegration(), () async {
       final request = Fail2banSearch(page: 1, pageSize: 10);
-      final response = await toolboxApi!.searchFail2ban(request);
+      final response = await toolboxApi.searchFail2ban(request);
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -135,7 +133,7 @@ Future<void> main() async {
 
   group('Command API集成测试', () {
     test('应该能够获取命令树', skip: SkipConditions.skipIntegration(), () async {
-      final response = await commandApi!.getCommandTree();
+      final response = await commandApi.getCommandTree();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isA<List>());
@@ -143,7 +141,7 @@ Future<void> main() async {
 
     test('应该能够搜索命令', skip: SkipConditions.skipIntegration(), () async {
       final request = PageRequest(page: 1, pageSize: 10);
-      final response = await commandApi!.searchCommand(request);
+      final response = await commandApi.searchCommand(request);
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -151,14 +149,14 @@ Future<void> main() async {
 
     test('应该能够搜索脚本', skip: SkipConditions.skipIntegration(), () async {
       final request = PageRequest(page: 1, pageSize: 10);
-      final response = await commandApi!.searchScript(request);
+      final response = await commandApi.searchScript(request);
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
     });
 
     test('应该能够获取脚本选项', skip: SkipConditions.skipIntegration(), () async {
-      final response = await commandApi!.getScriptOptions();
+      final response = await commandApi.getScriptOptions();
 
       expect(response.statusCode, equals(200));
       expect(response.data, isA<List>());
@@ -168,14 +166,14 @@ Future<void> main() async {
   group('MCP Server API集成测试', () {
     test('应该能够搜索MCP服务器', skip: SkipConditions.skipIntegration(), () async {
       final request = McpServerSearch(page: 1, pageSize: 10);
-      final response = await aiApi!.searchMcpServers(request);
+      final response = await aiApi.searchMcpServers(request);
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
     });
 
     test('应该能够获取MCP绑定域名', skip: SkipConditions.skipIntegration(), () async {
-      final response = await aiApi!.getMcpBindDomain();
+      final response = await aiApi.getMcpBindDomain();
 
       // 可能没有绑定域名，所以接受200或404
       expect(response.statusCode, anyOf(equals(200), equals(404)));
@@ -207,7 +205,7 @@ Future<void> main() async {
       skip: SkipConditions.skipIntegration() ?? SkipConditions.skipNoApiKey(),
       () async {
       try {
-        await apiClient!.authenticatedGet('/api/v2/invalid/path');
+        await apiClient.authenticatedGet('/api/v2/invalid/path');
         fail('应该抛出异常');
       } catch (e) {
         expect(e, isA<Exception>());
@@ -220,7 +218,7 @@ Future<void> main() async {
     test('API响应时间应该小于5秒', skip: SkipConditions.skipIntegration(), () async {
       final stopwatch = Stopwatch()..start();
 
-      await toolboxApi!.getDeviceBaseInfo();
+      await toolboxApi.getDeviceBaseInfo();
 
       stopwatch.stop();
       expect(stopwatch.elapsedMilliseconds, lessThan(5000));
@@ -228,9 +226,9 @@ Future<void> main() async {
 
     test('并发请求应该正常处理', skip: SkipConditions.skipIntegration(), () async {
       final futures = [
-        toolboxApi!.getDeviceBaseInfo(),
-        toolboxApi!.getFail2banBaseInfo(),
-        toolboxApi!.getFtpBaseInfo(),
+        toolboxApi.getDeviceBaseInfo(),
+        toolboxApi.getFail2banBaseInfo(),
+        toolboxApi.getFtpBaseInfo(),
       ];
 
       final responses = await Future.wait(futures);

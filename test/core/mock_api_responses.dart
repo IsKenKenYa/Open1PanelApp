@@ -1,7 +1,3 @@
-/// Mock API 响应数据
-///
-/// 提供各模块API的Mock响应数据，用于单元测试
-
 class MockApiResponses {
   static Map<String, dynamic> success({dynamic data, String message = 'success'}) {
     return {

@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Host 相关数据模型
-///
-/// 此文件包含主机管理相关的所有数据模型，
-/// 包括主机的创建、更新、查询等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
 /// 主机创建模型

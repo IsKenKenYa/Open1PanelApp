@@ -1,7 +1,3 @@
-/// 1Panel V2 API - Command & Script 模块
-///
-/// 此文件包含命令管理和脚本库相关的所有API接口
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

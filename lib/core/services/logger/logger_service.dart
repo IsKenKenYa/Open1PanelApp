@@ -10,7 +10,6 @@ class AppLogger {
   AppLogger._internal();
 
   Logger? _logger;
-  static const String _defaultPackageName = '[core.services]';
   bool _initialized = false;
 
   /// 初始化日志服务

@@ -1,16 +1,11 @@
-/// AI API 集成测试
-///
-/// 测试AI模块的所有API接口，需要真实的服务器环境
-
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../core/test_config_manager.dart';
-import '../core/api_test_base.dart';
-import '../../lib/api/v2/ai_v2.dart';
-import '../../lib/core/network/dio_client.dart';
-import '../../lib/data/models/ai_models.dart';
-import '../../lib/data/models/mcp_models.dart';
-import '../../lib/data/models/common_models.dart';
+import 'package:onepanelapp_app/api/v2/ai_v2.dart';
+import 'package:onepanelapp_app/core/network/dio_client.dart';
+import 'package:onepanelapp_app/data/models/ai_models.dart';
+import 'package:onepanelapp_app/data/models/common_models.dart';
+import 'package:onepanelapp_app/data/models/mcp_models.dart';
 
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -275,7 +270,8 @@ Future<void> main() async {
       final response = await api.searchOllamaModels(request);
 
       expect(response.statusCode, equals(200));
-      expect(response.data!.items!.length, lessThanOrEqualTo(100));
+      final itemCount = response.data?.items.length ?? 0;
+      expect(itemCount, lessThanOrEqualTo(100));
     });
   });
 }

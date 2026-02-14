@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../services/logger/logger_service.dart';
 
 /// 简化的日志拦截器
@@ -28,7 +29,7 @@ class LoggingInterceptor extends Interceptor {
       }
     } catch (e) {
       // 忽略日志错误，使用print作为后备
-      print('[$level] $message');
+      debugPrint('[$level] $message');
     }
   }
 

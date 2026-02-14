@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:convert';
 import '../../../core/config/api_config.dart';
 import '../../../core/services/logger/logger_service.dart';
 
 class ApiConfigPage extends StatefulWidget {
-  const ApiConfigPage({Key? key}) : super(key: key);
+  const ApiConfigPage({super.key});
 
   @override
-  _ApiConfigPageState createState() => _ApiConfigPageState();
+  State<ApiConfigPage> createState() => _ApiConfigPageState();
 }
 
 class _ApiConfigPageState extends State<ApiConfigPage> {
@@ -46,6 +44,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       final configs = await ApiConfigManager.getConfigs();
       final currentConfig = await ApiConfigManager.getCurrentConfig();
       
+      if (!mounted) return;
       setState(() {
         _configs = configs;
         _currentConfig = currentConfig;
@@ -54,6 +53,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       
       appLogger.dWithPackage('api.config', 'API配置加载成功，共${configs.length}个配置');
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -79,7 +79,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       appLogger.iWithPackage('api.config', '开始保存API配置: ${_nameController.text}');
       
       final config = ApiConfig(
-        id: const Uuid().v4(),
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
         name: _nameController.text,
         url: _urlController.text,
         apiKey: _apiKeyController.text,
@@ -94,6 +94,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       }
       
       await _loadConfigs();
+      if (!mounted) return;
       
       _clearForm();
       
@@ -103,6 +104,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
         const SnackBar(content: Text('配置保存成功')),
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -127,6 +129,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     try {
       await ApiConfigManager.deleteConfig(id);
       await _loadConfigs();
+      if (!mounted) return;
       
       appLogger.wWithPackage('api.config', 'API配置删除成功: ${config.name}');
       
@@ -134,6 +137,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
         SnackBar(content: Text('配置 "${config.name}" 删除成功')),
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
@@ -158,6 +162,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
     try {
       await ApiConfigManager.setCurrentConfig(id);
       await _loadConfigs();
+      if (!mounted) return;
       
       appLogger.iWithPackage('api.config', 'API配置切换成功: ${config.name}');
       
@@ -165,6 +170,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
         SnackBar(content: Text('已切换到配置 "${config.name}"')),
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });

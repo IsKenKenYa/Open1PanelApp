@@ -1,8 +1,3 @@
-/// System tools data models for 1Panel V2 API
-///
-/// This file contains all data models related to system tools,
-/// including utilities, diagnostics, maintenance tools, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Tool information model

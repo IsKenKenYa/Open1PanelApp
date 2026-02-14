@@ -1,10 +1,6 @@
-/// MCP Server API 单元测试
-///
-/// 测试MCP服务器管理模块的所有API接口
-
 import 'package:flutter_test/flutter_test.dart';
 import '../test_helper.dart';
-import '../../lib/data/models/mcp_models.dart';
+import 'package:onepanelapp_app/data/models/mcp_models.dart';
 
 void main() {
   setUpAll(() async {
@@ -391,7 +387,7 @@ void main() {
     });
 
     test('长命令应该正确处理', () {
-      final longCommand = 'echo "' + 'a' * 5000 + '"';
+      final longCommand = 'echo "${'a' * 5000}"';
       final model = McpServerCreate(
         name: '长命令测试',
         command: longCommand,
@@ -403,7 +399,7 @@ void main() {
       final json = model.toJson();
       final restored = McpServerCreate.fromJson(json);
 
-      expect(restored.command?.length, equals(longCommand.length));
+      expect(restored.command.length, equals(longCommand.length));
     });
 
     test('空列表应该正确处理', () {

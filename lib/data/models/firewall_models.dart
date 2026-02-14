@@ -1,8 +1,3 @@
-/// Firewall management data models for 1Panel V2 API
-///
-/// This file contains all data models related to firewall management,
-/// including rules, ports, policies, and access control.
-
 import 'package:equatable/equatable.dart';
 
 /// Firewall rule model

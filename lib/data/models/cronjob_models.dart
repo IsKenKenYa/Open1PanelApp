@@ -1,8 +1,3 @@
-/// Cron job management data models for 1Panel V2 API
-///
-/// This file contains all data models related to cron job management,
-/// including scheduled tasks, job execution history, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Cron job type enumeration

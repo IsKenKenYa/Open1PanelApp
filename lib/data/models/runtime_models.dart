@@ -1,8 +1,3 @@
-/// Runtime management data models for 1Panel V2 API
-///
-/// This file contains all data models related to runtime management,
-/// including Java, Node.js, Python, Go, PHP runtime environments.
-
 import 'package:equatable/equatable.dart';
 
 /// Runtime type enumeration

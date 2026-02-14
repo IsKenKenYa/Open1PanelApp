@@ -1,7 +1,3 @@
-/// MCP服务器相关数据模型
-///
-/// 此文件包含MCP服务器管理的所有数据模型定义
-
 /// MCP服务器环境变量
 class McpEnvironment {
   final String? key;

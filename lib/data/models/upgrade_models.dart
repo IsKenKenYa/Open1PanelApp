@@ -1,8 +1,3 @@
-/// System upgrade data models for 1Panel V2 API
-///
-/// This file contains all data models related to system upgrade operations,
-/// including version management, upgrade processes, etc.
-
 import 'package:equatable/equatable.dart';
 
 /// Version information model

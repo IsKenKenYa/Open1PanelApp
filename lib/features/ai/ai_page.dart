@@ -1,8 +1,3 @@
-/// AI模块页面
-/// 
-/// 此文件包含AI功能相关的所有页面，
-/// 包括Ollama模型管理、GPU信息展示、域名绑定等页面。
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanelapp_app/core/i18n/app_localizations.dart';
@@ -68,7 +63,6 @@ class OllamaModelPage extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       final aiProvider = Provider.of<AIProvider>(context);
-      final localizations = AppLocalizations.of(context)!;
       return _buildModelPage(context, aiProvider);
     } catch (e) {
       appLogger.eWithPackage('ai.model', '获取AIProvider失败: $e');

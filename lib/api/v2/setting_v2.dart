@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Setting 相关接口
-///
-/// 此文件包含与系统设置相关的所有API接口，
-/// 包括系统配置、用户设置、安全设置等操作。
-
 import 'package:dio/dio.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';

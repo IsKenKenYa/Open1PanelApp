@@ -1,8 +1,3 @@
-/// 1Panel V2 API - Logs 相关数据模型
-///
-/// 此文件包含日志管理相关的所有数据模型，
-/// 包括系统日志、应用日志、安全日志等操作的数据结构。
-
 import 'package:equatable/equatable.dart';
 
 /// 日志搜索模型
