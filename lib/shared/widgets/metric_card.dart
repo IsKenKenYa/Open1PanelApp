@@ -1,0 +1,161 @@
+import 'package:flutter/material.dart';
+import '../../core/theme/app_design_tokens.dart';
+import '../../data/models/monitoring_models.dart';
+import 'app_card.dart';
+
+class MetricCard extends StatelessWidget {
+  const MetricCard({
+    super.key,
+    required this.title,
+    required this.metrics,
+    required this.currentLabel,
+    required this.minLabel,
+    required this.avgLabel,
+    required this.maxLabel,
+  });
+
+  final String title;
+  final SystemMetrics? metrics;
+  final String currentLabel;
+  final String minLabel;
+  final String avgLabel;
+  final String maxLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final unit = metrics?.unit;
+    final current = _formatMetricValue(metrics?.current, unit);
+    final minValue = _formatMetricValue(metrics?.min, unit);
+    final avgValue = _formatMetricValue(metrics?.avg, unit);
+    final maxValue = _formatMetricValue(metrics?.max, unit);
+    final values = metrics?.dataPoints
+            ?.map((point) => point.value)
+            .whereType<double>()
+            .toList() ??
+        const [];
+    return AppCard(
+      title: title,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            current,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: AppDesignTokens.spacingSm),
+          if (values.length > 1) ...[
+            SizedBox(
+              height: 64,
+              child: CustomPaint(
+                painter: MetricSparklinePainter(
+                  values: values,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: AppDesignTokens.spacingSm),
+          ],
+          Wrap(
+            spacing: AppDesignTokens.spacingSm,
+            runSpacing: AppDesignTokens.spacingSm,
+            children: [
+              MetricStatChip(label: currentLabel, value: current),
+              MetricStatChip(label: minLabel, value: minValue),
+              MetricStatChip(label: avgLabel, value: avgValue),
+              MetricStatChip(label: maxLabel, value: maxValue),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatMetricValue(double? value, String? unit) {
+    if (value == null) {
+      return '--';
+    }
+    final fixed = value.toStringAsFixed(2);
+    if (unit == null || unit.isEmpty) {
+      return fixed;
+    }
+    return '$fixed $unit';
+  }
+}
+
+class MetricStatChip extends StatelessWidget {
+  const MetricStatChip({
+    super.key,
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      label: Text('$label: $value'),
+    );
+  }
+}
+
+class MetricIconValue extends StatelessWidget {
+  const MetricIconValue({
+    super.key,
+    required this.icon,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(icon, size: 16),
+      label: Text(value),
+    );
+  }
+}
+
+class MetricSparklinePainter extends CustomPainter {
+  MetricSparklinePainter({
+    required this.values,
+    required this.color,
+  });
+
+  final List<double> values;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (values.length < 2) {
+      return;
+    }
+    final minValue = values.reduce((a, b) => a < b ? a : b);
+    final maxValue = values.reduce((a, b) => a > b ? a : b);
+    final span = maxValue - minValue == 0 ? 1 : maxValue - minValue;
+    final points = <Offset>[];
+    for (int i = 0; i < values.length; i++) {
+      final dx = size.width * i / (values.length - 1);
+      final normalized = (values[i] - minValue) / span;
+      final dy = size.height - normalized * size.height;
+      points.add(Offset(dx, dy));
+    }
+    final path = Path()..moveTo(points.first.dx, points.first.dy);
+    for (int i = 1; i < points.length; i++) {
+      path.lineTo(points[i].dx, points[i].dy);
+    }
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant MetricSparklinePainter oldDelegate) {
+    return oldDelegate.values != values || oldDelegate.color != color;
+  }
+}

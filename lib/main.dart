@@ -12,6 +12,7 @@ import 'features/containers/containers_provider.dart';
 import 'features/apps/apps_provider.dart';
 import 'features/websites/websites_provider.dart';
 import 'features/server/server_provider.dart';
+import 'features/monitoring/monitoring_provider.dart';
 
 void main() {
   runApp(
@@ -40,6 +41,9 @@ void main() {
         // Websites
         ChangeNotifierProvider(
           create: (_) => WebsitesProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => MonitoringProvider(),
         ),
       ],
       child: const MyApp(),

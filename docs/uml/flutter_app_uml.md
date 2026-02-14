@@ -1,6 +1,121 @@
 # Flutter App UML Diagrams for 1Panel Mobile App
 
-## 1. Class Diagram
+## 1. Layered Architecture Diagram
+
+```mermaid
+flowchart TB
+  subgraph UI[UI Layer]
+    AppsPage
+    ContainersPage
+    MonitoringPage
+    AppCard
+    MetricCard
+  end
+
+  subgraph State[State Layer]
+    AppsProvider
+    ContainersProvider
+    MonitoringProvider
+  end
+
+  subgraph Service[Service Layer]
+    BaseComponent
+    AppService
+    ContainerService
+    MonitoringService
+  end
+
+  subgraph Data[Data Layer]
+    ApiClientManager
+    AppV2Api
+    ContainerV2Api
+    MonitorV2Api
+    Models
+  end
+
+  AppsPage --> AppsProvider
+  ContainersPage --> ContainersProvider
+  MonitoringPage --> MonitoringProvider
+  AppsProvider --> AppService
+  ContainersProvider --> ContainerService
+  MonitoringProvider --> MonitoringService
+  AppService --> BaseComponent
+  ContainerService --> BaseComponent
+  MonitoringService --> BaseComponent
+  BaseComponent --> ApiClientManager
+  AppService --> AppV2Api
+  ContainerService --> ContainerV2Api
+  MonitoringService --> MonitorV2Api
+  AppV2Api --> Models
+  ContainerV2Api --> Models
+  MonitorV2Api --> Models
+```
+
+## 2. Core Class Diagram
+
+```mermaid
+classDiagram
+  class BaseComponent {
+    +init()
+    +dispose()
+    +getCache(key)
+    +setCache(key, value)
+    +runGuarded(action)
+  }
+
+  class AppService {
+    +searchApps(request)
+    +getInstalledApps()
+    +installApp(request)
+    +uninstallApp(id)
+    +operateApp(installId, operate)
+  }
+
+  class ContainerService {
+    +listContainers()
+    +listImages()
+    +startContainer(id)
+    +stopContainer(id)
+    +restartContainer(id)
+    +removeContainer(id)
+    +removeImage(id)
+  }
+
+  class MonitoringService {
+    +getSystemMetrics(type, timeRange)
+    +getNetworkMetrics(interface, timeRange)
+  }
+
+  class AppsProvider {
+    +loadAvailableApps()
+    +loadInstalledApps()
+    +installApp(request)
+    +uninstallApp(id)
+  }
+
+  class ContainersProvider {
+    +loadContainers()
+    +loadImages()
+    +startContainer(id)
+    +stopContainer(id)
+    +restartContainer(id)
+    +deleteContainer(id)
+  }
+
+  class MonitoringProvider {
+    +load()
+    +refresh()
+  }
+
+  BaseComponent <|-- AppService
+  BaseComponent <|-- ContainerService
+  BaseComponent <|-- MonitoringService
+  AppsProvider --> AppService
+  ContainersProvider --> ContainerService
+  MonitoringProvider --> MonitoringService
+```
+
+## Legacy: Class Diagram
 
 ```mermaid
 classDiagram

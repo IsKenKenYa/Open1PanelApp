@@ -3,11 +3,9 @@
 /// 管理Docker容器和镜像数据
 
 import 'package:flutter/foundation.dart';
-import '../../api/v2/container_v2.dart';
-import '../../core/network/api_client_manager.dart';
 import '../../data/models/container_models.dart';
 import '../../data/models/container_extension_models.dart';
-import '../../data/models/common_models.dart';
+import 'container_service.dart';
 
 /// 容器统计数据
 class ContainerStats {
@@ -80,21 +78,16 @@ class ContainersData {
 
 /// 容器管理状态管理器
 class ContainersProvider extends ChangeNotifier {
-  ContainersProvider({ContainerV2Api? containerApi})
-      : _containerApi = containerApi;
+  ContainersProvider({ContainerService? service}) : _service = service;
 
-  ContainerV2Api? _containerApi;
+  ContainerService? _service;
 
   ContainersData _data = const ContainersData();
 
   ContainersData get data => _data;
 
-  /// 获取API客户端
-  Future<void> _ensureApiClient() async {
-    if (_containerApi == null) {
-      final manager = ApiClientManager.instance;
-      _containerApi = await manager.getContainerApi();
-    }
+  Future<void> _ensureService() async {
+    _service ??= ContainerService();
   }
 
   /// 加载容器数据
@@ -103,12 +96,9 @@ class ContainersProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _ensureApiClient();
+      await _ensureService();
 
-      // 获取容器列表
-      final response = await _containerApi!.listContainers();
-
-      final containers = response.data ?? [];
+      final containers = await _service!.listContainers();
 
       // 计算统计
       int running = 0, stopped = 0, paused = 0;
@@ -153,15 +143,9 @@ class ContainersProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _ensureApiClient();
+      await _ensureService();
 
-      // 获取镜像列表
-      final response = await _containerApi!.getAllImages();
-
-      final images = response.data
-              ?.map((item) => ContainerImage.fromJson(item))
-              .toList() ??
-          [];
+      final images = await _service!.listImages();
 
       // 计算统计（简化处理，实际应该根据是否被使用来判断）
       _data = _data.copyWith(
@@ -189,7 +173,7 @@ class ContainersProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _ensureApiClient();
+      await _ensureService();
 
       // 并行加载容器和镜像
       await Future.wait([
@@ -208,8 +192,8 @@ class ContainersProvider extends ChangeNotifier {
   /// 启动容器
   Future<bool> startContainer(String containerId) async {
     try {
-      await _ensureApiClient();
-      await _containerApi!.startContainer([containerId]);
+      await _ensureService();
+      await _service!.startContainer(containerId);
       await loadContainers(); // 刷新列表
       return true;
     } catch (e) {
@@ -222,8 +206,8 @@ class ContainersProvider extends ChangeNotifier {
   /// 停止容器
   Future<bool> stopContainer(String containerId) async {
     try {
-      await _ensureApiClient();
-      await _containerApi!.stopContainer([containerId]);
+      await _ensureService();
+      await _service!.stopContainer(containerId);
       await loadContainers(); // 刷新列表
       return true;
     } catch (e) {
@@ -236,8 +220,8 @@ class ContainersProvider extends ChangeNotifier {
   /// 重启容器
   Future<bool> restartContainer(String containerId) async {
     try {
-      await _ensureApiClient();
-      await _containerApi!.restartContainer([containerId]);
+      await _ensureService();
+      await _service!.restartContainer(containerId);
       await loadContainers(); // 刷新列表
       return true;
     } catch (e) {
@@ -250,8 +234,8 @@ class ContainersProvider extends ChangeNotifier {
   /// 删除容器
   Future<bool> deleteContainer(String containerId) async {
     try {
-      await _ensureApiClient();
-      await _containerApi!.deleteContainer([containerId]);
+      await _ensureService();
+      await _service!.removeContainer(containerId);
       await loadContainers(); // 刷新列表
       return true;
     } catch (e) {
@@ -264,14 +248,14 @@ class ContainersProvider extends ChangeNotifier {
   /// 删除镜像
   Future<bool> deleteImage(String imageId) async {
     try {
-      await _ensureApiClient();
+      await _ensureService();
       final id = int.tryParse(imageId);
       if (id == null) {
         _data = _data.copyWith(error: '删除镜像失败: 无效镜像ID');
         notifyListeners();
         return false;
       }
-      await _containerApi!.removeImage(BatchDelete(ids: [id]));
+      await _service!.removeImage(id);
       await loadImages(); // 刷新列表
       return true;
     } catch (e) {

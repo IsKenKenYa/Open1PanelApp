@@ -3,9 +3,8 @@
 /// 管理应用商店和已安装应用数据
 
 import 'package:flutter/foundation.dart';
-import '../../api/v2/app_v2.dart';
-import '../../core/network/api_client_manager.dart';
 import '../../data/models/app_models.dart';
+import 'app_service.dart';
 
 /// 应用统计数据
 class AppStats {
@@ -61,20 +60,16 @@ class AppsData {
 
 /// 应用管理状态管理器
 class AppsProvider extends ChangeNotifier {
-  AppsProvider({AppV2Api? appApi}) : _appApi = appApi;
+  AppsProvider({AppService? service}) : _service = service;
 
-  AppV2Api? _appApi;
+  AppService? _service;
 
   AppsData _data = const AppsData();
 
   AppsData get data => _data;
 
-  /// 获取API客户端
-  Future<void> _ensureApiClient() async {
-    if (_appApi == null) {
-      final manager = ApiClientManager.instance;
-      _appApi = await manager.getAppApi();
-    }
+  Future<void> _ensureService() async {
+    _service ??= AppService();
   }
 
   /// 加载应用商店数据
@@ -83,17 +78,14 @@ class AppsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _ensureApiClient();
+      await _ensureService();
 
-      // 获取应用列表
-      final response = await _appApi!.searchApps(
+      final apps = await _service!.searchApps(
         AppSearchRequest(
           page: 1,
           pageSize: 100,
         ),
       );
-
-      final apps = response.items;
 
       _data = _data.copyWith(
         availableApps: apps,
@@ -115,10 +107,9 @@ class AppsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _ensureApiClient();
+      await _ensureService();
 
-      // 获取已安装应用列表
-      final apps = await _appApi!.getInstalledApps();
+      final apps = await _service!.getInstalledApps();
 
       // 计算统计
       int running = 0, stopped = 0;
@@ -156,7 +147,7 @@ class AppsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _ensureApiClient();
+      await _ensureService();
 
       // 并行加载应用商店和已安装应用
       await Future.wait([
@@ -175,8 +166,8 @@ class AppsProvider extends ChangeNotifier {
   /// 安装应用
   Future<bool> installApp(AppInstallCreateRequest request) async {
     try {
-      await _ensureApiClient();
-      await _appApi!.installApp(request);
+      await _ensureService();
+      await _service!.installApp(request);
       await loadInstalledApps(); // 刷新已安装列表
       return true;
     } catch (e) {
@@ -189,8 +180,8 @@ class AppsProvider extends ChangeNotifier {
   /// 卸载应用
   Future<bool> uninstallApp(String installId) async {
     try {
-      await _ensureApiClient();
-      await _appApi!.uninstallApp(installId);
+      await _ensureService();
+      await _service!.uninstallApp(installId);
       await loadInstalledApps(); // 刷新已安装列表
       return true;
     } catch (e) {
@@ -203,19 +194,14 @@ class AppsProvider extends ChangeNotifier {
   /// 启动应用
   Future<bool> startApp(String installId) async {
     try {
-      await _ensureApiClient();
+      await _ensureService();
       final id = int.tryParse(installId);
       if (id == null) {
         _data = _data.copyWith(error: '启动应用失败: 无效应用ID');
         notifyListeners();
         return false;
       }
-      await _appApi!.operateApp(
-        AppInstalledOperateRequest(
-          installId: id,
-          operate: 'start',
-        ),
-      );
+      await _service!.operateApp(id, 'start');
       await loadInstalledApps(); // 刷新列表
       return true;
     } catch (e) {
@@ -228,19 +214,14 @@ class AppsProvider extends ChangeNotifier {
   /// 停止应用
   Future<bool> stopApp(String installId) async {
     try {
-      await _ensureApiClient();
+      await _ensureService();
       final id = int.tryParse(installId);
       if (id == null) {
         _data = _data.copyWith(error: '停止应用失败: 无效应用ID');
         notifyListeners();
         return false;
       }
-      await _appApi!.operateApp(
-        AppInstalledOperateRequest(
-          installId: id,
-          operate: 'stop',
-        ),
-      );
+      await _service!.operateApp(id, 'stop');
       await loadInstalledApps(); // 刷新列表
       return true;
     } catch (e) {
@@ -253,19 +234,14 @@ class AppsProvider extends ChangeNotifier {
   /// 重启应用
   Future<bool> restartApp(String installId) async {
     try {
-      await _ensureApiClient();
+      await _ensureService();
       final id = int.tryParse(installId);
       if (id == null) {
         _data = _data.copyWith(error: '重启应用失败: 无效应用ID');
         notifyListeners();
         return false;
       }
-      await _appApi!.operateApp(
-        AppInstalledOperateRequest(
-          installId: id,
-          operate: 'restart',
-        ),
-      );
+      await _service!.operateApp(id, 'restart');
       await loadInstalledApps(); // 刷新列表
       return true;
     } catch (e) {
