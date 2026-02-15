@@ -992,6 +992,108 @@ abstract class AppLocalizations {
   /// **'No process data'**
   String get dashboardNoProcesses;
 
+  /// No description provided for @authLoginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1Panel Login'**
+  String get authLoginTitle;
+
+  /// No description provided for @authLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your credentials'**
+  String get authLoginSubtitle;
+
+  /// No description provided for @authUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get authUsername;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPassword;
+
+  /// No description provided for @authCaptcha.
+  ///
+  /// In en, this message translates to:
+  /// **'Captcha'**
+  String get authCaptcha;
+
+  /// No description provided for @authLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get authLogin;
+
+  /// No description provided for @authUsernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter username'**
+  String get authUsernameRequired;
+
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter password'**
+  String get authPasswordRequired;
+
+  /// No description provided for @authCaptchaRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter captcha'**
+  String get authCaptchaRequired;
+
+  /// No description provided for @authMfaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-Factor Authentication'**
+  String get authMfaTitle;
+
+  /// No description provided for @authMfaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the verification code from your authenticator app'**
+  String get authMfaDesc;
+
+  /// No description provided for @authMfaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'000000'**
+  String get authMfaHint;
+
+  /// No description provided for @authMfaVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get authMfaVerify;
+
+  /// No description provided for @authMfaCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get authMfaCancel;
+
+  /// No description provided for @authDemoMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode: Some features are limited'**
+  String get authDemoMode;
+
+  /// No description provided for @authLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed'**
+  String get authLoginFailed;
+
+  /// No description provided for @authLogoutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged out successfully'**
+  String get authLogoutSuccess;
+
   /// No description provided for @coachDone.
   ///
   /// In en, this message translates to:

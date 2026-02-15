@@ -485,6 +485,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardNoProcesses => 'No process data';
 
   @override
+  String get authLoginTitle => '1Panel Login';
+
+  @override
+  String get authLoginSubtitle => 'Please enter your credentials';
+
+  @override
+  String get authUsername => 'Username';
+
+  @override
+  String get authPassword => 'Password';
+
+  @override
+  String get authCaptcha => 'Captcha';
+
+  @override
+  String get authLogin => 'Login';
+
+  @override
+  String get authUsernameRequired => 'Please enter username';
+
+  @override
+  String get authPasswordRequired => 'Please enter password';
+
+  @override
+  String get authCaptchaRequired => 'Please enter captcha';
+
+  @override
+  String get authMfaTitle => 'Two-Factor Authentication';
+
+  @override
+  String get authMfaDesc =>
+      'Please enter the verification code from your authenticator app';
+
+  @override
+  String get authMfaHint => '000000';
+
+  @override
+  String get authMfaVerify => 'Verify';
+
+  @override
+  String get authMfaCancel => 'Back to login';
+
+  @override
+  String get authDemoMode => 'Demo mode: Some features are limited';
+
+  @override
+  String get authLoginFailed => 'Login failed';
+
+  @override
+  String get authLogoutSuccess => 'Logged out successfully';
+
+  @override
   String get coachDone => 'Got it';
 
   @override

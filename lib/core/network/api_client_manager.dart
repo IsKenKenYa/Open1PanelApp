@@ -1,6 +1,7 @@
 import 'dio_client.dart';
 import '../config/api_config.dart';
 import '../../api/v2/app_v2.dart';
+import '../../api/v2/auth_v2.dart';
 import '../../api/v2/container_v2.dart';
 import '../../api/v2/dashboard_v2.dart';
 import '../../api/v2/database_v2.dart';
@@ -117,6 +118,11 @@ class ApiClientManager {
   Future<UpdateV2Api> getUpdateApi() async {
     final client = await getCurrentClient();
     return UpdateV2Api(client);
+  }
+
+  Future<AuthV2Api> getAuthApi() async {
+    final client = await getCurrentClient();
+    return AuthV2Api(client);
   }
 
   /// 移除指定服务器的API客户端

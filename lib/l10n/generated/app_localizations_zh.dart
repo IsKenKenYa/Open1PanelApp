@@ -476,6 +476,57 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dashboardNoProcesses => '暂无进程数据';
 
   @override
+  String get authLoginTitle => '1Panel 登录';
+
+  @override
+  String get authLoginSubtitle => '请输入您的登录凭据';
+
+  @override
+  String get authUsername => '用户名';
+
+  @override
+  String get authPassword => '密码';
+
+  @override
+  String get authCaptcha => '验证码';
+
+  @override
+  String get authLogin => '登录';
+
+  @override
+  String get authUsernameRequired => '请输入用户名';
+
+  @override
+  String get authPasswordRequired => '请输入密码';
+
+  @override
+  String get authCaptchaRequired => '请输入验证码';
+
+  @override
+  String get authMfaTitle => '双因素认证';
+
+  @override
+  String get authMfaDesc => '请输入您的认证器应用中的验证码';
+
+  @override
+  String get authMfaHint => '000000';
+
+  @override
+  String get authMfaVerify => '验证';
+
+  @override
+  String get authMfaCancel => '返回登录';
+
+  @override
+  String get authDemoMode => '演示模式：部分功能受限';
+
+  @override
+  String get authLoginFailed => '登录失败';
+
+  @override
+  String get authLogoutSuccess => '已成功登出';
+
+  @override
   String get coachDone => '我知道了';
 
   @override

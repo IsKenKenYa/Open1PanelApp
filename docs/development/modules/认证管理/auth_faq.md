@@ -4,22 +4,24 @@
 
 ### Q1: 登录后Token存储在哪里？
 
-**A**: Token使用`flutter_secure_storage`插件进行加密存储，存储位置如下：
-- iOS: Keychain
-- Android: EncryptedSharedPreferences
-- Web: Encrypted localStorage
+**A**: Token使用`SharedPreferences`进行存储（当前实现），存储键值：
+- Token键: `auth_token`
+- 用户名键: `auth_username`
 
-**相关代码**: [auth_interceptor.dart](../../../lib/core/network/interceptors/auth_interceptor.dart)
+**安全建议**: 生产环境建议升级为`flutter_secure_storage`加密存储。
 
-### Q2: Token过期后如何自动刷新？
+**相关代码**: [auth_provider.dart](../../../lib/features/auth/auth_provider.dart)
 
-**A**: Token刷新流程如下：
-1. `AuthInterceptor`在请求前检查Token有效期
-2. 如果Token即将过期（剩余时间<5分钟），自动调用刷新接口
-3. 新Token替换旧Token并继续原请求
-4. 如果刷新失败，跳转登录页
+### Q2: Token过期后如何处理？
 
-**相关代码**: [auth_interceptor.dart](../../../lib/core/network/interceptors/auth_interceptor.dart#L20-45)
+**A**: 当前实现中Token过期处理：
+1. API请求返回401状态码
+2. 清除本地存储的Token
+3. 跳转回登录页面
+
+**未来规划**: 实现Token自动刷新机制。
+
+**相关代码**: [auth_provider.dart](../../../lib/features/auth/auth_provider.dart#L212-232)
 
 ### Q3: 如何启用MFA多因素认证？
 
@@ -30,6 +32,8 @@
 4. 输入6位数字MFA码完成认证
 
 **API端点**: `POST /core/auth/mfalogin`
+
+**相关代码**: [auth_provider.dart](../../../lib/features/auth/auth_provider.dart#L171-209)
 
 ### Q4: 演示模式有哪些限制？
 
@@ -56,15 +60,16 @@
 
 ### Q7: 如何实现"记住登录"功能？
 
-**A**: "记住登录"通过延长Token有效期实现：
-- 不勾选：Token有效期2小时
-- 勾选：Token有效期7天
-- 使用`flutter_secure_storage`持久化存储
+**A**: 当前实现通过SharedPreferences持久化存储：
+- Token存储在本地
+- 应用启动时检查Token有效性
+- 有效则自动登录，无效则显示登录页
 
 ### Q8: 支持哪些登录方式？
 
 **A**: 当前支持：
 - 用户名+密码
+- 用户名+密码+验证码
 - 用户名+密码+MFA
 - 未来计划支持：OAuth2.0、SAML、生物识别
 
@@ -141,21 +146,22 @@
 
 1. **使用Provider管理认证状态**
    ```dart
+   // 当前实现示例
    class AuthProvider extends ChangeNotifier {
-     bool _isLoggedIn = false;
-     User? _user;
+     AuthStatus _status = AuthStatus.initial;
+     String? _token;
      
-     bool get isLoggedIn => _isLoggedIn;
-     User? get user => _user;
+     AuthStatus get status => _status;
+     bool get isAuthenticated => _status == AuthStatus.authenticated;
      
-     Future<void> login(String username, String password) async {
+     Future<bool> login(String username, String password) async {
        // 登录逻辑
      }
    }
    ```
 
 2. **实现自动登录**
-   - 应用启动时检查本地Token
+   - 应用启动时调用`checkAuthStatus()`
    - Token有效则自动登录
    - Token无效则显示登录页
 
@@ -168,7 +174,7 @@
 
 1. **Token安全**
    - 使用HTTPS传输
-   - 加密本地存储
+   - 当前使用SharedPreferences存储，生产环境建议升级为加密存储
    - 定期刷新Token
    - 敏感操作二次验证
 
@@ -185,23 +191,22 @@
 ### 用户体验建议
 
 1. **登录流程**
-   - 简洁明了的表单
-   - 清晰的错误提示
-   - 加载状态反馈
-   - 记住登录状态
+   - ✅ 简洁明了的表单
+   - ✅ 清晰的错误提示
+   - ✅ 加载状态反馈
+   - ✅ 验证码支持
 
 2. **MFA体验**
-   - 清晰的MFA启用指引
-   - 友好的MFA码输入界面
-   - 备用恢复码提供
+   - ✅ 清晰的MFA输入界面
+   - ⏳ 备用恢复码提供（待实现）
 
 3. **错误处理**
-   - 友好的错误提示
-   - 明确的解决方案
-   - 快速重试机制
+   - ✅ 友好的错误提示
+   - ✅ 明确的解决方案
+   - ✅ 快速重试机制
 
 ---
 
-**文档版本**: 1.0  
-**最后更新**: 2026-02-14  
+**文档版本**: 2.0  
+**最后更新**: 2026-02-15  
 **维护者**: Open1Panel开发团队
