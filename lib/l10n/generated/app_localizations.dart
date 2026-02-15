@@ -968,6 +968,30 @@ abstract class AppLocalizations {
   /// **'Just now'**
   String get dashboardActivityJustNow;
 
+  /// No description provided for @dashboardTopProcessesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Monitor'**
+  String get dashboardTopProcessesTitle;
+
+  /// No description provided for @dashboardCpuTab.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU'**
+  String get dashboardCpuTab;
+
+  /// No description provided for @dashboardMemoryTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory'**
+  String get dashboardMemoryTab;
+
+  /// No description provided for @dashboardNoProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'No process data'**
+  String get dashboardNoProcesses;
+
   /// No description provided for @coachDone.
   ///
   /// In en, this message translates to:

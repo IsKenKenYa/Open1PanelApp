@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/i18n/l10n_x.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../data/models/dashboard_models.dart';
 
@@ -18,8 +19,10 @@ class TopProcessesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return AppCard(
-      title: 'Top Processes',
+      title: l10n.dashboardTopProcessesTitle,
       trailing: onRefresh != null
           ? IconButton(
               icon: const Icon(Icons.refresh),
@@ -31,9 +34,9 @@ class TopProcessesCard extends StatelessWidget {
         child: Column(
           children: [
             TabBar(
-              tabs: const [
-                Tab(text: 'CPU'),
-                Tab(text: 'Memory'),
+              tabs: [
+                Tab(text: l10n.dashboardCpuTab),
+                Tab(text: l10n.dashboardMemoryTab),
               ],
             ),
             const SizedBox(height: 12),
@@ -75,6 +78,7 @@ class _ProcessList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     if (isLoading) {
       return Center(
@@ -85,7 +89,7 @@ class _ProcessList extends StatelessWidget {
     if (processes.isEmpty) {
       return Center(
         child: Text(
-          'No processes',
+          l10n.dashboardNoProcesses,
           style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
       );

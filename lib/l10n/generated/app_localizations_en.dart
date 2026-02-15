@@ -473,6 +473,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardActivityJustNow => 'Just now';
 
   @override
+  String get dashboardTopProcessesTitle => 'Process Monitor';
+
+  @override
+  String get dashboardCpuTab => 'CPU';
+
+  @override
+  String get dashboardMemoryTab => 'Memory';
+
+  @override
+  String get dashboardNoProcesses => 'No process data';
+
+  @override
   String get coachDone => 'Got it';
 
   @override

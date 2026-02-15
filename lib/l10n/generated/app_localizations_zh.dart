@@ -464,6 +464,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dashboardActivityJustNow => '刚刚';
 
   @override
+  String get dashboardTopProcessesTitle => '进程监控';
+
+  @override
+  String get dashboardCpuTab => 'CPU';
+
+  @override
+  String get dashboardMemoryTab => '内存';
+
+  @override
+  String get dashboardNoProcesses => '暂无进程数据';
+
+  @override
   String get coachDone => '我知道了';
 
   @override

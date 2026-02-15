@@ -218,6 +218,10 @@
     }
   },
   "dashboardActivityJustNow": "Just now",
+  "dashboardTopProcessesTitle": "Process Monitor",
+  "dashboardCpuTab": "CPU",
+  "dashboardMemoryTab": "Memory",
+  "dashboardNoProcesses": "No process data",
   "coachDone": "Got it",
   "notFoundTitle": "Page not found",
   "notFoundDesc": "The requested page does not exist.",

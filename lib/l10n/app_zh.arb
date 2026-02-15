@@ -218,6 +218,10 @@
     }
   },
   "dashboardActivityJustNow": "刚刚",
+  "dashboardTopProcessesTitle": "进程监控",
+  "dashboardCpuTab": "CPU",
+  "dashboardMemoryTab": "内存",
+  "dashboardNoProcesses": "暂无进程数据",
   "coachDone": "我知道了",
   "notFoundTitle": "页面不存在",
   "notFoundDesc": "请求的页面不存在或已迁移。",
