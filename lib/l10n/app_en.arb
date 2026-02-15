@@ -71,6 +71,9 @@
     }
   },
   "serverFormTestHint": "Connection test can be added after client adaptation.",
+  "serverTestSuccess": "Connection successful",
+  "serverTestFailed": "Connection failed",
+  "serverTestTesting": "Testing connection...",
   "filesPageTitle": "Files",
   "filesPath": "Path",
   "filesRoot": "Root",

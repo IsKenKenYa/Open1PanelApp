@@ -205,6 +205,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Connection test can be added after client adaptation.';
 
   @override
+  String get serverTestSuccess => 'Connection successful';
+
+  @override
+  String get serverTestFailed => 'Connection failed';
+
+  @override
+  String get serverTestTesting => 'Testing connection...';
+
+  @override
   String get filesPageTitle => 'Files';
 
   @override

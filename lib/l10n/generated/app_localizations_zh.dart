@@ -203,6 +203,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get serverFormTestHint => '连接测试可在 client 适配后接入。';
 
   @override
+  String get serverTestSuccess => '连接成功';
+
+  @override
+  String get serverTestFailed => '连接失败';
+
+  @override
+  String get serverTestTesting => '正在测试连接...';
+
+  @override
   String get filesPageTitle => '文件';
 
   @override

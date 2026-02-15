@@ -71,6 +71,9 @@
     }
   },
   "serverFormTestHint": "连接测试可在 client 适配后接入。",
+  "serverTestSuccess": "连接成功",
+  "serverTestFailed": "连接失败",
+  "serverTestTesting": "正在测试连接...",
   "filesPageTitle": "文件",
   "filesPath": "路径",
   "filesRoot": "根目录",

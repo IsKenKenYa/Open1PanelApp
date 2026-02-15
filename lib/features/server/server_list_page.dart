@@ -32,7 +32,11 @@ class _ServerListPageState extends State<ServerListPage> {
   @override
   void initState() {
     super.initState();
-    _provider.load();
+    _provider.load().then((_) {
+      if (_provider.servers.isNotEmpty) {
+        _provider.loadMetrics();
+      }
+    });
     _provider.addListener(_onProviderUpdated);
   }
 

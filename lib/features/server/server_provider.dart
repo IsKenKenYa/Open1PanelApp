@@ -10,8 +10,11 @@ class ServerProvider extends ChangeNotifier {
   final ServerRepository _repository;
   bool _isLoading = false;
   List<ServerCardViewModel> _servers = const [];
+  Map<String, ServerMetricsSnapshot> _metrics = {};
+  bool _isLoadingMetrics = false;
 
   bool get isLoading => _isLoading;
+  bool get isLoadingMetrics => _isLoadingMetrics;
   List<ServerCardViewModel> get servers => _servers;
 
   Future<void> load() async {
@@ -22,6 +25,29 @@ class ServerProvider extends ChangeNotifier {
       _servers = await _repository.loadServerCards();
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadMetrics() async {
+    if (_isLoadingMetrics) return;
+    
+    _isLoadingMetrics = true;
+    notifyListeners();
+
+    try {
+      for (final server in _servers) {
+        final metrics = await _repository.loadServerMetrics(server.config.id);
+        _metrics[server.config.id] = metrics;
+      }
+      
+      _servers = _servers.map((s) => ServerCardViewModel(
+        config: s.config,
+        isCurrent: s.isCurrent,
+        metrics: _metrics[s.config.id] ?? const ServerMetricsSnapshot(),
+      )).toList();
+    } finally {
+      _isLoadingMetrics = false;
       notifyListeners();
     }
   }

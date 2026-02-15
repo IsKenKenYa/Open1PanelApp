@@ -482,6 +482,24 @@ abstract class AppLocalizations {
   /// **'Connection test can be added after client adaptation.'**
   String get serverFormTestHint;
 
+  /// No description provided for @serverTestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection successful'**
+  String get serverTestSuccess;
+
+  /// No description provided for @serverTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed'**
+  String get serverTestFailed;
+
+  /// No description provided for @serverTestTesting.
+  ///
+  /// In en, this message translates to:
+  /// **'Testing connection...'**
+  String get serverTestTesting;
+
   /// No description provided for @filesPageTitle.
   ///
   /// In en, this message translates to:

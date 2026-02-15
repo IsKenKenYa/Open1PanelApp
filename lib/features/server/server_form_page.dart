@@ -3,6 +3,7 @@ import 'package:onepanelapp_app/core/config/api_config.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/core/theme/app_design_tokens.dart';
 import 'package:onepanelapp_app/features/server/server_repository.dart';
+import 'server_connection_service.dart';
 
 class ServerFormPage extends StatefulWidget {
   const ServerFormPage({super.key});
@@ -17,8 +18,11 @@ class _ServerFormPageState extends State<ServerFormPage> {
   final _urlController = TextEditingController();
   final _apiKeyController = TextEditingController();
   final _repository = const ServerRepository();
+  final _connectionService = ServerConnectionService();
 
   bool _saving = false;
+  bool _testing = false;
+  ServerConnectionResult? _testResult;
 
   @override
   void dispose() {
@@ -26,6 +30,58 @@ class _ServerFormPageState extends State<ServerFormPage> {
     _urlController.dispose();
     _apiKeyController.dispose();
     super.dispose();
+  }
+
+  Future<void> _testConnection() async {
+    if (_urlController.text.trim().isEmpty ||
+        _apiKeyController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.serverFormRequired)),
+      );
+      return;
+    }
+
+    setState(() {
+      _testing = true;
+      _testResult = null;
+    });
+
+    try {
+      final result = await _connectionService.testConnection(
+        serverUrl: _urlController.text.trim(),
+        apiKey: _apiKeyController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _testResult = result;
+      });
+
+      if (result.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${context.l10n.serverTestSuccess} (${result.responseTime?.inMilliseconds}ms)',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${context.l10n.serverTestFailed}: ${result.errorMessage}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _testing = false;
+        });
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -121,14 +177,85 @@ class _ServerFormPageState extends State<ServerFormPage> {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.serverFormTestHint)),
-                    );
-                  },
-                  child: Text(l10n.serverFormTest),
+                  onPressed: _testing ? null : _testConnection,
+                  child: _testing
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(l10n.serverTestTesting),
+                          ],
+                        )
+                      : Text(l10n.serverFormTest),
                 ),
               ),
+              if (_testResult != null) ...[
+                const SizedBox(height: AppDesignTokens.spacingMd),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _testResult!.success
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.red.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _testResult!.success
+                          ? Colors.green.withValues(alpha: 0.3)
+                          : Colors.red.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            _testResult!.success
+                                ? Icons.check_circle
+                                : Icons.error,
+                            color: _testResult!.success
+                                ? Colors.green
+                                : Colors.red,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _testResult!.success
+                                ? l10n.serverTestSuccess
+                                : l10n.serverTestFailed,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: _testResult!.success
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_testResult!.osInfo != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'OS: ${_testResult!.osInfo!['os'] ?? 'Unknown'}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                      if (_testResult!.errorMessage != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _testResult!.errorMessage!,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: AppDesignTokens.spacingMd),
               SizedBox(
                 width: double.infinity,
