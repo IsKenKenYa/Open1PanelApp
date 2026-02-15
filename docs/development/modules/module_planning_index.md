@@ -10,7 +10,9 @@
 
 | 模块 | 索引 | 架构设计 | 开发计划 | FAQ | 状态 |
 |------|------|---------|---------|-----|------|
+| **仪表盘** | [索引](仪表盘/dashboard_module_index.md) | [架构](仪表盘/dashboard_module_architecture.md) | [计划](仪表盘/dashboard_plan.md) | [FAQ](仪表盘/dashboard_faq.md) | ✅ 完成 |
 | **认证管理** | [索引](认证管理/auth_module_index.md) | [架构](认证管理/auth_module_architecture.md) | [计划](认证管理/auth_plan.md) | [FAQ](认证管理/auth_faq.md) | ✅ 完成 |
+| **系统设置** | [索引](系统设置/setting_module_index.md) | [架构](系统设置/setting_module_architecture.md) | [计划](系统设置/setting_plan.md) | [FAQ](系统设置/setting_faq.md) | ✅ 完成 |
 | **文件管理** | [索引](文件管理/file_module_index.md) | [架构](文件管理/file_module_architecture.md) | [计划](文件管理/file_plan.md) | [FAQ](文件管理/file_faq.md) | ✅ 完成 |
 | **应用管理** | [索引](应用管理/app_module_index.md) | [架构](应用管理/app_module_architecture.md) | [计划](应用管理/app_plan.md) | [FAQ](应用管理/app_faq.md) | ✅ 完成 |
 | **容器管理** | [索引](容器管理/container_module_index.md) | [架构](容器管理/container_module_architecture.md) | [计划](容器管理/container_plan.md) | [FAQ](容器管理/container_faq.md) | ✅ 完成 |
@@ -24,6 +26,9 @@
 
 | 模块 | 索引 | 架构设计 | 开发计划 | FAQ | 状态 |
 |------|------|---------|---------|-----|------|
+| **命令管理** | [索引](命令管理/command_module_index.md) | [架构](命令管理/command_module_architecture.md) | [计划](命令管理/command_plan.md) | [FAQ](命令管理/command_faq.md) | ✅ 完成 |
+| **进程管理** | [索引](进程管理/process_module_index.md) | [架构](进程管理/process_module_architecture.md) | [计划](进程管理/process_plan.md) | [FAQ](进程管理/process_faq.md) | ✅ 完成 |
+| **容器编排** | [索引](容器编排/container_orchestration_module_index.md) | [架构](容器编排/container_orchestration_module_architecture.md) | [计划](容器编排/container_orchestration_plan.md) | [FAQ](容器编排/container_orchestration_faq.md) | ✅ 完成 |
 | **SSH管理** | [索引](SSH管理/ssh_module_index.md) | [架构](SSH管理/ssh_module_architecture.md) | [计划](SSH管理/ssh_plan.md) | [FAQ](SSH管理/ssh_faq.md) | ✅ 完成 |
 | **防火墙管理** | [索引](防火墙管理/firewall_module_index.md) | [架构](防火墙管理/firewall_module_architecture.md) | [计划](防火墙管理/firewall_plan.md) | [FAQ](防火墙管理/firewall_faq.md) | ✅ 完成 |
 | **计划任务管理** | [索引](计划任务管理/cronjob_module_index.md) | [架构](计划任务管理/cronjob_module_architecture.md) | [计划](计划任务管理/cronjob_plan.md) | [FAQ](计划任务管理/cronjob_faq.md) | ✅ 完成 |
@@ -31,6 +36,10 @@
 | **日志管理** | [索引](日志管理/log_module_index.md) | [架构](日志管理/log_module_architecture.md) | [计划](日志管理/log_plan.md) | [FAQ](日志管理/log_faq.md) | ✅ 完成 |
 | **AI管理** | [索引](AI管理/ai_module_index.md) | [架构](AI管理/ai_module_architecture.md) | [计划](AI管理/ai_plan.md) | [FAQ](AI管理/ai_faq.md) | ✅ 完成 |
 | **主机管理** | [索引](主机管理/host_module_index.md) | [架构](主机管理/host_module_architecture.md) | [计划](主机管理/host_plan.md) | [FAQ](主机管理/host_faq.md) | ✅ 完成 |
+| **网站SSL证书** | [索引](网站SSL证书/website_ssl_module_index.md) | [架构](网站SSL证书/website_ssl_module_architecture.md) | [计划](网站SSL证书/website_ssl_plan.md) | [FAQ](网站SSL证书/website_ssl_faq.md) | ✅ 完成 |
+| **网站域名管理** | [索引](网站域名管理/website_domain_module_index.md) | [架构](网站域名管理/website_domain_module_architecture.md) | [计划](网站域名管理/website_domain_plan.md) | [FAQ](网站域名管理/website_domain_faq.md) | ✅ 完成 |
+| **网站配置管理** | [索引](网站配置管理/website_config_module_index.md) | [架构](网站配置管理/website_config_module_architecture.md) | [计划](网站配置管理/website_config_plan.md) | [FAQ](网站配置管理/website_config_faq.md) | ✅ 完成 |
+| **任务日志** | [索引](任务日志/tasklog_module_index.md) | [架构](任务日志/tasklog_module_architecture.md) | [计划](任务日志/tasklog_plan.md) | [FAQ](任务日志/tasklog_faq.md) | ✅ 完成 |
 
 ### P2 工具类模块
 
@@ -136,6 +145,6 @@
 
 ---
 
-**文档版本**: 1.3
+**文档版本**: 1.6
 **最后更新**: 2026-02-14
 **维护者**: Open1Panel开发团队
