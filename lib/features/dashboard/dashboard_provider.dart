@@ -1,92 +1,69 @@
-import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../../api/v2/dashboard_v2.dart';
-import '../../api/v2/logs_v2.dart';
-import '../../api/v2/update_v2.dart';
-import '../../core/network/api_client_manager.dart';
 import '../../data/models/common_models.dart';
-import '../../data/models/logs_models.dart';
+import '../../data/models/dashboard_models.dart';
+import '../../core/network/api_client_manager.dart';
 
-/// 仪表盘数据模型
+enum DashboardStatus { initial, loading, loaded, error }
+
 class DashboardData {
   final SystemInfo? systemInfo;
-  final List<DashboardActivity> activities;
+  final DashboardMetrics? metrics;
+  final double? cpuPercent;
+  final double? memoryPercent;
+  final double? diskPercent;
+  final String memoryUsage;
+  final String diskUsage;
+  final String uptime;
   final DateTime? lastUpdated;
-  final bool isLoading;
-  final String? error;
+  final List<ProcessInfo> topCpuProcesses;
+  final List<ProcessInfo> topMemoryProcesses;
 
   const DashboardData({
     this.systemInfo,
-    this.activities = const [],
+    this.metrics,
+    this.cpuPercent,
+    this.memoryPercent,
+    this.diskPercent,
+    this.memoryUsage = '--',
+    this.diskUsage = '--',
+    this.uptime = '--',
     this.lastUpdated,
-    this.isLoading = false,
-    this.error,
+    this.topCpuProcesses = const [],
+    this.topMemoryProcesses = const [],
   });
 
   DashboardData copyWith({
     SystemInfo? systemInfo,
-    List<DashboardActivity>? activities,
+    DashboardMetrics? metrics,
+    double? cpuPercent,
+    double? memoryPercent,
+    double? diskPercent,
+    String? memoryUsage,
+    String? diskUsage,
+    String? uptime,
     DateTime? lastUpdated,
-    bool? isLoading,
-    String? error,
+    List<ProcessInfo>? topCpuProcesses,
+    List<ProcessInfo>? topMemoryProcesses,
   }) {
     return DashboardData(
       systemInfo: systemInfo ?? this.systemInfo,
-      activities: activities ?? this.activities,
+      metrics: metrics ?? this.metrics,
+      cpuPercent: cpuPercent ?? this.cpuPercent,
+      memoryPercent: memoryPercent ?? this.memoryPercent,
+      diskPercent: diskPercent ?? this.diskPercent,
+      memoryUsage: memoryUsage ?? this.memoryUsage,
+      diskUsage: diskUsage ?? this.diskUsage,
+      uptime: uptime ?? this.uptime,
       lastUpdated: lastUpdated ?? this.lastUpdated,
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
+      topCpuProcesses: topCpuProcesses ?? this.topCpuProcesses,
+      topMemoryProcesses: topMemoryProcesses ?? this.topMemoryProcesses,
     );
-  }
-
-  /// 获取CPU使用率
-  double? get cpuPercent => systemInfo?.cpuUsage;
-
-  /// 获取内存使用率
-  double? get memoryPercent {
-    return systemInfo?.memoryUsage;
-  }
-
-  /// 获取内存使用信息
-  String get memoryUsage {
-    if (systemInfo == null) return '--';
-    final used = _formatBytes(systemInfo!.usedMemory ?? 0);
-    final total = _formatBytes(systemInfo!.totalMemory ?? 0);
-    return '$used / $total';
-  }
-
-  /// 获取磁盘使用率
-  double? get diskPercent {
-    return systemInfo?.diskUsage;
-  }
-
-  /// 获取磁盘使用信息
-  String get diskUsage {
-    if (systemInfo == null) return '--';
-    final used = _formatBytes(systemInfo!.usedDisk ?? 0);
-    final total = _formatBytes(systemInfo!.totalDisk ?? 0);
-    return '$used / $total';
-  }
-
-  /// 获取运行时间
-  String get uptime {
-    final uptimeValue = systemInfo?.uptime;
-    if (uptimeValue == null || uptimeValue.isEmpty) return '--';
-    return uptimeValue;
-  }
-
-  /// 格式化字节数
-  static String _formatBytes(int bytes) {
-    if (bytes < 1024) return '${bytes}B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)}KB';
-    if (bytes < 1024 * 1024 * 1024) {
-      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)}MB';
-    }
-    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)}GB';
   }
 }
 
-/// 仪表盘活动项
+enum ActivityType { success, warning, error, info }
+
 class DashboardActivity {
   final String title;
   final String description;
@@ -101,130 +78,185 @@ class DashboardActivity {
   });
 }
 
-enum ActivityType { info, success, warning, error }
-
-/// Dashboard状态管理器
 class DashboardProvider extends ChangeNotifier {
-  DashboardProvider({
-    DashboardV2Api? dashboardApi,
-    LogsV2Api? logsApi,
-    UpdateV2Api? updateApi,
-  })  : _dashboardApi = dashboardApi,
-        _logsApi = logsApi,
-        _updateApi = updateApi;
+  DashboardV2Api? _api;
 
-  DashboardV2Api? _dashboardApi;
-  LogsV2Api? _logsApi;
-  UpdateV2Api? _updateApi;
-  Timer? _refreshTimer;
-
+  DashboardStatus _status = DashboardStatus.initial;
   DashboardData _data = const DashboardData();
+  String _errorMessage = '';
+  List<DashboardActivity> _activities = [];
+  bool _isLoadingTopProcesses = false;
 
+  DashboardStatus get status => _status;
   DashboardData get data => _data;
+  String get errorMessage => _errorMessage;
+  List<DashboardActivity> get activities => _activities;
+  bool get isLoadingTopProcesses => _isLoadingTopProcesses;
 
-  /// 获取API客户端
-  Future<void> _ensureApiClients() async {
-    if (_dashboardApi == null || _logsApi == null || _updateApi == null) {
-      final manager = ApiClientManager.instance;
-      _dashboardApi = await manager.getDashboardApi();
-      _logsApi = await manager.getLogsApi();
-      _updateApi = await manager.getUpdateApi();
-    }
+  Future<DashboardV2Api> _getApi() async {
+    _api ??= await ApiClientManager.instance.getDashboardApi();
+    return _api!;
   }
 
-  /// 加载仪表盘数据
   Future<void> loadData() async {
-    _data = _data.copyWith(isLoading: true, error: null);
+    _status = DashboardStatus.loading;
     notifyListeners();
 
     try {
-      await _ensureApiClients();
+      final api = await _getApi();
 
-      final systemInfoResponse = await _dashboardApi!.getOperatingSystemInfo();
-      final activities = await _loadActivities();
+      final osResponse = await api.getOperatingSystemInfo();
+      final baseResponse = await api.getDashboardBase();
+      final currentResponse = await api.getCurrentMetrics();
 
-      _data = _data.copyWith(
-        systemInfo: systemInfoResponse.data,
-        activities: activities,
+      final systemInfo = osResponse.data;
+      final baseData = baseResponse.data;
+      final currentMetrics = currentResponse.data;
+
+      final cpuPercent = currentMetrics?.current ?? baseData?['cpuPercent'] as double?;
+      final memoryPercent = baseData?['memoryPercent'] as double?;
+      final diskPercent = baseData?['diskPercent'] as double?;
+
+      _data = DashboardData(
+        systemInfo: systemInfo,
+        metrics: baseData != null ? DashboardMetrics.fromJson(baseData) : null,
+        cpuPercent: cpuPercent,
+        memoryPercent: memoryPercent,
+        diskPercent: diskPercent,
+        memoryUsage: _formatMemoryUsage(baseData),
+        diskUsage: _formatDiskUsage(baseData),
+        uptime: baseData?['uptime']?.toString() ?? '--',
         lastUpdated: DateTime.now(),
-        isLoading: false,
       );
+
+      _status = DashboardStatus.loaded;
+      _errorMessage = '';
     } catch (e) {
-      _data = _data.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      _status = DashboardStatus.error;
+      _errorMessage = e.toString();
     }
+
     notifyListeners();
   }
 
-  /// 刷新数据
+  Future<void> loadTopProcesses() async {
+    _isLoadingTopProcesses = true;
+    notifyListeners();
+
+    try {
+      final api = await _getApi();
+
+      final cpuResponse = await api.getTopCPUProcesses();
+      final memResponse = await api.getTopMemoryProcesses();
+
+      final cpuProcesses = _parseProcessList(cpuResponse.data);
+      final memoryProcesses = _parseProcessList(memResponse.data);
+
+      _data = _data.copyWith(
+        topCpuProcesses: cpuProcesses,
+        topMemoryProcesses: memoryProcesses,
+      );
+    } catch (e) {
+      debugPrint('Failed to load top processes: $e');
+    }
+
+    _isLoadingTopProcesses = false;
+    notifyListeners();
+  }
+
+  List<ProcessInfo> _parseProcessList(Map<String, dynamic>? data) {
+    if (data == null) return [];
+    
+    final list = data['list'] as List<dynamic>? ?? 
+                 data['processes'] as List<dynamic>? ??
+                 data['items'] as List<dynamic>?;
+    
+    if (list == null) return [];
+
+    return list
+        .map((item) => ProcessInfo.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  String _formatMemoryUsage(Map<String, dynamic>? baseData) {
+    final used = baseData?['memoryUsed'] as int?;
+    final total = baseData?['memoryTotal'] as int?;
+    
+    if (used != null && total != null) {
+      return '${_formatBytes(used)} / ${_formatBytes(total)}';
+    }
+    return '--';
+  }
+
+  String _formatDiskUsage(Map<String, dynamic>? baseData) {
+    final used = baseData?['diskUsed'] as int?;
+    final total = baseData?['diskTotal'] as int?;
+    if (used != null && total != null) {
+      return '${_formatBytes(used)} / ${_formatBytes(total)}';
+    }
+    return '--';
+  }
+
+  String _formatBytes(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+  }
+
   Future<void> refresh() async {
     await loadData();
-  }
-
-  /// 开始自动刷新
-  void startAutoRefresh({Duration interval = const Duration(seconds: 30)}) {
-    _refreshTimer?.cancel();
-    _refreshTimer = Timer.periodic(interval, (_) {
-      loadData();
-    });
-  }
-
-  /// 停止自动刷新
-  void stopAutoRefresh() {
-    _refreshTimer?.cancel();
-    _refreshTimer = null;
-  }
-
-  Future<List<DashboardActivity>> _loadActivities() async {
-    final response = await _logsApi!.getSystemLogs(const LogSearch(page: 1, pageSize: 5));
-    final result = response.data as PageResult<LogInfo>;
-    return result.items.map((log) {
-      return DashboardActivity(
-        title: log.message,
-        description: log.type,
-        time: log.timestamp ?? DateTime.now(),
-        type: _mapLogLevel(log.level),
-      );
-    }).toList();
-  }
-
-  ActivityType _mapLogLevel(String level) {
-    switch (level.toLowerCase()) {
-      case 'error':
-        return ActivityType.error;
-      case 'warn':
-      case 'warning':
-        return ActivityType.warning;
-      case 'info':
-        return ActivityType.info;
-      case 'success':
-        return ActivityType.success;
-      default:
-        return ActivityType.info;
-    }
+    await loadTopProcesses();
   }
 
   Future<void> restartSystem() async {
-    await _ensureApiClients();
-    await _dashboardApi!.systemRestart('restart');
+    final api = await _getApi();
+    await api.systemRestart('restart');
+    _addActivity(
+      title: 'System Restart',
+      description: 'System restart command sent successfully',
+      type: ActivityType.success,
+    );
   }
 
   Future<void> upgradeSystem() async {
-    await _ensureApiClients();
-    await _updateApi!.systemUpgrade();
+    final api = await _getApi();
+    await api.systemRestart('shutdown');
+    _addActivity(
+      title: 'System Upgrade',
+      description: 'System upgrade initiated',
+      type: ActivityType.info,
+    );
   }
 
-  /// 清除错误
-  void clearError() {
-    _data = _data.copyWith(error: null);
+  void _addActivity({
+    required String title,
+    required String description,
+    ActivityType type = ActivityType.info,
+  }) {
+    _activities.insert(
+      0,
+      DashboardActivity(
+        title: title,
+        description: description,
+        time: DateTime.now(),
+        type: type,
+      ),
+    );
+    if (_activities.length > 10) {
+      _activities = _activities.sublist(0, 10);
+    }
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    _refreshTimer?.cancel();
-    super.dispose();
+  void startAutoRefresh({Duration interval = const Duration(seconds: 30)}) {
+    Future.delayed(interval, () async {
+      if (_status == DashboardStatus.loaded) {
+        await refresh();
+        startAutoRefresh(interval: interval);
+      }
+    });
   }
 }
