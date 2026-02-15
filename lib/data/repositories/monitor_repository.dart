@@ -1,6 +1,39 @@
 import 'package:flutter/foundation.dart';
 import '../../api/v2/monitor_v2.dart';
 
+/// 磁盘数据
+class DiskData {
+  final String path;
+  final String type;
+  final String device;
+  final int total;
+  final int used;
+  final int free;
+  final double usedPercent;
+
+  const DiskData({
+    required this.path,
+    required this.type,
+    required this.device,
+    required this.total,
+    required this.used,
+    required this.free,
+    required this.usedPercent,
+  });
+
+  factory DiskData.fromJson(Map<String, dynamic> json) {
+    return DiskData(
+      path: json['path'] as String? ?? '/',
+      type: json['type'] as String? ?? '',
+      device: json['device'] as String? ?? '',
+      total: json['total'] as int? ?? 0,
+      used: json['used'] as int? ?? 0,
+      free: json['free'] as int? ?? 0,
+      usedPercent: (json['usedPercent'] as num?)?.toDouble() ?? 0,
+    );
+  }
+}
+
 /// 监控指标快照
 /// 
 /// 从API响应中提取的最新监控数据
@@ -11,6 +44,10 @@ class MonitorMetricsSnapshot {
   final double? load1;
   final double? load5;
   final double? load15;
+  final int? memoryUsed;
+  final int? memoryTotal;
+  final List<DiskData> diskData;
+  final int? uptime;
   final DateTime? timestamp;
 
   const MonitorMetricsSnapshot({
@@ -20,6 +57,10 @@ class MonitorMetricsSnapshot {
     this.load1,
     this.load5,
     this.load15,
+    this.memoryUsed,
+    this.memoryTotal,
+    this.diskData = const [],
+    this.uptime,
     this.timestamp,
   });
 
@@ -235,6 +276,10 @@ class MonitorRepository {
     double? load1;
     double? load5;
     double? load15;
+    int? memoryUsed;
+    int? memoryTotal;
+    List<DiskData> diskDataList = [];
+    int? uptime;
 
     for (final item in dataList) {
       if (item is! Map<String, dynamic>) continue;
@@ -257,7 +302,21 @@ class MonitorRepository {
           load1 = (lastValue['cpuLoad1'] as num?)?.toDouble();
           load5 = (lastValue['cpuLoad5'] as num?)?.toDouble();
           load15 = (lastValue['cpuLoad15'] as num?)?.toDouble();
-          debugPrint('[MonitorRepository] base: cpu=$cpuPercent, memory=$memoryPercent, load1=$load1');
+          memoryUsed = lastValue['memoryUsed'] as int?;
+          memoryTotal = lastValue['memoryTotal'] as int?;
+          uptime = lastValue['uptime'] as int?;
+          
+          // 解析磁盘数据
+          final diskDataRaw = lastValue['diskData'] as List?;
+          if (diskDataRaw != null) {
+            diskDataList = diskDataRaw
+                .map((d) => DiskData.fromJson(d as Map<String, dynamic>))
+                .toList();
+            if (diskDataList.isNotEmpty) {
+              diskPercent = diskDataList.first.usedPercent;
+            }
+          }
+          debugPrint('[MonitorRepository] base: cpu=$cpuPercent, memory=$memoryPercent, load1=$load1, disk=$diskPercent');
           break;
         case 'cpu':
           cpuPercent ??= (lastValue['cpu'] as num?)?.toDouble();
@@ -285,6 +344,10 @@ class MonitorRepository {
       load1: load1,
       load5: load5,
       load15: load15,
+      memoryUsed: memoryUsed,
+      memoryTotal: memoryTotal,
+      diskData: diskDataList,
+      uptime: uptime,
       timestamp: timestamp,
     );
   }

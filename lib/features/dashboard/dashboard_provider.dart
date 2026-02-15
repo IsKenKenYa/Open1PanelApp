@@ -199,6 +199,7 @@ class DashboardProvider extends ChangeNotifier {
   // 自动刷新设置
   Duration _refreshInterval = const Duration(seconds: 5);
   bool _autoRefreshEnabled = false;
+  bool _isRefreshing = false;
 
   DashboardStatus get status => _status;
   DashboardData get data => _data;
@@ -209,6 +210,7 @@ class DashboardProvider extends ChangeNotifier {
   bool get isLoadingQuickOptions => _isLoadingQuickOptions;
   Duration get refreshInterval => _refreshInterval;
   bool get autoRefreshEnabled => _autoRefreshEnabled;
+  bool get isRefreshing => _isRefreshing;
 
   /// 设置刷新间隔
   void setRefreshInterval(Duration interval) {
@@ -234,7 +236,7 @@ class DashboardProvider extends ChangeNotifier {
   void _startAutoRefresh() {
     _stopAutoRefresh();
     _refreshTimer = Timer.periodic(_refreshInterval, (_) {
-      loadData();
+      loadData(silent: true);
     });
   }
 
@@ -248,9 +250,15 @@ class DashboardProvider extends ChangeNotifier {
     return _api!;
   }
 
-  Future<void> loadData() async {
-    _status = DashboardStatus.loading;
-    notifyListeners();
+  Future<void> loadData({bool silent = false}) async {
+    // 静默刷新时不显示loading状态
+    if (!silent) {
+      _status = DashboardStatus.loading;
+      notifyListeners();
+    } else {
+      _isRefreshing = true;
+      notifyListeners();
+    }
 
     try {
       final api = await _getApi();
@@ -268,6 +276,12 @@ class DashboardProvider extends ChangeNotifier {
       
       // 主机名 - 从 baseData 获取
       final hostname = baseData?['hostname'] as String?;
+      
+      // 操作系统信息
+      final os = baseData?['os'] as String?;
+      final platform = baseData?['platform'] as String?;
+      final platformVersion = baseData?['platformVersion'] as String?;
+      final kernelVersion = baseData?['kernelVersion'] as String?;
       
       // CPU百分比 - 从 currentInfo.cpuUsedPercent 获取
       final cpuPercent = (currentInfo?['cpuUsedPercent'] as num?)?.toDouble();
@@ -302,12 +316,21 @@ class DashboardProvider extends ChangeNotifier {
       final memoryUsed = currentInfo?['memoryUsed'] as int?;
       final memoryTotal = currentInfo?['memoryTotal'] as int?;
 
-      debugPrint('[DashboardProvider] hostname: $hostname');
+      // 创建 SystemInfo 对象
+      final systemInfo = SystemInfo(
+        hostname: hostname,
+        os: os,
+        platform: platform,
+        platformVersion: platformVersion,
+        kernelVersion: kernelVersion,
+        cpuCores: baseData?['cpuCores'] as int?,
+      );
+
+      debugPrint('[DashboardProvider] hostname: $hostname, os: $os, platform: $platform');
       debugPrint('[DashboardProvider] cpuPercent: $cpuPercent, memoryPercent: $memoryPercent, diskPercent: $diskPercent');
-      debugPrint('[DashboardProvider] load1: $load1, load5: $load5, load15: $load15');
 
       _data = DashboardData(
-        systemInfo: null,
+        systemInfo: systemInfo,
         metrics: baseData != null ? DashboardMetrics.fromJson(baseData) : null,
         cpuPercent: cpuPercent,
         memoryPercent: memoryPercent,
@@ -324,11 +347,16 @@ class DashboardProvider extends ChangeNotifier {
 
       _status = DashboardStatus.loaded;
       _errorMessage = '';
+      _isRefreshing = false;
+      
+      // 自动加载进程数据
+      loadTopProcesses();
     } catch (e, stack) {
       debugPrint('[DashboardProvider] Error: $e');
       debugPrint('[DashboardProvider] Stack: $stack');
       _status = DashboardStatus.error;
       _errorMessage = e.toString();
+      _isRefreshing = false;
     }
 
     notifyListeners();
@@ -572,7 +600,7 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Future<void> refresh() async {
-    await loadData();
+    await loadData(silent: true);
     await loadTopProcesses();
   }
 

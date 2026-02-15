@@ -16,7 +16,10 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DashboardProvider>().loadData();
+      final provider = context.read<DashboardProvider>();
+      provider.loadData();
+      // 默认启用自动刷新
+      provider.toggleAutoRefresh(true);
     });
   }
 
@@ -28,8 +31,39 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         title: Text(l10n.dashboardTitle),
         actions: [
+          // 自动刷新设置
+          PopupMenuButton<Duration>(
+            icon: const Icon(Icons.timer),
+            tooltip: '刷新间隔',
+            onSelected: (duration) {
+              context.read<DashboardProvider>().setRefreshInterval(duration);
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: Duration(seconds: 3),
+                child: Text('3秒'),
+              ),
+              const PopupMenuItem(
+                value: Duration(seconds: 5),
+                child: Text('5秒 (默认)'),
+              ),
+              const PopupMenuItem(
+                value: Duration(seconds: 10),
+                child: Text('10秒'),
+              ),
+              const PopupMenuItem(
+                value: Duration(seconds: 30),
+                child: Text('30秒'),
+              ),
+              const PopupMenuItem(
+                value: Duration(minutes: 1),
+                child: Text('1分钟'),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: '刷新',
             onPressed: () => context.read<DashboardProvider>().refresh(),
           ),
         ],

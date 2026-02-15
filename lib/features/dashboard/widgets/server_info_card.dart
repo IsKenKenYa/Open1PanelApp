@@ -67,10 +67,18 @@ class ServerInfoCard extends StatelessWidget {
     final os = info.os ?? '--';
     final platform = info.platform ?? '';
     final platformVersion = info.platformVersion ?? '';
-    if (platform.isNotEmpty && platformVersion.isNotEmpty) {
-      return '$os $platform $platformVersion';
+    final kernelVersion = info.kernelVersion ?? '';
+    
+    // 格式: Linux Ubuntu 24.04 (kernel: 6.8.0-84-generic)
+    final parts = <String>[os];
+    if (platform.isNotEmpty) parts.add(platform);
+    if (platformVersion.isNotEmpty) parts.add(platformVersion);
+    
+    var result = parts.join(' ');
+    if (kernelVersion.isNotEmpty) {
+      result += ' ($kernelVersion)';
     }
-    return os;
+    return result;
   }
 
   String _formatTime(DateTime time) {
@@ -78,15 +86,7 @@ class ServerInfoCard extends StatelessWidget {
   }
 
   String _formatUptime(BuildContext context, String uptime) {
-    if (uptime == '--') return uptime;
-    final seconds = int.tryParse(uptime);
-    if (seconds == null) return uptime;
-    final days = seconds ~/ 86400;
-    final hours = (seconds % 86400) ~/ 3600;
-    if (days > 0) {
-      return context.l10n.dashboardUptimeDaysHours(days, hours);
-    }
-    return context.l10n.dashboardUptimeHours(hours);
+    return uptime;
   }
 }
 
