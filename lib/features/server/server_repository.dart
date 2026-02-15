@@ -68,22 +68,27 @@ class ServerRepository {
                       case 'base':
                         cpuPercent = (lastValue['cpu'] as num?)?.toDouble();
                         memoryPercent = (lastValue['memory'] as num?)?.toDouble();
-                        diskPercent = (lastValue['disk'] as num?)?.toDouble();
-                        final load1 = lastValue['load1'] as num?;
-                        load = load1?.toDouble();
+                        load = (lastValue['cpuLoad1'] as num?)?.toDouble();
                         break;
                       case 'cpu':
-                        cpuPercent = (lastValue['cpu'] as num?)?.toDouble();
+                        if (cpuPercent == null) {
+                          cpuPercent = (lastValue['cpu'] as num?)?.toDouble();
+                        }
                         break;
                       case 'memory':
-                        memoryPercent = (lastValue['memory'] as num?)?.toDouble();
-                        break;
-                      case 'disk':
-                        diskPercent = (lastValue['disk'] as num?)?.toDouble();
+                        if (memoryPercent == null) {
+                          memoryPercent = (lastValue['memory'] as num?)?.toDouble();
+                        }
                         break;
                       case 'load':
-                        final load1 = lastValue['load1'] as num?;
-                        load = load1?.toDouble();
+                        if (load == null) {
+                          load = (lastValue['cpuLoad1'] as num?)?.toDouble();
+                        }
+                        break;
+                      case 'io':
+                        if (diskPercent == null) {
+                          diskPercent = (lastValue['disk'] as num?)?.toDouble();
+                        }
                         break;
                     }
                   }
