@@ -108,7 +108,7 @@ class MonitorRepository {
   /// 获取时间序列数据
   /// 
   /// [client] API客户端
-  /// [param] 参数类型: cpu, memory, load, io, network
+  /// [param] 参数类型: cpu, memory, load, io, network (注意: base单独使用会返回400)
   /// [valueKey] 值字段名
   /// [duration] 时间范围
   Future<MonitorTimeSeries> getTimeSeries(
@@ -121,16 +121,17 @@ class MonitorRepository {
       final now = DateTime.now();
       final startTime = now.subtract(duration);
 
+      // 使用 'all' 参数获取所有数据，然后从中提取需要的字段
       final response = await client.post(
         '/api/v2/hosts/monitor/search',
         data: {
-          'param': param,
+          'param': 'all',
           'startTime': startTime.toUtc().toIso8601String(),
           'endTime': now.toUtc().toIso8601String(),
         },
       );
 
-      return _parseTimeSeriesResponse(response.data, param, valueKey);
+      return _parseTimeSeriesResponse(response.data, 'base', valueKey);
     } catch (e) {
       debugPrint('[MonitorRepository] getTimeSeries error: $e');
       return MonitorTimeSeries.empty(param);
@@ -246,13 +247,17 @@ class MonitorRepository {
       final lastValue = values.last;
       if (lastValue is! Map<String, dynamic>) continue;
 
+      debugPrint('[MonitorRepository] Parsing param=$param, lastValue keys: ${lastValue.keys.toList()}');
+
       switch (param) {
         case 'base':
+          // base 包含所有指标
           cpuPercent = (lastValue['cpu'] as num?)?.toDouble();
           memoryPercent = (lastValue['memory'] as num?)?.toDouble();
           load1 = (lastValue['cpuLoad1'] as num?)?.toDouble();
           load5 = (lastValue['cpuLoad5'] as num?)?.toDouble();
           load15 = (lastValue['cpuLoad15'] as num?)?.toDouble();
+          debugPrint('[MonitorRepository] base: cpu=$cpuPercent, memory=$memoryPercent, load1=$load1');
           break;
         case 'cpu':
           cpuPercent ??= (lastValue['cpu'] as num?)?.toDouble();
@@ -270,6 +275,8 @@ class MonitorRepository {
           break;
       }
     }
+
+    debugPrint('[MonitorRepository] Final: cpu=$cpuPercent, memory=$memoryPercent, disk=$diskPercent, load1=$load1');
 
     return MonitorMetricsSnapshot(
       cpuPercent: cpuPercent,
@@ -296,15 +303,27 @@ class MonitorRepository {
     final dataList = responseData['data'] as List?;
 
     if (dataList == null || dataList.isEmpty) {
+      debugPrint('[MonitorRepository] _parseTimeSeriesResponse: dataList is null or empty');
       return MonitorTimeSeries.empty(param);
     }
 
-    final item = dataList.firstWhere(
+    // 查找匹配的数据项，如果没有匹配的，使用第一个
+    var item = dataList.firstWhere(
       (e) => (e as Map)['param'] == param,
       orElse: () => null,
     );
 
+    // 如果没有找到精确匹配，尝试使用 'base' 数据
+    if (item == null && param != 'base') {
+      item = dataList.firstWhere(
+        (e) => (e as Map)['param'] == 'base',
+        orElse: () => null,
+      );
+      debugPrint('[MonitorRepository] Using base data for param=$param');
+    }
+
     if (item == null) {
+      debugPrint('[MonitorRepository] No matching item found for param=$param');
       return MonitorTimeSeries.empty(param);
     }
 
@@ -312,7 +331,10 @@ class MonitorRepository {
     final dates = (itemMap['date'] as List?)?.map((e) => e.toString()).toList();
     final values = itemMap['value'] as List?;
 
+    debugPrint('[MonitorRepository] dates count: ${dates?.length ?? 0}, values count: ${values?.length ?? 0}');
+
     if (dates == null || values == null || dates.length != values.length) {
+      debugPrint('[MonitorRepository] Date/value mismatch or null');
       return MonitorTimeSeries.empty(param);
     }
 
@@ -328,7 +350,10 @@ class MonitorRepository {
       if (valueMap == null) continue;
 
       final value = (valueMap[valueKey] as num?)?.toDouble();
-      if (value == null) continue;
+      if (value == null) {
+        debugPrint('[MonitorRepository] valueKey=$valueKey not found in valueMap: ${valueMap.keys.toList()}');
+        continue;
+      }
 
       final time = DateTime.tryParse(dates[i]) ?? now;
       dataPoints.add(MonitorDataPoint(time: time, value: value));
@@ -338,6 +363,8 @@ class MonitorRepository {
       sum += value;
       count++;
     }
+
+    debugPrint('[MonitorRepository] Parsed $count data points for $param, min=$min, max=$max, avg=${count > 0 ? sum / count : null}');
 
     return MonitorTimeSeries(
       name: param,

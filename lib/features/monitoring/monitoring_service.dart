@@ -30,7 +30,8 @@ class MonitoringService extends BaseComponent {
   }) async {
     return runGuarded(() async {
       final client = await clientManager.getCurrentClient();
-      return _monitorRepo.getTimeSeries(client, 'cpu', 'cpu', duration: duration);
+      // API返回的是base数据，包含cpu字段
+      return _monitorRepo.getTimeSeries(client, 'base', 'cpu', duration: duration);
     });
   }
 
@@ -40,7 +41,8 @@ class MonitoringService extends BaseComponent {
   }) async {
     return runGuarded(() async {
       final client = await clientManager.getCurrentClient();
-      return _monitorRepo.getTimeSeries(client, 'memory', 'memory', duration: duration);
+      // API返回的是base数据，包含memory字段
+      return _monitorRepo.getTimeSeries(client, 'base', 'memory', duration: duration);
     });
   }
 
@@ -50,7 +52,8 @@ class MonitoringService extends BaseComponent {
   }) async {
     return runGuarded(() async {
       final client = await clientManager.getCurrentClient();
-      return _monitorRepo.getTimeSeries(client, 'load', 'cpuLoad1', duration: duration);
+      // API返回的是base数据，包含cpuLoad1字段
+      return _monitorRepo.getTimeSeries(client, 'base', 'cpuLoad1', duration: duration);
     });
   }
 

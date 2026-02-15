@@ -195,6 +195,10 @@ class DashboardProvider extends ChangeNotifier {
   bool _isLoadingTopProcesses = false;
   bool _isLoadingAppLaunchers = false;
   bool _isLoadingQuickOptions = false;
+  
+  // 自动刷新设置
+  Duration _refreshInterval = const Duration(seconds: 5);
+  bool _autoRefreshEnabled = false;
 
   DashboardStatus get status => _status;
   DashboardData get data => _data;
@@ -203,6 +207,41 @@ class DashboardProvider extends ChangeNotifier {
   bool get isLoadingTopProcesses => _isLoadingTopProcesses;
   bool get isLoadingAppLaunchers => _isLoadingAppLaunchers;
   bool get isLoadingQuickOptions => _isLoadingQuickOptions;
+  Duration get refreshInterval => _refreshInterval;
+  bool get autoRefreshEnabled => _autoRefreshEnabled;
+
+  /// 设置刷新间隔
+  void setRefreshInterval(Duration interval) {
+    _refreshInterval = interval;
+    if (_autoRefreshEnabled) {
+      _stopAutoRefresh();
+      _startAutoRefresh();
+    }
+    notifyListeners();
+  }
+
+  /// 启用/禁用自动刷新
+  void toggleAutoRefresh(bool enabled) {
+    _autoRefreshEnabled = enabled;
+    if (enabled) {
+      _startAutoRefresh();
+    } else {
+      _stopAutoRefresh();
+    }
+    notifyListeners();
+  }
+
+  void _startAutoRefresh() {
+    _stopAutoRefresh();
+    _refreshTimer = Timer.periodic(_refreshInterval, (_) {
+      loadData();
+    });
+  }
+
+  void _stopAutoRefresh() {
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
+  }
 
   Future<DashboardV2Api> _getApi() async {
     _api ??= await ApiClientManager.instance.getDashboardApi();
@@ -216,37 +255,70 @@ class DashboardProvider extends ChangeNotifier {
     try {
       final api = await _getApi();
 
-      debugPrint('[DashboardProvider] Loading OS info...');
-      final osResponse = await api.getOperatingSystemInfo();
-      debugPrint('[DashboardProvider] OS response: ${osResponse.data}');
-
       debugPrint('[DashboardProvider] Loading base info...');
       final baseResponse = await api.getDashboardBase();
-      debugPrint('[DashboardProvider] Base response: ${baseResponse.data}');
+      debugPrint('[DashboardProvider] Base response received');
 
-      debugPrint('[DashboardProvider] Loading current metrics...');
-      final currentResponse = await api.getCurrentMetrics();
-      debugPrint('[DashboardProvider] Current response: ${currentResponse.data}');
-
-      final systemInfo = osResponse.data;
       final baseData = baseResponse.data;
-      final currentMetrics = currentResponse.data;
 
-      final cpuPercent = currentMetrics?.current ?? baseData?['cpuPercent'] as double?;
-      final memoryPercent = baseData?['memoryPercent'] as double?;
-      final diskPercent = baseData?['diskPercent'] as double?;
+      // 从真实API响应中提取数据
+      // baseData 包含: hostname, ipV4Addr, cpuCores, currentInfo 等
+      // currentInfo 包含实时指标: cpuUsedPercent, memoryUsedPercent, diskData 等
+      final currentInfo = baseData?['currentInfo'] as Map<String, dynamic>?;
+      
+      // 主机名 - 从 baseData 获取
+      final hostname = baseData?['hostname'] as String?;
+      
+      // CPU百分比 - 从 currentInfo.cpuUsedPercent 获取
+      final cpuPercent = (currentInfo?['cpuUsedPercent'] as num?)?.toDouble();
+      
+      // 内存百分比
+      final memoryPercent = (currentInfo?['memoryUsedPercent'] as num?)?.toDouble();
+      
+      // 磁盘数据 - 从 currentInfo.diskData 数组获取
+      final diskDataList = currentInfo?['diskData'] as List?;
+      double? diskPercent;
+      String? diskUsage;
+      if (diskDataList != null && diskDataList.isNotEmpty) {
+        final mainDisk = diskDataList.first as Map<String, dynamic>;
+        diskPercent = (mainDisk['usedPercent'] as num?)?.toDouble();
+        final used = mainDisk['used'] as int?;
+        final total = mainDisk['total'] as int?;
+        if (used != null && total != null) {
+          diskUsage = '${_formatBytes(used)} / ${_formatBytes(total)}';
+        }
+      }
 
+      // 负载
+      final load1 = (currentInfo?['load1'] as num?)?.toDouble();
+      final load5 = (currentInfo?['load5'] as num?)?.toDouble();
+      final load15 = (currentInfo?['load15'] as num?)?.toDouble();
+
+      // 运行时间
+      final uptime = currentInfo?['uptime'] as int?;
+      final uptimeStr = uptime != null ? _formatUptime(uptime) : '--';
+
+      // 内存使用情况
+      final memoryUsed = currentInfo?['memoryUsed'] as int?;
+      final memoryTotal = currentInfo?['memoryTotal'] as int?;
+
+      debugPrint('[DashboardProvider] hostname: $hostname');
       debugPrint('[DashboardProvider] cpuPercent: $cpuPercent, memoryPercent: $memoryPercent, diskPercent: $diskPercent');
+      debugPrint('[DashboardProvider] load1: $load1, load5: $load5, load15: $load15');
 
       _data = DashboardData(
-        systemInfo: systemInfo,
+        systemInfo: null,
         metrics: baseData != null ? DashboardMetrics.fromJson(baseData) : null,
         cpuPercent: cpuPercent,
         memoryPercent: memoryPercent,
         diskPercent: diskPercent,
-        memoryUsage: _formatMemoryUsage(baseData),
-        diskUsage: _formatDiskUsage(baseData),
-        uptime: baseData?['uptime']?.toString() ?? '--',
+        memoryUsage: memoryPercent != null 
+            ? '${memoryPercent.toStringAsFixed(1)}%' 
+            : (memoryUsed != null && memoryTotal != null 
+                ? '${_formatBytes(memoryUsed)} / ${_formatBytes(memoryTotal)}' 
+                : '--'),
+        diskUsage: diskUsage ?? (diskPercent != null ? '${diskPercent.toStringAsFixed(1)}%' : '--'),
+        uptime: uptimeStr,
         lastUpdated: DateTime.now(),
       );
 
@@ -260,6 +332,37 @@ class DashboardProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  String _formatMemoryUsageFromNode(Map<String, dynamic>? nodeData) {
+    if (nodeData == null) return '--';
+    
+    final used = nodeData['memoryUsed'] as int?;
+    final total = nodeData['memoryTotal'] as int?;
+    final percent = nodeData['memoryUsedPercent'] as num?;
+    
+    if (percent != null) {
+      return '${percent.toStringAsFixed(1)}%';
+    }
+    
+    if (used != null && total != null) {
+      return '${_formatBytes(used)} / ${_formatBytes(total)}';
+    }
+    return '--';
+  }
+
+  String _formatUptime(int seconds) {
+    final days = seconds ~/ 86400;
+    final hours = (seconds % 86400) ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
+    
+    if (days > 0) {
+      return '${days}天 ${hours}小时';
+    } else if (hours > 0) {
+      return '${hours}小时 ${minutes}分钟';
+    } else {
+      return '${minutes}分钟';
+    }
   }
 
   Future<void> loadTopProcesses() async {
