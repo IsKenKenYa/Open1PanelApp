@@ -27,6 +27,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonSave => '保存';
 
   @override
+  String get commonSaveSuccess => '保存成功';
+
+  @override
+  String get commonSaveFailed => '保存失败';
+
+  @override
   String get commonDelete => '删除';
 
   @override

@@ -6,6 +6,8 @@
   "commonCancel": "取消",
   "commonConfirm": "确认",
   "commonSave": "保存",
+  "commonSaveSuccess": "保存成功",
+  "commonSaveFailed": "保存失败",
   "commonDelete": "删除",
   "commonRefresh": "刷新",
   "commonComingSoon": "即将支持",

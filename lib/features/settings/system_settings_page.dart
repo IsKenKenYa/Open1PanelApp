@@ -139,15 +139,14 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                 context,
                 icon: Icons.key_outlined,
                 title: l10n.systemSettingsApiKey,
-                subtitle: settings?.apiInterfaceStatus == 'enable'
+                subtitle: _isEnabled(settings?.apiInterfaceStatus)
                     ? l10n.systemSettingsEnabled
                     : l10n.systemSettingsDisabled,
                 trailing: _buildStatusChip(
                   context,
-                  settings?.apiInterfaceStatus == 'enable',
+                  _isEnabled(settings?.apiInterfaceStatus),
                   l10n,
                 ),
-                onTap: () => _showApiKeyDialog(context, provider, l10n),
               ),
             ],
           ),
@@ -163,28 +162,6 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                 title: l10n.systemSettingsSnapshot,
                 subtitle: l10n.systemSettingsSnapshotDesc,
                 onTap: () => _navigateTo(context, const SnapshotPage()),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppDesignTokens.spacingMd),
-        _buildSectionTitle(context, l10n.systemSettingsSystemSection, theme),
-        Card(
-          child: Column(
-            children: [
-              _buildSettingTile(
-                context,
-                icon: Icons.system_update_outlined,
-                title: l10n.systemSettingsUpgrade,
-                subtitle: settings?.systemVersion ?? 'v1.0.0',
-                onTap: () => _showUpgradeDialog(context, provider, l10n),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.info_outline,
-                title: l10n.systemSettingsAbout,
-                subtitle: l10n.systemSettingsAboutDesc,
-                onTap: () => _showAboutDialog(context, settings),
               ),
             ],
           ),
@@ -248,7 +225,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                   ),
                   _buildStatusChip(
                     context,
-                    settings.mfaStatus == 'enable',
+                    _isEnabled(settings.mfaStatus),
                     l10n,
                   ),
                 ],
@@ -285,7 +262,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
       leading: Icon(icon),
       title: Text(title),
       subtitle: Text(subtitle),
-      trailing: trailing ?? const Icon(Icons.chevron_right),
+      trailing: trailing ?? (onTap != null ? const Icon(Icons.chevron_right) : null),
       onTap: onTap,
     );
   }
@@ -309,6 +286,11 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     );
   }
 
+  bool _isEnabled(String? value) {
+    if (value == null) return false;
+    return value.toLowerCase() == 'enable' || value.toLowerCase() == 'true';
+  }
+
   void _navigateTo(BuildContext context, Widget page) {
     Navigator.push(
       context,
@@ -318,77 +300,6 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
           child: page,
         ),
       ),
-    );
-  }
-
-  void _showApiKeyDialog(BuildContext context, SettingsProvider provider, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.systemSettingsApiKeyManage),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${l10n.systemSettingsCurrentStatus}: ${provider.data.systemSettings?.apiInterfaceStatus ?? l10n.systemSettingsUnknown}'),
-            const SizedBox(height: 8),
-            Text('${l10n.systemSettingsApiKeyLabel}: ${provider.data.systemSettings?.apiKey ?? l10n.systemSettingsNotSet}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final success = await provider.generateApiKey();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(success ? l10n.systemSettingsApiKeyGenerated : l10n.systemSettingsGenerateFailed),
-                  ),
-                );
-              }
-            },
-            child: Text(l10n.systemSettingsGenerateNewKey),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showUpgradeDialog(BuildContext context, SettingsProvider provider, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.systemSettingsUpgrade),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${l10n.systemSettingsCurrentVersion}: ${provider.data.systemSettings?.systemVersion ?? l10n.systemSettingsUnknown}'),
-            const SizedBox(height: 8),
-            Text(l10n.systemSettingsCheckingUpdate),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.systemSettingsClose),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showAboutDialog(BuildContext context, dynamic settings) {
-    showAboutDialog(
-      context: context,
-      applicationName: '1Panel Mobile',
-      applicationVersion: settings?.systemVersion ?? '1.0.0',
-      applicationLegalese: '© 2024 1Panel Team',
     );
   }
 

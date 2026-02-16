@@ -134,6 +134,18 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get commonSave;
 
+  /// No description provided for @commonSaveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved successfully'**
+  String get commonSaveSuccess;
+
+  /// No description provided for @commonSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save'**
+  String get commonSaveFailed;
+
   /// No description provided for @commonDelete.
   ///
   /// In en, this message translates to:

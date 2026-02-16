@@ -180,10 +180,30 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateTerminalSettings({String? lineTheme, int? fontSize, String? fontFamily}) async {
+  Future<bool> updateTerminalSettings({
+    String? lineTheme,
+    String? fontSize,
+    String? fontFamily,
+    String? cursorStyle,
+    String? cursorBlink,
+    String? scrollSensitivity,
+    String? scrollback,
+    String? lineHeight,
+    String? letterSpacing,
+  }) async {
     try {
       await _service.updateTerminalSettings(
-        api.TerminalUpdate(lineTheme: lineTheme, fontSize: fontSize, fontFamily: fontFamily),
+        api.TerminalUpdate(
+          lineTheme: lineTheme,
+          fontSize: fontSize,
+          fontFamily: fontFamily,
+          cursorStyle: cursorStyle,
+          cursorBlink: cursorBlink,
+          scrollSensitivity: scrollSensitivity,
+          scrollback: scrollback,
+          lineHeight: lineHeight,
+          letterSpacing: letterSpacing,
+        ),
       );
       await loadTerminalSettings();
       return true;
@@ -258,6 +278,25 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('[SettingsProvider] recoverSnapshot error: $e');
       return false;
+    }
+  }
+
+  Future<bool> upgrade({String? version}) async {
+    try {
+      await _service.upgrade(api.UpgradeRequest(version: version));
+      return true;
+    } catch (e) {
+      debugPrint('[SettingsProvider] upgrade error: $e');
+      return false;
+    }
+  }
+
+  Future<List<dynamic>?> getUpgradeReleases() async {
+    try {
+      return await _service.getUpgradeReleases();
+    } catch (e) {
+      debugPrint('[SettingsProvider] getUpgradeReleases error: $e');
+      return null;
     }
   }
 

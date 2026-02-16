@@ -6,6 +6,8 @@
   "commonCancel": "Cancel",
   "commonConfirm": "Confirm",
   "commonSave": "Save",
+  "commonSaveSuccess": "Saved successfully",
+  "commonSaveFailed": "Failed to save",
   "commonDelete": "Delete",
   "commonRefresh": "Refresh",
   "commonComingSoon": "Coming soon",

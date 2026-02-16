@@ -73,7 +73,7 @@ class SettingV2Api {
   /// @return 更新结果
   Future<Response<void>> updateSystemSetting(SettingUpdate request) async {
     return await _client.post(
-      ApiConstants.buildApiPath('/core/settings/update'),
+      ApiConstants.buildApiPath('/settings/update'),
       data: request.toJson(),
     );
   }
@@ -771,15 +771,37 @@ class SettingUpdate {
 
 class TerminalUpdate {
   final String? lineTheme;
-  final int? fontSize;
+  final String? fontSize;
   final String? fontFamily;
+  final String? cursorStyle;
+  final String? cursorBlink;
+  final String? scrollSensitivity;
+  final String? scrollback;
+  final String? lineHeight;
+  final String? letterSpacing;
 
-  const TerminalUpdate({this.lineTheme, this.fontSize, this.fontFamily});
+  const TerminalUpdate({
+    this.lineTheme,
+    this.fontSize,
+    this.fontFamily,
+    this.cursorStyle,
+    this.cursorBlink,
+    this.scrollSensitivity,
+    this.scrollback,
+    this.lineHeight,
+    this.letterSpacing,
+  });
 
   Map<String, dynamic> toJson() => {
         if (lineTheme != null) 'lineTheme': lineTheme,
         if (fontSize != null) 'fontSize': fontSize,
         if (fontFamily != null) 'fontFamily': fontFamily,
+        if (cursorStyle != null) 'cursorStyle': cursorStyle,
+        if (cursorBlink != null) 'cursorBlink': cursorBlink,
+        if (scrollSensitivity != null) 'scrollSensitivity': scrollSensitivity,
+        if (scrollback != null) 'scrollback': scrollback,
+        if (lineHeight != null) 'lineHeight': lineHeight,
+        if (letterSpacing != null) 'letterSpacing': letterSpacing,
       };
 }
 
@@ -956,14 +978,23 @@ class SnapshotRollback {
 }
 
 class SnapshotSearch {
-  final int? page;
-  final int? pageSize;
+  final int page;
+  final int pageSize;
+  final String orderBy;
+  final String order;
 
-  const SnapshotSearch({this.page, this.pageSize});
+  const SnapshotSearch({
+    this.page = 1,
+    this.pageSize = 10,
+    this.orderBy = 'createdAt',
+    this.order = 'descending',
+  });
 
   Map<String, dynamic> toJson() => {
-        if (page != null) 'page': page,
-        if (pageSize != null) 'pageSize': pageSize,
+        'page': page,
+        'pageSize': pageSize,
+        'orderBy': orderBy,
+        'order': order,
       };
 }
 

@@ -23,21 +23,26 @@ class PanelSettingsPage extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                _buildListTile(l10n.panelSettingsPanelName, settings?.panelName ?? '-'),
-                _buildListTile(l10n.panelSettingsVersion, settings?.systemVersion ?? '-'),
-                _buildListTile(l10n.panelSettingsPort, settings?.port ?? '-'),
-                _buildListTile(l10n.panelSettingsBindAddress, settings?.bindAddress ?? '-'),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(context, l10n.panelSettingsInterface, theme),
-          Card(
-            child: Column(
-              children: [
-                _buildListTile(l10n.panelSettingsTheme, settings?.theme ?? 'default'),
-                _buildListTile(l10n.panelSettingsLanguage, settings?.language ?? 'zh'),
-                _buildListTile(l10n.panelSettingsMenuTabs, settings?.menuTabs ?? '-'),
+                _buildInfoListTile(
+                  title: l10n.panelSettingsPanelName,
+                  value: settings?.panelName ?? '-',
+                  icon: Icons.label_outline,
+                ),
+                _buildInfoListTile(
+                  title: l10n.panelSettingsVersion,
+                  value: settings?.systemVersion ?? '-',
+                  icon: Icons.info_outline,
+                ),
+                _buildInfoListTile(
+                  title: l10n.panelSettingsPort,
+                  value: settings?.serverPort ?? '-',
+                  icon: Icons.router_outlined,
+                ),
+                _buildInfoListTile(
+                  title: l10n.panelSettingsBindAddress,
+                  value: settings?.bindAddress ?? '-',
+                  icon: Icons.lan_outlined,
+                ),
               ],
             ),
           ),
@@ -46,17 +51,20 @@ class PanelSettingsPage extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                _buildListTile(
-                  l10n.panelSettingsDeveloperMode,
-                  settings?.developerMode == 'true' ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                _buildInfoListTile(
+                  title: l10n.panelSettingsDeveloperMode,
+                  value: _isEnabled(settings?.developerMode) ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                  icon: Icons.code_outlined,
                 ),
-                _buildListTile(
-                  l10n.panelSettingsIpv6,
-                  settings?.ipv6 == 'true' ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                _buildInfoListTile(
+                  title: l10n.panelSettingsIpv6,
+                  value: _isEnabled(settings?.ipv6) ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                  icon: Icons.network_check_outlined,
                 ),
-                _buildListTile(
-                  l10n.panelSettingsSessionTimeout,
-                  l10n.panelSettingsMinutes(settings?.sessionTimeout ?? '30'),
+                _buildInfoListTile(
+                  title: l10n.panelSettingsSessionTimeout,
+                  value: l10n.panelSettingsMinutes(settings?.sessionTimeout ?? '30'),
+                  icon: Icons.timer_outlined,
                 ),
               ],
             ),
@@ -79,10 +87,20 @@ class PanelSettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(String title, String value) {
+  Widget _buildInfoListTile({
+    required String title,
+    required String value,
+    required IconData icon,
+  }) {
     return ListTile(
+      leading: Icon(icon),
       title: Text(title),
       trailing: Text(value, style: const TextStyle(color: Colors.grey)),
     );
+  }
+
+  bool _isEnabled(String? value) {
+    if (value == null) return false;
+    return value.toLowerCase() == 'enable' || value.toLowerCase() == 'true';
   }
 }

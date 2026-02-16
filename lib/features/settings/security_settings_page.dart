@@ -13,7 +13,6 @@ class SecuritySettingsPage extends StatelessWidget {
     final l10n = context.l10n;
     final provider = context.watch<SettingsProvider>();
     final settings = provider.data.systemSettings;
-    final mfaStatus = provider.data.mfaStatus;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.securitySettingsTitle)),
@@ -24,20 +23,11 @@ class SecuritySettingsPage extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
-                  title: Text(l10n.securitySettingsMfaStatus),
-                  subtitle: Text(mfaStatus?.enabled == true ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled),
-                  value: mfaStatus?.enabled ?? false,
-                  onChanged: (value) {
-                    _showMfaDialog(context, value, l10n);
-                  },
+                _buildInfoListTile(
+                  title: l10n.securitySettingsMfaStatus,
+                  value: _isEnabled(settings?.mfaStatus) ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                  icon: Icons.security_outlined,
                 ),
-                if (mfaStatus?.enabled == true)
-                  ListTile(
-                    title: Text(l10n.securitySettingsUnbindMfa),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => _showUnbindMfaDialog(context, l10n),
-                  ),
               ],
             ),
           ),
@@ -46,9 +36,21 @@ class SecuritySettingsPage extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                _buildListTile(l10n.securitySettingsSecurityEntrance, settings?.securityEntrance ?? '-'),
-                _buildListTile(l10n.securitySettingsBindDomain, settings?.bindDomain ?? '-'),
-                _buildListTile(l10n.securitySettingsAllowIPs, settings?.allowIPs ?? '-'),
+                _buildInfoListTile(
+                  title: l10n.securitySettingsSecurityEntrance,
+                  value: settings?.securityEntrance ?? '-',
+                  icon: Icons.login_outlined,
+                ),
+                _buildInfoListTile(
+                  title: l10n.securitySettingsBindDomain,
+                  value: settings?.bindDomain ?? '-',
+                  icon: Icons.domain_outlined,
+                ),
+                _buildInfoListTile(
+                  title: l10n.securitySettingsAllowIPs,
+                  value: settings?.allowIPs ?? '-',
+                  icon: Icons.list_alt_outlined,
+                ),
               ],
             ),
           ),
@@ -57,11 +59,16 @@ class SecuritySettingsPage extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                _buildListTile(
-                  l10n.securitySettingsComplexityVerification,
-                  settings?.complexityVerification == 'true' ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                _buildInfoListTile(
+                  title: l10n.securitySettingsComplexityVerification,
+                  value: _isEnabled(settings?.complexityVerification) ? l10n.systemSettingsEnabled : l10n.systemSettingsDisabled,
+                  icon: Icons.password_outlined,
                 ),
-                _buildListTile(l10n.securitySettingsExpirationDays, settings?.expirationDays ?? '-'),
+                _buildInfoListTile(
+                  title: l10n.securitySettingsExpirationDays,
+                  value: settings?.expirationDays ?? '-',
+                  icon: Icons.calendar_today_outlined,
+                ),
               ],
             ),
           ),
@@ -83,76 +90,20 @@ class SecuritySettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(String title, String value) {
+  Widget _buildInfoListTile({
+    required String title,
+    required String value,
+    required IconData icon,
+  }) {
     return ListTile(
+      leading: Icon(icon),
       title: Text(title),
       trailing: Text(value, style: const TextStyle(color: Colors.grey)),
     );
   }
 
-  void _showMfaDialog(BuildContext context, bool enable, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(enable ? l10n.securitySettingsEnableMfa : l10n.securitySettingsDisableMfa),
-        content: Text(enable ? l10n.securitySettingsEnableMfaConfirm : l10n.securitySettingsDisableMfaConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(l10n.commonConfirm),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showUnbindMfaDialog(BuildContext context, AppLocalizations l10n) {
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.securitySettingsUnbindMfa),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.securitySettingsEnterMfaCode),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: l10n.securitySettingsVerifyCode,
-                hintText: l10n.securitySettingsMfaCodeHint,
-              ),
-              keyboardType: TextInputType.number,
-              maxLength: 6,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final success = await context.read<SettingsProvider>().unbindMfa(controller.text);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(success ? l10n.securitySettingsMfaUnbound : l10n.securitySettingsUnbindFailed)),
-                );
-              }
-            },
-            child: Text(l10n.commonConfirm),
-          ),
-        ],
-      ),
-    );
+  bool _isEnabled(String? value) {
+    if (value == null) return false;
+    return value.toLowerCase() == 'enable' || value.toLowerCase() == 'true';
   }
 }

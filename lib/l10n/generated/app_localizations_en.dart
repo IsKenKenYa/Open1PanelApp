@@ -27,6 +27,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonSave => 'Save';
 
   @override
+  String get commonSaveSuccess => 'Saved successfully';
+
+  @override
+  String get commonSaveFailed => 'Failed to save';
+
+  @override
   String get commonDelete => 'Delete';
 
   @override
