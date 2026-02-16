@@ -862,10 +862,23 @@ class ExpiredHandle {
 
 class ApiConfigUpdate {
   final String? apiKey;
+  final String? status;
+  final String? ipWhiteList;
+  final int? validityTime;
 
-  const ApiConfigUpdate({this.apiKey});
+  const ApiConfigUpdate({
+    this.apiKey,
+    this.status,
+    this.ipWhiteList,
+    this.validityTime,
+  });
 
-  Map<String, dynamic> toJson() => {if (apiKey != null) 'apiKey': apiKey};
+  Map<String, dynamic> toJson() => {
+        if (apiKey != null) 'apiKey': apiKey,
+        if (status != null) 'status': status,
+        if (ipWhiteList != null) 'ipWhiteList': ipWhiteList,
+        if (validityTime != null) 'validityTime': validityTime,
+      };
 }
 
 class AppStoreConfigUpdate {
@@ -890,13 +903,17 @@ class SSLUpdate {
   final String? sslType;
   final String? domain;
   final int? port;
+  final String? cert;
+  final String? key;
 
-  const SSLUpdate({this.sslType, this.domain, this.port});
+  const SSLUpdate({this.sslType, this.domain, this.port, this.cert, this.key});
 
   Map<String, dynamic> toJson() => {
         if (sslType != null) 'sslType': sslType,
         if (domain != null) 'domain': domain,
         if (port != null) 'port': port,
+        if (cert != null) 'cert': cert,
+        if (key != null) 'key': key,
       };
 }
 

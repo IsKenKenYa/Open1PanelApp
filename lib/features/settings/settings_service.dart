@@ -58,6 +58,11 @@ class SettingsService {
     await apiClient.updateSSL(request);
   }
 
+  Future<void> downloadSSL() async {
+    final apiClient = await _getApi();
+    await apiClient.downloadSSL();
+  }
+
   Future<dynamic> getUpgradeInfo() async {
     final apiClient = await _getApi();
     final response = await apiClient.getUpgradeInfo();
@@ -133,5 +138,15 @@ class SettingsService {
   Future<void> saveSSHConnection(api.SSHConnectionSave request) async {
     final apiClient = await _getApi();
     await apiClient.saveSSHConnection(request);
+  }
+
+  Future<void> updatePasswordSettings(api.PasswordUpdate request) async {
+    final apiClient = await _getApi();
+    await apiClient.updatePasswordSettings(request);
+  }
+
+  Future<void> updateApiConfig(api.ApiConfigUpdate request) async {
+    final apiClient = await _getApi();
+    await apiClient.updateApiConfig(request);
   }
 }

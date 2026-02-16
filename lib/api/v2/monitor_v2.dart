@@ -152,25 +152,33 @@ class MonitorSetting {
   final int? interval;
   final int? retention;
   final bool? enabled;
+  final String? defaultNetwork;
+  final String? defaultIO;
 
   const MonitorSetting({
     this.interval,
     this.retention,
     this.enabled,
+    this.defaultNetwork,
+    this.defaultIO,
   });
 
   factory MonitorSetting.fromJson(Map<String, dynamic> json) {
     return MonitorSetting(
-      interval: json['interval'] as int?,
-      retention: json['retention'] as int?,
-      enabled: json['enabled'] as bool?,
+      interval: int.tryParse(json['monitorInterval']?.toString() ?? ''),
+      retention: int.tryParse(json['monitorStoreDays']?.toString() ?? ''),
+      enabled: json['monitorStatus'] == 'Enable' || json['monitorStatus'] == true,
+      defaultNetwork: json['defaultNetwork'] as String?,
+      defaultIO: json['defaultIO'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        if (interval != null) 'interval': interval,
-        if (retention != null) 'retention': retention,
-        if (enabled != null) 'enabled': enabled,
+        if (interval != null) 'monitorInterval': interval,
+        if (retention != null) 'monitorStoreDays': retention,
+        if (enabled != null) 'monitorStatus': (enabled == true) ? 'Enable' : 'Disable',
+        if (defaultNetwork != null) 'defaultNetwork': defaultNetwork,
+        if (defaultIO != null) 'defaultIO': defaultIO,
       };
 }
 
@@ -187,9 +195,9 @@ class MonitorSettingUpdate {
   });
 
   Map<String, dynamic> toJson() => {
-        if (interval != null) 'interval': interval,
-        if (retention != null) 'retention': retention,
-        if (enabled != null) 'enabled': enabled,
+        if (interval != null) 'monitorInterval': interval,
+        if (retention != null) 'monitorStoreDays': retention,
+        if (enabled != null) 'monitorStatus': (enabled == true) ? 'Enable' : 'Disable',
       };
 }
 
@@ -252,8 +260,10 @@ class MonitorV2Api {
     final response = await _client.get(
       ApiConstants.buildApiPath('/hosts/monitor/setting'),
     );
+    final data = response.data as Map<String, dynamic>;
+    final innerData = data['data'] as Map<String, dynamic>?;
     return Response(
-      data: MonitorSetting.fromJson(response.data as Map<String, dynamic>),
+      data: innerData != null ? MonitorSetting.fromJson(innerData) : null,
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,

@@ -805,6 +805,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String get systemSettingsGenerateFailed => 'Generation failed';
 
   @override
+  String get apiKeySettingsTitle => 'API Key Management';
+
+  @override
+  String get apiKeySettingsStatus => 'Status';
+
+  @override
+  String get apiKeySettingsEnabled => 'API Interface';
+
+  @override
+  String get apiKeySettingsInfo => 'Key Information';
+
+  @override
+  String get apiKeySettingsKey => 'API Key';
+
+  @override
+  String get apiKeySettingsIpWhitelist => 'IP Whitelist';
+
+  @override
+  String get apiKeySettingsValidityTime => 'Validity Time';
+
+  @override
+  String get apiKeySettingsActions => 'Actions';
+
+  @override
+  String get apiKeySettingsRegenerate => 'Regenerate';
+
+  @override
+  String get apiKeySettingsRegenerateDesc => 'Generate new API key';
+
+  @override
+  String get apiKeySettingsRegenerateConfirm =>
+      'Are you sure you want to regenerate the API key? The old key will be invalid immediately.';
+
+  @override
+  String get apiKeySettingsRegenerateSuccess => 'API key regenerated';
+
+  @override
+  String get apiKeySettingsEnable => 'Enable API';
+
+  @override
+  String get apiKeySettingsDisable => 'Disable API';
+
+  @override
+  String get apiKeySettingsEnableConfirm =>
+      'Are you sure you want to enable API interface?';
+
+  @override
+  String get apiKeySettingsDisableConfirm =>
+      'Are you sure you want to disable API interface?';
+
+  @override
+  String get commonCopied => 'Copied to clipboard';
+
+  @override
+  String get sslSettingsTitle => 'SSL Certificate Management';
+
+  @override
+  String get sslSettingsInfo => 'Certificate Information';
+
+  @override
+  String get sslSettingsDomain => 'Domain';
+
+  @override
+  String get sslSettingsStatus => 'Status';
+
+  @override
+  String get sslSettingsType => 'Type';
+
+  @override
+  String get sslSettingsProvider => 'Provider';
+
+  @override
+  String get sslSettingsExpiration => 'Expiration';
+
+  @override
+  String get sslSettingsActions => 'Actions';
+
+  @override
+  String get sslSettingsUpload => 'Upload Certificate';
+
+  @override
+  String get sslSettingsUploadDesc => 'Upload SSL certificate file';
+
+  @override
+  String get sslSettingsDownload => 'Download Certificate';
+
+  @override
+  String get sslSettingsDownloadDesc => 'Download current SSL certificate';
+
+  @override
+  String get sslSettingsDownloadSuccess =>
+      'Certificate downloaded successfully';
+
+  @override
+  String get sslSettingsCert => 'Certificate Content';
+
+  @override
+  String get sslSettingsKey => 'Private Key Content';
+
+  @override
+  String get upgradeTitle => 'System Upgrade';
+
+  @override
+  String get upgradeCurrentVersion => 'Current Version';
+
+  @override
+  String get upgradeCurrentVersionLabel => 'Current System Version';
+
+  @override
+  String get upgradeAvailableVersions => 'Available Versions';
+
+  @override
+  String get upgradeNoUpdates => 'Already up to date';
+
+  @override
+  String get upgradeLatest => 'Latest';
+
+  @override
+  String get upgradeConfirm => 'Confirm Upgrade';
+
+  @override
+  String upgradeConfirmMessage(Object version) {
+    return 'Are you sure you want to upgrade to version $version?';
+  }
+
+  @override
+  String get upgradeButton => 'Upgrade';
+
+  @override
+  String get upgradeStarted => 'Upgrade started';
+
+  @override
+  String get monitorSettingsTitle => 'Monitor Settings';
+
+  @override
+  String get monitorSettingsInterval => 'Monitor Interval';
+
+  @override
+  String get monitorSettingsStoreDays => 'Data Retention Days';
+
+  @override
+  String get monitorSettingsEnable => 'Enable Monitoring';
+
+  @override
   String get systemSettingsCurrentVersion => 'Current Version';
 
   @override
@@ -897,10 +1041,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securitySettingsTitle => 'Security Settings';
 
   @override
+  String get securitySettingsPasswordSection => 'Password Management';
+
+  @override
+  String get securitySettingsChangePassword => 'Change Password';
+
+  @override
+  String get securitySettingsChangePasswordDesc => 'Change login password';
+
+  @override
+  String get securitySettingsOldPassword => 'Current Password';
+
+  @override
+  String get securitySettingsNewPassword => 'New Password';
+
+  @override
+  String get securitySettingsConfirmPassword => 'Confirm Password';
+
+  @override
+  String get securitySettingsPasswordMismatch => 'Passwords do not match';
+
+  @override
   String get securitySettingsMfaSection => 'MFA Authentication';
 
   @override
   String get securitySettingsMfaStatus => 'MFA Status';
+
+  @override
+  String get securitySettingsMfaBind => 'Bind MFA';
+
+  @override
+  String get securitySettingsMfaUnbind => 'Unbind MFA';
+
+  @override
+  String get securitySettingsMfaUnbindDesc =>
+      'MFA authentication will be disabled after unbinding. Are you sure?';
+
+  @override
+  String get securitySettingsMfaScanQr => 'Scan QR code with authenticator app';
+
+  @override
+  String securitySettingsMfaSecret(Object secret) {
+    return 'Secret: $secret';
+  }
+
+  @override
+  String get securitySettingsMfaCode => 'Verification Code';
 
   @override
   String get securitySettingsUnbindMfa => 'Unbind MFA';

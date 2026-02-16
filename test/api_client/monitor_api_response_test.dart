@@ -287,8 +287,22 @@ void main() {
       debugPrint('测试: GET /hosts/monitor/setting');
       debugPrint('========================================');
 
+      // 首先打印原始响应
+      final dio = client.dio;
+      final rawResponse = await dio.get('/api/v2/hosts/monitor/setting');
+      
+      debugPrint('\n--- 原始响应 ---');
+      debugPrint('状态码: ${rawResponse.statusCode}');
+      debugPrint('数据类型: ${rawResponse.data.runtimeType}');
+      if (rawResponse.data != null) {
+        final jsonStr = const JsonEncoder.withIndent('  ').convert(rawResponse.data);
+        debugPrint('原始数据:\n$jsonStr');
+      }
+      
+      // 测试解析后的数据
       final response = await api.getSetting();
       
+      debugPrint('\n--- 解析后数据 ---');
       debugPrint('状态码: ${response.statusCode}');
       debugPrint('响应数据类型: ${response.data.runtimeType}');
       

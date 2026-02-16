@@ -789,6 +789,146 @@ class AppLocalizationsZh extends AppLocalizations {
   String get systemSettingsGenerateFailed => '生成失败';
 
   @override
+  String get apiKeySettingsTitle => 'API密钥管理';
+
+  @override
+  String get apiKeySettingsStatus => '状态';
+
+  @override
+  String get apiKeySettingsEnabled => 'API接口';
+
+  @override
+  String get apiKeySettingsInfo => '密钥信息';
+
+  @override
+  String get apiKeySettingsKey => 'API密钥';
+
+  @override
+  String get apiKeySettingsIpWhitelist => 'IP白名单';
+
+  @override
+  String get apiKeySettingsValidityTime => '有效期';
+
+  @override
+  String get apiKeySettingsActions => '操作';
+
+  @override
+  String get apiKeySettingsRegenerate => '重新生成';
+
+  @override
+  String get apiKeySettingsRegenerateDesc => '生成新的API密钥';
+
+  @override
+  String get apiKeySettingsRegenerateConfirm => '确定要重新生成API密钥吗？旧密钥将立即失效。';
+
+  @override
+  String get apiKeySettingsRegenerateSuccess => 'API密钥已重新生成';
+
+  @override
+  String get apiKeySettingsEnable => '启用API';
+
+  @override
+  String get apiKeySettingsDisable => '禁用API';
+
+  @override
+  String get apiKeySettingsEnableConfirm => '确定要启用API接口吗？';
+
+  @override
+  String get apiKeySettingsDisableConfirm => '确定要禁用API接口吗？';
+
+  @override
+  String get commonCopied => '已复制到剪贴板';
+
+  @override
+  String get sslSettingsTitle => 'SSL证书管理';
+
+  @override
+  String get sslSettingsInfo => '证书信息';
+
+  @override
+  String get sslSettingsDomain => '域名';
+
+  @override
+  String get sslSettingsStatus => '状态';
+
+  @override
+  String get sslSettingsType => '类型';
+
+  @override
+  String get sslSettingsProvider => '提供商';
+
+  @override
+  String get sslSettingsExpiration => '过期时间';
+
+  @override
+  String get sslSettingsActions => '操作';
+
+  @override
+  String get sslSettingsUpload => '上传证书';
+
+  @override
+  String get sslSettingsUploadDesc => '上传SSL证书文件';
+
+  @override
+  String get sslSettingsDownload => '下载证书';
+
+  @override
+  String get sslSettingsDownloadDesc => '下载当前SSL证书';
+
+  @override
+  String get sslSettingsDownloadSuccess => '证书下载成功';
+
+  @override
+  String get sslSettingsCert => '证书内容';
+
+  @override
+  String get sslSettingsKey => '私钥内容';
+
+  @override
+  String get upgradeTitle => '系统升级';
+
+  @override
+  String get upgradeCurrentVersion => '当前版本';
+
+  @override
+  String get upgradeCurrentVersionLabel => '当前系统版本';
+
+  @override
+  String get upgradeAvailableVersions => '可用版本';
+
+  @override
+  String get upgradeNoUpdates => '已是最新版本';
+
+  @override
+  String get upgradeLatest => '最新';
+
+  @override
+  String get upgradeConfirm => '确认升级';
+
+  @override
+  String upgradeConfirmMessage(Object version) {
+    return '确定要升级到版本 $version 吗？';
+  }
+
+  @override
+  String get upgradeButton => '升级';
+
+  @override
+  String get upgradeStarted => '升级已开始';
+
+  @override
+  String get monitorSettingsTitle => '监控设置';
+
+  @override
+  String get monitorSettingsInterval => '监控间隔';
+
+  @override
+  String get monitorSettingsStoreDays => '数据保留天数';
+
+  @override
+  String get monitorSettingsEnable => '启用监控';
+
+  @override
   String get systemSettingsCurrentVersion => '当前版本';
 
   @override
@@ -881,10 +1021,51 @@ class AppLocalizationsZh extends AppLocalizations {
   String get securitySettingsTitle => '安全设置';
 
   @override
+  String get securitySettingsPasswordSection => '密码管理';
+
+  @override
+  String get securitySettingsChangePassword => '修改密码';
+
+  @override
+  String get securitySettingsChangePasswordDesc => '修改登录密码';
+
+  @override
+  String get securitySettingsOldPassword => '当前密码';
+
+  @override
+  String get securitySettingsNewPassword => '新密码';
+
+  @override
+  String get securitySettingsConfirmPassword => '确认密码';
+
+  @override
+  String get securitySettingsPasswordMismatch => '两次密码输入不一致';
+
+  @override
   String get securitySettingsMfaSection => 'MFA认证';
 
   @override
   String get securitySettingsMfaStatus => 'MFA状态';
+
+  @override
+  String get securitySettingsMfaBind => '绑定MFA';
+
+  @override
+  String get securitySettingsMfaUnbind => '解绑MFA';
+
+  @override
+  String get securitySettingsMfaUnbindDesc => '解绑后将无法使用MFA认证，确定要解绑吗？';
+
+  @override
+  String get securitySettingsMfaScanQr => '请使用认证器APP扫描二维码';
+
+  @override
+  String securitySettingsMfaSecret(Object secret) {
+    return '密钥: $secret';
+  }
+
+  @override
+  String get securitySettingsMfaCode => '验证码';
 
   @override
   String get securitySettingsUnbindMfa => '解绑MFA';

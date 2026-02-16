@@ -125,6 +125,22 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  Future<MfaOtp?> loadMfaOtp() async {
+    try {
+      final mfaInfo = await _service.loadMfaInfo(const MfaCredential(
+        code: '',
+        interval: '30',
+        secret: '',
+      ));
+      _data = _data.copyWith(mfaInfo: mfaInfo);
+      notifyListeners();
+      return mfaInfo;
+    } catch (e) {
+      debugPrint('[SettingsProvider] loadMfaOtp error: $e');
+      return null;
+    }
+  }
+
   Future<void> loadMfaStatus() async {
     try {
       final status = await _service.getMfaStatus();
@@ -224,6 +240,21 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> bindMfaWithCode(String code, String secret, String interval) async {
+    try {
+      await _service.bindMfa(MfaBindRequest(
+        code: code,
+        secret: secret,
+        interval: interval,
+      ));
+      await loadMfaStatus();
+      return true;
+    } catch (e) {
+      debugPrint('[SettingsProvider] bindMfaWithCode error: $e');
+      return false;
+    }
+  }
+
   Future<bool> unbindMfa(String code) async {
     try {
       await _service.unbindMfa({'code': code});
@@ -231,6 +262,19 @@ class SettingsProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('[SettingsProvider] unbindMfa error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updatePassword(String oldPassword, String newPassword) async {
+    try {
+      await _service.updatePasswordSettings(api.PasswordUpdate(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      ));
+      return true;
+    } catch (e) {
+      debugPrint('[SettingsProvider] updatePassword error: $e');
       return false;
     }
   }
@@ -245,6 +289,56 @@ class SettingsProvider extends ChangeNotifier {
       return false;
     } catch (e) {
       debugPrint('[SettingsProvider] generateApiKey error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateApiConfig({
+    required String status,
+    required String ipWhiteList,
+    required int validityTime,
+  }) async {
+    try {
+      await _service.updateApiConfig(api.ApiConfigUpdate(
+        status: status,
+        ipWhiteList: ipWhiteList,
+        validityTime: validityTime,
+      ));
+      await loadSystemSettings();
+      return true;
+    } catch (e) {
+      debugPrint('[SettingsProvider] updateApiConfig error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateSSL({
+    required String domain,
+    required String sslType,
+    required String cert,
+    required String key,
+  }) async {
+    try {
+      await _service.updateSSL(api.SSLUpdate(
+        domain: domain,
+        sslType: sslType,
+        cert: cert,
+        key: key,
+      ));
+      await loadSSLInfo();
+      return true;
+    } catch (e) {
+      debugPrint('[SettingsProvider] updateSSL error: $e');
+      return false;
+    }
+  }
+
+  Future<bool> downloadSSL() async {
+    try {
+      await _service.downloadSSL();
+      return true;
+    } catch (e) {
+      debugPrint('[SettingsProvider] downloadSSL error: $e');
       return false;
     }
   }

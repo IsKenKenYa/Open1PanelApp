@@ -7,6 +7,11 @@ import 'package:onepanelapp_app/features/settings/panel_settings_page.dart';
 import 'package:onepanelapp_app/features/settings/security_settings_page.dart';
 import 'package:onepanelapp_app/features/settings/snapshot_page.dart';
 import 'package:onepanelapp_app/features/settings/terminal_settings_page.dart';
+import 'package:onepanelapp_app/features/settings/api_key_settings_page.dart';
+import 'package:onepanelapp_app/features/settings/ssl_settings_page.dart';
+import 'package:onepanelapp_app/features/settings/upgrade_page.dart';
+import 'package:onepanelapp_app/features/settings/monitor_settings_page.dart';
+import 'package:onepanelapp_app/features/monitoring/monitoring_provider.dart';
 
 class SystemSettingsPage extends StatefulWidget {
   const SystemSettingsPage({super.key});
@@ -142,10 +147,40 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                 subtitle: _isEnabled(settings?.apiInterfaceStatus)
                     ? l10n.systemSettingsEnabled
                     : l10n.systemSettingsDisabled,
-                trailing: _buildStatusChip(
+                onTap: () => _navigateTo(context, const ApiKeySettingsPage()),
+              ),
+              _buildSettingTile(
+                context,
+                icon: Icons.lock_outlined,
+                title: l10n.sslSettingsTitle,
+                subtitle: _isEnabled(settings?.ssl)
+                    ? l10n.systemSettingsEnabled
+                    : l10n.systemSettingsDisabled,
+                onTap: () => _navigateTo(context, const SslSettingsPage()),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDesignTokens.spacingMd),
+        _buildSectionTitle(context, l10n.systemSettingsSystemSection, theme),
+        Card(
+          child: Column(
+            children: [
+              _buildSettingTile(
+                context,
+                icon: Icons.system_update_outlined,
+                title: l10n.systemSettingsUpgrade,
+                subtitle: settings?.systemVersion ?? '-',
+                onTap: () => _navigateTo(context, const UpgradePage()),
+              ),
+              _buildSettingTile(
+                context,
+                icon: Icons.monitor_heart_outlined,
+                title: l10n.monitorSettingsTitle,
+                subtitle: l10n.monitorSettings,
+                onTap: () => _navigateToWithProvider<MonitoringProvider>(
                   context,
-                  _isEnabled(settings?.apiInterfaceStatus),
-                  l10n,
+                  const MonitorSettingsPage(),
                 ),
               ),
             ],
@@ -297,6 +332,18 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider.value(
           value: _provider,
+          child: page,
+        ),
+      ),
+    );
+  }
+
+  void _navigateToWithProvider<T extends ChangeNotifier>(BuildContext context, Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider<T>.value(
+          value: context.read<T>(),
           child: page,
         ),
       ),

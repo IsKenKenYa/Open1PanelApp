@@ -1586,6 +1586,282 @@ abstract class AppLocalizations {
   /// **'Generation failed'**
   String get systemSettingsGenerateFailed;
 
+  /// No description provided for @apiKeySettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key Management'**
+  String get apiKeySettingsTitle;
+
+  /// No description provided for @apiKeySettingsStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get apiKeySettingsStatus;
+
+  /// No description provided for @apiKeySettingsEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'API Interface'**
+  String get apiKeySettingsEnabled;
+
+  /// No description provided for @apiKeySettingsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Information'**
+  String get apiKeySettingsInfo;
+
+  /// No description provided for @apiKeySettingsKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key'**
+  String get apiKeySettingsKey;
+
+  /// No description provided for @apiKeySettingsIpWhitelist.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Whitelist'**
+  String get apiKeySettingsIpWhitelist;
+
+  /// No description provided for @apiKeySettingsValidityTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity Time'**
+  String get apiKeySettingsValidityTime;
+
+  /// No description provided for @apiKeySettingsActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get apiKeySettingsActions;
+
+  /// No description provided for @apiKeySettingsRegenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate'**
+  String get apiKeySettingsRegenerate;
+
+  /// No description provided for @apiKeySettingsRegenerateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate new API key'**
+  String get apiKeySettingsRegenerateDesc;
+
+  /// No description provided for @apiKeySettingsRegenerateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to regenerate the API key? The old key will be invalid immediately.'**
+  String get apiKeySettingsRegenerateConfirm;
+
+  /// No description provided for @apiKeySettingsRegenerateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'API key regenerated'**
+  String get apiKeySettingsRegenerateSuccess;
+
+  /// No description provided for @apiKeySettingsEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable API'**
+  String get apiKeySettingsEnable;
+
+  /// No description provided for @apiKeySettingsDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable API'**
+  String get apiKeySettingsDisable;
+
+  /// No description provided for @apiKeySettingsEnableConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to enable API interface?'**
+  String get apiKeySettingsEnableConfirm;
+
+  /// No description provided for @apiKeySettingsDisableConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to disable API interface?'**
+  String get apiKeySettingsDisableConfirm;
+
+  /// No description provided for @commonCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get commonCopied;
+
+  /// No description provided for @sslSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SSL Certificate Management'**
+  String get sslSettingsTitle;
+
+  /// No description provided for @sslSettingsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Information'**
+  String get sslSettingsInfo;
+
+  /// No description provided for @sslSettingsDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain'**
+  String get sslSettingsDomain;
+
+  /// No description provided for @sslSettingsStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get sslSettingsStatus;
+
+  /// No description provided for @sslSettingsType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get sslSettingsType;
+
+  /// No description provided for @sslSettingsProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get sslSettingsProvider;
+
+  /// No description provided for @sslSettingsExpiration.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get sslSettingsExpiration;
+
+  /// No description provided for @sslSettingsActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get sslSettingsActions;
+
+  /// No description provided for @sslSettingsUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Certificate'**
+  String get sslSettingsUpload;
+
+  /// No description provided for @sslSettingsUploadDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload SSL certificate file'**
+  String get sslSettingsUploadDesc;
+
+  /// No description provided for @sslSettingsDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Certificate'**
+  String get sslSettingsDownload;
+
+  /// No description provided for @sslSettingsDownloadDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Download current SSL certificate'**
+  String get sslSettingsDownloadDesc;
+
+  /// No description provided for @sslSettingsDownloadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate downloaded successfully'**
+  String get sslSettingsDownloadSuccess;
+
+  /// No description provided for @sslSettingsCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Content'**
+  String get sslSettingsCert;
+
+  /// No description provided for @sslSettingsKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Private Key Content'**
+  String get sslSettingsKey;
+
+  /// No description provided for @upgradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'System Upgrade'**
+  String get upgradeTitle;
+
+  /// No description provided for @upgradeCurrentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version'**
+  String get upgradeCurrentVersion;
+
+  /// No description provided for @upgradeCurrentVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current System Version'**
+  String get upgradeCurrentVersionLabel;
+
+  /// No description provided for @upgradeAvailableVersions.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Versions'**
+  String get upgradeAvailableVersions;
+
+  /// No description provided for @upgradeNoUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Already up to date'**
+  String get upgradeNoUpdates;
+
+  /// No description provided for @upgradeLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get upgradeLatest;
+
+  /// No description provided for @upgradeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Upgrade'**
+  String get upgradeConfirm;
+
+  /// No description provided for @upgradeConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to upgrade to version {version}?'**
+  String upgradeConfirmMessage(Object version);
+
+  /// No description provided for @upgradeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get upgradeButton;
+
+  /// No description provided for @upgradeStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade started'**
+  String get upgradeStarted;
+
+  /// No description provided for @monitorSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor Settings'**
+  String get monitorSettingsTitle;
+
+  /// No description provided for @monitorSettingsInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor Interval'**
+  String get monitorSettingsInterval;
+
+  /// No description provided for @monitorSettingsStoreDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Retention Days'**
+  String get monitorSettingsStoreDays;
+
+  /// No description provided for @monitorSettingsEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Monitoring'**
+  String get monitorSettingsEnable;
+
   /// No description provided for @systemSettingsCurrentVersion.
   ///
   /// In en, this message translates to:
@@ -1766,6 +2042,48 @@ abstract class AppLocalizations {
   /// **'Security Settings'**
   String get securitySettingsTitle;
 
+  /// No description provided for @securitySettingsPasswordSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Management'**
+  String get securitySettingsPasswordSection;
+
+  /// No description provided for @securitySettingsChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get securitySettingsChangePassword;
+
+  /// No description provided for @securitySettingsChangePasswordDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Change login password'**
+  String get securitySettingsChangePasswordDesc;
+
+  /// No description provided for @securitySettingsOldPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get securitySettingsOldPassword;
+
+  /// No description provided for @securitySettingsNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get securitySettingsNewPassword;
+
+  /// No description provided for @securitySettingsConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get securitySettingsConfirmPassword;
+
+  /// No description provided for @securitySettingsPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get securitySettingsPasswordMismatch;
+
   /// No description provided for @securitySettingsMfaSection.
   ///
   /// In en, this message translates to:
@@ -1777,6 +2095,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MFA Status'**
   String get securitySettingsMfaStatus;
+
+  /// No description provided for @securitySettingsMfaBind.
+  ///
+  /// In en, this message translates to:
+  /// **'Bind MFA'**
+  String get securitySettingsMfaBind;
+
+  /// No description provided for @securitySettingsMfaUnbind.
+  ///
+  /// In en, this message translates to:
+  /// **'Unbind MFA'**
+  String get securitySettingsMfaUnbind;
+
+  /// No description provided for @securitySettingsMfaUnbindDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'MFA authentication will be disabled after unbinding. Are you sure?'**
+  String get securitySettingsMfaUnbindDesc;
+
+  /// No description provided for @securitySettingsMfaScanQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code with authenticator app'**
+  String get securitySettingsMfaScanQr;
+
+  /// No description provided for @securitySettingsMfaSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Secret: {secret}'**
+  String securitySettingsMfaSecret(Object secret);
+
+  /// No description provided for @securitySettingsMfaCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Code'**
+  String get securitySettingsMfaCode;
 
   /// No description provided for @securitySettingsUnbindMfa.
   ///
