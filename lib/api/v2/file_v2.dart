@@ -369,15 +369,21 @@ class FileV2Api {
       ApiConstants.buildApiPath('/files/favorite/search'),
       data: request.toJson(),
     );
-    final data = response.data;
+    final responseData = response.data;
     List<FileInfo> files = [];
-    if (data is List) {
-      files = data.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
-    } else if (data is Map<String, dynamic>) {
-      final itemsRaw = data['items'] ?? data['data'] ?? data['files'];
-      if (itemsRaw is List) {
-        files = itemsRaw.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
+    
+    if (responseData is Map<String, dynamic>) {
+      final dataWrapper = responseData['data'];
+      if (dataWrapper is Map<String, dynamic>) {
+        final itemsRaw = dataWrapper['items'];
+        if (itemsRaw is List) {
+          files = itemsRaw.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
+        }
+      } else if (dataWrapper is List) {
+        files = dataWrapper.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
       }
+    } else if (responseData is List) {
+      files = responseData.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
     }
     return Response(
       data: files,
