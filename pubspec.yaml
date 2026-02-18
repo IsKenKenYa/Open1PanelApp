@@ -59,6 +59,7 @@ dependencies:
     sdk: flutter  # Flutter官方国际化支持
   logger: ^2.6.2  # Logging (Updated from 2.0.2+1)
   equatable: ^2.0.8  # Equality checking (Updated from 2.0.5)
+  file_picker: ^8.0.0  # File picker for file upload
   
   # Testing
   mockito: ^5.6.3  # Mock objects for testing (Updated from 5.4.3)

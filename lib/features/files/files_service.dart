@@ -125,11 +125,49 @@ class FilesService {
     appLogger.iWithPackage('files', 'moveFiles: 成功移动 ${paths.length} 个文件到 $targetPath');
   }
 
-  Future<void> copyFiles(List<String> paths, String targetPath) async {
-    appLogger.dWithPackage('files', 'copyFiles: paths=$paths, targetPath=$targetPath');
+  Future<void> copyFiles(List<String> paths, String targetPath, {String? newName}) async {
+    appLogger.dWithPackage('files', 'copyFiles: paths=$paths, targetPath=$targetPath, newName=$newName');
     final api = await _getApi();
-    await api.moveFiles(FileMove(paths: paths, targetPath: targetPath, type: 'copy'));
+    
+    for (final sourcePath in paths) {
+      final sourceDir = sourcePath.substring(0, sourcePath.lastIndexOf('/'));
+      final sourceName = sourcePath.substring(sourcePath.lastIndexOf('/') + 1);
+      
+      String? name = newName;
+      
+      if (sourceDir == targetPath && name == null) {
+        name = _generateCopyName(sourceName);
+        appLogger.iWithPackage('files', 'copyFiles: 源目录与目标目录相同，自动重命名为 $name');
+      }
+      
+      await api.moveFiles(FileMove(
+        paths: [sourcePath],
+        targetPath: targetPath,
+        type: 'copy',
+        name: name,
+      ));
+    }
+    
     appLogger.iWithPackage('files', 'copyFiles: 成功复制 ${paths.length} 个文件到 $targetPath');
+  }
+
+  String _generateCopyName(String originalName) {
+    final lastDot = originalName.lastIndexOf('.');
+    String baseName;
+    String extension = '';
+    
+    if (lastDot > 0) {
+      baseName = originalName.substring(0, lastDot);
+      extension = originalName.substring(lastDot);
+    } else {
+      baseName = originalName;
+    }
+    
+    int counter = 1;
+    while (true) {
+      final newName = '$baseName ($counter)$extension';
+      return newName;
+    }
   }
 
   Future<String> getFileContent(String path) async {

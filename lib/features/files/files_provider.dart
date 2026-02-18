@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
 import 'files_service.dart';
 import '../../data/models/file_models.dart';
 import '../../core/config/api_config.dart';
@@ -240,6 +241,21 @@ class FilesProvider extends ChangeNotifier {
       await refresh();
     } catch (e, stackTrace) {
       appLogger.eWithPackage('files_provider', 'createFile: 失败', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<void> uploadFiles(List<String> filePaths) async {
+    appLogger.dWithPackage('files_provider', 'uploadFiles: filePaths=$filePaths, targetPath=${_data.currentPath}');
+    try {
+      for (final filePath in filePaths) {
+        final file = await MultipartFile.fromFile(filePath);
+        await _service.uploadFile(_data.currentPath, file);
+      }
+      appLogger.iWithPackage('files_provider', 'uploadFiles: 成功上传 ${filePaths.length} 个文件');
+      await refresh();
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage('files_provider', 'uploadFiles: 失败', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }

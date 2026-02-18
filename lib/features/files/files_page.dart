@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:onepanelapp_app/core/theme/app_design_tokens.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/data/models/file_models.dart';
@@ -578,7 +579,7 @@ class _FilesViewState extends State<FilesView> {
   void _showCreateOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -586,7 +587,7 @@ class _FilesViewState extends State<FilesView> {
               leading: const Icon(Icons.create_new_folder_outlined),
               title: Text(context.l10n.filesActionNewFolder),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(sheetContext);
                 _showCreateDirectoryDialog(context);
               },
             ),
@@ -594,7 +595,7 @@ class _FilesViewState extends State<FilesView> {
               leading: const Icon(Icons.note_add_outlined),
               title: Text(context.l10n.filesActionNewFile),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(sheetContext);
                 _showCreateFileDialog(context);
               },
             ),
@@ -602,7 +603,7 @@ class _FilesViewState extends State<FilesView> {
               leading: const Icon(Icons.upload_file_outlined),
               title: Text(context.l10n.filesActionUpload),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(sheetContext);
                 _showUploadDialog(context);
               },
             ),
@@ -1188,15 +1189,59 @@ class _FilesViewState extends State<FilesView> {
   }
 
   void _showUploadDialog(BuildContext context) {
+    appLogger.dWithPackage('files_page', '_showUploadDialog: 打开上传对话框');
+    final provider = context.read<FilesProvider>();
+    final l10n = context.l10n;
+    
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.filesActionUpload),
-        content: Text(context.l10n.filesUploadDeveloping),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.filesActionUpload),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${l10n.filesTargetPath}: ${provider.data.currentPath}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            Text(l10n.filesActionUpload),
+          ],
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n.commonConfirm),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              try {
+                final result = await FilePicker.platform.pickFiles(
+                  allowMultiple: true,
+                );
+                
+                if (result != null && result.files.isNotEmpty) {
+                  final filePaths = result.files
+                      .where((f) => f.path != null)
+                      .map((f) => f.path!)
+                      .toList();
+                  
+                  if (filePaths.isNotEmpty) {
+                    appLogger.dWithPackage('files_page', '_showUploadDialog: 选择${filePaths.length}个文件');
+                    await provider.uploadFiles(filePaths);
+                    appLogger.iWithPackage('files_page', '_showUploadDialog: 上传成功');
+                  }
+                }
+              } catch (e, stackTrace) {
+                appLogger.eWithPackage('files_page', '_showUploadDialog: 上传失败', error: e, stackTrace: stackTrace);
+                if (context.mounted) {
+                  DebugErrorDialog.show(context, l10n.filesCreateFailed, e, stackTrace: stackTrace);
+                }
+              }
+            },
+            child: Text(l10n.filesActionUpload),
           ),
         ],
       ),
