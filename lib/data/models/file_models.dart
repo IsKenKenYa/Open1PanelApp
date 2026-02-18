@@ -385,11 +385,15 @@ class FileMove extends Equatable {
   final List<String> paths;
   final String targetPath;
   final String? type;
+  final String? name;
+  final bool? cover;
 
   const FileMove({
     required this.paths,
     required this.targetPath,
     this.type,
+    this.name,
+    this.cover,
   });
 
   factory FileMove.fromJson(Map<String, dynamic> json) {
@@ -398,19 +402,24 @@ class FileMove extends Equatable {
              (json['paths'] as List?)?.cast<String>() ?? [],
       targetPath: json['newPath'] as String? ?? json['targetPath'] as String? ?? '',
       type: json['type'] as String?,
+      name: json['name'] as String?,
+      cover: json['cover'] as bool?,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'type': type ?? 'move',
+    final json = <String, dynamic>{
       'oldPaths': paths,
       'newPath': targetPath,
     };
+    json['type'] = type ?? 'cut';
+    if (name != null) json['name'] = name;
+    if (cover != null) json['cover'] = cover;
+    return json;
   }
 
   @override
-  List<Object?> get props => [paths, targetPath, type];
+  List<Object?> get props => [paths, targetPath, type, name, cover];
 }
 
 /// 文件复制模型

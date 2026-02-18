@@ -1,0 +1,3 @@
+[submodule "docs/OpenSource/1Panel"]
+	path = docs/OpenSource/1Panel
+	url = https://github.com/1Panel-dev/1Panel.git

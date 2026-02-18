@@ -96,7 +96,7 @@ class FilesService {
   Future<void> createFile(String path, {String? content}) async {
     appLogger.dWithPackage('files', 'createFile: path=$path, hasContent=${content != null}');
     final api = await _getApi();
-    await api.createDirectory(FileCreate(path: path, content: content, isDir: false));
+    await api.createFile(FileCreate(path: path, content: content, isDir: false));
     appLogger.iWithPackage('files', 'createFile: 成功创建文件 $path');
   }
 
@@ -121,8 +121,15 @@ class FilesService {
   Future<void> moveFiles(List<String> paths, String targetPath) async {
     appLogger.dWithPackage('files', 'moveFiles: paths=$paths, targetPath=$targetPath');
     final api = await _getApi();
-    await api.moveFiles(FileMove(paths: paths, targetPath: targetPath));
+    await api.moveFiles(FileMove(paths: paths, targetPath: targetPath, type: 'cut'));
     appLogger.iWithPackage('files', 'moveFiles: 成功移动 ${paths.length} 个文件到 $targetPath');
+  }
+
+  Future<void> copyFiles(List<String> paths, String targetPath) async {
+    appLogger.dWithPackage('files', 'copyFiles: paths=$paths, targetPath=$targetPath');
+    final api = await _getApi();
+    await api.moveFiles(FileMove(paths: paths, targetPath: targetPath, type: 'copy'));
+    appLogger.iWithPackage('files', 'copyFiles: 成功复制 ${paths.length} 个文件到 $targetPath');
   }
 
   Future<String> getFileContent(String path) async {

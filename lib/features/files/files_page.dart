@@ -355,6 +355,7 @@ class _FilesViewState extends State<FilesView> {
             if (isDir)
               PopupMenuItem(value: 'open', child: Text(l10n.filesActionOpen)),
             PopupMenuItem(value: 'rename', child: Text(l10n.filesActionRename)),
+            PopupMenuItem(value: 'copy', child: Text(l10n.filesActionCopy)),
             PopupMenuItem(value: 'move', child: Text(l10n.filesActionMove)),
             if (!isDir && _isCompressedFile(file.name))
               PopupMenuItem(value: 'extract', child: Text(l10n.filesActionExtract)),
@@ -403,6 +404,11 @@ class _FilesViewState extends State<FilesView> {
             icon: const Icon(Icons.folder_zip_outlined),
             onPressed: () => _showCompressDialog(context, provider, provider.data.selectedFiles.toList(), l10n),
             tooltip: l10n.filesActionCompress,
+          ),
+          IconButton(
+            icon: const Icon(Icons.content_copy),
+            onPressed: () => _showBatchCopyDialog(context, provider, l10n),
+            tooltip: l10n.filesActionCopy,
           ),
           IconButton(
             icon: const Icon(Icons.drive_file_move_outline),
@@ -549,6 +555,9 @@ class _FilesViewState extends State<FilesView> {
         break;
       case 'rename':
         _showRenameDialog(context, provider, file, l10n);
+        break;
+      case 'copy':
+        _showCopyDialog(context, provider, file, l10n);
         break;
       case 'move':
         _showMoveDialog(context, provider, file, l10n);
@@ -781,6 +790,67 @@ class _FilesViewState extends State<FilesView> {
                 appLogger.eWithPackage('files_page', '_showMoveDialog: 移动失败', error: e, stackTrace: stackTrace);
                 if (context.mounted) {
                   DebugErrorDialog.show(context, l10n.filesMoveFailed, e, stackTrace: stackTrace);
+                }
+              }
+            },
+            child: Text(l10n.commonConfirm),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCopyDialog(BuildContext context, FilesProvider provider, FileInfo file, AppLocalizations l10n) {
+    appLogger.dWithPackage('files_page', '_showCopyDialog: 打开复制对话框, file=${file.path}');
+    final controller = TextEditingController(text: provider.data.currentPath);
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.filesActionCopy),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${l10n.filesNameLabel}: ${file.name}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                labelText: l10n.filesTargetPath,
+                prefixIcon: const Icon(Icons.folder_outlined),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.folder_open),
+                  onPressed: () async {
+                    final selectedPath = await _showPathSelectorDialog(context, provider, controller.text, l10n);
+                    if (selectedPath != null) {
+                      controller.text = selectedPath;
+                    }
+                  },
+                  tooltip: l10n.filesSelectPath,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              appLogger.dWithPackage('files_page', '_showCopyDialog: 用户选择目标路径=${controller.text}');
+              Navigator.pop(dialogContext);
+              try {
+                await provider.copyFile(file.path, controller.text);
+                appLogger.iWithPackage('files_page', '_showCopyDialog: 复制成功');
+              } catch (e, stackTrace) {
+                appLogger.eWithPackage('files_page', '_showCopyDialog: 复制失败', error: e, stackTrace: stackTrace);
+                if (context.mounted) {
+                  DebugErrorDialog.show(context, l10n.filesCopyFailed, e, stackTrace: stackTrace);
                 }
               }
             },
@@ -1060,6 +1130,53 @@ class _FilesViewState extends State<FilesView> {
               } catch (e, stackTrace) {
                 if (context.mounted) {
                   DebugErrorDialog.show(context, l10n.filesMoveFailed, e, stackTrace: stackTrace);
+                }
+              }
+            },
+            child: Text(l10n.commonConfirm),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBatchCopyDialog(BuildContext context, FilesProvider provider, AppLocalizations l10n) {
+    final controller = TextEditingController(text: provider.data.currentPath);
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.filesActionCopy),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${l10n.filesSelected}: ${provider.data.selectionCount}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                labelText: l10n.filesTargetPath,
+                prefixIcon: const Icon(Icons.folder_outlined),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              try {
+                await provider.copySelected(controller.text);
+              } catch (e, stackTrace) {
+                if (context.mounted) {
+                  DebugErrorDialog.show(context, l10n.filesCopyFailed, e, stackTrace: stackTrace);
                 }
               }
             },

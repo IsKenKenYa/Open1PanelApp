@@ -303,6 +303,23 @@ class FilesProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> copySelected(String targetPath) async {
+    if (_data.selectedFiles.isEmpty) {
+      appLogger.wWithPackage('files_provider', 'copySelected: 没有选中的文件');
+      return;
+    }
+    appLogger.dWithPackage('files_provider', 'copySelected: 复制${_data.selectedFiles.length}个文件到$targetPath');
+    try {
+      await _service.copyFiles(_data.selectedFiles.toList(), targetPath);
+      appLogger.iWithPackage('files_provider', 'copySelected: 成功');
+      clearSelection();
+      await refresh();
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage('files_provider', 'copySelected: 失败', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
   Future<void> moveFile(String sourcePath, String targetPath) async {
     appLogger.dWithPackage('files_provider', 'moveFile: source=$sourcePath, target=$targetPath');
     try {
@@ -311,6 +328,18 @@ class FilesProvider extends ChangeNotifier {
       await refresh();
     } catch (e, stackTrace) {
       appLogger.eWithPackage('files_provider', 'moveFile: 失败', error: e, stackTrace: stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<void> copyFile(String sourcePath, String targetPath) async {
+    appLogger.dWithPackage('files_provider', 'copyFile: source=$sourcePath, target=$targetPath');
+    try {
+      await _service.copyFiles([sourcePath], targetPath);
+      appLogger.iWithPackage('files_provider', 'copyFile: 成功');
+      await refresh();
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage('files_provider', 'copyFile: 失败', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
