@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
@@ -1560,15 +1561,49 @@ class _FilesViewState extends State<FilesView> {
                   if (status != null && status.state == WgetDownloadState.success) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(l10n.filesWgetSuccess(status.filePath ?? '')),
+                        content: Row(
+                          children: [
+                            Icon(Icons.check_circle, color: Theme.of(context).colorScheme.onPrimary),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(status.message ?? l10n.filesWgetSuccess(status.filePath ?? ''))),
+                          ],
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.primary,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        action: SnackBarAction(
+                          label: l10n.commonConfirm,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          onPressed: () {},
+                        ),
                       ),
                     );
                   } else if (status != null && status.state == WgetDownloadState.error) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(status.message ?? l10n.filesWgetFailed),
+                        content: Row(
+                          children: [
+                            Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onError),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(status.message ?? l10n.filesWgetFailed)),
+                          ],
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.error,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        action: SnackBarAction(
+                          label: l10n.commonConfirm,
+                          textColor: Theme.of(context).colorScheme.onError,
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: status.message ?? ''));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.commonCopied),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     );
                   }
@@ -1577,7 +1612,33 @@ class _FilesViewState extends State<FilesView> {
               } catch (e, stackTrace) {
                 appLogger.eWithPackage('files_page', '_showWgetDialog: wget下载失败', error: e, stackTrace: stackTrace);
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, l10n.filesWgetFailed, e, stackTrace: stackTrace);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(Icons.error_outline, color: Theme.of(context).colorScheme.onError),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(e.toString())),
+                        ],
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      action: SnackBarAction(
+                        label: l10n.commonConfirm,
+                        textColor: Theme.of(context).colorScheme.onError,
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: e.toString()));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.commonCopied),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
                 }
               }
             },
