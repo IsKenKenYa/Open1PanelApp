@@ -451,6 +451,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsGeneral => '通用';
 
   @override
+  String get settingsStorage => '存储';
+
+  @override
+  String get settingsSystem => '系统';
+
+  @override
   String get settingsLanguage => '语言';
 
   @override
@@ -506,6 +512,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsCacheCleared => '缓存已清除';
+
+  @override
+  String get settingsCacheLimit => '缓存限制';
+
+  @override
+  String get settingsCacheStatus => '缓存状态';
+
+  @override
+  String get settingsCacheStrategyHybridDesc => '内存+硬盘双缓存，体验最佳';
+
+  @override
+  String get settingsCacheStrategyMemoryOnlyDesc => '仅内存缓存，减少闪存损耗';
+
+  @override
+  String get settingsCacheStrategyDiskOnlyDesc => '仅硬盘缓存，支持离线查看';
+
+  @override
+  String get settingsCacheExpiration => '过期时间';
+
+  @override
+  String get settingsCacheExpirationUnit => '分钟';
 
   @override
   String get themeSystem => '跟随系统';

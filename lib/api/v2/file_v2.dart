@@ -194,7 +194,7 @@ class FileV2Api {
   /// @return 更新结果
   Future<Response> updateFileContent(FileContent request) async {
     return await _client.post(
-      ApiConstants.buildApiPath('/files/content/update'),
+      ApiConstants.buildApiPath('/files/save'),
       data: request.toJson(),
     );
   }

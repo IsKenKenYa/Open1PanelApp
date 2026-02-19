@@ -455,6 +455,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsGeneral => 'General';
 
   @override
+  String get settingsStorage => 'Storage';
+
+  @override
+  String get settingsSystem => 'System';
+
+  @override
   String get settingsLanguage => 'Language';
 
   @override
@@ -511,6 +517,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsCacheCleared => 'Cache cleared';
+
+  @override
+  String get settingsCacheLimit => 'Cache Limit';
+
+  @override
+  String get settingsCacheStatus => 'Cache Status';
+
+  @override
+  String get settingsCacheStrategyHybridDesc =>
+      'Memory + Disk, best experience';
+
+  @override
+  String get settingsCacheStrategyMemoryOnlyDesc =>
+      'Memory only, reduce flash wear';
+
+  @override
+  String get settingsCacheStrategyDiskOnlyDesc =>
+      'Disk only, support offline viewing';
+
+  @override
+  String get settingsCacheExpiration => 'Expiration';
+
+  @override
+  String get settingsCacheExpirationUnit => 'minutes';
 
   @override
   String get themeSystem => 'Follow system';

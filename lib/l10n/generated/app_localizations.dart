@@ -962,6 +962,18 @@ abstract class AppLocalizations {
   /// **'General'**
   String get settingsGeneral;
 
+  /// No description provided for @settingsStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get settingsStorage;
+
+  /// No description provided for @settingsSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsSystem;
+
   /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
@@ -1075,6 +1087,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cache cleared'**
   String get settingsCacheCleared;
+
+  /// No description provided for @settingsCacheLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Limit'**
+  String get settingsCacheLimit;
+
+  /// No description provided for @settingsCacheStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Status'**
+  String get settingsCacheStatus;
+
+  /// No description provided for @settingsCacheStrategyHybridDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory + Disk, best experience'**
+  String get settingsCacheStrategyHybridDesc;
+
+  /// No description provided for @settingsCacheStrategyMemoryOnlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory only, reduce flash wear'**
+  String get settingsCacheStrategyMemoryOnlyDesc;
+
+  /// No description provided for @settingsCacheStrategyDiskOnlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Disk only, support offline viewing'**
+  String get settingsCacheStrategyDiskOnlyDesc;
+
+  /// No description provided for @settingsCacheExpiration.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get settingsCacheExpiration;
+
+  /// No description provided for @settingsCacheExpirationUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get settingsCacheExpirationUnit;
 
   /// No description provided for @themeSystem.
   ///
