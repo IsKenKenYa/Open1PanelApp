@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:onepanelapp_app/core/theme/app_design_tokens.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/data/models/file_models.dart';
+import 'package:onepanelapp_app/features/files/models/models.dart';
 import 'package:onepanelapp_app/features/files/files_provider.dart';
 import 'package:onepanelapp_app/features/files/file_preview_page.dart';
 import 'package:onepanelapp_app/features/files/file_editor_page.dart';
@@ -29,7 +30,7 @@ import 'package:onepanelapp_app/features/files/widgets/dialogs/wget_dialog.dart'
 import 'package:onepanelapp_app/features/files/widgets/dialogs/search_dialog.dart';
 import 'package:onepanelapp_app/features/files/widgets/dialogs/sort_options_dialog.dart';
 
-export 'files_provider.dart' show WgetDownloadState;
+export 'models/models.dart' show WgetDownloadState;
 
 class FilesPage extends StatelessWidget {
   const FilesPage({super.key});

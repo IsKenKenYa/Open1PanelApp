@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/core/services/logger/logger_service.dart';
 import 'package:onepanelapp_app/features/files/files_provider.dart';
+import 'package:onepanelapp_app/features/files/models/models.dart';
 
 void showWgetDialog(BuildContext context, FilesProvider provider) {
   appLogger.dWithPackage('wget_dialog', 'showWgetDialog: 打开wget下载对话框');
