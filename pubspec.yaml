@@ -51,6 +51,7 @@ dependencies:
   # UI & UX
   material_design_icons_flutter: ^7.0.7296  # Material Design Icons (Latest)
   cached_network_image: ^3.3.1  # Image caching (Latest stable)
+  flutter_cache_manager: ^3.4.1  # File caching manager
   shimmer: ^3.0.0  # Skeleton loaders (Latest)
   
   # Utilities

@@ -998,6 +998,84 @@ abstract class AppLocalizations {
   /// **'Onboarding state has been reset'**
   String get settingsResetOnboardingDone;
 
+  /// No description provided for @settingsCacheTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Settings'**
+  String get settingsCacheTitle;
+
+  /// No description provided for @settingsCacheStrategy.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Strategy'**
+  String get settingsCacheStrategy;
+
+  /// No description provided for @settingsCacheStrategyHybrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Hybrid'**
+  String get settingsCacheStrategyHybrid;
+
+  /// No description provided for @settingsCacheStrategyMemoryOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Only'**
+  String get settingsCacheStrategyMemoryOnly;
+
+  /// No description provided for @settingsCacheStrategyDiskOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Disk Only'**
+  String get settingsCacheStrategyDiskOnly;
+
+  /// No description provided for @settingsCacheMaxSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Limit'**
+  String get settingsCacheMaxSize;
+
+  /// No description provided for @settingsCacheStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Status'**
+  String get settingsCacheStats;
+
+  /// No description provided for @settingsCacheItemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get settingsCacheItemCount;
+
+  /// No description provided for @settingsCacheCurrentSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Size'**
+  String get settingsCacheCurrentSize;
+
+  /// No description provided for @settingsCacheClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get settingsCacheClear;
+
+  /// No description provided for @settingsCacheClearConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Clear Cache'**
+  String get settingsCacheClearConfirm;
+
+  /// No description provided for @settingsCacheClearConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all cache? This will delete both memory and disk cache.'**
+  String get settingsCacheClearConfirmMessage;
+
+  /// No description provided for @settingsCacheCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared'**
+  String get settingsCacheCleared;
+
   /// No description provided for @themeSystem.
   ///
   /// In en, this message translates to:

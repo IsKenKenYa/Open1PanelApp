@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,11 +10,13 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/core/services/logger/logger_service.dart';
+import 'package:onepanelapp_app/core/services/cache/file_preview_cache_manager.dart';
+import 'package:onepanelapp_app/core/services/app_settings_controller.dart';
 import 'package:onepanelapp_app/features/files/files_service.dart';
 import 'package:onepanelapp_app/features/files/file_editor_page.dart';
-import 'package:onepanelapp_app/core/config/api_config.dart';
 
 class FilePreviewPage extends StatefulWidget {
   final String filePath;
@@ -34,7 +38,10 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
   String? _error;
   late FileType _fileType;
   FilesService? _service;
-  ApiConfig? _serverConfig;
+  String? _localFilePath;
+  CacheSource? _cacheSource;
+  
+  final FilePreviewCacheManager _cacheManager = FilePreviewCacheManager();
 
   VideoPlayerController? _videoController;
   ChewieController? _chewieController;
@@ -91,22 +98,83 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
 
   Future<void> _initService() async {
     _service = FilesService();
-    _serverConfig = await _service!.getCurrentServer();
     
-    if (_fileType == FileType.image || _fileType == FileType.pdf) {
-      setState(() {
-        _isLoading = false;
-      });
-    } else if (_fileType == FileType.video) {
-      await _initVideoPlayer();
-    } else if (_fileType == FileType.audio) {
-      await _initAudioPlayer();
+    if (_fileType == FileType.image || 
+        _fileType == FileType.video || 
+        _fileType == FileType.pdf || 
+        _fileType == FileType.audio) {
+      await _downloadAndPreview();
     } else if (_fileType == FileType.text || _fileType == FileType.markdown) {
       await _loadContent();
     } else {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _downloadAndPreview() async {
+    try {
+      appLogger.dWithPackage('file_preview', '_downloadAndPreview: 加载文件 ${widget.filePath}');
+      
+      _service ??= FilesService();
+      
+      final settingsController = context.read<AppSettingsController>();
+      final cacheStrategy = settingsController.cacheStrategy;
+      
+      final result = await _cacheManager.loadFile(
+        filePath: widget.filePath,
+        fileName: widget.fileName,
+        strategy: cacheStrategy,
+        downloadFn: () async {
+          final tempDir = await getTemporaryDirectory();
+          final tempPath = '${tempDir.path}/temp_${DateTime.now().millisecondsSinceEpoch}_${widget.fileName}';
+          await _service!.downloadFile(widget.filePath, tempPath);
+          final file = File(tempPath);
+          final data = await file.readAsBytes();
+          await file.delete();
+          return data;
+        },
+      );
+      
+      if (result == null) {
+        throw Exception('加载文件失败');
+      }
+      
+      _cacheSource = result.source;
+      
+      final tempPath = await _cacheManager.saveToTempFile(result.data, widget.fileName);
+      if (tempPath == null) {
+        throw Exception('保存临时文件失败');
+      }
+      _localFilePath = tempPath;
+      
+      final sourceName = switch (result.source) {
+        CacheSource.memory => '内存缓存',
+        CacheSource.disk => '硬盘缓存',
+        CacheSource.network => '网络下载',
+      };
+      appLogger.iWithPackage('file_preview', '_downloadAndPreview: 文件已加载 (来源: $sourceName)');
+      
+      if (_fileType == FileType.video) {
+        await _initVideoPlayer();
+      } else if (_fileType == FileType.audio) {
+        await _initAudioPlayer();
+      } else {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage('file_preview', '_downloadAndPreview: 加载失败', error: e, stackTrace: stackTrace);
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -144,21 +212,13 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     return false;
   }
 
-  String _getFileUrl() {
-    final server = _serverConfig;
-    if (server == null) {
-      return '';
-    }
-    final baseUrl = server.url.endsWith('/') ? server.url : '${server.url}/';
-    final apiKey = server.apiKey;
-    final path = widget.filePath.startsWith('/') ? widget.filePath.substring(1) : widget.filePath;
-    return '${baseUrl}api/v2/files/download?path=/$path&apiKey=$apiKey';
-  }
-
   Future<void> _initVideoPlayer() async {
     try {
-      final videoUrl = _getFileUrl();
-      _videoController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      if (_localFilePath == null) {
+        throw Exception('Local file path is null');
+      }
+      
+      _videoController = VideoPlayerController.file(File(_localFilePath!));
       await _videoController!.initialize();
       
       _chewieController = ChewieController(
@@ -202,10 +262,13 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
 
   Future<void> _initAudioPlayer() async {
     try {
-      final audioUrl = _getFileUrl();
+      if (_localFilePath == null) {
+        throw Exception('Local file path is null');
+      }
+      
       _audioPlayer = AudioPlayer();
       
-      await _audioPlayer!.setSourceUrl(audioUrl);
+      await _audioPlayer!.setSource(DeviceFileSource(_localFilePath!));
       _audioDuration = (await _audioPlayer!.getDuration()) ?? Duration.zero;
 
       _audioPlayer!.onPositionChanged.listen((position) {
@@ -278,9 +341,21 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.fileName,
-          overflow: TextOverflow.ellipsis,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.fileName,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (_cacheSource != null)
+              Text(
+                _getCacheSourceText(),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+          ],
         ),
         actions: [
           if (_fileType == FileType.text || _fileType == FileType.markdown)
@@ -293,6 +368,14 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
       ),
       body: _buildBody(context, l10n, theme),
     );
+  }
+  
+  String _getCacheSourceText() {
+    return switch (_cacheSource!) {
+      CacheSource.memory => '从内存缓存加载',
+      CacheSource.disk => '从硬盘缓存加载',
+      CacheSource.network => '从网络下载',
+    };
   }
 
   Widget _buildBody(BuildContext context, dynamic l10n, ThemeData theme) {
@@ -343,12 +426,23 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     final isDark = theme.brightness == Brightness.dark;
     final isSvg = widget.fileName.toLowerCase().endsWith('.svg');
 
-    final imageUrl = _getFileUrl();
+    if (_localFilePath == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+            const SizedBox(height: 16),
+            Text('Failed to load image'),
+          ],
+        ),
+      );
+    }
 
     if (isSvg) {
       return Center(
-        child: SvgPicture.network(
-          imageUrl,
+        child: SvgPicture.file(
+          File(_localFilePath!),
           placeholderBuilder: (context) => const CircularProgressIndicator(),
           errorBuilder: (context, error, stackTrace) {
             return Column(
@@ -365,7 +459,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     }
 
     return PhotoView(
-      imageProvider: NetworkImage(imageUrl),
+      imageProvider: FileImage(File(_localFilePath!)),
       loadingBuilder: (context, event) => Center(
         child: CircularProgressIndicator(
           value: event?.expectedTotalBytes != null
@@ -543,10 +637,21 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
   }
 
   Widget _buildPdfPreview(BuildContext context, ThemeData theme) {
-    final pdfUrl = _getFileUrl();
+    if (_localFilePath == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+            const SizedBox(height: 16),
+            Text('Failed to load PDF'),
+          ],
+        ),
+      );
+    }
 
-    return SfPdfViewer.network(
-      pdfUrl,
+    return SfPdfViewer.file(
+      File(_localFilePath!),
       onDocumentLoaded: (details) {
         appLogger.iWithPackage('file_preview', 'PDF loaded successfully');
       },

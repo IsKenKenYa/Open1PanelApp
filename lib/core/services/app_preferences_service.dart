@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum CacheStrategy {
+  memoryOnly,
+  diskOnly,
+  hybrid,
+}
+
 class AppPreferencesService {
   static const String _themeModeKey = 'app_theme_mode';
   static const String _localeKey = 'app_locale';
+  static const String _cacheStrategyKey = 'cache_strategy';
+  static const String _cacheMaxSizeKey = 'cache_max_size_mb';
 
   Future<ThemeMode> loadThemeMode() async {
     final prefs = await SharedPreferences.getInstance();
@@ -48,5 +56,42 @@ class AppPreferencesService {
     }
 
     await prefs.setString(_localeKey, locale.languageCode);
+  }
+
+  Future<CacheStrategy> loadCacheStrategy() async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = prefs.getString(_cacheStrategyKey);
+
+    switch (value) {
+      case 'memoryOnly':
+        return CacheStrategy.memoryOnly;
+      case 'diskOnly':
+        return CacheStrategy.diskOnly;
+      case 'hybrid':
+        return CacheStrategy.hybrid;
+      default:
+        return CacheStrategy.hybrid;
+    }
+  }
+
+  Future<void> saveCacheStrategy(CacheStrategy strategy) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = switch (strategy) {
+      CacheStrategy.memoryOnly => 'memoryOnly',
+      CacheStrategy.diskOnly => 'diskOnly',
+      CacheStrategy.hybrid => 'hybrid',
+    };
+
+    await prefs.setString(_cacheStrategyKey, value);
+  }
+
+  Future<int> loadCacheMaxSizeMB() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_cacheMaxSizeKey) ?? 100;
+  }
+
+  Future<void> saveCacheMaxSizeMB(int sizeMB) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_cacheMaxSizeKey, sizeMB);
   }
 }

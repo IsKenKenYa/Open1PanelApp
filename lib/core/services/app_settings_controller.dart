@@ -10,14 +10,20 @@ class AppSettingsController extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
   Locale? _locale;
   bool _loaded = false;
+  CacheStrategy _cacheStrategy = CacheStrategy.hybrid;
+  int _cacheMaxSizeMB = 100;
 
   ThemeMode get themeMode => _themeMode;
   Locale? get locale => _locale;
   bool get loaded => _loaded;
+  CacheStrategy get cacheStrategy => _cacheStrategy;
+  int get cacheMaxSizeMB => _cacheMaxSizeMB;
 
   Future<void> load() async {
     _themeMode = await _preferencesService.loadThemeMode();
     _locale = await _preferencesService.loadLocale();
+    _cacheStrategy = await _preferencesService.loadCacheStrategy();
+    _cacheMaxSizeMB = await _preferencesService.loadCacheMaxSizeMB();
     _loaded = true;
     notifyListeners();
   }
@@ -31,6 +37,18 @@ class AppSettingsController extends ChangeNotifier {
   Future<void> updateLocale(Locale? locale) async {
     _locale = locale;
     await _preferencesService.saveLocale(locale);
+    notifyListeners();
+  }
+
+  Future<void> updateCacheStrategy(CacheStrategy strategy) async {
+    _cacheStrategy = strategy;
+    await _preferencesService.saveCacheStrategy(strategy);
+    notifyListeners();
+  }
+
+  Future<void> updateCacheMaxSizeMB(int sizeMB) async {
+    _cacheMaxSizeMB = sizeMB;
+    await _preferencesService.saveCacheMaxSizeMB(sizeMB);
     notifyListeners();
   }
 }

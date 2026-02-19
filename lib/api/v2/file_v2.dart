@@ -132,11 +132,14 @@ class FileV2Api {
   ///
   /// 下载指定的文件 (GET 方法)
   /// @param path 文件路径
-  /// @return 文件内容
-  Future<Response> downloadFile(String path) async {
-    return await _client.get(
+  /// @return 文件内容（字节）
+  Future<Response<List<int>>> downloadFile(String path) async {
+    return await _client.get<List<int>>(
       ApiConstants.buildApiPath('/files/download'),
       queryParameters: {'path': path},
+      options: Options(
+        responseType: ResponseType.bytes,
+      ),
     );
   }
 
@@ -162,8 +165,22 @@ class FileV2Api {
       ApiConstants.buildApiPath('/files/content'),
       data: data,
     );
+    String content = '';
+    if (response.data != null) {
+      if (response.data is Map<String, dynamic>) {
+        final dataWrapper = response.data as Map<String, dynamic>;
+        final dataField = dataWrapper['data'];
+        if (dataField is Map<String, dynamic>) {
+          content = dataField['content'] as String? ?? '';
+        } else {
+          content = dataField?.toString() ?? '';
+        }
+      } else {
+        content = response.data.toString();
+      }
+    }
     return Response(
-      data: response.data?.toString() ?? '',
+      data: content,
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,

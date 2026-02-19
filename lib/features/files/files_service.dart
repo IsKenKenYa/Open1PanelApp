@@ -476,7 +476,17 @@ class FilesService {
   Future<void> downloadFile(String path, String savePath) async {
     appLogger.dWithPackage('files', 'downloadFile: path=$path, savePath=$savePath');
     final api = await _getApi();
-    await api.downloadFile(path);
+    final response = await api.downloadFile(path);
+    
+    final bytes = response.data;
+    if (bytes == null || bytes.isEmpty) {
+      throw Exception('下载文件失败: 响应为空');
+    }
+    
+    final file = await File(savePath).create(recursive: true);
+    await file.writeAsBytes(bytes);
+    
+    appLogger.iWithPackage('files', 'downloadFile: 文件已保存到 $savePath');
   }
 
   CancelToken? _downloadCancelToken;

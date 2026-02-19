@@ -473,6 +473,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsResetOnboardingDone => 'Onboarding state has been reset';
 
   @override
+  String get settingsCacheTitle => 'Cache Settings';
+
+  @override
+  String get settingsCacheStrategy => 'Cache Strategy';
+
+  @override
+  String get settingsCacheStrategyHybrid => 'Hybrid';
+
+  @override
+  String get settingsCacheStrategyMemoryOnly => 'Memory Only';
+
+  @override
+  String get settingsCacheStrategyDiskOnly => 'Disk Only';
+
+  @override
+  String get settingsCacheMaxSize => 'Cache Limit';
+
+  @override
+  String get settingsCacheStats => 'Cache Status';
+
+  @override
+  String get settingsCacheItemCount => 'Items';
+
+  @override
+  String get settingsCacheCurrentSize => 'Current Size';
+
+  @override
+  String get settingsCacheClear => 'Clear Cache';
+
+  @override
+  String get settingsCacheClearConfirm => 'Confirm Clear Cache';
+
+  @override
+  String get settingsCacheClearConfirmMessage =>
+      'Are you sure you want to clear all cache? This will delete both memory and disk cache.';
+
+  @override
+  String get settingsCacheCleared => 'Cache cleared';
+
+  @override
   String get themeSystem => 'Follow system';
 
   @override

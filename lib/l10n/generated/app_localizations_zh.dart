@@ -469,6 +469,45 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsResetOnboardingDone => '已重置引导状态';
 
   @override
+  String get settingsCacheTitle => '缓存设置';
+
+  @override
+  String get settingsCacheStrategy => '缓存策略';
+
+  @override
+  String get settingsCacheStrategyHybrid => '混合模式';
+
+  @override
+  String get settingsCacheStrategyMemoryOnly => '仅内存';
+
+  @override
+  String get settingsCacheStrategyDiskOnly => '仅硬盘';
+
+  @override
+  String get settingsCacheMaxSize => '缓存上限';
+
+  @override
+  String get settingsCacheStats => '缓存状态';
+
+  @override
+  String get settingsCacheItemCount => '缓存项数';
+
+  @override
+  String get settingsCacheCurrentSize => '当前大小';
+
+  @override
+  String get settingsCacheClear => '清除缓存';
+
+  @override
+  String get settingsCacheClearConfirm => '确认清除缓存';
+
+  @override
+  String get settingsCacheClearConfirmMessage => '确定要清除所有缓存吗？这将删除内存缓存和硬盘缓存。';
+
+  @override
+  String get settingsCacheCleared => '缓存已清除';
+
+  @override
   String get themeSystem => '跟随系统';
 
   @override
