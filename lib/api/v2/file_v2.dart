@@ -490,9 +490,18 @@ class FileV2Api {
     if (data is List) {
       files = data.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
     } else if (data is Map<String, dynamic>) {
-      final itemsRaw = data['items'] ?? data['data'] ?? data['files'];
-      if (itemsRaw is List) {
-        files = itemsRaw.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
+      final dataWrapper = data['data'];
+      if (dataWrapper is Map<String, dynamic>) {
+        final itemsRaw = dataWrapper['items'];
+        if (itemsRaw is List) {
+          files = itemsRaw.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
+        }
+      }
+      if (files.isEmpty) {
+        final itemsRaw = data['items'] ?? data['files'];
+        if (itemsRaw is List) {
+          files = itemsRaw.map((item) => FileInfo.fromJson(item as Map<String, dynamic>)).toList();
+        }
       }
     }
     return Response(
