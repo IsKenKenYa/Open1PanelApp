@@ -5,7 +5,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:onepanelapp_app/core/theme/app_design_tokens.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/data/models/file_models.dart';
-import 'package:onepanelapp_app/features/files/models/models.dart';
 import 'package:onepanelapp_app/features/files/files_provider.dart';
 import 'package:onepanelapp_app/features/files/file_preview_page.dart';
 import 'package:onepanelapp_app/features/files/file_editor_page.dart';
@@ -419,6 +418,8 @@ class _FilesViewState extends State<FilesView> {
             provider.toggleSelection(file.path);
           } else if (isDir) {
             provider.navigateTo(file.path);
+          } else {
+            _openFilePreview(context, file);
           }
         },
       ),

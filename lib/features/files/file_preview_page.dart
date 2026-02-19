@@ -3,6 +3,11 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:onepanelapp_app/core/i18n/l10n_x.dart';
 import 'package:onepanelapp_app/core/services/logger/logger_service.dart';
 import 'package:onepanelapp_app/features/files/files_service.dart';
@@ -31,17 +36,43 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
   FilesService? _service;
   ApiConfig? _serverConfig;
 
+  VideoPlayerController? _videoController;
+  ChewieController? _chewieController;
+  AudioPlayer? _audioPlayer;
+  bool _isAudioPlaying = false;
+  Duration _audioPosition = Duration.zero;
+  Duration _audioDuration = Duration.zero;
+
   static const Set<String> _imageExtensions = {
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico'
   };
 
+  static const Set<String> _videoExtensions = {
+    'mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v', '3gp', 'flv', 'wmv'
+  };
+
+  static const Set<String> _audioExtensions = {
+    'mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac', 'wma'
+  };
+
   static const Set<String> _textExtensions = {
-    'txt', 'md', 'json', 'xml', 'yaml', 'yml', 'html', 'css', 'js', 'ts',
+    'txt', 'json', 'xml', 'yaml', 'yml', 'html', 'css', 'js', 'ts',
     'dart', 'py', 'java', 'c', 'cpp', 'h', 'hpp', 'sh', 'bash', 'sql',
     'log', 'conf', 'ini', 'env', 'gitignore', 'dockerfile', 'makefile',
     'toml', 'gradle', 'properties', 'vue', 'jsx', 'tsx', 'scss', 'sass',
-    'less', 'go', 'rs', 'swift', 'kt', 'scala', 'rb', 'php', 'pl', 'lua'
+    'less', 'go', 'rs', 'swift', 'kt', 'scala', 'rb', 'php', 'pl', 'lua',
+    'bat', 'ps1', 'psm1', 'psd1', 'vbs', 'cmd', 'awk', 'sed', 'fish',
+    'zsh', 'csh', 'tcsh', 'ksh', 'r', 'm', 'mm', 'clj', 'cljs',
+    'hs', 'erl', 'ex', 'exs', 'lisp', 'lsp', 'scm', 'rkt', 'nim', 'cr',
+    'd', 'f90', 'f95', 'f03', 'for', 'pas', 'pp', 'jl', 'ml', 'mli',
+    'elm', 'idr', 'agda', 'coq', 'v', 'sv', 'vhdl', 'verilog', 'tcl',
+    'proto', 'graphql', 'gql', 'rego', 'hcl', 'tf', 'tfvars', 'nomad',
+    'sls', 'cfg', 'config',
   };
+
+  static const Set<String> _markdownExtensions = {'md', 'markdown'};
+
+  static const Set<String> _pdfExtensions = {'pdf'};
 
   @override
   void initState() {
@@ -50,11 +81,28 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     _initService();
   }
 
+  @override
+  void dispose() {
+    _videoController?.dispose();
+    _chewieController?.dispose();
+    _audioPlayer?.dispose();
+    super.dispose();
+  }
+
   Future<void> _initService() async {
     _service = FilesService();
     _serverConfig = await _service!.getCurrentServer();
-    if (_fileType != FileType.image && mounted) {
-      _loadContent();
+    
+    if (_fileType == FileType.image || _fileType == FileType.pdf) {
+      setState(() {
+        _isLoading = false;
+      });
+    } else if (_fileType == FileType.video) {
+      await _initVideoPlayer();
+    } else if (_fileType == FileType.audio) {
+      await _initAudioPlayer();
+    } else if (_fileType == FileType.text || _fileType == FileType.markdown) {
+      await _loadContent();
     } else {
       setState(() {
         _isLoading = false;
@@ -66,6 +114,18 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     final ext = fileName.split('.').last.toLowerCase();
     if (_imageExtensions.contains(ext)) {
       return FileType.image;
+    }
+    if (_videoExtensions.contains(ext)) {
+      return FileType.video;
+    }
+    if (_audioExtensions.contains(ext)) {
+      return FileType.audio;
+    }
+    if (_markdownExtensions.contains(ext)) {
+      return FileType.markdown;
+    }
+    if (_pdfExtensions.contains(ext)) {
+      return FileType.pdf;
     }
     if (_textExtensions.contains(ext) || _isTextFileName(fileName)) {
       return FileType.text;
@@ -82,6 +142,102 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
       }
     }
     return false;
+  }
+
+  String _getFileUrl() {
+    final server = _serverConfig;
+    if (server == null) {
+      return '';
+    }
+    final baseUrl = server.url.endsWith('/') ? server.url : '${server.url}/';
+    final apiKey = server.apiKey;
+    final path = widget.filePath.startsWith('/') ? widget.filePath.substring(1) : widget.filePath;
+    return '${baseUrl}api/v2/files/download?path=/$path&apiKey=$apiKey';
+  }
+
+  Future<void> _initVideoPlayer() async {
+    try {
+      final videoUrl = _getFileUrl();
+      _videoController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      await _videoController!.initialize();
+      
+      _chewieController = ChewieController(
+        videoPlayerController: _videoController!,
+        autoPlay: false,
+        looping: false,
+        aspectRatio: _videoController!.value.aspectRatio,
+        placeholder: Container(
+          color: Colors.black,
+          child: const Center(child: CircularProgressIndicator()),
+        ),
+        errorBuilder: (context, errorMessage) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(errorMessage, textAlign: TextAlign.center),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage('file_preview', '_initVideoPlayer: 初始化失败', error: e, stackTrace: stackTrace);
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _initAudioPlayer() async {
+    try {
+      final audioUrl = _getFileUrl();
+      _audioPlayer = AudioPlayer();
+      
+      await _audioPlayer!.setSourceUrl(audioUrl);
+      _audioDuration = (await _audioPlayer!.getDuration()) ?? Duration.zero;
+
+      _audioPlayer!.onPositionChanged.listen((position) {
+        if (mounted) {
+          setState(() {
+            _audioPosition = position;
+          });
+        }
+      });
+
+      _audioPlayer!.onPlayerStateChanged.listen((state) {
+        if (mounted) {
+          setState(() {
+            _isAudioPlaying = state == PlayerState.playing;
+          });
+        }
+      });
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage('file_preview', '_initAudioPlayer: 初始化失败', error: e, stackTrace: stackTrace);
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _loadContent() async {
@@ -127,7 +283,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          if (_fileType == FileType.text)
+          if (_fileType == FileType.text || _fileType == FileType.markdown)
             IconButton(
               icon: const Icon(Icons.edit_outlined),
               onPressed: () => _openEditor(context),
@@ -168,6 +324,14 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     switch (_fileType) {
       case FileType.image:
         return _buildImagePreview(context, theme);
+      case FileType.video:
+        return _buildVideoPreview(context, theme);
+      case FileType.audio:
+        return _buildAudioPreview(context, theme, l10n);
+      case FileType.markdown:
+        return _buildMarkdownPreview(context, theme);
+      case FileType.pdf:
+        return _buildPdfPreview(context, theme);
       case FileType.text:
         return _buildTextPreview(context, theme);
       case FileType.unknown:
@@ -179,7 +343,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     final isDark = theme.brightness == Brightness.dark;
     final isSvg = widget.fileName.toLowerCase().endsWith('.svg');
 
-    final imageUrl = _getImageUrl(context);
+    final imageUrl = _getFileUrl();
 
     if (isSvg) {
       return Center(
@@ -227,15 +391,172 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     );
   }
 
-  String _getImageUrl(BuildContext context) {
-    final server = _serverConfig;
-    if (server == null) {
-      return '';
+  Widget _buildVideoPreview(BuildContext context, ThemeData theme) {
+    if (_chewieController == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.video_library_outlined, size: 48, color: theme.colorScheme.error),
+            const SizedBox(height: 16),
+            Text('Video player not initialized'),
+          ],
+        ),
+      );
     }
-    final baseUrl = server.url.endsWith('/') ? server.url : '${server.url}/';
-    final apiKey = server.apiKey;
-    final path = widget.filePath.startsWith('/') ? widget.filePath.substring(1) : widget.filePath;
-    return '${baseUrl}api/v2/files/download?path=/$path&apiKey=$apiKey';
+
+    return Center(
+      child: AspectRatio(
+        aspectRatio: _videoController!.value.aspectRatio,
+        child: Chewie(controller: _chewieController!),
+      ),
+    );
+  }
+
+  Widget _buildAudioPreview(BuildContext context, ThemeData theme, dynamic l10n) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.music_note,
+                size: 64,
+                color: theme.colorScheme.onPrimaryContainer,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              widget.fileName,
+              style: theme.textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            Slider(
+              value: _audioPosition.inSeconds.toDouble(),
+              max: _audioDuration.inSeconds > 0 ? _audioDuration.inSeconds.toDouble() : 1,
+              onChanged: (value) async {
+                await _audioPlayer?.seek(Duration(seconds: value.toInt()));
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(_formatDuration(_audioPosition)),
+                  Text(_formatDuration(_audioDuration)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.replay_10),
+                  iconSize: 32,
+                  onPressed: () async {
+                    final newPosition = _audioPosition - const Duration(seconds: 10);
+                    await _audioPlayer?.seek(newPosition.isNegative ? Duration.zero : newPosition);
+                  },
+                ),
+                const SizedBox(width: 16),
+                FloatingActionButton.large(
+                  onPressed: () async {
+                    if (_isAudioPlaying) {
+                      await _audioPlayer?.pause();
+                    } else {
+                      await _audioPlayer?.resume();
+                    }
+                  },
+                  child: Icon(_isAudioPlaying ? Icons.pause : Icons.play_arrow, size: 48),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.forward_10),
+                  iconSize: 32,
+                  onPressed: () async {
+                    final newPosition = _audioPosition + const Duration(seconds: 10);
+                    await _audioPlayer?.seek(newPosition > _audioDuration ? _audioDuration : newPosition);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds.remainder(60);
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Widget _buildMarkdownPreview(BuildContext context, ThemeData theme) {
+    if (_content == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Markdown(
+      data: _content!,
+      selectable: true,
+      styleSheet: MarkdownStyleSheet(
+        h1: theme.textTheme.headlineLarge,
+        h2: theme.textTheme.headlineMedium,
+        h3: theme.textTheme.headlineSmall,
+        p: theme.textTheme.bodyMedium,
+        code: theme.textTheme.bodySmall?.copyWith(
+          fontFamily: 'monospace',
+          backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
+        ),
+        codeblockDecoration: BoxDecoration(
+          color: isDark ? Colors.grey[850] : Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        blockquote: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+          fontStyle: FontStyle.italic,
+        ),
+        blockquoteDecoration: BoxDecoration(
+          border: Border(left: BorderSide(color: theme.colorScheme.primary, width: 4)),
+        ),
+      ),
+      onTapLink: (text, href, title) {
+        if (href != null) {
+          // 可以添加打开链接的逻辑
+        }
+      },
+    );
+  }
+
+  Widget _buildPdfPreview(BuildContext context, ThemeData theme) {
+    final pdfUrl = _getFileUrl();
+
+    return SfPdfViewer.network(
+      pdfUrl,
+      onDocumentLoaded: (details) {
+        appLogger.iWithPackage('file_preview', 'PDF loaded successfully');
+      },
+      onDocumentLoadFailed: (details) {
+        appLogger.eWithPackage('file_preview', 'PDF load failed: ${details.error}');
+      },
+      canShowScrollHead: true,
+      canShowScrollStatus: true,
+      enableDoubleTapZooming: true,
+    );
   }
 
   Widget _buildTextPreview(BuildContext context, ThemeData theme) {
@@ -296,7 +617,6 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
       'scss': 'scss',
       'sass': 'sass',
       'less': 'less',
-      'md': 'markdown',
       'py': 'python',
       'java': 'java',
       'c': 'c',
@@ -368,6 +688,10 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
 
 enum FileType {
   image,
+  video,
+  audio,
+  markdown,
+  pdf,
   text,
   unknown,
 }

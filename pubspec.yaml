@@ -68,6 +68,13 @@ dependencies:
   photo_view: ^0.15.0  # Image zoom viewer
   flutter_svg: ^2.0.0  # SVG support
   
+  # File preview
+  video_player: ^2.9.3  # Video playback
+  chewie: ^1.8.5  # Video player UI
+  flutter_markdown: ^0.7.4+3  # Markdown rendering
+  syncfusion_flutter_pdfviewer: ^28.1.36  # PDF viewer
+  audioplayers: ^6.1.0  # Audio playback
+  
   # Testing
   mockito: ^5.6.3  # Mock objects for testing (Updated from 5.4.3)
   hive: ^2.2.3
