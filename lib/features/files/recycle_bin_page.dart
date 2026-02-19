@@ -75,7 +75,7 @@ class _RecycleBinViewState extends State<RecycleBinView> {
               isDir: f.isDir,
               size: f.size,
               deleteTime: f.modifiedAt,
-              rName: f.gid ?? f.path.split('/').last,
+              rName: f.rName ?? f.gid ?? f.path.split('/').last,
               from: f.from ?? '/',
             );
           }).toList();

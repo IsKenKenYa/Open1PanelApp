@@ -149,6 +149,7 @@ class FileInfo extends Equatable {
   final String? content;
   final String? mode;
   final String? from;
+  final String? rName;
 
   const FileInfo({
     required this.name,
@@ -174,6 +175,7 @@ class FileInfo extends Equatable {
     this.content,
     this.mode,
     this.from,
+    this.rName,
   });
 
   factory FileInfo.fromJson(Map<String, dynamic> json) {
@@ -212,6 +214,7 @@ class FileInfo extends Equatable {
       content: json['content'] as String?,
       mode: json['mode'] as String?,
       from: json['from'] as String? ?? json['sourcePath'] as String?,
+      rName: json['rName'] as String?,
     );
   }
 
@@ -239,6 +242,7 @@ class FileInfo extends Equatable {
       'isDetail': isDetail,
       'content': content,
       'from': from,
+      'rName': rName,
     };
   }
 
@@ -267,5 +271,6 @@ class FileInfo extends Equatable {
         content,
         mode,
         from,
+        rName,
       ];
 }
