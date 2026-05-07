@@ -4,43 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:onepanel_client/api/v2/dashboard_v2.dart';
-import 'package:onepanel_client/api/v2/container_v2.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
-import 'package:onepanel_client/api/v2/website_v2.dart';
 import 'package:onepanel_client/api/v2/auth_v2.dart';
-import 'package:onepanel_client/api/v2/app_v2.dart';
 import 'package:onepanel_client/api/v2/file_v2.dart';
-import 'package:onepanel_client/api/v2/ssl_v2.dart';
-import 'package:onepanel_client/api/v2/firewall_v2.dart';
 import 'package:onepanel_client/api/v2/backup_account_v2.dart';
-import 'package:onepanel_client/api/v2/cronjob_v2.dart';
-import 'package:onepanel_client/api/v2/ssh_v2.dart';
-import 'package:onepanel_client/api/v2/monitor_v2.dart';
-import 'package:onepanel_client/api/v2/process_v2.dart';
-import 'package:onepanel_client/api/v2/logs_v2.dart';
-import 'package:onepanel_client/api/v2/host_v2.dart';
-import 'package:onepanel_client/api/v2/host_tool_v2.dart';
-import 'package:onepanel_client/api/v2/setting_v2.dart';
-import 'package:onepanel_client/api/v2/snapshot_v2.dart';
-import 'package:onepanel_client/api/v2/command_v2.dart';
-import 'package:onepanel_client/api/v2/ai_v2.dart';
-import 'package:onepanel_client/api/v2/compose_v2.dart';
-import 'package:onepanel_client/api/v2/openresty_v2.dart';
-import 'package:onepanel_client/api/v2/runtime_v2.dart';
-import 'package:onepanel_client/api/v2/toolbox_v2.dart';
-import 'package:onepanel_client/api/v2/update_v2.dart';
-import 'package:onepanel_client/api/v2/user_v2.dart';
-import 'package:onepanel_client/api/v2/system_group_v2.dart';
-import 'package:onepanel_client/api/v2/website_group_v2.dart';
-import 'package:onepanel_client/api/v2/script_library_v2.dart';
-import 'package:onepanel_client/api/v2/disk_management_v2.dart';
-import 'package:onepanel_client/api/v2/docker_v2.dart';
-import 'package:onepanel_client/api/v2/task_log_v2.dart';
 import 'package:onepanel_client/core/config/api_constants.dart';
 import 'package:onepanel_client/core/network/dio_client.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
-import 'package:onepanel_client/data/models/database_option_models.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 
 import '../core/test_config_manager.dart';
@@ -1112,8 +1083,6 @@ void main() {
 
     test('ContainerV2Api.searchContainers - PageResult<ContainerInfo> 解析', () async {
       if (skip() != null) return;
-      final api = ContainerV2Api(client);
-      // Use raw Map with all required fields including state
       final resp = await _rawPost(client, '/containers/search', data: {
         'page': 1,
         'pageSize': 5,
@@ -1185,8 +1154,6 @@ void main() {
 
     test('SettingV2Api 系统设置解析', () async {
       if (skip() != null) return;
-      final api = SettingV2Api(client);
-      // Use the correct settings search endpoint
       final resp = await _rawPost(client, '/settings/search', data: {});
       final data = _unwrap(resp.data, '/settings/search typed');
       _log('Setting typed/search', response: data);

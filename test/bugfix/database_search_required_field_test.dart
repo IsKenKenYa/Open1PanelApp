@@ -131,9 +131,7 @@ void main() {
       // 模拟场景：没有 MySQL 实例时，targetDatabase 为 null
       String? targetDatabase;
 
-      // 验证空值检查逻辑
-      final isEmpty = targetDatabase == null || targetDatabase.isEmpty;
-      expect(isEmpty, isTrue);
+      expect(targetDatabase, isNull);
 
       // 当 targetDatabase 为空时，应该返回空结果而不是发送请求
       // 这避免了服务端返回 400 错误：

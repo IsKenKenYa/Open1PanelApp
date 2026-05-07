@@ -17,26 +17,26 @@
   - [x] SubTask D01.8: 写入仓库记忆，固定阶段起点
 
 ## Day 02 阻断项清理与可执行环境恢复
-- [ ] Task D02: 清理阻断门禁执行的问题
-  - [ ] SubTask D02.1: 梳理 flutter analyze 当前错误清单
-  - [ ] SubTask D02.2: 梳理 unit/integration/ui 当前错误清单
-  - [ ] SubTask D02.3: 修复 command 相关历史编译问题
-  - [ ] SubTask D02.4: 修复 monitoring 测试签名漂移问题
-  - [ ] SubTask D02.5: 处理明显 dead code 与无效导入
+- [x] Task D02: 清理阻断门禁执行的问题
+  - [x] SubTask D02.1: 梳理 flutter analyze 当前错误清单
+  - [x] SubTask D02.2: 梳理 unit/integration/ui 当前错误清单
+  - [x] SubTask D02.3: 修复 command 相关历史编译问题
+  - [x] SubTask D02.4: 修复 monitoring 测试签名漂移问题
+  - [x] SubTask D02.5: 处理明显 dead code 与无效导入
   - [x] SubTask D02.6: 验证 test_runner unit 可稳定执行
   - [x] SubTask D02.7: 验证 test_runner ui 可稳定执行
-  - [ ] SubTask D02.8: 输出阻断项闭环报告
+  - [x] SubTask D02.8: 输出阻断项闭环报告
 
 ## Day 03 API基线自动巡检脚本固化
-- [ ] Task D03: 固化 API 巡检节奏
-  - [ ] SubTask D03.1: 约定每日巡检命令模板
-  - [ ] SubTask D03.2: 输出 all 模块 JSON 报告留档
-  - [ ] SubTask D03.3: 约定 aligned 与 extra 的判定口径
-  - [ ] SubTask D03.4: 约定 missing 的阻断处理口径
-  - [ ] SubTask D03.5: 复核模块映射字典完整性
-  - [ ] SubTask D03.6: 复核路径过滤规则是否误判
-  - [ ] SubTask D03.7: 将巡检结论回写模块索引
-  - [ ] SubTask D03.8: 沉淀巡检 FAQ
+- [x] Task D03: 固化 API 巡检节奏
+  - [x] SubTask D03.1: 约定每日巡检命令模板
+  - [x] SubTask D03.2: 输出 all 模块 JSON 报告留档
+  - [x] SubTask D03.3: 约定 aligned 与 extra 的判定口径
+  - [x] SubTask D03.4: 约定 missing 的阻断处理口径
+  - [x] SubTask D03.5: 复核模块映射字典完整性
+  - [x] SubTask D03.6: 复核路径过滤规则是否误判
+  - [x] SubTask D03.7: 将巡检结论回写模块索引
+  - [x] SubTask D03.8: 沉淀巡检 FAQ
 
 ## Day 04 P0 应用模块缺口收口
 - [x] Task D04: 补齐 app 缺口端点
@@ -72,48 +72,48 @@
   - [x] SubTask D06.8: 提交下一阶段执行入口
 
 ## Day 07 command 模块漂移深挖
-- [ ] Task D07: 收口 command 与脚本库边界
-  - [ ] SubTask D07.1: 盘点 command_v2 端点集合
-  - [ ] SubTask D07.2: 盘点 script_library_v2 端点集合
-  - [ ] SubTask D07.3: 标注混入端点来源与原因
-  - [ ] SubTask D07.4: 调整覆盖脚本过滤逻辑（必要时）
-  - [ ] SubTask D07.5: 补充 command 侧对齐测试
-  - [ ] SubTask D07.6: 补充脚本库侧对齐测试
-  - [ ] SubTask D07.7: 清理可去除的兼容路由
-  - [ ] SubTask D07.8: 输出 command 边界决议
+- [x] Task D07: 收口 command 与脚本库边界
+  - [x] SubTask D07.1: 盘点 command_v2 端点集合
+  - [x] SubTask D07.2: 盘点 script_library_v2 端点集合
+  - [x] SubTask D07.3: 标注混入端点来源与原因
+  - [x] SubTask D07.4: 调整覆盖脚本过滤逻辑（必要时）
+  - [x] SubTask D07.5: 补充 command 侧对齐测试
+  - [x] SubTask D07.6: 补充脚本库侧对齐测试
+  - [x] SubTask D07.7: 清理可去除的兼容路由
+  - [x] SubTask D07.8: 输出 command 边界决议
 
 ## Day 08 host 模块漂移与回退策略核对
-- [ ] Task D08: 收口 host 路由迁移残留
-  - [ ] SubTask D08.1: 复核 /hosts 与 /core/hosts 双路由行为
-  - [ ] SubTask D08.2: 明确 fallback 保留条件
-  - [ ] SubTask D08.3: 评估 fallback 退出窗口
-  - [ ] SubTask D08.4: 增补 host API 对齐测试
-  - [ ] SubTask D08.5: 增补 host provider 单测
-  - [ ] SubTask D08.6: 复核 host 文档说明完整性
-  - [ ] SubTask D08.7: 更新覆盖报告注释
-  - [ ] SubTask D08.8: 输出 host 收口建议
+- [x] Task D08: 收口 host 路由迁移残留
+  - [x] SubTask D08.1: 复核 /hosts 与 /core/hosts 双路由行为
+  - [x] SubTask D08.2: 明确 fallback 保留条件
+  - [x] SubTask D08.3: 评估 fallback 退出窗口
+  - [x] SubTask D08.4: 增补 host API 对齐测试
+  - [x] SubTask D08.5: 增补 host provider 单测
+  - [x] SubTask D08.6: 复核 host 文档说明完整性
+  - [x] SubTask D08.7: 更新覆盖报告注释
+  - [x] SubTask D08.8: 输出 host 收口建议
 
 ## Day 09 database 与 setting 增强端点治理
-- [ ] Task D09: extra_in_client 分类治理（第一批）
-  - [ ] SubTask D09.1: database extra 端点分类（保留/清理）
-  - [ ] SubTask D09.2: setting extra 端点分类（保留/清理）
-  - [ ] SubTask D09.3: 写入兼容原因文档
-  - [ ] SubTask D09.4: 清理无价值历史端点
+- [x] Task D09: extra_in_client 分类治理（第一批）
+  - [x] SubTask D09.1: database extra 端点分类（保留/清理）
+  - [x] SubTask D09.2: setting extra 端点分类（保留/清理）
+  - [x] SubTask D09.3: 写入兼容原因文档
+  - [x] SubTask D09.4: 清理无价值历史端点
   - [x] SubTask D09.5: 补充对齐测试断言
   - [x] SubTask D09.6: 回归 database 模块 API 用例
   - [x] SubTask D09.7: 回归 setting 模块 API 用例
-  - [ ] SubTask D09.8: 形成 extra 治理批次报告
+  - [x] SubTask D09.8: 形成 extra 治理批次报告
 
 ## Day 10 ai 与 auth 增强端点治理
-- [ ] Task D10: extra_in_client 分类治理（第二批）
-  - [ ] SubTask D10.1: ai 白名单复核
-  - [ ] SubTask D10.2: auth 非标准路由复核
-  - [ ] SubTask D10.3: 确认浏览器/审批相关端点必要性
-  - [ ] SubTask D10.4: 标注未来迁移计划
+- [x] Task D10: extra_in_client 分类治理（第二批）
+  - [x] SubTask D10.1: ai 白名单复核
+  - [x] SubTask D10.2: auth 非标准路由复核
+  - [x] SubTask D10.3: 确认浏览器/审批相关端点必要性
+  - [x] SubTask D10.4: 标注未来迁移计划
   - [x] SubTask D10.5: 补齐 ai/auth 对齐测试
-  - [ ] SubTask D10.6: 更新 API 映射文档
-  - [ ] SubTask D10.7: 更新模块 FAQ
-  - [ ] SubTask D10.8: 输出第二批治理结果
+  - [x] SubTask D10.6: 更新 API 映射文档
+  - [x] SubTask D10.7: 更新模块 FAQ
+  - [x] SubTask D10.8: 输出第二批治理结果
 
 ## Day 11 Week2 回归门禁与文档同步
 - [ ] Task D11: 周中门禁检查

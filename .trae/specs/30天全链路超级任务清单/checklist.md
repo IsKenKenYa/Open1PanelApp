@@ -6,44 +6,44 @@
 - 每项验收都应附带可追溯证据（命令输出、截图、日志或文档链接）。
 
 ## A. 流程与边界验收
-- [ ] A01 已确认 docs/OpenSource/1Panel 只读策略
-- [ ] A02 已确认不适配 Web 的边界
-- [ ] A03 已确认平台策略矩阵
-- [ ] A04 已确认链路同步规则
-- [ ] A05 已确认失败阻断规则
-- [ ] A06 已确认文档同步门禁规则
-- [ ] A07 已确认任务状态每日更新机制
-- [ ] A08 已确认阶段复盘机制
+- [x] A01 已确认 docs/OpenSource/1Panel 只读策略
+- [x] A02 已确认不适配 Web 的边界
+- [x] A03 已确认平台策略矩阵
+- [x] A04 已确认链路同步规则
+- [x] A05 已确认失败阻断规则
+- [x] A06 已确认文档同步门禁规则
+- [x] A07 已确认任务状态每日更新机制
+- [x] A08 已确认阶段复盘机制
 
 ## B. API 覆盖验收
-- [ ] B01 每日两次运行覆盖检查
-- [ ] B02 每周运行一次全量 JSON 覆盖快照
-- [ ] B03 app 模块为 aligned
-- [ ] B04 backup 模块为 aligned
-- [ ] B05 command 模块已完成边界分类
-- [ ] B06 host 模块已完成迁移残留分类
-- [ ] B07 database 模块 extra 已分类
-- [ ] B08 setting 模块 extra 已分类
-- [ ] B09 ai 模块 extra 已分类
-- [ ] B10 auth 模块 extra 已分类
-- [ ] B11 missing_in_client 总数为 0
-- [ ] B12 extra_in_client 全部有保留说明或清理计划
-- [ ] B13 no_client_mapping 总数为 0
-- [ ] B14 missing_client_file 总数为 0
-- [ ] B15 覆盖报告已归档
+- [x] B01 每日两次运行覆盖检查
+- [x] B02 每周运行一次全量 JSON 覆盖快照
+- [x] B03 app 模块为 aligned
+- [x] B04 backup 模块为 aligned
+- [x] B05 command 模块已完成边界分类
+- [x] B06 host 模块已完成迁移残留分类
+- [x] B07 database 模块 extra 已分类
+- [x] B08 setting 模块 extra 已分类
+- [x] B09 ai 模块 extra 已分类
+- [x] B10 auth 模块 extra 已分类
+- [x] B11 missing_in_client 总数为 0
+- [x] B12 extra_in_client 全部有保留说明或清理计划
+- [x] B13 no_client_mapping 总数为 0
+- [x] B14 missing_client_file 总数为 0
+- [x] B15 覆盖报告已归档
 
 ## C. 契约偏差与兼容策略验收
-- [ ] C01 已记录所有 method mismatch
-- [ ] C02 已记录所有 required body mismatch
-- [ ] C03 偏差已区分真实服务端行为与文档偏差
-- [ ] C04 已补充对应 API 测试样例
+- [x] C01 已记录所有 method mismatch
+- [x] C02 已记录所有 required body mismatch
+- [x] C03 偏差已区分真实服务端行为与文档偏差
+- [x] C04 已补充对应 API 测试样例
 - [ ] C05 已补充对应 provider/widget 回归用例
-- [ ] C06 已在模块文档补充兼容策略
-- [ ] C07 已在 FAQ 记录高频偏差
-- [ ] C08 已建立偏差关闭标准
+- [x] C06 已在模块文档补充兼容策略
+- [x] C07 已在 FAQ 记录高频偏差
+- [x] C08 已建立偏差关闭标准
 
 ## D. 测试矩阵验收
-- [ ] D01 flutter analyze 可通过
+- [x] D01 flutter analyze 可通过
 - [ ] D02 unit 测试可通过
 - [x] D03 ui 测试可通过
 - [ ] D04 integration 测试可执行（环境满足时）

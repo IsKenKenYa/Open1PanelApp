@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:onepanel_client/features/shell/app_shell_page.dart';
 import 'package:onepanel_client/features/apps/apps_page.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/l10n/generated/app_localizations.dart';
@@ -9,20 +8,12 @@ import 'package:onepanel_client/features/shell/widgets/no_server_selected_state.
 
 class MockCurrentServerController extends CurrentServerController {
   bool _hasServer = false;
-  bool _isValidConnection = true;
-  String? _errorMsg;
 
   @override
   bool get hasServer => _hasServer;
 
   void setHasServer(bool value) {
     _hasServer = value;
-    notifyListeners();
-  }
-
-  void setInvalidConnection(String error) {
-    _isValidConnection = false;
-    _errorMsg = error;
     notifyListeners();
   }
 }

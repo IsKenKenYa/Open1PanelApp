@@ -27,7 +27,6 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
   bool _showAdvanced = false;
   bool _isLoading = false;
   bool _isCheckingVersion = false;
-  bool _isLoadingParams = false;
 
   // Dynamic form fields from API params
   final Map<String, TextEditingController> _paramControllers = {};
@@ -92,7 +91,6 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
 
     setState(() {
       _isCheckingVersion = true;
-      _isLoadingParams = true;
     });
 
     try {
@@ -136,7 +134,6 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
       if (mounted) {
         setState(() {
           _isCheckingVersion = false;
-          _isLoadingParams = false;
         });
       }
     }

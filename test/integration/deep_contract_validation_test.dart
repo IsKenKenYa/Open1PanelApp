@@ -6,25 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/api/v2/dashboard_v2.dart';
 import 'package:onepanel_client/api/v2/container_v2.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
-import 'package:onepanel_client/api/v2/website_v2.dart';
-import 'package:onepanel_client/api/v2/app_v2.dart';
-import 'package:onepanel_client/api/v2/file_v2.dart';
-import 'package:onepanel_client/api/v2/backup_account_v2.dart';
-import 'package:onepanel_client/api/v2/setting_v2.dart';
-import 'package:onepanel_client/api/v2/cronjob_v2.dart';
-import 'package:onepanel_client/api/v2/ssl_v2.dart' show SSLV2Api;
-import 'package:onepanel_client/api/v2/firewall_v2.dart';
-import 'package:onepanel_client/api/v2/monitor_v2.dart';
-import 'package:onepanel_client/api/v2/snapshot_v2.dart';
-import 'package:onepanel_client/api/v2/ssh_v2.dart';
-import 'package:onepanel_client/api/v2/host_v2.dart';
-import 'package:onepanel_client/api/v2/logs_v2.dart';
-import 'package:onepanel_client/api/v2/command_v2.dart';
-import 'package:onepanel_client/api/v2/ai_v2.dart' show AIV2Api;
 import 'package:onepanel_client/core/config/api_constants.dart';
 import 'package:onepanel_client/core/network/dio_client.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
-import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/container_models.dart' show PageContainer;
 import 'package:onepanel_client/data/models/cronjob_list_models.dart' show CronjobListQuery;
 import 'package:onepanel_client/data/models/database_models.dart';
@@ -84,46 +68,11 @@ void _expectItemCountMatch(
           '$path: parsed item count (${parsedItems.length}) should match raw (${rawItems.length})');
 }
 
-/// Deep compare raw map with parsed model's toJson output for key fields
-void _expectFieldTypesMatch(
-    Map<String, dynamic> raw, Map<String, dynamic> parsed, List<String> keys,
-    {required String path}) {
-  for (final key in keys) {
-    if (!raw.containsKey(key)) continue;
-    final rawVal = raw[key];
-    final parsedVal = parsed[key];
-    if (rawVal == null && parsedVal == null) continue;
-    if (rawVal == null || parsedVal == null) {
-      appLogger.wWithPackage(_pkg,
-          '$path: key "$key" raw=${rawVal?.runtimeType} parsed=${parsedVal?.runtimeType}');
-      continue;
-    }
-    expect(parsedVal.runtimeType, equals(rawVal.runtimeType),
-        reason:
-            '$path: key "$key" type mismatch: raw=${rawVal.runtimeType} parsed=${parsedVal.runtimeType}');
-  }
-}
-
 void main() {
   late DioClient client;
   late DashboardV2Api dashboardApi;
   late ContainerV2Api containerApi;
   late DatabaseV2Api databaseApi;
-  late WebsiteV2Api websiteApi;
-  late AppV2Api appApi;
-  late FileV2Api fileApi;
-  late BackupAccountV2Api backupApi;
-  late SettingV2Api settingApi;
-  late CronjobV2Api cronjobApi;
-  late SSLV2Api sslApi;
-  late FirewallV2Api firewallApi;
-  late MonitorV2Api monitorApi;
-  late SnapshotV2Api snapshotApi;
-  late SshV2Api sshApi;
-  late HostV2Api hostApi;
-  late LogsV2Api logsApi;
-  late CommandV2Api commandApi;
-  late AIV2Api aiApi;
   bool canRun = false;
 
   setUpAll(() async {
@@ -137,21 +86,6 @@ void main() {
       dashboardApi = DashboardV2Api(client);
       containerApi = ContainerV2Api(client);
       databaseApi = DatabaseV2Api(client);
-      websiteApi = WebsiteV2Api(client);
-      appApi = AppV2Api(client);
-      fileApi = FileV2Api(client);
-      backupApi = BackupAccountV2Api(client);
-      settingApi = SettingV2Api(client);
-      cronjobApi = CronjobV2Api(client);
-      sslApi = SSLV2Api(client);
-      firewallApi = FirewallV2Api(client);
-      monitorApi = MonitorV2Api(client);
-      snapshotApi = SnapshotV2Api(client);
-      sshApi = SshV2Api(client);
-      hostApi = HostV2Api(client);
-      logsApi = LogsV2Api(client);
-      commandApi = CommandV2Api(client);
-      aiApi = AIV2Api(client);
     }
   });
 

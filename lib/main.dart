@@ -260,7 +260,7 @@ class MyApp extends StatelessWidget {
               title: '1Panel Client',
               debugShowCheckedModeBanner: false,
               builder: (context, child) {
-                final l10n = AppLocalizations.of(context)!;
+                final l10n = AppLocalizations.of(context);
                 return PlatformMenuBar(
                   menus: [
                     PlatformMenu(
