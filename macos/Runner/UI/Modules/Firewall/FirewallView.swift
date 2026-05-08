@@ -12,21 +12,12 @@ struct FirewallView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.rules.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "network.badge.shield.half.filled")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary)
-                    Text(translations.get("noFirewallRules", fallback: "No firewall rules"))
-                        .foregroundColor(.secondary)
-                    Button(translations.get("addRule", fallback: "Add Rule")) {
-                        showAddSheet = true
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "network.badge.shield.half.filled",
+                    message: translations.get("noFirewallRules", fallback: "No firewall rules")
+                )
             } else {
                 Table(viewModel.rules) {
                     TableColumn(translations.get("firewall_port", fallback: "Port")) { rule in
@@ -69,7 +60,7 @@ struct FirewallView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("serverModuleFirewall", fallback: "Firewall"))
+        .navigationTitle(translations.get("nav_firewall", fallback: "Firewall"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -78,14 +69,14 @@ struct FirewallView: View {
                     Button { viewModel.fetchRules() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
             ToolbarItem(placement: .automatic) {
                 Button { showAddSheet = true } label: {
                     Image(systemName: "plus")
                 }
-                .help("Add Rule")
+                .help(translations.get("addRule", fallback: "Add Rule"))
             }
         }
         .sheet(isPresented: $showAddSheet) {
@@ -94,22 +85,22 @@ struct FirewallView: View {
             }
         }
         .confirmationDialog(
-            "Delete rule for \"\(ruleToDelete?.port ?? ruleToDelete?.address ?? "")\"?",
+            translations.get("deleteConfirm", fallback: "Delete rule for \"\(ruleToDelete?.port ?? ruleToDelete?.address ?? "")\"?"),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(translations.get("delete", fallback: "Delete"), role: .destructive) {
                 if let r = ruleToDelete { Task { await viewModel.deleteRule(r) } }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This action cannot be undone.")
+            Text(translations.get("deleteCannotUndo", fallback: "This action cannot be undone."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -122,6 +113,7 @@ struct FirewallView: View {
 struct AddFirewallRuleSheet: View {
     @Binding var isPresented: Bool
     let onAdd: (String, String, String, String) -> Void
+    @EnvironmentObject var translations: TranslationsManager
 
     @State private var port = ""
     @State private var proto = "tcp"
@@ -133,20 +125,20 @@ struct AddFirewallRuleSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Add Firewall Rule")
+            Text(translations.get("addFirewallRule", fallback: "Add Firewall Rule"))
                 .font(.title2)
                 .fontWeight(.semibold)
 
             Form {
-                TextField("Port (e.g. 80, 8080-9090)", text: $port)
+                TextField(translations.get("firewallPortHint", fallback: "Port (e.g. 80, 8080-9090)"), text: $port)
                     .autocorrectionDisabled()
-                Picker("Protocol", selection: $proto) {
+                Picker(translations.get("firewall_protocol", fallback: "Protocol"), selection: $proto) {
                     ForEach(protocols, id: \.self) { Text($0.uppercased()) }
                 }
                 .pickerStyle(.segmented)
-                TextField("Source Address (optional)", text: $address)
+                TextField(translations.get("firewallAddressHint", fallback: "Source Address (optional)"), text: $address)
                     .autocorrectionDisabled()
-                Picker("Action", selection: $strategy) {
+                Picker(translations.get("firewall_action", fallback: "Action"), selection: $strategy) {
                     Text("Accept").tag("accept")
                     Text("Drop").tag("drop")
                 }
@@ -156,9 +148,9 @@ struct AddFirewallRuleSheet: View {
 
             HStack {
                 Spacer()
-                Button("Cancel", role: .cancel) { isPresented = false }
+                Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) { isPresented = false }
                     .keyboardShortcut(.cancelAction)
-                Button("Add") {
+                Button(translations.get("add", fallback: "Add")) {
                     onAdd(port, proto, address, strategy)
                     isPresented = false
                 }

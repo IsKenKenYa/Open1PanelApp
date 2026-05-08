@@ -5,6 +5,8 @@ struct ServerModel: Identifiable {
     let name: String
     let url: String
     let isCurrent: Bool
+    let cpu: Double
+    let memory: Double
 
     var id: String { originalId }
 }
@@ -30,7 +32,9 @@ class ServersViewModel: ObservableObject {
                     if let intId = rawId as? Int { originalId = String(intId) }
                     else { originalId = rawId as? String ?? "" }
                     let isCurrent = dict["isCurrent"] as? Bool ?? false
-                    return ServerModel(originalId: originalId, name: name, url: url, isCurrent: isCurrent)
+                    let cpu = dict["cpu"] as? Double ?? 0
+                    let memory = dict["memory"] as? Double ?? 0
+                    return ServerModel(originalId: originalId, name: name, url: url, isCurrent: isCurrent, cpu: cpu, memory: memory)
                 }
             }
         }

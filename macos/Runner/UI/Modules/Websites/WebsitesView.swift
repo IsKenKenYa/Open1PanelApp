@@ -11,12 +11,12 @@ struct WebsitesView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.websites.isEmpty {
-                Text("No websites found")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "globe",
+                    message: translations.get("noWebsitesFound", fallback: "No websites found")
+                )
             } else {
                 Table(viewModel.websites) {
                     TableColumn(translations.get("website_domain", fallback: "Domain")) { website in
@@ -63,7 +63,7 @@ struct WebsitesView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("serverModuleWebsites", fallback: "Websites"))
+        .navigationTitle(translations.get("nav_websites", fallback: "Websites"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -72,27 +72,27 @@ struct WebsitesView: View {
                     Button { viewModel.fetchWebsites() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
         }
         .confirmationDialog(
-            "Delete \"\(websiteToDelete?.primaryDomain ?? "")\"?",
+            translations.get("deleteConfirm", fallback: "Delete \"\(websiteToDelete?.primaryDomain ?? "")\"?"),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(translations.get("delete", fallback: "Delete"), role: .destructive) {
                 if let w = websiteToDelete { Task { await viewModel.deleteWebsite(id: w.originalId) } }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This action cannot be undone.")
+            Text(translations.get("deleteCannotUndo", fallback: "This action cannot be undone."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

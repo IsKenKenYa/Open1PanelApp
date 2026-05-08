@@ -11,12 +11,12 @@ struct BackupsView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.backups.isEmpty {
-                Text("No backups found")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "archivebox",
+                    message: translations.get("noBackupsFound", fallback: "No backups found")
+                )
             } else {
                 Table(viewModel.backups) {
                     TableColumn(translations.get("backup_name", fallback: "Name")) { backup in
@@ -38,7 +38,7 @@ struct BackupsView: View {
                         Text(backup.type.isEmpty ? "--" : backup.type)
                             .foregroundColor(.secondary)
                     }
-                    TableColumn("Status") { backup in
+                    TableColumn(translations.get("app_status", fallback: "Status")) { backup in
                         if !backup.status.isEmpty {
                             let ok = backup.status.lowercased() == "success" || backup.status.lowercased() == "done"
                             Text(backup.status)
@@ -63,7 +63,7 @@ struct BackupsView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("operationsBackupsTitle", fallback: "Backups"))
+        .navigationTitle(translations.get("nav_backups", fallback: "Backups"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -72,27 +72,27 @@ struct BackupsView: View {
                     Button { viewModel.fetchBackups() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
         }
         .confirmationDialog(
-            "Delete \"\(backupToDelete?.name ?? "")\"?",
+            translations.get("deleteConfirm", fallback: "Delete \"\(backupToDelete?.name ?? "")\"?"),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(translations.get("delete", fallback: "Delete"), role: .destructive) {
                 if let b = backupToDelete { Task { await viewModel.deleteBackup(id: b.originalId) } }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This will permanently delete the backup file.")
+            Text(translations.get("deleteBackupCannotUndo", fallback: "This will permanently delete the backup file."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

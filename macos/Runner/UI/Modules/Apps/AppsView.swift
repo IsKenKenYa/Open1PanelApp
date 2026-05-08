@@ -11,12 +11,12 @@ struct AppsView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.apps.isEmpty {
-                Text("No apps found")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "app.badge",
+                    message: translations.get("noAppsFound", fallback: "No apps found")
+                )
             } else {
                 Table(viewModel.apps) {
                     TableColumn(translations.get("server_name", fallback: "Name")) { app in
@@ -63,7 +63,7 @@ struct AppsView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("serverModuleApps", fallback: "Apps"))
+        .navigationTitle(translations.get("nav_apps", fallback: "Apps"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -72,27 +72,27 @@ struct AppsView: View {
                     Button { viewModel.fetchApps() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
         }
         .confirmationDialog(
-            "Uninstall \"\(appToUninstall?.name ?? "")\"?",
+            translations.get("uninstallConfirm", fallback: "Uninstall \"\(appToUninstall?.name ?? "")\"?"),
             isPresented: $showUninstallConfirm,
             titleVisibility: .visible
         ) {
-            Button("Uninstall", role: .destructive) {
+            Button(translations.get("uninstall", fallback: "Uninstall"), role: .destructive) {
                 if let a = appToUninstall { Task { await viewModel.uninstallApp(id: a.originalId) } }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This will remove the app and its data. This action cannot be undone.")
+            Text(translations.get("uninstallCannotUndo", fallback: "This will remove the app and its data. This action cannot be undone."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

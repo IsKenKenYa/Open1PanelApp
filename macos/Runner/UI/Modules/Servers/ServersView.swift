@@ -12,21 +12,12 @@ struct ServersView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.servers.isEmpty {
-                VStack(spacing: 16) {
-                    Image(systemName: "server.rack")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary)
-                    Text(translations.get("noServersFound", fallback: "No servers found"))
-                        .foregroundColor(.secondary)
-                    Button(translations.get("addServer", fallback: "Add Server")) {
-                        showAddSheet = true
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "server.rack",
+                    message: translations.get("noServersFound", fallback: "No servers found")
+                )
             } else {
                 Table(viewModel.servers) {
                     TableColumn(translations.get("server_name", fallback: "Name")) { server in
@@ -59,9 +50,9 @@ struct ServersView: View {
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
-                    TableColumn("Status") { server in
+                    TableColumn(translations.get("app_status", fallback: "Status")) { server in
                         if server.isCurrent {
-                            Text("Connected")
+                            Text(translations.get("server_status_online", fallback: "Connected"))
                                 .font(.caption)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 3)
@@ -75,7 +66,7 @@ struct ServersView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("navServer", fallback: "Servers"))
+        .navigationTitle(translations.get("nav_servers", fallback: "Servers"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -84,14 +75,14 @@ struct ServersView: View {
                     Button { viewModel.fetchServers() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
             ToolbarItem(placement: .automatic) {
                 Button { showAddSheet = true } label: {
                     Image(systemName: "plus")
                 }
-                .help("Add Server")
+                .help(translations.get("addServer", fallback: "Add Server"))
             }
         }
         .sheet(isPresented: $showAddSheet) {
@@ -102,24 +93,24 @@ struct ServersView: View {
             }
         }
         .confirmationDialog(
-            "Delete \"\(serverToDelete?.name ?? "")\"?",
+            translations.get("deleteConfirm", fallback: "Delete \"\(serverToDelete?.name ?? "")\"?"),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(translations.get("delete", fallback: "Delete"), role: .destructive) {
                 if let s = serverToDelete {
                     Task { await viewModel.deleteServer(id: s.originalId) }
                 }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This action cannot be undone.")
+            Text(translations.get("deleteCannotUndo", fallback: "This action cannot be undone."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -134,6 +125,7 @@ struct ServersView: View {
 struct AddServerSheet: View {
     @Binding var isPresented: Bool
     let onAdd: (String, String, String) -> Void
+    @EnvironmentObject var translations: TranslationsManager
 
     @State private var name = ""
     @State private var url = ""
@@ -141,23 +133,23 @@ struct AddServerSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Add Server")
+            Text(translations.get("addServer", fallback: "Add Server"))
                 .font(.title2)
                 .fontWeight(.semibold)
 
             Form {
-                TextField("Name", text: $name)
-                TextField("URL (https://host:port)", text: $url)
+                TextField(translations.get("server_name", fallback: "Name"), text: $name)
+                TextField(translations.get("server_url", fallback: "URL (https://host:port)"), text: $url)
                     .autocorrectionDisabled()
-                SecureField("API Token", text: $token)
+                SecureField(translations.get("server_api_token", fallback: "API Token"), text: $token)
             }
             .formStyle(.grouped)
 
             HStack {
                 Spacer()
-                Button("Cancel", role: .cancel) { isPresented = false }
+                Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) { isPresented = false }
                     .keyboardShortcut(.cancelAction)
-                Button("Add") {
+                Button(translations.get("add", fallback: "Add")) {
                     onAdd(name, url, token)
                     isPresented = false
                 }

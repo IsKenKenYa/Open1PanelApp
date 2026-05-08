@@ -11,20 +11,12 @@ struct AIView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.models.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "cpu.fill")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary)
-                    Text("No AI models found")
-                        .foregroundColor(.secondary)
-                    Text("Use 1Panel to pull Ollama models")
-                        .font(.caption)
-                        .foregroundColor(.secondary.opacity(0.7))
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "cpu.fill",
+                    message: translations.get("noAIModelsFound", fallback: "No AI models found")
+                )
             } else {
                 Table(viewModel.models) {
                     TableColumn(translations.get("ai_model_name", fallback: "Model")) { model in
@@ -56,7 +48,7 @@ struct AIView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("serverModuleAi", fallback: "AI"))
+        .navigationTitle(translations.get("nav_ai", fallback: "AI"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -65,27 +57,27 @@ struct AIView: View {
                     Button { viewModel.fetchModels() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
         }
         .confirmationDialog(
-            "Delete model \"\(modelToDelete?.name ?? "")\"?",
+            translations.get("deleteConfirm", fallback: "Delete model \"\(modelToDelete?.name ?? "")\"?"),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(translations.get("delete", fallback: "Delete"), role: .destructive) {
                 if let m = modelToDelete { Task { await viewModel.deleteModel(id: m.originalId) } }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("The model weights will be permanently deleted.")
+            Text(translations.get("deleteModelCannotUndo", fallback: "The model weights will be permanently deleted."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

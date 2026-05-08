@@ -16,6 +16,27 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		EC90BAE2EC33A4635343E2AF /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02BE807C5B40C56FD4C55EBF /* Pods_RunnerTests.framework */; };
+		B10S00010000000000000001 /* ChannelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000001 /* ChannelManager.swift */; };
+		B10S00010000000000000002 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000002 /* ThemeManager.swift */; };
+		B10S00010000000000000003 /* TranslationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000003 /* TranslationsManager.swift */; };
+		B10S00010000000000000004 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000004 /* LoadingView.swift */; };
+		B10S00010000000000000005 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000005 /* ErrorView.swift */; };
+		B10S00010000000000000006 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000006 /* EmptyStateView.swift */; };
+		B10S00010000000000000007 /* ServersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000007 /* ServersViewModel.swift */; };
+		B10S00010000000000000008 /* ServersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000008 /* ServersView.swift */; };
+		B10S00010000000000000009 /* FilesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000009 /* FilesViewModel.swift */; };
+		B10S0001000000000000000A /* FilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S0001000000000000000A /* FilesView.swift */; };
+		B10S0001000000000000000B /* ContainersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S0001000000000000000B /* ContainersViewModel.swift */; };
+		B10S0001000000000000000C /* ContainersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S0001000000000000000C /* ContainersView.swift */; };
+		B10S0001000000000000000D /* AppsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S0001000000000000000D /* AppsViewModel.swift */; };
+		B10S0001000000000000000E /* AppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S0001000000000000000E /* AppsView.swift */; };
+		B10S0001000000000000000F /* WebsitesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S0001000000000000000F /* WebsitesViewModel.swift */; };
+		B10S00010000000000000010 /* WebsitesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000010 /* WebsitesView.swift */; };
+		B10S00010000000000000011 /* MonitoringViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000011 /* MonitoringViewModel.swift */; };
+		B10S00010000000000000012 /* MonitoringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000012 /* MonitoringView.swift */; };
+		B10S00010000000000000013 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000013 /* SettingsViewModel.swift */; };
+		B10S00010000000000000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000014 /* SettingsView.swift */; };
+		B10S00010000000000000015 /* AppShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10S00010000000000000015 /* AppShellView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +86,27 @@
 		D7B60D11A5FD97BEC67BA98C /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		EA13C6076B2AB20EBC2ED4BC /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5FE544562901A893BA47BA5 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F10S00010000000000000001 /* ChannelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelManager.swift; sourceTree = "<group>"; };
+		F10S00010000000000000002 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		F10S00010000000000000003 /* TranslationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationsManager.swift; sourceTree = "<group>"; };
+		F10S00010000000000000004 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000005 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000006 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000007 /* ServersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServersViewModel.swift; sourceTree = "<group>"; };
+		F10S00010000000000000008 /* ServersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServersView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000009 /* FilesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesViewModel.swift; sourceTree = "<group>"; };
+		F10S0001000000000000000A /* FilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesView.swift; sourceTree = "<group>"; };
+		F10S0001000000000000000B /* ContainersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainersViewModel.swift; sourceTree = "<group>"; };
+		F10S0001000000000000000C /* ContainersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainersView.swift; sourceTree = "<group>"; };
+		F10S0001000000000000000D /* AppsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsViewModel.swift; sourceTree = "<group>"; };
+		F10S0001000000000000000E /* AppsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppsView.swift; sourceTree = "<group>"; };
+		F10S0001000000000000000F /* WebsitesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsitesViewModel.swift; sourceTree = "<group>"; };
+		F10S00010000000000000010 /* WebsitesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsitesView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000011 /* MonitoringViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringViewModel.swift; sourceTree = "<group>"; };
+		F10S00010000000000000012 /* MonitoringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitoringView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000013 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		F10S00010000000000000014 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F10S00010000000000000015 /* AppShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +186,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				G10S00010000000000000001 /* UI */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -154,6 +197,122 @@
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000001 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				G10S00010000000000000002 /* Core */,
+				G10S00010000000000000003 /* Components */,
+				G10S00010000000000000004 /* Modules */,
+				G10S0001000000000000000C /* Shell */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000002 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000001 /* ChannelManager.swift */,
+				F10S00010000000000000002 /* ThemeManager.swift */,
+				F10S00010000000000000003 /* TranslationsManager.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000003 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000004 /* LoadingView.swift */,
+				F10S00010000000000000005 /* ErrorView.swift */,
+				F10S00010000000000000006 /* EmptyStateView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000004 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				G10S00010000000000000005 /* Servers */,
+				G10S00010000000000000006 /* Files */,
+				G10S00010000000000000007 /* Containers */,
+				G10S00010000000000000008 /* Apps */,
+				G10S00010000000000000009 /* Websites */,
+				G10S0001000000000000000A /* Monitoring */,
+				G10S0001000000000000000B /* Settings */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000005 /* Servers */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000007 /* ServersViewModel.swift */,
+				F10S00010000000000000008 /* ServersView.swift */,
+			);
+			path = Servers;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000006 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000009 /* FilesViewModel.swift */,
+				F10S0001000000000000000A /* FilesView.swift */,
+			);
+			path = Files;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000007 /* Containers */ = {
+			isa = PBXGroup;
+			children = (
+				F10S0001000000000000000B /* ContainersViewModel.swift */,
+				F10S0001000000000000000C /* ContainersView.swift */,
+			);
+			path = Containers;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000008 /* Apps */ = {
+			isa = PBXGroup;
+			children = (
+				F10S0001000000000000000D /* AppsViewModel.swift */,
+				F10S0001000000000000000E /* AppsView.swift */,
+			);
+			path = Apps;
+			sourceTree = "<group>";
+		};
+		G10S00010000000000000009 /* Websites */ = {
+			isa = PBXGroup;
+			children = (
+				F10S0001000000000000000F /* WebsitesViewModel.swift */,
+				F10S00010000000000000010 /* WebsitesView.swift */,
+			);
+			path = Websites;
+			sourceTree = "<group>";
+		};
+		G10S0001000000000000000A /* Monitoring */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000011 /* MonitoringViewModel.swift */,
+				F10S00010000000000000012 /* MonitoringView.swift */,
+			);
+			path = Monitoring;
+			sourceTree = "<group>";
+		};
+		G10S0001000000000000000B /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000013 /* SettingsViewModel.swift */,
+				F10S00010000000000000014 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		G10S0001000000000000000C /* Shell */ = {
+			isa = PBXGroup;
+			children = (
+				F10S00010000000000000015 /* AppShellView.swift */,
+			);
+			path = Shell;
 			sourceTree = "<group>";
 		};
 		C26A4CCB4017B88A10622C5D /* Frameworks */ = {
@@ -397,6 +556,27 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				B10S00010000000000000001 /* ChannelManager.swift in Sources */,
+				B10S00010000000000000002 /* ThemeManager.swift in Sources */,
+				B10S00010000000000000003 /* TranslationsManager.swift in Sources */,
+				B10S00010000000000000004 /* LoadingView.swift in Sources */,
+				B10S00010000000000000005 /* ErrorView.swift in Sources */,
+				B10S00010000000000000006 /* EmptyStateView.swift in Sources */,
+				B10S00010000000000000007 /* ServersViewModel.swift in Sources */,
+				B10S00010000000000000008 /* ServersView.swift in Sources */,
+				B10S00010000000000000009 /* FilesViewModel.swift in Sources */,
+				B10S0001000000000000000A /* FilesView.swift in Sources */,
+				B10S0001000000000000000B /* ContainersViewModel.swift in Sources */,
+				B10S0001000000000000000C /* ContainersView.swift in Sources */,
+				B10S0001000000000000000D /* AppsViewModel.swift in Sources */,
+				B10S0001000000000000000E /* AppsView.swift in Sources */,
+				B10S0001000000000000000F /* WebsitesViewModel.swift in Sources */,
+				B10S00010000000000000010 /* WebsitesView.swift in Sources */,
+				B10S00010000000000000011 /* MonitoringViewModel.swift in Sources */,
+				B10S00010000000000000012 /* MonitoringView.swift in Sources */,
+				B10S00010000000000000013 /* SettingsViewModel.swift in Sources */,
+				B10S00010000000000000014 /* SettingsView.swift in Sources */,
+				B10S00010000000000000015 /* AppShellView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

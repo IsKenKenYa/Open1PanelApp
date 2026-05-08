@@ -11,12 +11,12 @@ struct FilesView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.files.isEmpty {
-                Text("No files found")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "folder",
+                    message: translations.get("noFilesFound", fallback: "No files found")
+                )
             } else {
                 Table(viewModel.files) {
                     TableColumn(translations.get("server_name", fallback: "Name")) { file in
@@ -54,7 +54,7 @@ struct FilesView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(URL(fileURLWithPath: viewModel.currentPath).lastPathComponent == "/" ? translations.get("navFiles", fallback: "Files") : URL(fileURLWithPath: viewModel.currentPath).lastPathComponent)
+        .navigationTitle(URL(fileURLWithPath: viewModel.currentPath).lastPathComponent == "/" ? translations.get("nav_files", fallback: "Files") : URL(fileURLWithPath: viewModel.currentPath).lastPathComponent)
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button(action: {
@@ -64,7 +64,7 @@ struct FilesView: View {
                     Image(systemName: "arrow.up")
                 }
                 .disabled(viewModel.currentPath == "/")
-                .help("Up")
+                .help(translations.get("goUp", fallback: "Up"))
             }
             ToolbarItem(placement: .automatic) {
                 Button(action: {
@@ -72,7 +72,7 @@ struct FilesView: View {
                 }) {
                     Image(systemName: "folder.badge.plus")
                 }
-                .help("New Folder")
+                .help(translations.get("newFolder", fallback: "New Folder"))
             }
             ToolbarItem(placement: .automatic) {
                 Button(action: {
@@ -80,7 +80,7 @@ struct FilesView: View {
                 }) {
                     Image(systemName: "arrow.clockwise")
                 }
-                .help("Refresh")
+                .help(translations.get("refresh", fallback: "Refresh"))
             }
         }
         .onAppear {
@@ -90,14 +90,14 @@ struct FilesView: View {
             VStack(spacing: 16) {
                 Text(translations.get("create_folder", fallback: "New Folder"))
                     .font(.headline)
-                TextField("Folder Name", text: $newFolderName)
+                TextField(translations.get("folderName", fallback: "Folder Name"), text: $newFolderName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                 HStack {
-                    Button("Cancel") {
+                    Button(translations.get("commonCancel", fallback: "Cancel")) {
                         showingNewFolderDialog = false
                         newFolderName = ""
                     }
-                    Button("Create") {
+                    Button(translations.get("create", fallback: "Create")) {
                         Task {
                             await viewModel.createFolder(name: newFolderName)
                             showingNewFolderDialog = false

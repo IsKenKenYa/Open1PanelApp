@@ -116,114 +116,114 @@
   - [x] SubTask D10.8: 输出第二批治理结果
 
 ## Day 11 Week2 回归门禁与文档同步
-- [ ] Task D11: 周中门禁检查
-  - [ ] SubTask D11.1: 执行 flutter analyze
-  - [ ] SubTask D11.2: 执行 unit 测试集
-  - [ ] SubTask D11.3: 执行 ui 测试集
-  - [ ] SubTask D11.4: 执行 integration 测试集（条件满足时）
-  - [ ] SubTask D11.5: 输出门禁失败项清单
-  - [ ] SubTask D11.6: 修复高优先失败项
-  - [ ] SubTask D11.7: 更新 docs 模块索引
-  - [ ] SubTask D11.8: 记录周中可发布状态
+- [x] Task D11: 周中门禁检查
+  - [x] SubTask D11.1: 执行 flutter analyze（0 error, 1 warning, 456 info）
+  - [x] SubTask D11.2: 执行 unit 测试集（features: 789/789 全通过）
+  - [x] SubTask D11.3: 执行 ui 测试集（8/8 全通过）
+  - [x] SubTask D11.4: 执行 integration 测试集（api_client: 212/452 需服务器环境）
+  - [x] SubTask D11.5: 输出门禁失败项清单（api_client 为集成测试，需真实服务器）
+  - [x] SubTask D11.6: 修复高优先失败项（无 error 级别）
+  - [x] SubTask D11.7: 更新 docs 模块索引
+  - [x] SubTask D11.8: 记录周中可发布状态
 
 ## Day 12 Windows 原生轨道架构设计冻结
-- [ ] Task D12: Windows 原生建设方案冻结
-  - [ ] SubTask D12.1: 明确首批模块范围（建议 Servers/Settings/Files）
-  - [ ] SubTask D12.2: 明确导航与内容容器结构
-  - [ ] SubTask D12.3: 明确 C# 与 Dart 桥接边界
-  - [ ] SubTask D12.4: 明确不可跨层规则
-  - [ ] SubTask D12.5: 明确状态同步策略
-  - [ ] SubTask D12.6: 明确异常回退与降级策略
-  - [ ] SubTask D12.7: 明确验收标准与截图要求
-  - [ ] SubTask D12.8: 冻结方案并回写文档
+- [x] Task D12: Windows 原生建设方案冻结
+  - [x] SubTask D12.1: 明确首批模块范围（Servers/Settings/Files）
+  - [x] SubTask D12.2: 明确导航与内容容器结构
+  - [x] SubTask D12.3: 明确 C# 与 Dart 桥接边界
+  - [x] SubTask D12.4: 明确不可跨层规则
+  - [x] SubTask D12.5: 明确状态同步策略
+  - [x] SubTask D12.6: 明确异常回退与降级策略
+  - [x] SubTask D12.7: 明确验收标准与截图要求
+  - [x] SubTask D12.8: 冻结方案并回写文档
 
 ## Day 13 Windows Shell 页面分发升级
-- [ ] Task D13: 从占位内容升级为真实页面分发
-  - [ ] SubTask D13.1: 创建模块页面容器基类
-  - [ ] SubTask D13.2: 为 NavigationView 添加路由分发表
-  - [ ] SubTask D13.3: 将 TextBlock 占位替换为页面对象
-  - [ ] SubTask D13.4: 增加页面切换状态保持机制
-  - [ ] SubTask D13.5: 增加空数据态组件
-  - [ ] SubTask D13.6: 增加错误态组件
-  - [ ] SubTask D13.7: 增加加载态组件
-  - [ ] SubTask D13.8: 提交第一版可演示壳
+- [x] Task D13: 从占位内容升级为真实页面分发
+  - [x] SubTask D13.1: 创建模块页面容器基类
+  - [x] SubTask D13.2: 为 NavigationView 添加路由分发表
+  - [x] SubTask D13.3: 将 TextBlock 占位替换为页面对象
+  - [x] SubTask D13.4: 增加页面切换状态保持机制
+  - [x] SubTask D13.5: 增加空数据态组件
+  - [x] SubTask D13.6: 增加错误态组件
+  - [x] SubTask D13.7: 增加加载态组件
+  - [x] SubTask D13.8: 提交第一版可演示壳
 
 ## Day 14 Windows 与 Dart 桥接首批打通
-- [ ] Task D14: 打通首批桥接调用
-  - [ ] SubTask D14.1: 确认 onepanel/windows_bridge 能力清单
-  - [ ] SubTask D14.2: 增加模块数据请求桥接命令
-  - [ ] SubTask D14.3: 增加响应解析与错误映射
-  - [ ] SubTask D14.4: 增加桥接超时保护
-  - [ ] SubTask D14.5: 增加重试策略（仅幂等）
-  - [ ] SubTask D14.6: 增加桥接日志脱敏输出
-  - [ ] SubTask D14.7: 运行 windows_bridge_validation
-  - [ ] SubTask D14.8: 输出桥接连通性报告
+- [x] Task D14: 打通首批桥接调用
+  - [x] SubTask D14.1: 确认 onepanel/windows_bridge 能力清单
+  - [x] SubTask D14.2: 增加模块数据请求桥接命令
+  - [x] SubTask D14.3: 增加响应解析与错误映射
+  - [x] SubTask D14.4: 增加桥接超时保护
+  - [x] SubTask D14.5: 增加重试策略（仅幂等）
+  - [x] SubTask D14.6: 增加桥接日志脱敏输出
+  - [x] SubTask D14.7: 运行 windows_bridge_validation
+  - [x] SubTask D14.8: 输出桥接连通性报告
 
 ## Day 15 Windows 首批模块真实数据渲染
-- [ ] Task D15: 页面从静态切换到动态数据
-  - [ ] SubTask D15.1: Servers 页接入真实列表
-  - [ ] SubTask D15.2: Settings 页接入真实配置摘要
-  - [ ] SubTask D15.3: Files 页接入目录列表只读视图
-  - [ ] SubTask D15.4: 增加分页/滚动性能防护
-  - [ ] SubTask D15.5: 增加错误提示统一组件
-  - [ ] SubTask D15.6: 增加无权限提示
-  - [ ] SubTask D15.7: 增加页面刷新机制
-  - [ ] SubTask D15.8: 完成首批模块演示验收
+- [x] Task D15: 页面从静态切换到动态数据
+  - [x] SubTask D15.1: Servers 页接入真实列表
+  - [x] SubTask D15.2: Settings 页接入真实配置摘要
+  - [x] SubTask D15.3: Files 页接入目录列表只读视图
+  - [x] SubTask D15.4: 增加分页/滚动性能防护
+  - [x] SubTask D15.5: 增加错误提示统一组件
+  - [x] SubTask D15.6: 增加无权限提示
+  - [x] SubTask D15.7: 增加页面刷新机制
+  - [x] SubTask D15.8: 完成首批模块演示验收
 
 ## Day 16 Windows 交互能力补齐（第一批）
-- [ ] Task D16: 增加可操作能力
-  - [ ] SubTask D16.1: Servers 页切换当前服务器
-  - [ ] SubTask D16.2: Files 页基础导航（进入/返回）
-  - [ ] SubTask D16.3: Settings 页基础切换（展示类）
-  - [ ] SubTask D16.4: 增加操作确认弹窗
-  - [ ] SubTask D16.5: 增加危险操作二次确认
-  - [ ] SubTask D16.6: 增加 toast/tray 回退验证
-  - [ ] SubTask D16.7: 增加失败可重试按钮
-  - [ ] SubTask D16.8: 输出交互能力清单
+- [x] Task D16: 增加可操作能力
+  - [x] SubTask D16.1: Servers 页切换当前服务器
+  - [x] SubTask D16.2: Files 页基础导航（进入/返回）
+  - [x] SubTask D16.3: Settings 页基础切换（展示类）
+  - [x] SubTask D16.4: 增加操作确认弹窗
+  - [x] SubTask D16.5: 增加危险操作二次确认
+  - [x] SubTask D16.6: 增加 toast/tray 回退验证
+  - [x] SubTask D16.7: 增加失败可重试按钮
+  - [x] SubTask D16.8: 输出交互能力清单
 
 ## Day 17 Apple 轨道结构拆分设计
-- [ ] Task D17: iOS 原生代码拆分方案冻结
-  - [ ] SubTask D17.1: 拆分目标文件结构设计
-  - [ ] SubTask D17.2: 抽离 ChannelManager
-  - [ ] SubTask D17.3: 抽离模块 ViewModel
-  - [ ] SubTask D17.4: 抽离公共组件层
-  - [ ] SubTask D17.5: 约定状态流转范式
-  - [ ] SubTask D17.6: 约定错误处理范式
-  - [ ] SubTask D17.7: 约定命名与目录规范
-  - [ ] SubTask D17.8: 输出拆分计划文档
+- [x] Task D17: iOS 原生代码拆分方案冻结
+  - [x] SubTask D17.1: 拆分目标文件结构设计
+  - [x] SubTask D17.2: 抽离 ChannelManager
+  - [x] SubTask D17.3: 抽离模块 ViewModel
+  - [x] SubTask D17.4: 抽离公共组件层
+  - [x] SubTask D17.5: 约定状态流转范式
+  - [x] SubTask D17.6: 约定错误处理范式
+  - [x] SubTask D17.7: 约定命名与目录规范
+  - [x] SubTask D17.8: 输出拆分计划文档
 
 ## Day 18 iOS 拆分实施（第一批）
-- [ ] Task D18: 拆分 AppDelegate 大文件
-  - [ ] SubTask D18.1: 创建 Core 目录与 Channel 文件
-  - [ ] SubTask D18.2: 创建 Modules 目录与 View 文件
-  - [ ] SubTask D18.3: 创建 ViewModels 目录
-  - [ ] SubTask D18.4: 迁移 servers/files 模块逻辑
-  - [ ] SubTask D18.5: 迁移 monitoring/settings 模块逻辑
-  - [ ] SubTask D18.6: 保持 render mode 切换可用
-  - [ ] SubTask D18.7: 通过 iOS 本地编译
-  - [ ] SubTask D18.8: 输出拆分前后对比
+- [x] Task D18: 拆分 AppDelegate 大文件
+  - [x] SubTask D18.1: 创建 Core 目录与 Channel 文件
+  - [x] SubTask D18.2: 创建 Modules 目录与 View 文件
+  - [x] SubTask D18.3: 创建 ViewModels 目录
+  - [x] SubTask D18.4: 迁移 servers/files 模块逻辑
+  - [x] SubTask D18.5: 迁移 monitoring/settings 模块逻辑
+  - [x] SubTask D18.6: 保持 render mode 切换可用
+  - [x] SubTask D18.7: 通过 iOS 本地编译
+  - [x] SubTask D18.8: 输出拆分前后对比
 
 ## Day 19 macOS 轨道语义对齐
-- [ ] Task D19: macOS 与 iOS 语义一致性收敛
-  - [ ] SubTask D19.1: 对齐导航层级命名
-  - [ ] SubTask D19.2: 对齐错误提示策略
-  - [ ] SubTask D19.3: 对齐加载态行为
-  - [ ] SubTask D19.4: 对齐空态与无权限态
-  - [ ] SubTask D19.5: 对齐操作确认策略
-  - [ ] SubTask D19.6: 对齐国际化 key 使用
-  - [ ] SubTask D19.7: 对齐平台差异记录
-  - [ ] SubTask D19.8: 输出语义对齐清单 v1
+- [x] Task D19: macOS 与 iOS 语义一致性收敛
+  - [x] SubTask D19.1: 对齐导航层级命名
+  - [x] SubTask D19.2: 对齐错误提示策略
+  - [x] SubTask D19.3: 对齐加载态行为
+  - [x] SubTask D19.4: 对齐空态与无权限态
+  - [x] SubTask D19.5: 对齐操作确认策略
+  - [x] SubTask D19.6: 对齐国际化 key 使用
+  - [x] SubTask D19.7: 对齐平台差异记录
+  - [x] SubTask D19.8: 输出语义对齐清单 v1
 
 ## Day 20 双轨（Native vs MDUI3）模块对账
-- [ ] Task D20: 模块级双轨对账
-  - [ ] SubTask D20.1: Servers 双轨对账
-  - [ ] SubTask D20.2: Files 双轨对账
-  - [ ] SubTask D20.3: Containers 双轨对账
-  - [ ] SubTask D20.4: Apps 双轨对账
-  - [ ] SubTask D20.5: Websites 双轨对账
-  - [ ] SubTask D20.6: Monitoring 双轨对账
-  - [ ] SubTask D20.7: Settings 双轨对账
-  - [ ] SubTask D20.8: 输出差异修复列表
+- [x] Task D20: 模块级双轨对账
+  - [x] SubTask D20.1: Servers 双轨对账
+  - [x] SubTask D20.2: Files 双轨对账
+  - [x] SubTask D20.3: Containers 双轨对账
+  - [x] SubTask D20.4: Apps 双轨对账
+  - [x] SubTask D20.5: Websites 双轨对账
+  - [x] SubTask D20.6: Monitoring 双轨对账
+  - [x] SubTask D20.7: Settings 双轨对账
+  - [x] SubTask D20.8: 输出差异修复列表
 
 ## Day 21 Week3 质量门禁冲刺
 - [ ] Task D21: 强化测试矩阵

@@ -8,8 +8,7 @@ struct DashboardView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
@@ -62,21 +61,21 @@ struct DashboardView: View {
                 }
             }
         }
-        .navigationTitle(translations.get("serverModuleDashboard", fallback: "Dashboard"))
+        .navigationTitle(translations.get("nav_dashboard", fallback: "Dashboard"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button { viewModel.fetchDashboardData() } label: {
                     Image(systemName: "arrow.clockwise")
                 }
-                .help("Refresh")
+                .help(translations.get("refresh", fallback: "Refresh"))
                 .disabled(viewModel.isLoading)
             }
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

@@ -8,8 +8,7 @@ struct MonitoringView: View {
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.metrics.cpu == 0 {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else {
                 ScrollView {
                     VStack(spacing: 20) {
@@ -18,24 +17,24 @@ struct MonitoringView: View {
                             VStack(spacing: 16) {
                                 ResourceRow(
                                     title: "CPU",
-                                    value: Double(viewModel.metrics.cpu) / 100,
-                                    label: "\(viewModel.metrics.cpu)%",
+                                    value: viewModel.metrics.cpu / 100,
+                                    label: String(format: "%.1f%%", viewModel.metrics.cpu),
                                     icon: "cpu",
-                                    color: gaugeColor(Double(viewModel.metrics.cpu))
+                                    color: gaugeColor(viewModel.metrics.cpu)
                                 )
                                 ResourceRow(
                                     title: translations.get("monitoring_memory", fallback: "Memory"),
-                                    value: Double(viewModel.metrics.memory) / 100,
-                                    label: "\(viewModel.metrics.memory)%",
+                                    value: viewModel.metrics.memory / 100,
+                                    label: String(format: "%.1f%%", viewModel.metrics.memory),
                                     icon: "memorychip",
-                                    color: gaugeColor(Double(viewModel.metrics.memory))
+                                    color: gaugeColor(viewModel.metrics.memory)
                                 )
                                 ResourceRow(
                                     title: translations.get("monitoring_disk", fallback: "Disk"),
-                                    value: Double(viewModel.metrics.disk) / 100,
-                                    label: "\(viewModel.metrics.disk)%",
+                                    value: viewModel.metrics.disk / 100,
+                                    label: String(format: "%.1f%%", viewModel.metrics.disk),
                                     icon: "internaldrive",
-                                    color: gaugeColor(Double(viewModel.metrics.disk))
+                                    color: gaugeColor(viewModel.metrics.disk)
                                 )
                             }
                             .padding(.vertical, 8)
@@ -60,7 +59,7 @@ struct MonitoringView: View {
                 }
             }
         }
-        .navigationTitle(translations.get("serverModuleMonitoring", fallback: "Monitoring"))
+        .navigationTitle(translations.get("nav_monitoring", fallback: "Monitoring"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 HStack(spacing: 4) {
@@ -70,7 +69,7 @@ struct MonitoringView: View {
                     Button { viewModel.fetchMonitoring() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
         }

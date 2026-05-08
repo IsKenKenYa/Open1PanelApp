@@ -1,10 +1,21 @@
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace OnePanelNativeHost;
 
 public sealed partial class MainWindow : Window
 {
+    private static readonly Dictionary<string, Type> _pageMap = new()
+    {
+        { "Servers", typeof(ServersPage) },
+        { "Files", typeof(FilesPage) },
+        { "Containers", typeof(ContainersPage) },
+        { "Apps", typeof(AppsPage) },
+        { "Websites", typeof(WebsitesPage) },
+        { "AI", typeof(AIPage) },
+        { "Security", typeof(SecurityPage) },
+        { "Settings", typeof(SettingsPage) },
+    };
+
     public MainWindow()
     {
         InitializeComponent();
@@ -21,11 +32,11 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        ContentFrame.Content = new TextBlock
+        var tag = item.Content?.ToString();
+
+        if (tag is not null && _pageMap.TryGetValue(tag, out var pageType))
         {
-            Text = $"WinUI3 Native Module: {item.Content}",
-            Margin = new Thickness(24),
-            FontSize = 20,
-        };
+            ContentFrame.Navigate(pageType);
+        }
     }
 }

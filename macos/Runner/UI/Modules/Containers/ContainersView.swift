@@ -11,12 +11,12 @@ struct ContainersView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                LoadingView()
             } else if viewModel.containers.isEmpty {
-                Text("No containers found")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                EmptyStateView(
+                    icon: "cube.box",
+                    message: translations.get("noContainersFound", fallback: "No containers found")
+                )
             } else {
                 Table(viewModel.containers) {
                     TableColumn(translations.get("container_name", fallback: "Name")) { container in
@@ -54,7 +54,7 @@ struct ContainersView: View {
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
-                    TableColumn("Status") { container in
+                    TableColumn(translations.get("app_status", fallback: "Status")) { container in
                         Text(container.status.isEmpty ? container.state : container.status)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -75,7 +75,7 @@ struct ContainersView: View {
                 .disableAlternatingRowBackgrounds()
             }
         }
-        .navigationTitle(translations.get("serverModuleContainers", fallback: "Containers"))
+        .navigationTitle(translations.get("nav_containers", fallback: "Containers"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 if viewModel.isProcessing {
@@ -84,27 +84,27 @@ struct ContainersView: View {
                     Button { viewModel.fetchContainers() } label: {
                         Image(systemName: "arrow.clockwise")
                     }
-                    .help("Refresh")
+                    .help(translations.get("refresh", fallback: "Refresh"))
                 }
             }
         }
         .confirmationDialog(
-            "Delete \"\(containerToDelete?.name ?? "")\"?",
+            translations.get("deleteConfirm", fallback: "Delete \"\(containerToDelete?.name ?? "")\"?"),
             isPresented: $showDeleteConfirm,
             titleVisibility: .visible
         ) {
-            Button("Delete", role: .destructive) {
+            Button(translations.get("delete", fallback: "Delete"), role: .destructive) {
                 if let c = containerToDelete { Task { await viewModel.deleteContainer(id: c.originalId) } }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(translations.get("commonCancel", fallback: "Cancel"), role: .cancel) {}
         } message: {
-            Text("This action cannot be undone.")
+            Text(translations.get("deleteCannotUndo", fallback: "This action cannot be undone."))
         }
-        .alert("Error", isPresented: Binding(
+        .alert(translations.get("error", fallback: "Error"), isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
         )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(translations.get("ok", fallback: "OK"), role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
