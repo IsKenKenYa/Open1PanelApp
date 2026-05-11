@@ -61,10 +61,14 @@ export default class OhosSharedPreferencesPlugin
           result.success(await this.store.getAll());
           return;
         case 'getAllWithParameters': {
+          const prefix = call.argument('prefix') as string | null;
+          const allowList = call.argument('allowList') as Array<string> | null;
+          const all =
+            (await this.store.getAll()) as Record<string, preferences.ValueType>;
           const filter = this.filterEntries(
-            await this.store.getAll(),
-            this.toNullableString(call.argument('prefix')),
-            this.toStringArray(call.argument('allowList')),
+            all,
+            prefix,
+            allowList,
           );
           result.success(filter);
           return;
@@ -91,11 +95,15 @@ export default class OhosSharedPreferencesPlugin
           result.success(true);
           return;
         case 'clearWithParameters': {
+          const prefix = call.argument('prefix') as string | null;
+          const allowList = call.argument('allowList') as Array<string> | null;
+          const all =
+            (await this.store.getAll()) as Record<string, preferences.ValueType>;
           const keys = Object.keys(
             this.filterEntries(
-              await this.store.getAll(),
-              this.toNullableString(call.argument('prefix')),
-              this.toStringArray(call.argument('allowList')),
+              all,
+              prefix,
+              allowList,
             ),
           );
           await this.store.deleteKeys(keys);
@@ -116,12 +124,12 @@ export default class OhosSharedPreferencesPlugin
   }
 
   private filterEntries(
-    source: Object,
+    source: Record<string, preferences.ValueType>,
     prefix: string | null,
     allowList: Array<string> | null,
-  ): Object {
-    const entries = source as Record<string, Object>;
-    const filtered: Record<string, Object> = {};
+  ): Record<string, preferences.ValueType> {
+    const filtered: Record<string, preferences.ValueType> = {};
+    const entries = source;
     for (const key of Object.keys(entries)) {
       if (prefix != null && prefix.length > 0 && !key.startsWith(prefix)) {
         continue;
@@ -135,36 +143,10 @@ export default class OhosSharedPreferencesPlugin
   }
 
   private requireStringArgument(call: MethodCall, key: string): string {
-    const rawValue = call.argument(key) as Object | null;
-    if (typeof rawValue === 'string' && rawValue.length > 0) {
+    const rawValue = call.argument(key) as string | null;
+    if (rawValue != null && rawValue.length > 0) {
       return rawValue;
     }
     throw new Error(`Missing required string argument: ${key}`);
-  }
-
-  private toNullableString(value: Object | null): string | null {
-    if (value == null) {
-      return null;
-    }
-    if (typeof value === 'string') {
-      return value;
-    }
-    return `${value}`;
-  }
-
-  private toStringArray(value: Object | null): Array<string> | null {
-    if (value == null || !Array.isArray(value)) {
-      return null;
-    }
-    const result: Array<string> = [];
-    const items = value as Array<Object | null>;
-    for (let index = 0; index < items.length; index++) {
-      const entry = items[index];
-      if (entry == null) {
-        continue;
-      }
-      result.push(`${entry}`);
-    }
-    return result;
   }
 }

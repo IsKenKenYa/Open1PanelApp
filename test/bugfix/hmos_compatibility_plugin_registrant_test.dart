@@ -34,6 +34,10 @@ void main() {
       contains('new OhosSecureStoragePlugin()'),
     );
     expect(
+      registrant,
+      contains('new OhosLocalAuthPlugin()'),
+    );
+    expect(
       entryAbility,
       contains('OhosCompatibilityPluginRegistrant.registerWith(flutterEngine)'),
     );

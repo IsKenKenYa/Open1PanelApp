@@ -10,6 +10,8 @@ import {
 import common from '@ohos.app.ability.common';
 import OhosPreferenceStore from './OhosPreferenceStore';
 
+type SecureStorageValue = string | number | boolean | Array<string> | null;
+
 const TAG = 'OhosSecureStoragePlugin';
 const CHANNEL = 'plugins.it_nomads.com/flutter_secure_storage';
 const STORE_NAME = 'FlutterSecureStorage';
@@ -57,19 +59,21 @@ export default class OhosSecureStoragePlugin
     try {
       switch (call.method) {
         case 'containsKey': {
-          const key = this.requireStringArgument(call, 'key');
+          const key = this.requireNonEmptyStringArgument(call, 'key');
           result.success(await this.store.has(key));
           return;
         }
         case 'read': {
-          const key = this.requireStringArgument(call, 'key');
-          const all = (await this.store.getAll()) as Record<string, Object>;
+          const key = this.requireNonEmptyStringArgument(call, 'key');
+          const all =
+            (await this.store.getAll()) as Record<string, SecureStorageValue>;
           const value = all[key];
           result.success(value == null ? null : `${value}`);
           return;
         }
         case 'readAll': {
-          const all = (await this.store.getAll()) as Record<string, Object>;
+          const all =
+            (await this.store.getAll()) as Record<string, SecureStorageValue>;
           const serialized: Record<string, string> = {};
           for (const key of Object.keys(all)) {
             const value = all[key];
@@ -82,14 +86,14 @@ export default class OhosSecureStoragePlugin
           return;
         }
         case 'write': {
-          const key = this.requireStringArgument(call, 'key');
+          const key = this.requireNonEmptyStringArgument(call, 'key');
           const value = this.requireStringArgument(call, 'value');
           await this.store.put(key, value);
           result.success(null);
           return;
         }
         case 'delete': {
-          const key = this.requireStringArgument(call, 'key');
+          const key = this.requireNonEmptyStringArgument(call, 'key');
           await this.store.delete(key);
           result.success(null);
           return;
@@ -108,9 +112,17 @@ export default class OhosSecureStoragePlugin
   }
 
   private requireStringArgument(call: MethodCall, key: string): string {
-    const rawValue = call.argument(key) as Object | null;
-    if (typeof rawValue === 'string' && rawValue.length > 0) {
+    const rawValue = call.argument(key) as string | null;
+    if (rawValue != null) {
       return rawValue;
+    }
+    throw new Error(`Missing required string argument: ${key}`);
+  }
+
+  private requireNonEmptyStringArgument(call: MethodCall, key: string): string {
+    const value = this.requireStringArgument(call, key);
+    if (value.length > 0) {
+      return value;
     }
     throw new Error(`Missing required string argument: ${key}`);
   }
