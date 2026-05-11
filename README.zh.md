@@ -405,6 +405,33 @@ flutter build appbundle
 flutter packages pub run build_runner build
 ```
 
+### HarmonyOS 专属构建
+
+- 非 HarmonyOS 平台继续使用官方 `flutter`；HarmonyOS 构建、运行与排障统一使用 HMOS 专属 `hflutter`，避免混用缓存。
+- 首次编译、切换 HMOS Flutter 分支/版本后，先执行：
+
+```bash
+hflutter precache --force --ohos
+hflutter pub get
+hflutter build hap --debug --no-codesign
+```
+
+- `ohos/local.properties` 需要正确指向 `flutter.sdk`、`hwsdk.dir`、`nodejs.dir`，由项目内配置统一管理。
+- `ohos/entry/src/main/ets/plugins/OhosCompatibilityPluginRegistrant.ets` 负责补齐当前 HMOS Flutter 分支缺失的启动关键插件通道（`shared_preferences`、`package_info_plus`、`path_provider`、`flutter_secure_storage`）；若设备日志再次出现 `No registered handler for message`，优先检查这里是否被遗漏或被生成流程覆盖。
+- 若 `hflutter run` 卡在 `waiting for a debug connection`，且设备日志出现 `Wrong full snapshot version`，优先按下列顺序清理并重拉 HMOS artifacts：
+
+```bash
+hflutter clean
+rm -rf .dart_tool/flutter_build build/ohos ohos/.hvigor ohos/entry/build
+hflutter precache --force --ohos
+hflutter pub get
+hflutter build hap --debug --no-codesign
+```
+
+- 当前项目通过 `pubspec_overrides.yaml` 锁定 `wakelock_plus: 1.4.0`，用于兼容 HMOS Flutter 当前 Dart SDK 约束。
+- 当前 HMOS 兼容层走“Dart 共享业务 + OHOS 本地插件补齐缺失通道”路线，禁止为 HarmonyOS 单独分叉一套业务逻辑。
+- 只有在确认没有 Flutter / Git 进程占用时，才处理 HMOS Flutter SDK 的 `.upgrade_lock` 或仓库内 `.git/index.lock`。
+
 ### 日志记录
 
 应用使用全面的日志系统配合 `appLogger`。日志特性：
