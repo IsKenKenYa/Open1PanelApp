@@ -60,11 +60,50 @@
 - API 契约变更后，必须同步更新 Repository/Service/Provider/Page/测试/模块文档。
 - 若任一链路未更新，模块不得进入“完成”状态。
 
+## Swagger-客户端覆盖状态
+
+- 覆盖状态: aligned（含白名单）
+- 测试覆盖: API 测试通过
+- 双轨状态: N/A
+
+### 额外端点白名单（9 个）
+
+| 端点 | 原因分类 | 保留原因 |
+|------|---------|---------|
+| `GET /cronjobs/script/options` | cronjob 兼容 | 命令/脚本选择器兼容入口；迁移计划是收口到 cronjob/script 独立客户端 |
+| `POST /core/commands/command` | POST-only 真实路由 | 运行时真实路由为 POST，客户端严格 POST，不做 Swagger GET 回退 |
+| `POST /core/commands/list` | POST-only 真实路由 | 运行时真实列表接口，供 legacy getCommand/listCommands 使用 |
+| `POST /core/commands/tree` | POST-only 真实路由 | 运行时真实 tree 接口，客户端严格 POST，不做 Swagger GET 回退 |
+| `POST /core/script` | 脚本库 legacy wrapper | 迁移计划是完全由 script_library_v2.dart 承接 |
+| `POST /core/script/del` | 脚本库 legacy wrapper | 迁移计划是完全由 script_library_v2.dart 承接 |
+| `POST /core/script/search` | 脚本库 legacy wrapper | 迁移计划是完全由 script_library_v2.dart 承接 |
+| `POST /core/script/sync` | 脚本库 legacy wrapper | 迁移计划是完全由 script_library_v2.dart 承接 |
+| `POST /core/script/update` | 脚本库 legacy wrapper | 迁移计划是完全由 script_library_v2.dart 承接 |
+
+### 有意缺失端点（2 个）
+
+| 端点 | 原因 |
+|------|------|
+| `GET /core/commands/command` | 有意缺失：运行时真实接口为 POST /core/commands/command，客户端严格 POST，不做 GET 回退 |
+| `GET /core/commands/tree` | 有意缺失：运行时真实接口为 POST /core/commands/tree，客户端严格 POST，不做 GET 回退 |
+
+### 脚本库迁移计划
+
+5 个 `/core/script` 端点为 legacy wrapper，迁移计划：
+- `POST /core/script` -> `script_library_v2.dart`
+- `POST /core/script/del` -> `script_library_v2.dart`
+- `POST /core/script/search` -> `script_library_v2.dart`
+- `POST /core/script/sync` -> `script_library_v2.dart`
+- `POST /core/script/update` -> `script_library_v2.dart`
+
+迁移完成后从 `command_v2.dart` 移除对应 helper 方法，并从白名单中移除。
+
 ## 后续计划
 
-1. 后续周再评估“发送到终端”交接能力
+1. 后续周再评估"发送到终端"交接能力
 2. `command_v2.dart` 中残留的脚本库 helper 视为 legacy wrapper，不再作为当前 UI 真值
+3. 执行脚本库迁移计划，将 5 个 `/core/script` 端点迁移到 `script_library_v2.dart`
 
 ---
-**文档版本**: 2.0
-**最后更新**: 2026-03-27
+**文档版本**: 3.0
+**最后更新**: 2026-05-08

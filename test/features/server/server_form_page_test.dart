@@ -16,7 +16,7 @@ Future<void> pumpServerFormPage(WidgetTester tester) async {
 }
 
 AppLocalizations appLocalizations(WidgetTester tester) {
-  return AppLocalizations.of(tester.element(find.byType(ServerFormPage)))!;
+  return AppLocalizations.of(tester.element(find.byType(ServerFormPage)));
 }
 
 void main() {

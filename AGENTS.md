@@ -281,3 +281,16 @@
 ## 安全与配置说明
 - API 访问使用 1Panel API Key，禁止提交密钥或令牌。
 - 分享日志或复现步骤时必须脱敏 IP、用户名、凭据。
+
+## 落地进展
+
+| 领域 | 内容 | 状态 |
+|------|------|------|
+| 架构规则 | 六层分离、Provider 状态管理 | 已强制执行 |
+| 文件规模限制 | 1000 LOC 硬上限 | 已强制执行 |
+| CI 门禁 | 8 个工作流（flutter-ci、ui-test、integration、windows、ios、macos、doc-sync、android-release） | 已上线 |
+| 测试门禁 | features 789/789、ui 8/8、api/core/data 219/219 | 全部通过 |
+| API 覆盖 | 27 模块对齐、0 缺失 | 已完成 |
+| 原生轨道 | Windows/iOS/macOS 均有可用 Shell | 已完成 |
+
+> 最后更新：2026-05-08

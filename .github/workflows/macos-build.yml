@@ -1,0 +1,50 @@
+name: macOS Build
+
+on:
+  push:
+    branches:
+      - dev-v2
+    paths:
+      - "macos/**"
+  pull_request:
+    branches:
+      - dev-v2
+    paths:
+      - "macos/**"
+
+concurrency:
+  group: macos-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
+
+      - name: Cache Pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}-
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Build macOS
+        run: flutter build macos --debug

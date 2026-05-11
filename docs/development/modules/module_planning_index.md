@@ -292,3 +292,95 @@ API端点覆盖：425+个端点
 **文档版本**: 1.7
 **最后更新**: 2026-03-30
 **维护者**: Open1Panel开发团队
+
+---
+
+## Swagger-客户端覆盖全局状态
+
+> 基于 `check_module_client_coverage.py` 的 `EXTRA_ENDPOINT_CLASSIFICATIONS` 与 `MISSING_ENDPOINT_CLASSIFICATIONS` 生成
+> 更新时间: 2026-05-08
+
+### 汇总
+
+- 总模块数: 27
+- 覆盖状态: 全部 aligned
+- 意外缺失端点: 0
+- 所有额外端点均在白名单中
+
+### 模块覆盖状态明细
+
+| 模块 | 覆盖状态 | 白名单额外端点 | 白名单缺失端点 | 说明 |
+|------|---------|--------------|--------------|------|
+| dashboard | aligned | 0 | 0 | 无覆盖差异 |
+| container | aligned | 1 | 0 | 容器命令执行入口 |
+| website | aligned | 0 | 0 | 无覆盖差异 |
+| openresty | aligned | 0 | 0 | 无覆盖差异 |
+| domains | aligned | 0 | 0 | 无覆盖差异 |
+| app | aligned | 0 | 0 | 无覆盖差异 |
+| database | aligned | 7 | 0 | Redis 探测/连接测试/权限/更新/备份/密码重置 |
+| file | aligned | 1 | 0 | 文件下载主链路 |
+| setting | aligned | 6 | 0 | 备份选项/MFA 状态与解绑/dashboard OS/设置重置 |
+| monitor | aligned | 0 | 0 | 无覆盖差异 |
+| backup | aligned | 0 | 0 | 无覆盖差异 |
+| runtime | aligned | 0 | 0 | 无覆盖差异 |
+| ssh | aligned | 0 | 0 | 无覆盖差异 |
+| firewall | aligned | 0 | 0 | 无覆盖差异 |
+| cronjob | aligned | 0 | 0 | 无覆盖差异 |
+| ssl | aligned | 4 | 0 | 证书状态轮询/选项/自动续签/校验 |
+| system_ssl | aligned | 0 | 0 | 无覆盖差异 |
+| website_ssl | aligned | 4 | 0 | 同 ssl 模块共享端点 |
+| log | aligned | 2 | 0 | 任务日志执行中数量/列表查询 |
+| ai | aligned | 4 | 0 | 浏览器托管/通道审批/模型测试 |
+| host | aligned | 7 | 0 | SSH 设置共用(4)/双路由测试(2)/fail2ban(1) |
+| command | aligned | 9 | 2 | 脚本库 legacy(5)/cronjob 兼容(1)/POST-only(3)；GET->POST 偏差(2) |
+| process | aligned | 0 | 0 | 无覆盖差异 |
+| auth | aligned | 3 | 0 | 演示模式/安全状态/语言探测 |
+| device | aligned | 0 | 0 | 无覆盖差异 |
+| toolbox | aligned | 13 | 0 | 磁盘管理(4)/Supervisor(3)/清理工具(4)/主机工具(4)/磁盘操作(3) |
+| group | aligned | 0 | 0 | 无覆盖差异 |
+
+### 关键决策记录
+
+#### 命令模块边界
+
+- 9 个白名单额外端点中，5 个为 `/core/script` legacy wrapper
+- 迁移计划: 将 5 个脚本库端点迁移到 `script_library_v2.dart`
+- 2 个有意缺失端点: Swagger 标注 GET 但运行时为 POST，客户端严格 POST
+
+#### 主机模块双路由回退
+
+- 7 个白名单额外端点中，2 个为双路由测试端点
+- 主路由 `/core/hosts/test/byid/{id}` 优先，回退路由 `/hosts/test/byid`
+- 退出窗口: 6-12 个月
+
+#### 数据库模块额外端点分类
+
+- 7 个额外端点均为运行时真实能力，Swagger 未覆盖
+- 分类: Redis 探测(1)、连接测试(1)、权限读写(2)、通用更新(1)、备份快捷入口(1)、密码重置(1)
+- 退出条件: 待数据库模块契约补齐后移出白名单
+
+#### 设置模块额外端点分类
+
+- 6 个额外端点包含跨模块依赖和客户端增强
+- 分类: 备份选项依赖(2)、MFA 增强(2)、dashboard 复用(1)、设置重置(1)
+- 退出条件: 待 setting Swagger 补齐或归属收口后移出白名单
+
+#### AI 模块额外端点分类
+
+- 4 个额外端点均为移动端增强能力
+- 分类: 浏览器托管(2)、通道审批(1)、模型测试(1)
+- 退出条件: 待 AI 渠道契约稳定或上游 Swagger 补齐后移出白名单
+
+#### 认证模块额外端点分类
+
+- 3 个额外端点均为登录前探测能力
+- 分类: 演示模式(1)、安全状态(1)、语言探测(1)
+- 退出条件: 待 auth Swagger 补齐后移出白名单
+
+### 下一步: Day 21-30 质量门禁
+
+1. 脚本库迁移: 将 5 个 `/core/script` 端点从 `command_v2.dart` 迁移到 `script_library_v2.dart`
+2. 白名单清理: 对退出窗口已到的白名单端点进行评估和清理
+3. 双路由归一化: 跟踪服务端 `/hosts/test/byid` 路由状态，准备移除回退
+4. 契约补齐: 推动上游 Swagger 对缺失端点进行补齐
+5. 覆盖率提升: 将 api_client 集成测试从 212/452 提升到 300+

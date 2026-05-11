@@ -1,0 +1,57 @@
+name: Doc Sync Check
+
+on:
+  pull_request:
+    branches:
+      - dev-v2
+    paths:
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - '.kiro/**'
+      - 'docs/development/**'
+
+jobs:
+  doc-sync:
+    name: Document Sync Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check Doc Sync
+        id: check
+        run: |
+          chmod +x docs/development/scripts/check_doc_sync.sh
+          if docs/development/scripts/check_doc_sync.sh 2>&1 | tee sync-output.txt; then
+            echo "sync_status=pass" >> $GITHUB_OUTPUT
+          else
+            echo "sync_status=fail" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment on PR
+        if: steps.check.outputs.sync_status == 'fail'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let output = '';
+            try {
+              output = fs.readFileSync('sync-output.txt', 'utf8');
+            } catch (e) {
+              output = 'Document sync check failed but output could not be read.';
+            }
+            const body = `## ⚠️ 文档同步检查未通过\n\n以下文档可能需要同步更新：\n\n\`\`\`\n${output}\n\`\`\`\n\n请参考 [文档同步报告](docs/development/doc_sync_report.md) 了解如何修复。`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail if out of sync
+        if: steps.check.outputs.sync_status == 'fail'
+        run: |
+          echo "❌ Document sync check failed. See the PR comment for details."
+          exit 1

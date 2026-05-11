@@ -273,3 +273,15 @@ Operational workflow references:
 
 - `docs/模块适配专属工作流.md`
 - `docs/原生UI适配专属工作流.md`
+
+## 执行状态
+
+| 里程碑 | 内容 | 状态 |
+|--------|------|------|
+| Windows 原生轨道 | Shell + Bridge + Data Rendering + Interaction | Day 12-16 已完成 |
+| iOS 原生轨道 | 从单体拆分为 21 文件模块化结构 | Day 17-18 已完成 |
+| macOS 原生轨道 | 与 iOS 语义对齐完成 | Day 19 已完成 |
+| 双轨审计 | 16 项修复项已识别 | Day 20 已完成 |
+| 渲染模式切换 | 全平台可用 | 已完成 |
+
+> 最后更新：2026-05-08

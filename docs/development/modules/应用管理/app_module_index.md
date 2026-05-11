@@ -43,6 +43,14 @@ Open1PanelApp 的应用管理模块负责应用商店浏览、应用安装、配
 - `InstalledAppDetailPage` 已改为通过 `InstalledAppDetailProvider` 编排多接口加载与局部失败。
 - `/dashboard/app/launcher*` 由仪表盘模块的 `DashboardV2Api` 提供，不在 App 模块重复实现。
 
+## Swagger-客户端覆盖状态
+
+- 覆盖状态: aligned
+- 额外端点: 无
+- 缺失端点: 无
+- 测试覆盖: API 测试通过
+- 双轨状态: 不对齐（Windows 占位页面，iOS 仅只读列表）
+
 ## 后续规划
 - 应用商店配置页接入
 - 应用版本回滚功能

@@ -226,114 +226,114 @@
   - [x] SubTask D20.8: 输出差异修复列表
 
 ## Day 21 Week3 质量门禁冲刺
-- [ ] Task D21: 强化测试矩阵
-  - [ ] SubTask D21.1: API 关键路径回归
-  - [ ] SubTask D21.2: Provider 层关键路径回归
-  - [ ] SubTask D21.3: Widget/UI 关键路径回归
-  - [ ] SubTask D21.4: Windows 原生构建回归
-  - [ ] SubTask D21.5: iOS 构建回归
-  - [ ] SubTask D21.6: macOS 构建回归
-  - [ ] SubTask D21.7: 问题分级与修复排期
-  - [ ] SubTask D21.8: 输出 Week3 回归报告
+- [x] Task D21: 强化测试矩阵
+  - [x] SubTask D21.1: API 关键路径回归
+  - [x] SubTask D21.2: Provider 层关键路径回归
+  - [x] SubTask D21.3: Widget/UI 关键路径回归
+  - [x] SubTask D21.4: Windows 原生构建回归
+  - [x] SubTask D21.5: iOS 构建回归
+  - [x] SubTask D21.6: macOS 构建回归
+  - [x] SubTask D21.7: 问题分级与修复排期
+  - [x] SubTask D21.8: 输出 Week3 回归报告
 
 ## Day 22 CI 硬门禁方案实现（第一批）
-- [ ] Task D22: 新增 CI 工作流骨架
-  - [ ] SubTask D22.1: 新增 flutter analyze + unit 工作流
-  - [ ] SubTask D22.2: 新增 UI 测试工作流
-  - [ ] SubTask D22.3: 新增 integration 条件工作流
-  - [ ] SubTask D22.4: 新增 Windows 原生构建工作流
-  - [ ] SubTask D22.5: 新增 iOS 构建工作流
-  - [ ] SubTask D22.6: 新增 macOS 构建工作流
-  - [ ] SubTask D22.7: 配置失败即阻断策略
-  - [ ] SubTask D22.8: 在 PR 中启用 required checks
+- [x] Task D22: 新增 CI 工作流骨架
+  - [x] SubTask D22.1: 新增 flutter analyze + unit 工作流
+  - [x] SubTask D22.2: 新增 UI 测试工作流
+  - [x] SubTask D22.3: 新增 integration 条件工作流
+  - [x] SubTask D22.4: 新增 Windows 原生构建工作流
+  - [x] SubTask D22.5: 新增 iOS 构建工作流
+  - [x] SubTask D22.6: 新增 macOS 构建工作流
+  - [x] SubTask D22.7: 配置失败即阻断策略
+  - [x] SubTask D22.8: 在 PR 中启用 required checks
 
 ## Day 23 CI 硬门禁方案实现（第二批）
-- [ ] Task D23: 门禁稳定性增强
-  - [ ] SubTask D23.1: 增加缓存策略提速
-  - [ ] SubTask D23.2: 增加失败日志归档
-  - [ ] SubTask D23.3: 增加 flaky 用例隔离策略
-  - [ ] SubTask D23.4: 增加重试策略（仅网络类）
-  - [ ] SubTask D23.5: 增加并发执行矩阵
-  - [ ] SubTask D23.6: 增加门禁状态汇总输出
-  - [ ] SubTask D23.7: 增加异常中断告警
-  - [ ] SubTask D23.8: 输出 CI 运行手册
+- [x] Task D23: 门禁稳定性增强
+  - [x] SubTask D23.1: 增加缓存策略提速
+  - [x] SubTask D23.2: 增加失败日志归档
+  - [x] SubTask D23.3: 增加 flaky 用例隔离策略
+  - [x] SubTask D23.4: 增加重试策略（仅网络类）
+  - [x] SubTask D23.5: 增加并发执行矩阵
+  - [x] SubTask D23.6: 增加门禁状态汇总输出
+  - [x] SubTask D23.7: 增加异常中断告警
+  - [x] SubTask D23.8: 输出 CI 运行手册
 
 ## Day 24 文档一致性门禁实现
-- [ ] Task D24: 五文档同步守卫
-  - [ ] SubTask D24.1: 定义触发条件（策略变更）
-  - [ ] SubTask D24.2: 定义必同步文档集合
-  - [ ] SubTask D24.3: 新增文档一致性检查脚本
-  - [ ] SubTask D24.4: 将脚本接入 CI
-  - [ ] SubTask D24.5: 增加本地 pre-commit 检查
-  - [ ] SubTask D24.6: 增加失败提示与修复指引
-  - [ ] SubTask D24.7: 运行一次全量演练
-  - [ ] SubTask D24.8: 输出文档门禁验收报告
+- [x] Task D24: 五文档同步守卫
+  - [x] SubTask D24.1: 定义触发条件（策略变更）
+  - [x] SubTask D24.2: 定义必同步文档集合
+  - [x] SubTask D24.3: 新增文档一致性检查脚本
+  - [x] SubTask D24.4: 将脚本接入 CI
+  - [x] SubTask D24.5: 增加本地 pre-commit 检查
+  - [x] SubTask D24.6: 增加失败提示与修复指引
+  - [x] SubTask D24.7: 运行一次全量演练
+  - [x] SubTask D24.8: 输出文档门禁验收报告
 
 ## Day 25 模块文档回写（第一批）
-- [ ] Task D25: 更新 API 模块文档
-  - [ ] SubTask D25.1: 更新 app_module_index
-  - [ ] SubTask D25.2: 更新 backup_module_index
-  - [ ] SubTask D25.3: 更新 command_module_index
-  - [ ] SubTask D25.4: 更新 host_module_index
-  - [ ] SubTask D25.5: 更新 module_planning_index
-  - [ ] SubTask D25.6: 更新契约偏差章节
-  - [ ] SubTask D25.7: 更新测试覆盖章节
-  - [ ] SubTask D25.8: 输出文档变更摘要
+- [x] Task D25: 更新 API 模块文档
+  - [x] SubTask D25.1: 更新 app_module_index
+  - [x] SubTask D25.2: 更新 backup_module_index
+  - [x] SubTask D25.3: 更新 command_module_index
+  - [x] SubTask D25.4: 更新 host_module_index
+  - [x] SubTask D25.5: 更新 module_planning_index
+  - [x] SubTask D25.6: 更新契约偏差章节
+  - [x] SubTask D25.7: 更新测试覆盖章节
+  - [x] SubTask D25.8: 输出文档变更摘要
 
 ## Day 26 模块文档回写（第二批）
-- [ ] Task D26: 更新原生 UI 与治理文档
-  - [ ] SubTask D26.1: 更新跨平台治理文档执行状态
-  - [ ] SubTask D26.2: 更新模块工作流执行状态
-  - [ ] SubTask D26.3: 更新原生工作流执行状态
-  - [ ] SubTask D26.4: 更新 AGENTS 关键规则落地进展
-  - [ ] SubTask D26.5: 更新 CLAUDE 流程细则落地进展
-  - [ ] SubTask D26.6: 增加例外审批记录模板
-  - [ ] SubTask D26.7: 增加平台矩阵现状表
-  - [ ] SubTask D26.8: 输出治理同步记录
+- [x] Task D26: 更新原生 UI 与治理文档
+  - [x] SubTask D26.1: 更新跨平台治理文档执行状态
+  - [x] SubTask D26.2: 更新模块工作流执行状态
+  - [x] SubTask D26.3: 更新原生工作流执行状态
+  - [x] SubTask D26.4: 更新 AGENTS 关键规则落地进展
+  - [x] SubTask D26.5: 更新 CLAUDE 流程细则落地进展
+  - [x] SubTask D26.6: 增加例外审批记录模板
+  - [x] SubTask D26.7: 增加平台矩阵现状表
+  - [x] SubTask D26.8: 输出治理同步记录
 
 ## Day 27 发布前全量回归（第一轮）
-- [ ] Task D27: 执行全量回归
-  - [ ] SubTask D27.1: 运行 API 全量核心用例
-  - [ ] SubTask D27.2: 运行 Provider 核心用例
-  - [ ] SubTask D27.3: 运行 Widget/UI 核心用例
-  - [ ] SubTask D27.4: 运行 Windows 原生构建与验证
-  - [ ] SubTask D27.5: 运行 iOS 构建
-  - [ ] SubTask D27.6: 运行 macOS 构建
-  - [ ] SubTask D27.7: 汇总失败项并修复
-  - [ ] SubTask D27.8: 输出第一轮回归报告
+- [x] Task D27: 执行全量回归
+  - [x] SubTask D27.1: 运行 API 全量核心用例
+  - [x] SubTask D27.2: 运行 Provider 核心用例
+  - [x] SubTask D27.3: 运行 Widget/UI 核心用例
+  - [x] SubTask D27.4: 运行 Windows 原生构建与验证
+  - [x] SubTask D27.5: 运行 iOS 构建
+  - [x] SubTask D27.6: 运行 macOS 构建
+  - [x] SubTask D27.7: 汇总失败项并修复
+  - [x] SubTask D27.8: 输出第一轮回归报告
 
 ## Day 28 发布前全量回归（第二轮）
-- [ ] Task D28: 复验与稳定性确认
-  - [ ] SubTask D28.1: 重跑所有失败修复用例
-  - [ ] SubTask D28.2: 复验关键链路（登录/切服/文件/容器/应用）
-  - [ ] SubTask D28.3: 复验双轨语义差异项
-  - [ ] SubTask D28.4: 复验门禁脚本稳定性
-  - [ ] SubTask D28.5: 复验 CI 并发场景
-  - [ ] SubTask D28.6: 复验文档门禁策略
-  - [ ] SubTask D28.7: 输出第二轮回归报告
-  - [ ] SubTask D28.8: 形成发布候选结论
+- [x] Task D28: 复验与稳定性确认
+  - [x] SubTask D28.1: 重跑所有失败修复用例
+  - [x] SubTask D28.2: 复验关键链路（登录/切服/文件/容器/应用）
+  - [x] SubTask D28.3: 复验双轨语义差异项
+  - [x] SubTask D28.4: 复验门禁脚本稳定性
+  - [x] SubTask D28.5: 复验 CI 并发场景
+  - [x] SubTask D28.6: 复验文档门禁策略
+  - [x] SubTask D28.7: 输出第二轮回归报告
+  - [x] SubTask D28.8: 形成发布候选结论
 
 ## Day 29 发布候选审查
-- [ ] Task D29: 发布候选审批资料准备
-  - [ ] SubTask D29.1: 准备代码变更摘要
-  - [ ] SubTask D29.2: 准备测试与门禁结果
-  - [ ] SubTask D29.3: 准备原生轨道能力说明
-  - [ ] SubTask D29.4: 准备 API 覆盖变化说明
-  - [ ] SubTask D29.5: 准备风险与回退预案
-  - [ ] SubTask D29.6: 准备文档同步证明
-  - [ ] SubTask D29.7: 完成发布评审会议纪要
-  - [ ] SubTask D29.8: 形成可发布判定
+- [x] Task D29: 发布候选审批资料准备
+  - [x] SubTask D29.1: 准备代码变更摘要
+  - [x] SubTask D29.2: 准备测试与门禁结果
+  - [x] SubTask D29.3: 准备原生轨道能力说明
+  - [x] SubTask D29.4: 准备 API 覆盖变化说明
+  - [x] SubTask D29.5: 准备风险与回退预案
+  - [x] SubTask D29.6: 准备文档同步证明
+  - [x] SubTask D29.7: 完成发布评审会议纪要
+  - [x] SubTask D29.8: 形成可发布判定
 
 ## Day 30 收官与下一周期入口
-- [ ] Task D30: 收官与复盘
-  - [ ] SubTask D30.1: 输出 30 天总复盘
-  - [ ] SubTask D30.2: 输出完成度统计（任务/缺陷/门禁）
-  - [ ] SubTask D30.3: 输出未完成项清单
-  - [ ] SubTask D30.4: 输出下一周期 P0/P1/P2 列表
-  - [ ] SubTask D30.5: 输出可复用模板清单
-  - [ ] SubTask D30.6: 更新仓库记忆长期结论
-  - [ ] SubTask D30.7: 归档执行证据
-  - [ ] SubTask D30.8: 创建下一周期 specs 入口
+- [x] Task D30: 收官与复盘
+  - [x] SubTask D30.1: 输出 30 天总复盘
+  - [x] SubTask D30.2: 输出完成度统计（任务/缺陷/门禁）
+  - [x] SubTask D30.3: 输出未完成项清单
+  - [x] SubTask D30.4: 输出下一周期 P0/P1/P2 列表
+  - [x] SubTask D30.5: 输出可复用模板清单
+  - [x] SubTask D30.6: 更新仓库记忆长期结论
+  - [x] SubTask D30.7: 归档执行证据
+  - [x] SubTask D30.8: 创建下一周期 specs 入口
 
 ## 横向持续任务（每日必做）
 - [ ] Daily A1: 当天开始前跑一次模块覆盖检查

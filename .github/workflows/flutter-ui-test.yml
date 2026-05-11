@@ -1,0 +1,59 @@
+name: Flutter UI Tests
+
+on:
+  push:
+    branches:
+      - dev-v2
+  pull_request:
+    branches:
+      - dev-v2
+
+concurrency:
+  group: flutter-ui-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ui-test:
+    name: UI Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
+
+      - name: Cache Pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: pub-${{ runner.os }}-${{ hashFiles('pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}-
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Run UI Tests
+        run: |
+          mkdir -p test-results
+          flutter test test/ui --no-pub > test-results/ui-test-output.txt 2>&1
+          TEST_EXIT_CODE=$?
+          cat test-results/ui-test-output.txt
+          exit $TEST_EXIT_CODE
+
+      - name: Upload Test Results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-results
+          path: test-results/
+          retention-days: 7

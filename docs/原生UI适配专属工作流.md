@@ -234,6 +234,17 @@ xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner -configuration Deb
 
 ## 10. 版本信息
 
-- 文档版本：1.0
-- 最后更新：2026-04-20
+- 文档版本：1.1
+- 最后更新：2026-05-08
 - 维护者：Open1Panel 开发团队
+
+---
+
+## 附录：执行状态
+
+| 平台 | 里程碑 | 内容 | 状态 |
+|------|--------|------|------|
+| Windows | 架构冻结 | Shell 升级、Bridge 连接、Data Rendering、Interaction | 已完成 |
+| iOS | 拆分设计与实施 | 610 LOC 拆分为 21 文件 | 已完成 |
+| macOS | 语义对齐 | 12 模块与 iOS 统一 | 已完成 |
+| Apple 语义对齐报告 | apple_semantic_alignment_v1.md | 已输出 | 已完成 |

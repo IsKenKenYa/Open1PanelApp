@@ -472,3 +472,14 @@ flutter build ios --release          # Release build
 - Configure in respective platform folders
 - Use environment variables for sensitive keys
 - Never commit signing certificates
+
+## 流程细则落地进展
+
+| 领域 | 内容 | 状态 |
+|------|------|------|
+| API 巡检 | daily_inspection.sh + inspection_faq.md 已创建 | 已上线 |
+| 模块覆盖 | check_module_client_coverage.py 运行中，全部对齐 | 已完成 |
+| CI 工作流 | 8 个工作流运行正常 | 已上线 |
+| 文档同步 | check_doc_sync.sh + doc-sync-check.yml 已创建 | 已上线 |
+
+> 最后更新：2026-05-08

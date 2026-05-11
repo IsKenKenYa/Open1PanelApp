@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onepanel_client/core/config/api_config.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
+import 'package:onepanel_client/core/network/network_exceptions.dart';
 import 'package:onepanel_client/data/repositories/files_repository.dart';
 
 void main() {
@@ -98,13 +99,13 @@ void main() {
       expect(identical(server2Api, server2ApiCached), isTrue);
     });
 
-    test('throws StateError when no server config exists', () async {
+    test('throws NetworkConnectionException when no server config exists', () async {
       SharedPreferences.setMockInitialValues(<String, Object>{});
       final repository = FilesRepository();
 
       await expectLater(
         repository.getApi(),
-        throwsA(isA<StateError>()),
+        throwsA(isA<NetworkConnectionException>()),
       );
     });
   });

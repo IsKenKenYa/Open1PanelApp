@@ -81,3 +81,71 @@ A: 以真实 API 测试结果为准，在客户端兼容真实行为。禁止修
 
 ### Q: 每天需要跑几次巡检？
 A: 建议每天两次：开始工作前和结束工作后各一次。开始前确认基线，结束后确认无新增漂移。
+
+## 契约偏差记录
+
+### 命令模块 GET->POST 契约偏差
+
+**涉及端点（2 个）**:
+- `GET /core/commands/command` -> 客户端实际使用 `POST /core/commands/command`
+- `GET /core/commands/tree` -> 客户端实际使用 `POST /core/commands/tree`
+
+**偏差原因**:
+- Swagger 快照中 `tree/command` 存在 `GET` 标注
+- 运行时路由与客户端执行均以 `POST` 为真值
+- 服务端源码 `command.go` 路由注册为 POST，Swagger 注解存在标注错误
+
+**客户端处理策略**:
+- 客户端严格使用 `POST`，不做 `GET` 回退
+- 在 `check_module_client_coverage.py` 的 `MISSING_ENDPOINT_CLASSIFICATIONS` 中登记为有意缺失
+- 在 `EXTRA_ENDPOINT_CLASSIFICATIONS` 中登记对应的 POST 端点为白名单额外端点
+
+**为什么是有意设计**:
+- 运行时行为与 Swagger 文档不一致时，以真实 API 测试结果为准
+- 禁止修改 `docs/OpenSource/1Panel/**` 来"修复契约"
+- 客户端按运行时真实行为实现，确保功能正确性
+
+**跟踪**:
+- 上游 issue: `1Panel-dev/1Panel#12363`
+- 本仓 issue: `IsKenKenYa/1Panel-Client#6`
+
+## 测试覆盖现状
+
+### 当前测试结果
+
+| 测试类别 | 通过/总计 | 说明 |
+|---------|----------|------|
+| features 单元测试 | 789/789 | 全部通过 |
+| UI 测试 | 8/8 | 全部通过 |
+| api/core/data 测试 | 219/219 | 全部通过 |
+| api_client 集成测试 | 212/452 | 需要 1Panel 服务端运行 |
+
+### 测试命令参考
+
+```bash
+# 全量测试
+flutter test
+
+# 按类别执行
+flutter test test/features/          # features 单元测试 (789)
+flutter test test/ui/                # UI 测试 (8)
+flutter test test/api/ test/core/ test/data/  # api/core/data 测试 (219)
+
+# api_client 集成测试（需要服务端）
+flutter test test/api_client/        # 集成测试 (212/452)
+
+# 覆盖率报告
+flutter test --coverage
+
+# 静态分析
+flutter analyze
+```
+
+### 集成测试说明
+
+api_client 集成测试 212/452 通过，剩余 240 个测试需要连接 1Panel 服务端才能执行。在 CI 环境中需要配置:
+- 1Panel 服务端地址
+- 有效 API Key
+- 测试用数据库/应用/网站等资源
+
+本地开发时可通过 `dart run test/scripts/test_runner.dart integration` 执行集成测试套件。
