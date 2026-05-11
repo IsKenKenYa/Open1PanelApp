@@ -1,0 +1,53 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/kenkenmac/.ohos/config/default_ohos_pfpvUEKnAjqmgCmRHKXeKL9-JjDDNXR23_Y-dG-_yLA=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B58089527CC04D7A432CE965AB5C0B64F2A210E5ACB2C92C2ED66C8B24A2E38783E37F73F322AD4",
+          "profile": "/Users/kenkenmac/.ohos/config/default_ohos_pfpvUEKnAjqmgCmRHKXeKL9-JjDDNXR23_Y-dG-_yLA=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/kenkenmac/.ohos/config/default_ohos_pfpvUEKnAjqmgCmRHKXeKL9-JjDDNXR23_Y-dG-_yLA=.p12",
+          "storePassword": "0000001B4E5A64801074482E0525D57880C593B532242C319C3EAFDDF4B0C5A3B992EFAA2309ED613BD0D6"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS",
+        "targetSdkVersion": ""
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      },
+      {
+        "name": "profile"
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

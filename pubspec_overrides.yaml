@@ -1,0 +1,4 @@
+dependency_overrides:
+  flutter_lints: 5.0.0
+  path: 1.9.0
+  wakelock_plus: 1.4.0

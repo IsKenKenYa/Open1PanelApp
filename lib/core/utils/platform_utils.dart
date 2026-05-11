@@ -8,28 +8,32 @@ class PlatformUtils {
 
   /// Whether the current platform is a desktop platform
   static bool get isDesktopPlatform {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-      case TargetPlatform.linux:
+    switch (defaultTargetPlatform.name) {
+      case 'macOS':
+      case 'windows':
+      case 'linux':
         return true;
-      case TargetPlatform.android:
-      case TargetPlatform.iOS:
-      case TargetPlatform.fuchsia:
+      case 'android':
+      case 'iOS':
+      case 'fuchsia':
+      case 'ohos':
+      default:
         return false;
     }
   }
 
   /// Whether the current platform is a mobile platform
   static bool get isMobilePlatform {
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-      case TargetPlatform.iOS:
+    switch (defaultTargetPlatform.name) {
+      case 'android':
+      case 'iOS':
+      case 'ohos':
         return true;
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-      case TargetPlatform.linux:
-      case TargetPlatform.fuchsia:
+      case 'macOS':
+      case 'windows':
+      case 'linux':
+      case 'fuchsia':
+      default:
         return false;
     }
   }

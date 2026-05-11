@@ -40,30 +40,32 @@ class PasskeyService {
         return const PasskeyAvailabilityResult.unsupported('当前浏览器不支持 Passkey');
       }
 
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.android:
+      switch (defaultTargetPlatform.name) {
+        case 'android':
           final availability = await _authenticator.getAvailability().android();
           if (availability.hasPasskeySupport) {
             return const PasskeyAvailabilityResult.supported();
           }
           return const PasskeyAvailabilityResult.unsupported('当前设备不支持 Passkey');
-        case TargetPlatform.iOS:
-        case TargetPlatform.macOS:
+        case 'iOS':
+        case 'macOS':
           final availability = await _authenticator.getAvailability().iOS();
           if (availability.hasPasskeySupport) {
             return const PasskeyAvailabilityResult.supported();
           }
           return const PasskeyAvailabilityResult.unsupported(
               '当前 Apple 设备不支持 Passkey');
-        case TargetPlatform.windows:
+        case 'windows':
           final availability = await _authenticator.getAvailability().windows();
           if (availability.hasPasskeySupport) {
             return const PasskeyAvailabilityResult.supported();
           }
           return const PasskeyAvailabilityResult.unsupported(
               '当前 Windows 设备不支持 Passkey');
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
+        case 'fuchsia':
+        case 'linux':
+        case 'ohos':
+        default:
           return const PasskeyAvailabilityResult.unsupported(
               '当前平台暂不支持 Passkey');
       }

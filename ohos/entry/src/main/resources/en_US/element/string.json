@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "1Panel Client Module"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "1Panel Client - Server Management"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "1Panel Client"
+    }
+  ]
+}

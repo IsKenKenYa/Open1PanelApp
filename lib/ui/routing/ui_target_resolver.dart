@@ -43,23 +43,23 @@ class UiTargetResolver {
       );
     }
 
-    switch (platform) {
-      case TargetPlatform.macOS:
+    switch (platform.name) {
+      case 'macOS':
         return const UiTarget(
           platformKind: UiPlatformKind.desktopMacos,
           formFactor: UiFormFactor.desktop,
         );
-      case TargetPlatform.windows:
+      case 'windows':
         return const UiTarget(
           platformKind: UiPlatformKind.desktopWindows,
           formFactor: UiFormFactor.desktop,
         );
-      case TargetPlatform.linux:
+      case 'linux':
         return const UiTarget(
           platformKind: UiPlatformKind.desktopLinux,
           formFactor: UiFormFactor.desktop,
         );
-      case TargetPlatform.iOS:
+      case 'iOS':
         if (shortestSide >= _kTabletShortestSide) {
           return const UiTarget(
             platformKind: UiPlatformKind.mobile,
@@ -71,7 +71,7 @@ class UiTargetResolver {
           platformKind: UiPlatformKind.mobile,
           formFactor: UiFormFactor.phone,
         );
-      case TargetPlatform.android:
+      case 'android':
         if (shortestSide >= _kTabletShortestSide) {
           return const UiTarget(
             platformKind: UiPlatformKind.mobile,
@@ -83,7 +83,9 @@ class UiTargetResolver {
           platformKind: UiPlatformKind.mobile,
           formFactor: UiFormFactor.phone,
         );
-      case TargetPlatform.fuchsia:
+      case 'fuchsia':
+      case 'ohos':
+      default:
         // Placeholder mapping for future HarmonyOS family support.
         if (shortestSide >= _kTabletShortestSide) {
           return const UiTarget(
