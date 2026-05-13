@@ -5,11 +5,17 @@ import util from '@ohos.util';
 
 import OhosPreferenceStore from './OhosPreferenceStore';
 
-type SecureStoragePayload = {
-  v: number;
-  iv: string;
-  data: string;
-};
+class SecureStoragePayload {
+  v: number = 0;
+  iv: string = '';
+  data: string = '';
+
+  constructor(v: number, iv: string, data: string) {
+    this.v = v;
+    this.iv = iv;
+    this.data = data;
+  }
+}
 
 const STORE_VERSION = 1;
 const MASTER_KEY_ALIAS = 'onepanel_secure_storage_master_key';
@@ -134,14 +140,14 @@ export default class OhosHuksSecureStore {
       inData: this.textEncoder.encodeInto(value),
     });
 
-    return {
-      v: STORE_VERSION,
-      iv: this.base64Helper.encodeToStringSync(iv, util.Type.BASIC),
-      data: this.base64Helper.encodeToStringSync(
+    return new SecureStoragePayload(
+      STORE_VERSION,
+      this.base64Helper.encodeToStringSync(iv, util.Type.BASIC),
+      this.base64Helper.encodeToStringSync(
         result.outData as Uint8Array,
         util.Type.BASIC,
       ),
-    };
+    );
   }
 
   private async decrypt(payload: SecureStoragePayload): Promise<string> {
@@ -201,17 +207,14 @@ export default class OhosHuksSecureStore {
 
   private tryParsePayload(value: string): SecureStoragePayload | null {
     try {
-      const parsed = JSON.parse(value) as Partial<SecureStoragePayload>;
+      const parsed = JSON.parse(value) as SecureStoragePayload;
       if (
+        parsed != null &&
         parsed.v === STORE_VERSION &&
         typeof parsed.iv === 'string' &&
         typeof parsed.data === 'string'
       ) {
-        return {
-          v: parsed.v,
-          iv: parsed.iv,
-          data: parsed.data,
-        };
+        return new SecureStoragePayload(parsed.v, parsed.iv, parsed.data);
       }
     } catch (_) {
       return null;

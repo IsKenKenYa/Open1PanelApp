@@ -110,17 +110,14 @@ extension _FilesViewContent on _FilesViewState {
   }
 
   Widget _buildResponsiveBody(BuildContext context, Widget child) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth >= 840;
-        final targetWidth = isWide ? 760.0 : constraints.maxWidth;
-        return Center(
-          child: SizedBox(
-            width: targetWidth,
-            child: child,
-          ),
-        );
-      },
+    final spec = AdaptiveLayoutSpec.of(context);
+    if (spec.isPhone) {
+      return child;
+    }
+
+    return AdaptiveWidthContainer(
+      maxWidth: spec.filesBodyMaxWidth,
+      child: child,
     );
   }
 }

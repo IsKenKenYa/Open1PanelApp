@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 
 import 'ui_target.dart';
 
@@ -13,12 +14,14 @@ class UiTargetResolver {
     final size = MediaQuery.sizeOf(context);
     final shortestSide = size.shortestSide;
     final width = size.width;
+    final capabilities = PlatformCapabilities.current();
 
     return resolveForTest(
       isWeb: kIsWeb,
       platform: defaultTargetPlatform,
       shortestSide: shortestSide,
       width: width,
+      isOhos: capabilities.isOhos,
     );
   }
 
@@ -28,6 +31,7 @@ class UiTargetResolver {
     required TargetPlatform platform,
     required double shortestSide,
     required double width,
+    bool isOhos = false,
   }) {
     if (isWeb) {
       final formFactor = _resolveWebFormFactor(
@@ -72,6 +76,19 @@ class UiTargetResolver {
           formFactor: UiFormFactor.phone,
         );
       case 'android':
+        if (isOhos) {
+          if (shortestSide >= _kTabletShortestSide) {
+            return const UiTarget(
+              platformKind: UiPlatformKind.harmony,
+              formFactor: UiFormFactor.tablet,
+              tabletKind: TabletKind.harmonyPad,
+            );
+          }
+          return const UiTarget(
+            platformKind: UiPlatformKind.harmony,
+            formFactor: UiFormFactor.phone,
+          );
+        }
         if (shortestSide >= _kTabletShortestSide) {
           return const UiTarget(
             platformKind: UiPlatformKind.mobile,

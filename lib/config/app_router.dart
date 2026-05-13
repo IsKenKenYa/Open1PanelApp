@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:onepanel_client/core/config/api_config.dart';
 import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 import 'package:onepanel_client/core/services/onboarding_service.dart';
 import 'package:onepanel_client/core/services/startup/testing_channel_consent_service.dart';
 import 'package:onepanel_client/features/onboarding/onboarding_page.dart';
@@ -1359,7 +1360,8 @@ class AppRouter {
       ),
       AppRoutes.toolboxDevice: _shellAwareModuleEntry(
         routeName: AppRoutes.toolboxDevice,
-        defaultBuilder: (_, __) => ChangeNotifierProvider<ToolboxDeviceProvider>(
+        defaultBuilder: (_, __) =>
+            ChangeNotifierProvider<ToolboxDeviceProvider>(
           create: (_) => ToolboxDeviceProvider(),
           child: const ToolboxDevicePage(),
         ),
@@ -1490,8 +1492,7 @@ class AppRouter {
       ),
       AppRoutes.sshSessions: _shellAwareModuleEntry(
         routeName: AppRoutes.sshSessions,
-        defaultBuilder: (_, __) =>
-            ChangeNotifierProvider<SshSessionsProvider>(
+        defaultBuilder: (_, __) => ChangeNotifierProvider<SshSessionsProvider>(
           create: (_) => SshSessionsProvider(),
           child: const SshSessionsPage(),
         ),
@@ -1542,8 +1543,8 @@ class AppRouter {
             return provider;
           },
           child: CronjobFormPage(
-            args:
-                settings.arguments as CronjobFormArgs? ?? const CronjobFormArgs(),
+            args: settings.arguments as CronjobFormArgs? ??
+                const CronjobFormArgs(),
           ),
         ),
       ),
@@ -2061,7 +2062,11 @@ class _SplashPageState extends State<SplashPage> {
         return StatefulBuilder(
           builder: (dialogContext, setState) {
             final dialogL10n = dialogContext.l10n;
+            final dialogSpec = AdaptiveLayoutSpec.of(dialogContext);
             return AlertDialog(
+              key: const Key('testing-warning-dialog'),
+              constraints: dialogSpec.dialogConstraints,
+              insetPadding: dialogSpec.dialogInsetPadding,
               title: Text(dialogL10n.testingWarningDialogTitle(channelLabel)),
               content: SingleChildScrollView(
                 child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 import '../../core/i18n/l10n_x.dart';
 import 'widgets/widgets.dart';
 import 'dashboard_provider.dart';
@@ -90,18 +91,23 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildContent(BuildContext context, DashboardProvider provider) {
+    final spec = AdaptiveLayoutSpec.of(context);
     return RefreshIndicator(
       onRefresh: () => provider.refresh(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(16),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth > 600) {
-              return _buildTabletLayout(provider);
-            }
-            return _buildMobileLayout(provider);
-          },
+        padding: spec.pagePadding,
+        child: AdaptiveWidthContainer(
+          maxWidth: spec.dashboardMaxWidth,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (spec.isDesktop || spec.isTablet) {
+                return _buildTabletLayout(provider,
+                    compact: constraints.maxWidth < 900);
+              }
+              return _buildMobileLayout(provider);
+            },
+          ),
         ),
       ),
     );
@@ -129,12 +135,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildTabletLayout(DashboardProvider provider) {
+  Widget _buildTabletLayout(DashboardProvider provider,
+      {required bool compact}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          flex: 2,
+          flex: compact ? 5 : 2,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -153,7 +160,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          flex: 1,
+          flex: compact ? 3 : 1,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

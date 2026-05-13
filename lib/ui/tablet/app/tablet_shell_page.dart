@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/pinned_modules_controller.dart';
@@ -30,7 +31,8 @@ class _TabletShellPageState extends State<TabletShellPage> {
   @override
   void initState() {
     super.initState();
-    _selectedModule = clientModuleFromId(widget.initialModuleId) ?? _moduleFromIndex(widget.initialIndex);
+    _selectedModule = clientModuleFromId(widget.initialModuleId) ??
+        _moduleFromIndex(widget.initialIndex);
   }
 
   ClientModule _moduleFromIndex(int index) {
@@ -69,10 +71,13 @@ class _TabletShellPageState extends State<TabletShellPage> {
   Widget build(BuildContext context) {
     return Consumer2<CurrentServerController, PinnedModulesController>(
       builder: (context, currentServer, pinnedModules, _) {
+        final spec = AdaptiveLayoutSpec.of(context);
+        final railTheme = Theme.of(context);
         final modules = _tabletSlots(pinnedModules);
-        final selectedModule = (!currentServer.hasServer && _selectedModule.requiresServer)
-            ? ClientModule.servers
-            : _selectedModule;
+        final selectedModule =
+            (!currentServer.hasServer && _selectedModule.requiresServer)
+                ? ClientModule.servers
+                : _selectedModule;
 
         final selectedIndex = modules.contains(selectedModule)
             ? modules.indexOf(selectedModule)
@@ -81,47 +86,69 @@ class _TabletShellPageState extends State<TabletShellPage> {
         return Scaffold(
           body: Row(
             children: [
-              NavigationRail(
-                extended: false,
-                selectedIndex: selectedIndex,
-                onDestinationSelected: (index) {
-                  final module = modules[index];
-                  if (!currentServer.hasServer && module.requiresServer) {
-                    ServerSwitcherAction.showServerPicker(context);
-                    return;
-                  }
-                  setState(() {
-                    _selectedModule = module;
-                  });
-                },
-                labelType: NavigationRailLabelType.all,
-                useIndicator: true,
-                indicatorColor: Theme.of(context).colorScheme.primaryContainer,
-                destinations: [
-                  for (final module in modules)
-                    NavigationRailDestination(
-                      icon: Icon(
-                        module.icon,
-                        color: !module.requiresServer || currentServer.hasServer
-                            ? null
-                            : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.42),
-                      ),
-                      selectedIcon: Icon(
-                        module.selectedIcon,
-                        color: !module.requiresServer || currentServer.hasServer
-                            ? null
-                            : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.42),
-                      ),
-                      label: Text(module.label(context.l10n)),
-                    ),
-                ],
+              SafeArea(
+                right: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    12,
+                    widget.tabletKind == TabletKind.ipad ? 20 : 16,
+                    8,
+                    16,
+                  ),
+                  child: NavigationRail(
+                    extended: false,
+                    minWidth: widget.tabletKind == TabletKind.ipad ? 88 : 96,
+                    minExtendedWidth:
+                        widget.tabletKind == TabletKind.ipad ? 220 : 236,
+                    groupAlignment: -0.92,
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (index) {
+                      final module = modules[index];
+                      if (!currentServer.hasServer && module.requiresServer) {
+                        ServerSwitcherAction.showServerPicker(context);
+                        return;
+                      }
+                      setState(() {
+                        _selectedModule = module;
+                      });
+                    },
+                    labelType: NavigationRailLabelType.all,
+                    useIndicator: true,
+                    indicatorColor: railTheme.colorScheme.primaryContainer,
+                    destinations: [
+                      for (final module in modules)
+                        NavigationRailDestination(
+                          icon: Icon(
+                            module.icon,
+                            color: !module.requiresServer ||
+                                    currentServer.hasServer
+                                ? null
+                                : railTheme.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.42),
+                          ),
+                          selectedIcon: Icon(
+                            module.selectedIcon,
+                            color: !module.requiresServer ||
+                                    currentServer.hasServer
+                                ? null
+                                : railTheme.colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.42),
+                          ),
+                          label: Text(module.label(context.l10n)),
+                        ),
+                    ],
+                  ),
+                ),
               ),
               const VerticalDivider(thickness: 1, width: 1),
               Expanded(
-                child: buildShellModulePage(
-                  context,
-                  module: selectedModule,
-                  serverId: currentServer.currentServerId,
+                child: AdaptiveWidthContainer(
+                  maxWidth: spec.contentMaxWidth,
+                  child: buildShellModulePage(
+                    context,
+                    module: selectedModule,
+                    serverId: currentServer.currentServerId,
+                  ),
                 ),
               ),
             ],

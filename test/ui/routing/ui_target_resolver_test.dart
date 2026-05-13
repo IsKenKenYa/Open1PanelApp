@@ -29,6 +29,19 @@ void main() {
       expect(target.tabletKind, TabletKind.androidPad);
     });
 
+    test('harmony pad -> harmony tablet harmonyPad', () {
+      final target = UiTargetResolver.resolveForTest(
+        isWeb: false,
+        platform: TargetPlatform.android,
+        shortestSide: 800,
+        width: 1200,
+        isOhos: true,
+      );
+      expect(target.platformKind, UiPlatformKind.harmony);
+      expect(target.formFactor, UiFormFactor.tablet);
+      expect(target.tabletKind, TabletKind.harmonyPad);
+    });
+
     test('iPadOS -> mobile tablet ipad', () {
       final target = UiTargetResolver.resolveForTest(
         isWeb: false,
@@ -65,4 +78,3 @@ void main() {
     });
   });
 }
-

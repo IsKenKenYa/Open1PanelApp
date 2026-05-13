@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 import 'package:onepanel_client/core/services/app_settings_controller.dart';
 import 'package:onepanel_client/core/services/onboarding_service.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/theme/ui_render_mode.dart';
 import 'package:onepanel_client/core/theme/ui_render_policy.dart';
-import 'package:onepanel_client/core/utils/platform_utils.dart';
 import 'package:onepanel_client/features/settings/about_page.dart';
 import 'package:onepanel_client/features/settings/app_lock_settings_page.dart';
 import 'package:onepanel_client/features/settings/screens/theme_settings_page.dart';
@@ -20,8 +20,12 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (PlatformUtils.isDesktop(context)) {
+    final spec = AdaptiveLayoutSpec.of(context);
+    if (spec.isDesktop) {
       return const _SettingsPageDesktop();
+    }
+    if (spec.isTablet) {
+      return const _SettingsPageTablet();
     }
     return const _SettingsPageMobile();
   }
@@ -64,11 +68,33 @@ class _SettingsPageDesktop extends StatelessWidget {
       backgroundColor: scheme.surface,
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: BoxConstraints(
+            maxWidth: AdaptiveLayoutSpec.of(context).settingsBodyMaxWidth,
+          ),
           child: ColoredBox(
             color: scheme.surface,
             child: const _SettingsBody(),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsPageTablet extends StatelessWidget {
+  const _SettingsPageTablet();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final spec = AdaptiveLayoutSpec.of(context);
+    return Scaffold(
+      backgroundColor: scheme.surface,
+      body: AdaptiveWidthContainer(
+        maxWidth: spec.settingsBodyMaxWidth,
+        child: ColoredBox(
+          color: scheme.surface,
+          child: const _SettingsBody(),
         ),
       ),
     );
@@ -83,7 +109,7 @@ class _SettingsBody extends StatelessWidget {
     final l10n = context.l10n;
 
     return ListView(
-      padding: AppDesignTokens.pagePadding,
+      padding: AdaptiveLayoutSpec.of(context).pagePadding,
       children: [
         Text(l10n.settingsGeneral,
             style: Theme.of(context).textTheme.titleMedium),
@@ -148,7 +174,9 @@ class _SettingsBody extends StatelessWidget {
                                 settings.updateUIRenderMode(value);
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(l10n.settingsUIRenderModeRestartHint)),
+                                  SnackBar(
+                                      content: Text(l10n
+                                          .settingsUIRenderModeRestartHint)),
                                 );
                               },
                               child: Column(
@@ -156,7 +184,8 @@ class _SettingsBody extends StatelessWidget {
                                 children: [
                                   if (UIRenderPolicy.canSelectNativeMode())
                                     RadioListTile<UIRenderMode>(
-                                      title: Text(l10n.settingsUIRenderModeNative),
+                                      title:
+                                          Text(l10n.settingsUIRenderModeNative),
                                       value: UIRenderMode.native,
                                     ),
                                   RadioListTile<UIRenderMode>(
@@ -271,7 +300,8 @@ class _SettingsBody extends StatelessWidget {
                 title: Text(l10n.settingsServerManagement),
                 subtitle: Text(l10n.settingsServerManagementSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => openRouteRespectingShell(context, AppRoutes.server),
+                onTap: () =>
+                    openRouteRespectingShell(context, AppRoutes.server),
               ),
               const Divider(height: 1),
               ListTile(

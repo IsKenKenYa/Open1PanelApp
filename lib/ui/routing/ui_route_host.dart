@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/core/utils/platform_utils.dart';
 
 import '../desktop/common/app/desktop_shell_page.dart';
 import '../desktop/macos/app/macos_shell_content_page.dart';
 import '../desktop/windows/app/windows_shell_content_page.dart';
 import '../mobile/app/mobile_shell_page.dart';
 import 'ui_target.dart';
+import 'ui_target_resolver.dart';
 
 /// Route host that resolves the current UI target (platform + form factor)
 /// and builds the correct page implementation for a semantic route name.
@@ -17,9 +17,11 @@ class UiRouteHost extends StatelessWidget {
   const UiRouteHost({
     super.key,
     required this.settings,
+    this.debugTargetOverride,
   });
 
   final RouteSettings settings;
+  final UiTarget? debugTargetOverride;
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +36,23 @@ class UiRouteHost extends StatelessWidget {
   }
 
   Widget _buildHome(BuildContext context) {
+    final target = debugTargetOverride ?? UiTargetResolver.resolve(context);
     final initialIndex = _readInitialIndex(settings.arguments);
     final initialModuleId = _readInitialModuleId(settings.arguments);
     final initialEmbeddedRouteName =
-      _readInitialEmbeddedRouteName(settings.arguments);
+        _readInitialEmbeddedRouteName(settings.arguments);
     final initialEmbeddedRouteArguments =
-      _readInitialEmbeddedRouteArguments(settings.arguments);
+        _readInitialEmbeddedRouteArguments(settings.arguments);
 
-    if (PlatformUtils.isDesktop(context)) {
-      if (PlatformUtils.isMacOS) {
+    if (target.isDesktop) {
+      if (target.platformKind == UiPlatformKind.desktopMacos) {
         return MacosShellContentPage(
           initialIndex: initialIndex,
           initialModuleId: initialModuleId,
           initialEmbeddedRouteName: initialEmbeddedRouteName,
           initialEmbeddedRouteArguments: initialEmbeddedRouteArguments,
         );
-      } else if (PlatformUtils.isWindows) {
+      } else if (target.platformKind == UiPlatformKind.desktopWindows) {
         return WindowsShellContentPage(
           initialIndex: initialIndex,
           initialModuleId: initialModuleId,
@@ -63,16 +66,13 @@ class UiRouteHost extends StatelessWidget {
         initialEmbeddedRouteName: initialEmbeddedRouteName,
         initialEmbeddedRouteArguments: initialEmbeddedRouteArguments,
       );
-    } else {
-      final tabletKind = PlatformUtils.isTablet(context)
-          ? (PlatformUtils.isIOS ? TabletKind.ipad : TabletKind.androidPad)
-          : TabletKind.none;
-      return MobileShellPage(
-        initialIndex: initialIndex,
-        initialModuleId: initialModuleId,
-        tabletKind: tabletKind,
-      );
     }
+
+    return MobileShellPage(
+      initialIndex: initialIndex,
+      initialModuleId: initialModuleId,
+      tabletKind: target.tabletKind,
+    );
   }
 
   int _readInitialIndex(Object? arguments) {

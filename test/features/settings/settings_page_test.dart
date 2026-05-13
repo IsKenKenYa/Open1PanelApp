@@ -48,4 +48,28 @@ void main() {
 
     expect(find.text('About 1Panel Client'), findsOneWidget);
   });
+
+  testWidgets('settings page keeps tablet layout bounded', (tester) async {
+    tester.view.physicalSize = const Size(1024, 1366);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => AppSettingsController(),
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: const SettingsPage(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Feedback Center'), findsOneWidget);
+    expect(find.text('About'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

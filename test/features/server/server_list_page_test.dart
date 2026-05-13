@@ -37,6 +37,11 @@ void main() {
     final currentServer = CurrentServerController();
     await currentServer.load();
 
+    tester.view.physicalSize = const Size(393, 852);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -127,6 +132,73 @@ void main() {
 
     expect(find.text('Tencent Guangzhou'), findsOneWidget);
     expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tablet server list uses wide add action and grid layout',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final currentServer = CurrentServerController();
+    await currentServer.load();
+
+    tester.view.physicalSize = const Size(1024, 1366);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final serverItems = <ServerCardViewModel>[
+      ServerCardViewModel(
+        config: ApiConfig(
+          id: 'server-1',
+          name: 'Alpha',
+          url: 'http://10.0.0.1:11451',
+          apiKey: 'key-1',
+          allowInsecureTls: true,
+          isDefault: true,
+        ),
+        isCurrent: true,
+        metrics: const ServerMetricsSnapshot(),
+      ),
+      ServerCardViewModel(
+        config: ApiConfig(
+          id: 'server-2',
+          name: 'Beta',
+          url: 'http://10.0.0.2:11451',
+          apiKey: 'key-2',
+          allowInsecureTls: true,
+          isDefault: false,
+        ),
+        isCurrent: false,
+        metrics: const ServerMetricsSnapshot(),
+      ),
+    ];
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AppSettingsController()),
+          ChangeNotifierProvider(create: (_) => ThemeController()),
+          ChangeNotifierProvider<CurrentServerController>.value(
+            value: currentServer,
+          ),
+          ChangeNotifierProvider<ServerProvider>.value(
+            value: TestServerProvider(items: serverItems),
+          ),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('en'),
+          home: const ServerListPage(enableCoach: false),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add'), findsOneWidget);
+    expect(find.text('Alpha'), findsOneWidget);
+    expect(find.text('Beta'), findsOneWidget);
+    expect(find.byType(FilledButton), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 }

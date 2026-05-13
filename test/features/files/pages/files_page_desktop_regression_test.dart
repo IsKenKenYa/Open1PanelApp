@@ -107,4 +107,75 @@ void main() {
     currentServerController.dispose();
     await tester.pump();
   });
+
+  testWidgets('tablet files page uses toolbar action instead of fab',
+      (tester) async {
+    final currentServerController = _FakeCurrentServerController();
+    final mockService = MockFilesService();
+    when(mockService.getCurrentServer()).thenAnswer(
+      (_) async => currentServerController.currentServer,
+    );
+    when(mockService.getFiles(
+      path: anyNamed('path'),
+      search: anyNamed('search'),
+      page: anyNamed('page'),
+      pageSize: anyNamed('pageSize'),
+      expand: anyNamed('expand'),
+      sortBy: anyNamed('sortBy'),
+      sortOrder: anyNamed('sortOrder'),
+      showHidden: anyNamed('showHidden'),
+    )).thenAnswer(
+      (_) async => const [
+        FileInfo(
+          name: 'tablet-demo.txt',
+          path: '/tablet-demo.txt',
+          isDir: false,
+          size: 128,
+          mode: '0644',
+          type: 'file',
+          user: 'root',
+          group: 'root',
+          permission: 'rw-r--r--',
+        ),
+      ],
+    );
+    when(mockService.searchFavoriteFiles(path: anyNamed('path')))
+        .thenAnswer((_) async => const []);
+
+    final provider = FilesProvider(service: mockService);
+    await provider.loadFiles(path: '/');
+
+    tester.view.physicalSize = const Size(1024, 1366);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CurrentServerController>.value(
+            value: currentServerController,
+          ),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: FilesPage(
+            provider: provider,
+            autoInitialize: false,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('tablet-demo.txt'), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.text('New'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    provider.dispose();
+    currentServerController.dispose();
+    await tester.pump();
+  });
 }
