@@ -91,6 +91,9 @@ extension FilesProviderSystemMixin on FilesProvider {
     if (file.isDir) {
       throw Exception('cannot_download_directory');
     }
+    if (!PlatformCapabilities.current().supportsBackgroundDownloader) {
+      throw UnsupportedError('当前平台暂不支持后台下载');
+    }
 
     final hasPermission = await _service.checkAndRequestStoragePermission();
     if (!hasPermission) {
@@ -116,16 +119,19 @@ extension FilesProviderSystemMixin on FilesProvider {
       }
 
       String downloadPath;
-      if (Platform.isAndroid) {
+      final capabilities = PlatformCapabilities.current();
+      if (capabilities.supportsAndroidIntent) {
         final dir = Directory('/storage/emulated/0/Download');
         if (!await dir.exists()) {
           final extDir = await getExternalStorageDirectory();
-          downloadPath = extDir?.path ?? (await getApplicationDocumentsDirectory()).path;
+          downloadPath =
+              extDir?.path ?? (await getApplicationDocumentsDirectory()).path;
         } else {
           downloadPath = dir.path;
         }
       } else {
-        final directory = await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
+        final directory = await getDownloadsDirectory() ??
+            await getApplicationDocumentsDirectory();
         downloadPath = directory.path;
       }
 

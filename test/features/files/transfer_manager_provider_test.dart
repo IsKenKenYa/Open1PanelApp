@@ -1,5 +1,7 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/features/files/providers/transfer_manager_provider.dart';
 
 void main() {
@@ -54,5 +56,28 @@ void main() {
     await provider.clearCompletedDownloads();
 
     expect(clearCompletedCalls, 1);
+  });
+
+  test('TransferManagerProvider exposes unsupported state on OHOS', () async {
+    var loadCalls = 0;
+    final provider = TransferManagerProvider(
+      loadTasksOverride: () async {
+        loadCalls += 1;
+        return const <DownloadTask>[];
+      },
+      capabilities: PlatformCapabilities.resolveForTest(
+        isWeb: false,
+        targetPlatform: TargetPlatform.android,
+        operatingSystem: 'ohos',
+      ),
+    );
+
+    await provider.initialize();
+
+    expect(provider.isLoading, isFalse);
+    expect(provider.isBackgroundDownloadSupported, isFalse);
+    expect(provider.unsupportedReason, isNotNull);
+    expect(provider.downloadTasks, isEmpty);
+    expect(loadCalls, 0);
   });
 }

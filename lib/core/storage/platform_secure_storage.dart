@@ -1,132 +1,193 @@
-import 'dart:io' as io;
-
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/logger/logger_service.dart';
 
-/// 平台感知的安全存储适配器
-/// 
-/// - OHOS: 使用 SharedPreferences（沙箱保证安全性）
-/// - 其他平台: 使用 flutter_secure_storage
+enum PlatformSecureStorageBackend {
+  flutterSecureStorage,
+  ohosMethodChannel,
+  sharedPreferencesFallback,
+}
+
 class PlatformSecureStorage {
+  PlatformSecureStorage._({
+    required this.backend,
+    FlutterSecureStorage? secureStorage,
+    SharedPreferences? prefs,
+    MethodChannel? ohosChannel,
+  })  : _secureStorage = secureStorage,
+        _prefsFallback = prefs,
+        _ohosChannel = ohosChannel;
+
+  static const String ohosChannelName = 'onepanel/secure_storage';
+  static const String _prefsKeyPrefix = 'open1panel_secure_';
+
+  final PlatformSecureStorageBackend backend;
   final FlutterSecureStorage? _secureStorage;
   final SharedPreferences? _prefsFallback;
-  final bool _usePrefs;
+  final MethodChannel? _ohosChannel;
 
-  static Future<PlatformSecureStorage> create() async {
-    final usePrefs = _shouldUsePrefsFallback();
-    
-    FlutterSecureStorage? secureStorage;
-    SharedPreferences? prefs;
-    
-    if (!usePrefs) {
+  static Future<PlatformSecureStorage> create({
+    PlatformCapabilitiesSnapshot? capabilities,
+    FlutterSecureStorage? secureStorage,
+    SharedPreferences? sharedPreferences,
+    MethodChannel? ohosMethodChannel,
+    bool probeSecureStorage = true,
+  }) async {
+    final resolvedCapabilities = capabilities ?? PlatformCapabilities.current();
+
+    if (resolvedCapabilities.isOhos) {
+      final ohosChannel =
+          ohosMethodChannel ?? const MethodChannel(ohosChannelName);
       try {
-        secureStorage = const FlutterSecureStorage(
-          aOptions: AndroidOptions(
-            encryptedSharedPreferences: true,
-          ),
+        final healthy = await ohosChannel.invokeMethod<bool>('ping');
+        if (healthy == true) {
+          return PlatformSecureStorage._(
+            backend: PlatformSecureStorageBackend.ohosMethodChannel,
+            ohosChannel: ohosChannel,
+          );
+        }
+      } catch (error, stackTrace) {
+        appLogger.wWithPackage(
+          'core.storage.platform_secure',
+          'OHOS secure storage channel unavailable, falling back to SharedPreferences',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+
+      return PlatformSecureStorage._(
+        backend: PlatformSecureStorageBackend.sharedPreferencesFallback,
+        prefs: sharedPreferences ?? await SharedPreferences.getInstance(),
+      );
+    }
+
+    final candidate = secureStorage ??
+        const FlutterSecureStorage(
           iOptions: IOSOptions(
             accessibility: KeychainAccessibility.first_unlock,
           ),
           lOptions: LinuxOptions(),
         );
-        // 尝试调用一次，确认是否支持
-        await secureStorage.read(key: '__test__');
-      } on UnsupportedError catch (e, s) {
-        appLogger.eWithPackage('core.storage.platform_secure', 'SecureStorage not supported, falling back to SharedPreferences', error: e, stackTrace: s);
-      }
+
+    if (!probeSecureStorage) {
+      return PlatformSecureStorage._(
+        backend: PlatformSecureStorageBackend.flutterSecureStorage,
+        secureStorage: candidate,
+      );
     }
-    
-    if (usePrefs || secureStorage == null) {
-      prefs = await SharedPreferences.getInstance();
+
+    try {
+      await candidate.read(key: '__platform_probe__');
+      return PlatformSecureStorage._(
+        backend: PlatformSecureStorageBackend.flutterSecureStorage,
+        secureStorage: candidate,
+      );
+    } on UnsupportedError catch (error, stackTrace) {
+      appLogger.wWithPackage(
+        'core.storage.platform_secure',
+        'SecureStorage unsupported, falling back to SharedPreferences',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } on MissingPluginException catch (error, stackTrace) {
+      appLogger.wWithPackage(
+        'core.storage.platform_secure',
+        'SecureStorage plugin missing, falling back to SharedPreferences',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } catch (error, stackTrace) {
+      appLogger.wWithPackage(
+        'core.storage.platform_secure',
+        'SecureStorage probe failed, falling back to SharedPreferences',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
-    
+
     return PlatformSecureStorage._(
-      secureStorage: usePrefs ? null : secureStorage,
-      prefs: prefs,
-      usePrefs: usePrefs || secureStorage == null,
+      backend: PlatformSecureStorageBackend.sharedPreferencesFallback,
+      prefs: sharedPreferences ?? await SharedPreferences.getInstance(),
     );
   }
 
-  PlatformSecureStorage._({
-    required FlutterSecureStorage? secureStorage,
-    required SharedPreferences? prefs,
-    required bool usePrefs,
-  }) : _secureStorage = secureStorage,
-       _prefsFallback = prefs,
-       _usePrefs = usePrefs;
-
-  /// 判断当前平台是否应该使用 SharedPreferences 替代 FlutterSecureStorage
-  static bool _shouldUsePrefsFallback() {
-    if (kIsWeb) return false;
-    
-    // OHOS 检测
-    // OHOS Flutter 可能识别为 Android 或自定义平台
-    if (io.Platform.isAndroid) {
-      try {
-        // 尝试检测 OHOS 操作系统
-        final os = io.Platform.operatingSystem;
-        if (os.toLowerCase().contains('ohos') || os.toLowerCase().contains('harmony')) {
-          return true;
-        }
-      } catch (_) {
-        // ignore
-      }
-    }
-    
-    // 桌面端：macOS/Windows/Linux
-    if (io.Platform.isMacOS || io.Platform.isWindows || io.Platform.isLinux) {
-      return true;
-    }
-    
-    return false;
-  }
-
   Future<String?> read({required String key}) async {
-    if (_usePrefs) {
-      return _prefsFallback!.getString(_prefixKey(key));
+    switch (backend) {
+      case PlatformSecureStorageBackend.flutterSecureStorage:
+        return _secureStorage!.read(key: key);
+      case PlatformSecureStorageBackend.ohosMethodChannel:
+        return _ohosChannel!.invokeMethod<String?>(
+          'read',
+          <String, Object?>{'key': key},
+        );
+      case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        return _prefsFallback!.getString(_prefixedKey(key));
     }
-    return _secureStorage!.read(key: key);
   }
 
   Future<void> write({required String key, required String? value}) async {
-    if (_usePrefs) {
-      if (value == null) {
-        await _prefsFallback!.remove(_prefixKey(key));
-      } else {
-        await _prefsFallback!.setString(_prefixKey(key), value);
-      }
-      return;
-    }
-    if (value == null) {
-      await _secureStorage!.delete(key: key);
-    } else {
-      await _secureStorage!.write(key: key, value: value);
+    switch (backend) {
+      case PlatformSecureStorageBackend.flutterSecureStorage:
+        if (value == null) {
+          await _secureStorage!.delete(key: key);
+        } else {
+          await _secureStorage!.write(key: key, value: value);
+        }
+        return;
+      case PlatformSecureStorageBackend.ohosMethodChannel:
+        await _ohosChannel!.invokeMethod<void>(
+          'write',
+          <String, Object?>{'key': key, 'value': value},
+        );
+        return;
+      case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        if (value == null) {
+          await _prefsFallback!.remove(_prefixedKey(key));
+        } else {
+          await _prefsFallback!.setString(_prefixedKey(key), value);
+        }
+        return;
     }
   }
 
   Future<void> delete({required String key}) async {
-    if (_usePrefs) {
-      await _prefsFallback!.remove(_prefixKey(key));
-      return;
+    switch (backend) {
+      case PlatformSecureStorageBackend.flutterSecureStorage:
+        await _secureStorage!.delete(key: key);
+        return;
+      case PlatformSecureStorageBackend.ohosMethodChannel:
+        await _ohosChannel!.invokeMethod<void>(
+          'delete',
+          <String, Object?>{'key': key},
+        );
+        return;
+      case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        await _prefsFallback!.remove(_prefixedKey(key));
+        return;
     }
-    await _secureStorage!.delete(key: key);
   }
 
   Future<void> deleteAll() async {
-    if (_usePrefs) {
-      final keys = _prefsFallback!.getKeys().where((k) => k.startsWith(_keyPrefix));
-      for (final key in keys) {
-        await _prefsFallback!.remove(key);
-      }
-      return;
+    switch (backend) {
+      case PlatformSecureStorageBackend.flutterSecureStorage:
+        await _secureStorage!.deleteAll();
+        return;
+      case PlatformSecureStorageBackend.ohosMethodChannel:
+        await _ohosChannel!.invokeMethod<void>('deleteAll');
+        return;
+      case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        final prefs = _prefsFallback!;
+        final keys =
+            prefs.getKeys().where((key) => key.startsWith(_prefsKeyPrefix));
+        for (final key in keys) {
+          await prefs.remove(key);
+        }
+        return;
     }
-    await _secureStorage!.deleteAll();
   }
 
-  static const String _keyPrefix = 'open1panel_secure_';
-
-  String _prefixKey(String key) => '$_keyPrefix$key';
+  String _prefixedKey(String key) => '$_prefsKeyPrefix$key';
 }

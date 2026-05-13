@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/transfer/transfer_manager.dart';
 
@@ -12,13 +13,16 @@ class TransferManagerProvider extends ChangeNotifier with SafeChangeNotifier {
     TransferManager? transferManager,
     Future<List<DownloadTask>?> Function()? loadTasksOverride,
     Future<void> Function()? clearCompletedOverride,
+    PlatformCapabilitiesSnapshot? capabilities,
   })  : _transferManager = transferManager ?? TransferManager(),
         _loadTasksOverride = loadTasksOverride,
-        _clearCompletedOverride = clearCompletedOverride;
+        _clearCompletedOverride = clearCompletedOverride,
+        _capabilities = capabilities ?? PlatformCapabilities.current();
 
   final TransferManager _transferManager;
   final Future<List<DownloadTask>?> Function()? _loadTasksOverride;
   final Future<void> Function()? _clearCompletedOverride;
+  final PlatformCapabilitiesSnapshot _capabilities;
 
   TransferChannel _channel = TransferChannel.downloads;
   List<DownloadTask>? _downloadTasks;
@@ -28,8 +32,19 @@ class TransferManagerProvider extends ChangeNotifier with SafeChangeNotifier {
   TransferChannel get channel => _channel;
   List<DownloadTask>? get downloadTasks => _downloadTasks;
   bool get isLoading => _isLoading;
+  bool get isBackgroundDownloadSupported =>
+      _capabilities.supportsBackgroundDownloader;
+  String? get unsupportedReason => isBackgroundDownloadSupported
+      ? null
+      : 'transferBackgroundDownloadUnsupported';
 
   Future<void> initialize() async {
+    if (!isBackgroundDownloadSupported) {
+      _downloadTasks = const <DownloadTask>[];
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
     await loadTasks();
     _startAutoRefresh();
   }
@@ -40,6 +55,12 @@ class TransferManagerProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> loadTasks() async {
+    if (!isBackgroundDownloadSupported) {
+      _downloadTasks = const <DownloadTask>[];
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
     final tasks = await (_loadTasksOverride?.call() ??
         _transferManager.getDownloaderTasks());
     _downloadTasks = tasks;
@@ -76,6 +97,9 @@ class TransferManagerProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> clearCompletedDownloads() async {
+    if (!isBackgroundDownloadSupported) {
+      return;
+    }
     if (_clearCompletedOverride != null) {
       await _clearCompletedOverride.call();
     } else {

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 
 class FileSaveResult {
@@ -61,8 +62,7 @@ class FileSaveService {
       final file = await File(filePath).create(recursive: true);
       await file.writeAsBytes(bytes);
 
-      appLogger.iWithPackage(
-          'file_save', 'saveFile: 文件已保存到降级目录 $filePath');
+      appLogger.iWithPackage('file_save', 'saveFile: 文件已保存到降级目录 $filePath');
       return FileSaveResult(
         success: true,
         filePath: filePath,
@@ -71,7 +71,8 @@ class FileSaveService {
   }
 
   Future<Directory> _getFallbackDownloadDir() async {
-    if (Platform.isAndroid || Platform.isIOS) {
+    final capabilities = PlatformCapabilities.current();
+    if (capabilities.isOhos || Platform.isAndroid || Platform.isIOS) {
       return await getApplicationDocumentsDirectory();
     } else {
       return await getDownloadsDirectory() ??
@@ -135,6 +136,7 @@ class FileSaveService {
     }
 
     final directory = file.parent;
+    final capabilities = PlatformCapabilities.current();
 
     if (Platform.isMacOS) {
       await Process.run('open', [directory.path]);
@@ -142,7 +144,7 @@ class FileSaveService {
       await Process.run('explorer', [directory.path]);
     } else if (Platform.isLinux) {
       await Process.run('xdg-open', [directory.path]);
-    } else if (Platform.isAndroid) {
+    } else if (capabilities.supportsAndroidIntent) {
       await openDownloadsDirectory();
     } else {
       throw UnsupportedError('当前平台不支持打开文件所在目录');
@@ -153,7 +155,8 @@ class FileSaveService {
   }
 
   Future<bool> openDownloadsDirectory() async {
-    if (Platform.isAndroid) {
+    final capabilities = PlatformCapabilities.current();
+    if (capabilities.supportsAndroidIntent) {
       const data =
           'content://com.android.externalstorage.documents/document/primary%3ADownload';
       try {
@@ -192,13 +195,18 @@ class FileSaveService {
 
   Future<String?> getDownloadDirectoryPath() async {
     try {
-      if (Platform.isAndroid) {
+      final capabilities = PlatformCapabilities.current();
+      if (capabilities.supportsAndroidIntent) {
         // 对于 Android，默认返回公共下载目录，以便 FlutterDownloader 使用
         final dir = Directory('/storage/emulated/0/Download');
         if (!await dir.exists()) {
           final extDir = await getExternalStorageDirectory();
-          return extDir?.path ?? (await getApplicationDocumentsDirectory()).path;
+          return extDir?.path ??
+              (await getApplicationDocumentsDirectory()).path;
         }
+        return dir.path;
+      } else if (capabilities.isOhos) {
+        final dir = await getApplicationDocumentsDirectory();
         return dir.path;
       } else if (Platform.isIOS) {
         final dir = await getApplicationDocumentsDirectory();

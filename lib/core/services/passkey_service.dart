@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:passkeys/authenticator.dart';
 import 'package:passkeys/types.dart';
@@ -27,6 +28,12 @@ class PasskeyService {
   final PasskeyAuthenticator _authenticator;
 
   Future<PasskeyAvailabilityResult> getAvailability() async {
+    final capabilities = PlatformCapabilities.current();
+    if (capabilities.isOhos) {
+      return const PasskeyAvailabilityResult.unsupported(
+        '当前平台暂不支持 Passkey',
+      );
+    }
     if (defaultTargetPlatform == TargetPlatform.linux) {
       return const PasskeyAvailabilityResult.unsupported('Linux 仅提供占位提示');
     }

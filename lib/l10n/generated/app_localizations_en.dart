@@ -3853,6 +3853,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transferEmpty => 'No transfer tasks';
 
   @override
+  String get transferBackgroundDownloadUnsupported =>
+      'Current platform does not support background downloads yet.';
+
+  @override
   String get transferStatusRunning => 'Running';
 
   @override
@@ -4119,6 +4123,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transferOpenFile => 'Open File';
+
+  @override
+  String get transferOpenDownloadedFileUnsupported =>
+      'Current platform does not support opening downloaded files directly.';
 
   @override
   String get transferClearTitle => 'Clear Completed Tasks';

@@ -3719,6 +3719,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get transferEmpty => '暂无传输任务';
 
   @override
+  String get transferBackgroundDownloadUnsupported => '当前平台暂不支持后台下载';
+
+  @override
   String get transferStatusRunning => '传输中';
 
   @override
@@ -3982,6 +3985,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transferOpenFile => '打开文件';
+
+  @override
+  String get transferOpenDownloadedFileUnsupported => '当前平台暂不支持直接打开已下载文件';
 
   @override
   String get transferClearTitle => '清除已完成任务';

@@ -7238,6 +7238,12 @@ abstract class AppLocalizations {
   /// **'No transfer tasks'**
   String get transferEmpty;
 
+  /// No description provided for @transferBackgroundDownloadUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Current platform does not support background downloads yet.'**
+  String get transferBackgroundDownloadUnsupported;
+
   /// No description provided for @transferStatusRunning.
   ///
   /// In en, this message translates to:
@@ -7747,6 +7753,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open File'**
   String get transferOpenFile;
+
+  /// No description provided for @transferOpenDownloadedFileUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Current platform does not support opening downloaded files directly.'**
+  String get transferOpenDownloadedFileUnsupported;
 
   /// No description provided for @transferClearTitle.
   ///

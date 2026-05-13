@@ -8,38 +8,42 @@ import {
   MethodResult,
 } from '@ohos/flutter_ohos';
 import common from '@ohos.app.ability.common';
-import OhosPreferenceStore from './OhosPreferenceStore';
-
-type SecureStorageValue = string | number | boolean | Array<string> | null;
+import OhosHuksSecureStore from './OhosHuksSecureStore';
 
 const TAG = 'OhosSecureStoragePlugin';
 const CHANNEL = 'plugins.it_nomads.com/flutter_secure_storage';
+const CUSTOM_CHANNEL = 'onepanel/secure_storage';
 const STORE_NAME = 'FlutterSecureStorage';
 
 export default class OhosSecureStoragePlugin
   implements FlutterPlugin, MethodCallHandler
 {
-  private channel: MethodChannel | null = null;
-  private store: OhosPreferenceStore | null = null;
+  private channels: Array<MethodChannel> = [];
+  private store: OhosHuksSecureStore | null = null;
 
   getUniqueClassName(): string {
     return 'OhosSecureStoragePlugin';
   }
 
   onAttachedToEngine(binding: FlutterPluginBinding): void {
-    this.store = new OhosPreferenceStore(
+    this.store = new OhosHuksSecureStore(
       binding.getApplicationContext() as common.Context,
       STORE_NAME,
     );
-    this.channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL);
-    this.channel.setMethodCallHandler(this);
+    this.channels = [
+      new MethodChannel(binding.getBinaryMessenger(), CHANNEL),
+      new MethodChannel(binding.getBinaryMessenger(), CUSTOM_CHANNEL),
+    ];
+    for (const channel of this.channels) {
+      channel.setMethodCallHandler(this);
+    }
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
-    if (this.channel != null) {
-      this.channel.setMethodCallHandler(null);
-      this.channel = null;
+    for (const channel of this.channels) {
+      channel.setMethodCallHandler(null);
     }
+    this.channels = [];
     this.store = null;
   }
 
@@ -58,49 +62,38 @@ export default class OhosSecureStoragePlugin
 
     try {
       switch (call.method) {
+        case 'ping':
+          result.success(await this.store.ping());
+          return;
         case 'containsKey': {
           const key = this.requireNonEmptyStringArgument(call, 'key');
-          result.success(await this.store.has(key));
+          result.success(await this.store.containsKey(key));
           return;
         }
         case 'read': {
           const key = this.requireNonEmptyStringArgument(call, 'key');
-          const all =
-            (await this.store.getAll()) as Record<string, SecureStorageValue>;
-          const value = all[key];
-          result.success(value == null ? null : `${value}`);
+          result.success(await this.store.read(key));
           return;
         }
-        case 'readAll': {
-          const all =
-            (await this.store.getAll()) as Record<string, SecureStorageValue>;
-          const serialized: Record<string, string> = {};
-          for (const key of Object.keys(all)) {
-            const value = all[key];
-            if (value == null) {
-              continue;
-            }
-            serialized[key] = `${value}`;
-          }
-          result.success(serialized);
+        case 'readAll':
+          result.success(await this.store.readAll());
           return;
-        }
         case 'write': {
           const key = this.requireNonEmptyStringArgument(call, 'key');
           const value = this.requireStringArgument(call, 'value');
-          await this.store.put(key, value);
-          result.success(null);
+          await this.store.write(key, value);
+          result.success(true);
           return;
         }
         case 'delete': {
           const key = this.requireNonEmptyStringArgument(call, 'key');
           await this.store.delete(key);
-          result.success(null);
+          result.success(true);
           return;
         }
         case 'deleteAll':
-          await this.store.clear();
-          result.success(null);
+          await this.store.deleteAll();
+          result.success(true);
           return;
         default:
           result.notImplemented();

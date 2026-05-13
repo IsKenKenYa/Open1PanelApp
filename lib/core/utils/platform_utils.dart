@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 
 class PlatformUtils {
   // Constants for screen breakpoints
@@ -8,34 +9,12 @@ class PlatformUtils {
 
   /// Whether the current platform is a desktop platform
   static bool get isDesktopPlatform {
-    switch (defaultTargetPlatform.name) {
-      case 'macOS':
-      case 'windows':
-      case 'linux':
-        return true;
-      case 'android':
-      case 'iOS':
-      case 'fuchsia':
-      case 'ohos':
-      default:
-        return false;
-    }
+    return PlatformCapabilities.current().isDesktopHost;
   }
 
   /// Whether the current platform is a mobile platform
   static bool get isMobilePlatform {
-    switch (defaultTargetPlatform.name) {
-      case 'android':
-      case 'iOS':
-      case 'ohos':
-        return true;
-      case 'macOS':
-      case 'windows':
-      case 'linux':
-      case 'fuchsia':
-      default:
-        return false;
-    }
+    return PlatformCapabilities.current().isMobileHost;
   }
 
   /// Whether the device form factor is considered Desktop
@@ -73,4 +52,5 @@ class PlatformUtils {
   static bool get isLinux => defaultTargetPlatform == TargetPlatform.linux;
   static bool get isAndroid => defaultTargetPlatform == TargetPlatform.android;
   static bool get isIOS => defaultTargetPlatform == TargetPlatform.iOS;
+  static bool get isOhos => PlatformCapabilities.current().isOhos;
 }

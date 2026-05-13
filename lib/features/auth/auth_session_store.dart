@@ -1,8 +1,3 @@
-import 'dart:io' as io;
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onepanel_client/core/storage/platform_secure_storage.dart';
 
 class AuthSession {
@@ -22,8 +17,7 @@ abstract class AuthSessionStore {
 }
 
 class SecureAuthSessionStore implements AuthSessionStore {
-  SecureAuthSessionStore({PlatformSecureStorage? storage})
-      : _storage = storage;
+  SecureAuthSessionStore({PlatformSecureStorage? storage}) : _storage = storage;
 
   static const String tokenKey = 'auth_token';
   static const String usernameKey = 'auth_username';

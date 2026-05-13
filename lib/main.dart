@@ -11,6 +11,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/services/app_settings_controller.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/theme/theme_controller.dart';
 import 'package:onepanel_client/core/services/transfer/transfer_manager.dart';
 import 'package:onepanel_client/core/theme/app_theme.dart';
@@ -35,36 +36,37 @@ import 'features/monitoring/monitoring_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Native Channel Manager for headless/engine-only communication as early as possible
   NativeChannelManager.init();
-  
-  final isAndroid = !kIsWeb && Platform.isAndroid;
-  final isDesktopHost = !kIsWeb &&
-      (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
-  final prefs = AppPreferencesService();
-    var uiRenderMode = await prefs.loadUIRenderMode();
 
-    // Windows native mode must be hosted by a native WinUI3 process.
-    // If the Flutter runner process is still active without native handoff,
-    // force fallback to MD3 to avoid rendering an empty headless shell.
-    final windowsNativeHostActive = !kIsWeb &&
+  final capabilities = PlatformCapabilities.current();
+  final isAndroid = capabilities.supportsBackgroundDownloader;
+  final isDesktopHost =
+      !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
+  final prefs = AppPreferencesService();
+  var uiRenderMode = await prefs.loadUIRenderMode();
+
+  // Windows native mode must be hosted by a native WinUI3 process.
+  // If the Flutter runner process is still active without native handoff,
+  // force fallback to MD3 to avoid rendering an empty headless shell.
+  final windowsNativeHostActive = !kIsWeb &&
       Platform.isWindows &&
       Platform.environment['ONEPANEL_NATIVE_HOST_ACTIVE'] == '1';
-    final forceMd3ByBootstrap = !kIsWeb &&
+  final forceMd3ByBootstrap = !kIsWeb &&
       Platform.isWindows &&
       Platform.environment['ONEPANEL_FORCE_MD3'] == '1';
 
-    if (!kIsWeb &&
+  if (!kIsWeb &&
       Platform.isWindows &&
       uiRenderMode == UIRenderMode.native &&
       (!windowsNativeHostActive || forceMd3ByBootstrap)) {
     uiRenderMode = UIRenderMode.md3;
-    }
-  
+  }
+
   final useFlutterUI = UIRenderPolicy.shouldUseFlutterUI(uiRenderMode);
   final nativeModeFallback = UIRenderPolicy.isNativeModeFallback(uiRenderMode);
-  
+
   if (useFlutterUI && isDesktopHost) {
     // Desktop using Flutter UI needs window bootstrap.
     await windowManager.ensureInitialized();
@@ -125,7 +127,7 @@ void main() async {
 
   if (useFlutterUI) {
     if (isAndroid) {
-      // Initialize Flutter Downloader only on Mobile platforms
+      // Initialize FlutterDownloader only on supported Android hosts.
       await FlutterDownloader.initialize(
         debug: true,
         ignoreSsl: true,
@@ -180,8 +182,9 @@ void main() async {
     );
   } else {
     // Engine-only mode (Headless)
-    appLogger.iWithPackage('main', 'Running in Headless/Engine-only mode for Native UI');
-    
+    appLogger.iWithPackage(
+        'main', 'Running in Headless/Engine-only mode for Native UI');
+
     // Core services can be instantiated here if needed by NativeChannelManager
     // e.g. ServerProvider, AppSettingsController, etc.
   }
@@ -293,7 +296,8 @@ class MyApp extends StatelessWidget {
                             control: true,
                           ),
                           onSelected: () async {
-                            bool isFullScreen = await windowManager.isFullScreen();
+                            bool isFullScreen =
+                                await windowManager.isFullScreen();
                             windowManager.setFullScreen(!isFullScreen);
                           },
                         ),
@@ -309,7 +313,8 @@ class MyApp extends StatelessWidget {
                         PlatformMenuItem(
                           label: 'Maximize / Restore',
                           onSelected: () async {
-                            final isMaximized = await windowManager.isMaximized();
+                            final isMaximized =
+                                await windowManager.isMaximized();
                             if (isMaximized) {
                               await windowManager.unmaximize();
                             } else {

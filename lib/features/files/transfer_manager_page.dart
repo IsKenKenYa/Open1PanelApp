@@ -5,6 +5,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/services/transfer/transfer_task.dart';
 import 'package:onepanel_client/core/services/transfer/transfer_manager.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart';
@@ -58,68 +59,82 @@ class _TransferManagerPageState extends State<TransferManagerPage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.refresh),
-                  onPressed: provider.loadTasks,
+                  onPressed: provider.isBackgroundDownloadSupported
+                      ? provider.loadTasks
+                      : null,
                   tooltip: l10n.commonRefresh,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_sweep_outlined),
-                  onPressed: () => _showClearDialog(context, provider),
+                  onPressed: provider.isBackgroundDownloadSupported
+                      ? () => _showClearDialog(context, provider)
+                      : null,
                   tooltip: l10n.transferClearCompleted,
                 ),
               ],
             ),
             body: provider.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isWide = constraints.maxWidth >= 840;
-                      if (isWide) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: _buildDownloadsPane(
-                                context,
-                                l10n,
-                                theme,
-                                provider,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildUploadsPane(context, l10n, theme),
-                            ),
-                          ],
-                        );
-                      }
-
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                            child: SegmentedButton<TransferChannel>(
-                              segments: [
-                                ButtonSegment<TransferChannel>(
-                                  value: TransferChannel.downloads,
-                                  icon: const Icon(Icons.download),
-                                  label: Text(l10n.transferDownloads),
+                : !provider.isBackgroundDownloadSupported
+                    ? _EmptyState(
+                        text: provider.unsupportedReason ==
+                                'transferBackgroundDownloadUnsupported'
+                            ? l10n.transferBackgroundDownloadUnsupported
+                            : (provider.unsupportedReason ??
+                                l10n.transferBackgroundDownloadUnsupported),
+                      )
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isWide = constraints.maxWidth >= 840;
+                          if (isWide) {
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: _buildDownloadsPane(
+                                    context,
+                                    l10n,
+                                    theme,
+                                    provider,
+                                  ),
                                 ),
-                                ButtonSegment<TransferChannel>(
-                                  value: TransferChannel.uploads,
-                                  icon: const Icon(Icons.upload),
-                                  label: Text(l10n.transferUploads),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child:
+                                      _buildUploadsPane(context, l10n, theme),
                                 ),
                               ],
-                              selected: {provider.channel},
-                              onSelectionChanged: (value) {
-                                provider.setChannel(value.first);
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 200),
-                              child:
-                                  provider.channel == TransferChannel.downloads
+                            );
+                          }
+
+                          return Column(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                                child: SegmentedButton<TransferChannel>(
+                                  segments: [
+                                    ButtonSegment<TransferChannel>(
+                                      value: TransferChannel.downloads,
+                                      icon: const Icon(Icons.download),
+                                      label: Text(l10n.transferDownloads),
+                                    ),
+                                    ButtonSegment<TransferChannel>(
+                                      value: TransferChannel.uploads,
+                                      icon: const Icon(Icons.upload),
+                                      label: Text(l10n.transferUploads),
+                                    ),
+                                  ],
+                                  selected: {provider.channel},
+                                  onSelectionChanged: (value) {
+                                    provider.setChannel(value.first);
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 200),
+                                  child: provider.channel ==
+                                          TransferChannel.downloads
                                       ? _buildDownloadsPane(
                                           context,
                                           l10n,
@@ -127,12 +142,12 @@ class _TransferManagerPageState extends State<TransferManagerPage> {
                                           provider,
                                         )
                                       : _buildUploadsPane(context, l10n, theme),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
           );
         },
       ),
@@ -550,6 +565,7 @@ class _DownloadTaskTile extends StatelessWidget {
 
   Future<void> _openDownloadedFile(BuildContext context) async {
     final l10n = context.l10n;
+    final capabilities = PlatformCapabilities.current();
     final fileName = _resolveFileName();
     final filePath =
         fileName.isEmpty ? task.savedDir : '${task.savedDir}/$fileName';
@@ -567,7 +583,8 @@ class _DownloadTaskTile extends StatelessWidget {
     }
 
     try {
-      if (Platform.isAndroid || Platform.isIOS) {
+      if (capabilities.supportsOpenDownloadedFile &&
+          (Platform.isAndroid || Platform.isIOS)) {
         if (task.status == DownloadTaskStatus.complete) {
           final ok = await FlutterDownloader.open(taskId: task.taskId);
           if (ok == true) return;
@@ -578,6 +595,18 @@ class _DownloadTaskTile extends StatelessWidget {
           _showFloatingSnackBar(
             context,
             l10n.transferOpenFileError,
+            actionLabel: l10n.transferCopyPath,
+            onAction: () => _copyToClipboard(context, filePath),
+          );
+        }
+        return;
+      }
+
+      if (!capabilities.supportsOpenDownloadedFile) {
+        if (context.mounted) {
+          _showFloatingSnackBar(
+            context,
+            l10n.transferOpenDownloadedFileUnsupported,
             actionLabel: l10n.transferCopyPath,
             onAction: () => _copyToClipboard(context, filePath),
           );

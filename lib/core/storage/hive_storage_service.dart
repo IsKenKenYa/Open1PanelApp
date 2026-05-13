@@ -40,17 +40,16 @@ class HiveStorageService implements StorageService {
         if (keyStr == null) {
           // 生成新密钥
           final key = Hive.generateSecureKey();
-          await _secureStorage!.write(
-              key: '${boxName}_key', value: base64Url.encode(key));
+          await _secureStorage!
+              .write(key: '${boxName}_key', value: base64Url.encode(key));
           encryptionKey = key;
         } else {
           encryptionKey = base64Url.decode(keyStr);
         }
       } catch (e, s) {
-        // OHOS fallback: 不使用加密
         appLogger.wWithPackage(
           'core.storage.hive_storage',
-          'Secure storage initialization failed, using non-encrypted storage',
+          'OHOS degraded to non-encrypted Hive',
           error: e,
           stackTrace: s,
         );

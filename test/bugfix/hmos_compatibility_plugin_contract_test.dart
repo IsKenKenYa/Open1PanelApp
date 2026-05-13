@@ -16,18 +16,35 @@ void main() {
     final secureStorage = await _read(
       'ohos/entry/src/main/ets/plugins/OhosSecureStoragePlugin.ets',
     );
+    final secureStore = await _read(
+      'ohos/entry/src/main/ets/plugins/OhosHuksSecureStore.ets',
+    );
     final localAuth = await _read(
       'ohos/entry/src/main/ets/plugins/OhosLocalAuthPlugin.ets',
     );
 
-    expect(shared, contains("const CHANNEL = 'plugins.flutter.io/shared_preferences';"));
-    expect(packageInfo, contains("const CHANNEL = 'dev.fluttercommunity.plus/package_info';"));
-    expect(pathProvider, contains("const CHANNEL = 'plugins.flutter.io/path_provider';"));
-    expect(secureStorage, contains("const CHANNEL = 'plugins.it_nomads.com/flutter_secure_storage';"));
-    expect(localAuth, contains("const CHANNEL = 'plugins.flutter.io/local_auth';"));
+    expect(shared,
+        contains("const CHANNEL = 'plugins.flutter.io/shared_preferences';"));
+    expect(packageInfo,
+        contains("const CHANNEL = 'dev.fluttercommunity.plus/package_info';"));
+    expect(pathProvider,
+        contains("const CHANNEL = 'plugins.flutter.io/path_provider';"));
+    expect(
+        secureStorage,
+        contains(
+            "const CHANNEL = 'plugins.it_nomads.com/flutter_secure_storage';"));
+    expect(secureStorage,
+        contains("const CUSTOM_CHANNEL = 'onepanel/secure_storage';"));
+    expect(
+        secureStore,
+        contains(
+            "const MASTER_KEY_ALIAS = 'onepanel_secure_storage_master_key';"));
+    expect(localAuth,
+        contains("const CHANNEL = 'plugins.flutter.io/local_auth';"));
   });
 
-  test('HMOS compatibility plugins cover startup-critical method contracts', () async {
+  test('HMOS compatibility plugins cover startup-critical method contracts',
+      () async {
     final shared = await _read(
       'ohos/entry/src/main/ets/plugins/OhosSharedPreferencesPlugin.ets',
     );
@@ -39,6 +56,9 @@ void main() {
     );
     final secureStorage = await _read(
       'ohos/entry/src/main/ets/plugins/OhosSecureStoragePlugin.ets',
+    );
+    final secureStore = await _read(
+      'ohos/entry/src/main/ets/plugins/OhosHuksSecureStore.ets',
     );
     final localAuth = await _read(
       'ohos/entry/src/main/ets/plugins/OhosLocalAuthPlugin.ets',
@@ -56,10 +76,17 @@ void main() {
     expect(pathProvider, contains("case 'getApplicationDocumentsDirectory'"));
     expect(pathProvider, contains("case 'getApplicationCacheDirectory'"));
 
+    expect(secureStorage, contains("case 'ping'"));
     expect(secureStorage, contains("case 'containsKey'"));
     expect(secureStorage, contains("case 'readAll'"));
     expect(secureStorage, contains("case 'write'"));
     expect(secureStorage, contains("case 'deleteAll'"));
+    expect(secureStorage, contains('result.success(true);'));
+    expect(secureStore, contains("import huks from '@ohos.security.huks';"));
+    expect(
+        secureStore, contains('await huks.generateKeyItem(MASTER_KEY_ALIAS'));
+    expect(secureStore, contains('await huks.deleteKeyItem(MASTER_KEY_ALIAS'));
+    expect(secureStore, contains("JSON.stringify(payload)"));
 
     expect(localAuth, contains("case 'authenticate'"));
     expect(localAuth, contains("case 'getAvailableBiometrics'"));

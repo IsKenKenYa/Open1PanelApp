@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/core/storage/platform_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,30 +16,17 @@ abstract class ApiKeyStore {
 }
 
 class SecureApiKeyStore implements ApiKeyStore {
-  SecureApiKeyStore({PlatformSecureStorage? storage})
-      : _storage = storage;
-
-  static const Duration _operationTimeout = Duration(seconds: 5);
+  SecureApiKeyStore({PlatformSecureStorage? storage}) : _storage = storage;
 
   PlatformSecureStorage? _storage;
   final Map<String, String> _memoryFallback = <String, String>{};
 
   bool get _shouldUsePrefsFallback =>
       !kIsWeb &&
-      (io.Platform.isMacOS || io.Platform.isWindows || io.Platform.isLinux || _isOHOS);
-
-  bool get _isOHOS {
-    if (kIsWeb) return false;
-    if (io.Platform.isAndroid) {
-      try {
-        final os = io.Platform.operatingSystem;
-        return os.toLowerCase().contains('ohos') || os.toLowerCase().contains('harmony');
-      } catch (_) {
-        return false;
-      }
-    }
-    return false;
-  }
+      (io.Platform.isMacOS ||
+          io.Platform.isWindows ||
+          io.Platform.isLinux ||
+          PlatformCapabilities.current().isOhos);
 
   bool get _shouldUseEnvFallbackForDebug =>
       kDebugMode &&
