@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../services/logger/logger_service.dart';
 import 'storage_service.dart';
+import 'platform_secure_storage.dart';
 
 /// 基于Hive的存储服务实现
 ///
@@ -13,14 +13,7 @@ class HiveStorageService implements StorageService {
   final bool isEncrypted;
 
   late Box _box;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock,
-    ),
-    mOptions: MacOsOptions(
-      accessibility: KeychainAccessibility.first_unlock,
-    ),
-  );
+  PlatformSecureStorage? _secureStorage;
 
   HiveStorageService({
     required this.boxName,
@@ -39,17 +32,29 @@ class HiveStorageService implements StorageService {
     List<int>? encryptionKey;
 
     if (isEncrypted) {
-      // 尝试获取现有密钥
-      String? keyStr = await _secureStorage.read(key: '${boxName}_key');
+      _secureStorage = await PlatformSecureStorage.create();
+      try {
+        // 尝试获取现有密钥
+        String? keyStr = await _secureStorage!.read(key: '${boxName}_key');
 
-      if (keyStr == null) {
-        // 生成新密钥
-        final key = Hive.generateSecureKey();
-        await _secureStorage.write(
-            key: '${boxName}_key', value: base64Url.encode(key));
-        encryptionKey = key;
-      } else {
-        encryptionKey = base64Url.decode(keyStr);
+        if (keyStr == null) {
+          // 生成新密钥
+          final key = Hive.generateSecureKey();
+          await _secureStorage!.write(
+              key: '${boxName}_key', value: base64Url.encode(key));
+          encryptionKey = key;
+        } else {
+          encryptionKey = base64Url.decode(keyStr);
+        }
+      } catch (e, s) {
+        // OHOS fallback: 不使用加密
+        appLogger.wWithPackage(
+          'core.storage.hive_storage',
+          'Secure storage initialization failed, using non-encrypted storage',
+          error: e,
+          stackTrace: s,
+        );
+        encryptionKey = null;
       }
     }
 

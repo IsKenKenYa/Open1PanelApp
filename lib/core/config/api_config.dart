@@ -4,6 +4,7 @@ import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
+import 'package:onepanel_client/core/storage/platform_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String _apiConfigManagerPackage = 'core.config.api_config';
@@ -15,25 +16,30 @@ abstract class ApiKeyStore {
 }
 
 class SecureApiKeyStore implements ApiKeyStore {
-  SecureApiKeyStore({FlutterSecureStorage? storage})
-      : _storage = storage ??
-            const FlutterSecureStorage(
-              iOptions: IOSOptions(
-                accessibility: KeychainAccessibility.first_unlock,
-              ),
-              mOptions: MacOsOptions(
-                accessibility: KeychainAccessibility.first_unlock,
-              ),
-            );
+  SecureApiKeyStore({PlatformSecureStorage? storage})
+      : _storage = storage;
 
   static const Duration _operationTimeout = Duration(seconds: 5);
 
-  final FlutterSecureStorage _storage;
+  PlatformSecureStorage? _storage;
   final Map<String, String> _memoryFallback = <String, String>{};
 
   bool get _shouldUsePrefsFallback =>
       !kIsWeb &&
-      (io.Platform.isMacOS || io.Platform.isWindows || io.Platform.isLinux);
+      (io.Platform.isMacOS || io.Platform.isWindows || io.Platform.isLinux || _isOHOS);
+
+  bool get _isOHOS {
+    if (kIsWeb) return false;
+    if (io.Platform.isAndroid) {
+      try {
+        final os = io.Platform.operatingSystem;
+        return os.toLowerCase().contains('ohos') || os.toLowerCase().contains('harmony');
+      } catch (_) {
+        return false;
+      }
+    }
+    return false;
+  }
 
   bool get _shouldUseEnvFallbackForDebug =>
       kDebugMode &&
@@ -41,6 +47,11 @@ class SecureApiKeyStore implements ApiKeyStore {
       (io.Platform.isMacOS || io.Platform.isWindows || io.Platform.isLinux);
 
   String _prefsFallbackKey(String key) => 'secure_api_key_fallback_$key';
+
+  Future<PlatformSecureStorage> _ensureStorage() async {
+    _storage ??= await PlatformSecureStorage.create();
+    return _storage!;
+  }
 
   Future<String?> _readEnvApiKeyFallback() async {
     if (!_shouldUseEnvFallbackForDebug) {
@@ -79,9 +90,8 @@ class SecureApiKeyStore implements ApiKeyStore {
   @override
   Future<String?> read(String key) async {
     try {
-      final value = await _storage
-          .read(key: key)
-          .timeout(_operationTimeout, onTimeout: () => null);
+      final storage = await _ensureStorage();
+      final value = await storage.read(key: key);
       if (value != null && value.isNotEmpty) {
         return value;
       }
@@ -141,7 +151,8 @@ class SecureApiKeyStore implements ApiKeyStore {
   @override
   Future<void> write(String key, String value) async {
     try {
-      await _storage.write(key: key, value: value).timeout(_operationTimeout);
+      final storage = await _ensureStorage();
+      await storage.write(key: key, value: value);
       _memoryFallback.remove(key);
       if (_shouldUsePrefsFallback) {
         final prefs = await SharedPreferences.getInstance();
@@ -181,7 +192,8 @@ class SecureApiKeyStore implements ApiKeyStore {
   @override
   Future<void> delete(String key) async {
     try {
-      await _storage.delete(key: key).timeout(_operationTimeout);
+      final storage = await _ensureStorage();
+      await storage.delete(key: key);
       appLogger.dWithPackage(
         _apiConfigManagerPackage,
         'secure storage delete successful for key: $key',
