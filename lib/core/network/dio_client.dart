@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../services/logger/logger_service.dart';
 import '../config/api_constants.dart';
+import 'auth_failure_diagnostics.dart';
 import 'network_exceptions.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
@@ -131,7 +132,7 @@ class DioClient {
 
     if (statusCode == 401) {
       return AuthException(
-        '认证失败: ${responseData ?? errorMessage}',
+        AuthFailureDiagnostics.describe(e),
         requestOptions: e.requestOptions,
         statusCode: statusCode,
       );

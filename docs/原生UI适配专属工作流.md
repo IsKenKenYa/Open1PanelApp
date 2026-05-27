@@ -12,7 +12,7 @@
 
 ### 0.1 适用范围
 
-- 目标平台：Android、iOS、iPadOS、macOS、Windows、Linux、HarmonyOS（目标阶段）
+- 目标平台：Android、iOS、iPadOS、macOS、Windows、Linux、HarmonyOS
 - 当前不适配范围：Web
 
 ### 0.2 与其他文档关系
@@ -61,7 +61,7 @@
 | macOS | 必须 | 必须 | 强制建设 SwiftUI 轨道（Liquid Glass 视觉语义） | 无 |
 | Windows | 必须 | 必须 | 强制建设 WinUI3/Fluent 轨道 | 无 |
 | Linux | 必须 | 规划 | 当前以 MDUI3 交付，保留原生社区扩展路线 | 原生试点需单独立项 |
-| HarmonyOS（目标） | 必须 | 规划 | 当前先保留 resolver/channel/provider 占位 | 原生实施按里程碑推进 |
+| HarmonyOS（目标） | 必须 | 硬适配推进中 | 当前通过 Dart facade + ArkTS bridge 补齐平台能力 | 原生实施按里程碑推进 |
 
 ---
 
@@ -172,7 +172,7 @@ xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner -configuration Deb
 - [ ] Windows：窗口能力、托盘、通知能力符合白名单策略
 - [ ] Apple：遵循 SwiftUI 与平台交互语义，不引入业务分叉
 - [ ] Android：MDUI3 体验持续可用，原生例外有审批记录
-- [ ] Linux/Harmony：里程碑状态与占位边界清晰可追踪
+- [ ] Linux/Harmony：里程碑状态与平台 bridge 边界清晰可追踪
 
 ---
 

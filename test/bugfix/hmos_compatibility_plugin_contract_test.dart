@@ -22,6 +22,9 @@ void main() {
     final localAuth = await _read(
       'ohos/entry/src/main/ets/plugins/OhosLocalAuthPlugin.ets',
     );
+    final platformBridge = await _read(
+      'ohos/entry/src/main/ets/plugins/OhosPlatformPlugin.ets',
+    );
 
     expect(shared,
         contains("const CHANNEL = 'plugins.flutter.io/shared_preferences';"));
@@ -41,6 +44,8 @@ void main() {
             "const MASTER_KEY_ALIAS = 'onepanel_secure_storage_master_key';"));
     expect(localAuth,
         contains("const CHANNEL = 'plugins.flutter.io/local_auth';"));
+    expect(
+        platformBridge, contains("const CHANNEL = 'onepanel/ohos_platform';"));
   });
 
   test('HMOS compatibility plugins cover startup-critical method contracts',
@@ -62,6 +67,9 @@ void main() {
     );
     final localAuth = await _read(
       'ohos/entry/src/main/ets/plugins/OhosLocalAuthPlugin.ets',
+    );
+    final platformBridge = await _read(
+      'ohos/entry/src/main/ets/plugins/OhosPlatformPlugin.ets',
     );
 
     expect(shared, contains("case 'getAll'"));
@@ -94,6 +102,12 @@ void main() {
     expect(localAuth, contains("case 'stopAuthentication'"));
     expect(localAuth, contains('result.success(false);'));
     expect(localAuth, contains('result.success([]);'));
+
+    expect(platformBridge, contains("case 'getRuntimeInfo'"));
+    expect(platformBridge, contains("case 'saveBytes'"));
+    expect(platformBridge, contains('context.filesDir'));
+    expect(platformBridge, contains('/exports'));
+    expect(platformBridge, contains('fs.writeSync'));
   });
 }
 

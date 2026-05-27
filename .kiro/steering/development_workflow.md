@@ -77,6 +77,8 @@ flutter analyze  # 静态分析
 dart run test/scripts/test_runner.dart unit  # 单元测试
 # API/网络改动：
 dart run test/scripts/test_runner.dart integration
+# HarmonyOS/OHOS 平台能力、存储、文件、下载、日志、媒体或构建配置改动：
+hflutter build hap --release
 ```
 
 ### 7. 热重启应用
@@ -198,7 +200,19 @@ dart run test/scripts/test_runner.dart ui
 dotnet build windows/runner/native_host/OnePanelNativeHost/OnePanelNativeHost.csproj -c Debug
 # Apple (macOS 环境):
 xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug
+# HarmonyOS/OHOS:
+hflutter build hap --release
+# 或使用完整 Flutter-OH 路径：
+/Volumes/FanXiangMac/DevTools/Flutter_HMOS/flutter_flutter/bin/flutter build hap --release
 ```
+
+## HarmonyOS / OHOS 开发规则
+
+- HarmonyOS 是一等目标平台，平台缺口通过 Dart facade + ArkTS bridge 补齐。
+- Flutter 侧优先使用 `PlatformFileService`、`PlatformDiagnosticsService`、`PlatformDownloadService`、`PlatformMediaService` 等 facade，禁止在 UI/业务层散落裸 `MethodChannel`。
+- ArkTS bridge 位于 `ohos/entry/src/main/ets/plugins/`，通道名为 `onepanel/ohos_platform`。
+- Windows 用户使用 Flutter-OH 的 `flutter.bat` 完整路径，不要求配置 `hflutter` shell 函数。
+- 排障时必须优先保留仓库 `pubspec.lock`，避免第三方包升级后触发 `TargetPlatform.ohos` 编译错误。
 
 ## 常见问题快速修复
 

@@ -19,7 +19,7 @@ The goal is not to encourage arbitrary UI fragmentation. The goal is to enforce 
 
 ### Baseline
 
-- Non-web target platforms are Android, iOS, iPadOS, macOS, Windows, Linux, and HarmonyOS (target phase)
+- Non-web target platforms are Android, iOS, iPadOS, macOS, Windows, Linux, and HarmonyOS
 - The project supports multiple design systems and multiple theme profiles under central governance
 - MDUI3 is the mandatory, always-available baseline across target platforms and must not be treated as a backup-only path
 - Apple (iOS/iPadOS/macOS) and Windows must keep a native UI track in parallel with the MDUI3 baseline
@@ -107,24 +107,27 @@ Native pages are optional pilot paths and require explicit architecture review a
 Linux may deliver with Dart-rendered MDUI3 first in the current phase.
 Native container capability can be introduced incrementally.
 
-### HarmonyOS (target phase)
+### HarmonyOS
 
-HarmonyOS remains in target scope with staged placeholders now and native milestone planning in roadmap phases.
+HarmonyOS is a first-class target platform. Current delivery keeps the shared Dart state/service/repository/API core and fills platform capability gaps through project-owned Dart facades backed by ArkTS bridge code.
 
 Mandatory constraints:
 
 - native and MDUI3 modes must share the same Dart non-UI core
 - no duplicated business rules between native and MDUI3 presentation stacks
 - platform-native UX enhancements must preserve shared state/service/repository contracts
+- business/UI code must call platform capabilities through reviewed facades such as `PlatformFileService`, `PlatformDiagnosticsService`, `PlatformDownloadService`, and `PlatformMediaService`
+- ArkTS bridge code may own file picker/save, URL/file opening, downloads, log export, media preview, terminal I/O, and biometric system integration, but must not own 1Panel business rules
 
-## Future Platform Placeholder (HarmonyOS)
+## HarmonyOS Platform Bridge
 
-HarmonyOS and other future platforms are handled as staged placeholders in this phase:
+HarmonyOS platform capability work is handled through an explicit bridge boundary:
 
-- reserve `UiTarget`/routing placeholders in Dart
-- reserve channel/provider placeholders for bridge boundaries
-- do not commit full native UI delivery yet, while keeping it in the long-term target scope
-- do not move shared business logic into future platform native layers
+- Flutter channel: `onepanel/ohos_platform`
+- ArkTS plugin directory: `ohos/entry/src/main/ets/plugins/`
+- Flutter-side facade directory: `lib/core/platform/services/`
+- the bridge can implement platform abilities that Flutter plugins do not support reliably on OHOS
+- platform bridge changes must keep `hflutter build hap --release` green before merge
 
 ## Page Categories
 
@@ -224,7 +227,7 @@ Any PR introducing a new visual system, native page, or platform-specific UI sho
 4. Which tokens/components are shared vs platform-specific?
 5. Does it preserve `Presentation -> State -> Service/Repository -> API/Infra`?
 6. What is the fallback or rollback plan?
-7. Is the plan aligned with platform strategy mapping (Windows native, Apple native, Android/Linux MDUI3-first, Harmony placeholder)?
+7. Is the plan aligned with platform strategy mapping (Windows native, Apple native, Android/Linux MDUI3-first, HarmonyOS facade + ArkTS bridge)?
 8. Does the change preserve the mandatory dual-track requirement (MDUI3 baseline + native track) for Apple and Windows?
 
 ## Roadmap
@@ -251,7 +254,7 @@ Any PR introducing a new visual system, native page, or platform-specific UI sho
 
 - maintain parity checklist for Apple and Windows mandatory native tracks
 - continue incremental Linux native-shell exploration while keeping MDUI3 as the current delivery baseline
-- preserve Harmony placeholder routing/channel/provider contracts and execute native milestone planning
+- keep the HarmonyOS facade + ArkTS bridge contract buildable and expand native capability coverage incrementally
 
 ### Phase 5: Multi-Theme User Selection
 

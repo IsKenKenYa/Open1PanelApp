@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/platform/services/platform_diagnostics_service.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart' as fs;
 import 'package:onepanel_client/core/services/logger/log_export_service.dart';
 import 'package:onepanel_client/core/services/logger/log_file_manager_service.dart';
@@ -144,6 +145,8 @@ class _FeedbackCenterPageState extends State<FeedbackCenterPage> {
 
   Future<void> _copyTemplate(BuildContext context) async {
     final l10n = context.l10n;
+    final platformTemplate =
+        await PlatformDiagnosticsService().buildFeedbackTemplate();
     final template = '''
 ${l10n.settingsFeedbackTemplateTitle}
 
@@ -167,6 +170,9 @@ ${l10n.settingsFeedbackTemplateLogs}
 ${l10n.settingsFeedbackTemplateEnvironment}
 - channel: ${_channelLabel(l10n)}
 - app: 1Panel Client
+
+---
+$platformTemplate
 ''';
     await Clipboard.setData(ClipboardData(text: template.trim()));
     if (!context.mounted) return;
@@ -211,7 +217,8 @@ ${l10n.settingsFeedbackTemplateEnvironment}
     _showExportResultSnackBar(context, result);
   }
 
-  void _showExportResultSnackBar(BuildContext context, fs.FileSaveResult result) {
+  void _showExportResultSnackBar(
+      BuildContext context, fs.FileSaveResult result) {
     final l10n = context.l10n;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

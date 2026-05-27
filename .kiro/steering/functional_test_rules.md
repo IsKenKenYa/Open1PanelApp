@@ -130,6 +130,15 @@ void main() {
 - ✅ 错误状态处理
 - ✅ 通知监听器时机
 
+### HarmonyOS / OHOS 平台层
+- ✅ `PlatformCapabilities` 正确识别 `TargetPlatform.ohos` 或 `operatingSystem=ohos`
+- ✅ API key 保存后重启模拟仍能从 secure store / 持久 fallback 恢复
+- ✅ `api_configs` 不持久化明文 `apiKey`
+- ✅ 401 诊断能区分空 key、HTML 401、时间偏差、IP 白名单/密钥问题
+- ✅ 日志导出在 OHOS 走 native save 或应用文档目录 fallback，并返回有效路径
+- ✅ 下载任务重试重新生成认证头，避免旧时间戳导致 401
+- ✅ ArkTS bridge 注册器包含项目自有 `onepanel/ohos_platform` 通道
+
 ### Model 层
 - ✅ JSON 序列化/反序列化
 - ✅ null 值处理
@@ -226,3 +235,4 @@ test/
 - [ ] 测试能重现修复前的问题
 - [ ] 测试验证修复后的正确行为
 - [ ] 相关功能未受影响
+- [ ] 如果涉及 HarmonyOS/OHOS，运行 `hflutter build hap --release` 或完整 Flutter-OH 路径命令

@@ -41,6 +41,9 @@ class PlatformCapabilitiesSnapshot {
       case TargetPlatform.android:
       case TargetPlatform.iOS:
       case TargetPlatform.fuchsia:
+      // Flutter-OH adds TargetPlatform.ohos, while official Flutter does not.
+      // ignore: unreachable_switch_default
+      default:
         return false;
     }
   }
@@ -64,6 +67,16 @@ class PlatformCapabilitiesSnapshot {
   bool get supportsAndroidIntent =>
       !isWeb && targetPlatform == TargetPlatform.android && !isOhos;
 
+  bool get supportsNativeFilePicker => !isWeb && isOhos;
+
+  bool get supportsNativeFileSave => !isWeb && isOhos;
+
+  bool get supportsNativeDownloader => !isWeb && isOhos;
+
+  bool get supportsNativeLogExport => !isWeb && isOhos;
+
+  bool get supportsNativeMediaPreview => !isWeb && isOhos;
+
   bool get supportsPasskeys {
     if (isWeb) {
       return true;
@@ -77,6 +90,9 @@ class PlatformCapabilitiesSnapshot {
         return true;
       case TargetPlatform.linux:
       case TargetPlatform.fuchsia:
+      // Flutter-OH adds TargetPlatform.ohos, while official Flutter does not.
+      // ignore: unreachable_switch_default
+      default:
         return false;
     }
   }

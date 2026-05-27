@@ -109,4 +109,28 @@ void main() {
     final configs = await ApiConfigManager.getConfigs();
     expect(configs, isEmpty);
   });
+
+  test('server config survives restart when apiKey is restored from key store',
+      () async {
+    final config = ApiConfig(
+      id: 'hmos-server',
+      name: 'Harmony Server',
+      url: 'https://hmos.example.com',
+      apiKey: 'persisted-key',
+      isDefault: true,
+    );
+
+    await ApiConfigManager.saveConfig(config);
+
+    final prefs = await SharedPreferences.getInstance();
+    final persistedRaw = prefs.getString('api_configs');
+    expect(persistedRaw, isNotNull);
+    expect(persistedRaw, isNot(contains('persisted-key')));
+
+    final restored = await ApiConfigManager.getCurrentConfig();
+    expect(restored, isNotNull);
+    expect(restored!.id, 'hmos-server');
+    expect(restored.apiKey, 'persisted-key');
+    expect(restored.isDefault, isTrue);
+  });
 }

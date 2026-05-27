@@ -4,6 +4,7 @@ import OhosPathProviderPlugin from './OhosPathProviderPlugin';
 import OhosSecureStoragePlugin from './OhosSecureStoragePlugin';
 import OhosSharedPreferencesPlugin from './OhosSharedPreferencesPlugin';
 import OhosLocalAuthPlugin from './OhosLocalAuthPlugin';
+import OhosPlatformPlugin from './OhosPlatformPlugin';
 
 const TAG = 'OhosCompatibilityPluginRegistrant';
 
@@ -23,6 +24,9 @@ export class OhosCompatibilityPluginRegistrant {
     });
     OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'local_auth', () => {
       flutterEngine.getPlugins()?.add(new OhosLocalAuthPlugin());
+    });
+    OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'onepanel_ohos_platform', () => {
+      flutterEngine.getPlugins()?.add(new OhosPlatformPlugin());
     });
   }
 

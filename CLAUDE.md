@@ -119,7 +119,7 @@ The project follows **Layered Architecture with MVVM** and clean separation of c
 ## Cross-Platform UI Governance
 
 ### Default UI Baseline
-- Non-web target platforms are Android, iOS, iPadOS, macOS, Windows, Linux, and HarmonyOS (target phase)
+- Non-web target platforms are Android, iOS, iPadOS, macOS, Windows, Linux, and HarmonyOS
 - Web is out of current adaptation scope
 - MDUI3 is a mandatory, always-available baseline across target platforms, not a backup-only mode
 - The project allows multiple design systems and multiple theme profiles, but all must be centrally governed
@@ -130,7 +130,7 @@ The project follows **Layered Architecture with MVVM** and clean separation of c
 - **iOS / iPadOS / macOS**: SwiftUI native track is mandatory, aligned with Liquid Glass visual direction
 - **Android**: Dart-rendered MDUI3 is the default delivery path; native pages require explicit architecture review approval
 - **Linux**: current phase delivers with Dart-rendered MDUI3 first; native container capability is a planned community extension path
-- **HarmonyOS (target phase)**: reserve resolver/channel/provider placeholders now and plan native milestones while keeping shared business logic in Dart
+- **HarmonyOS**: treat as a first-class target platform. Keep shared business logic in Dart and fill platform gaps through project-owned facades plus the ArkTS `onepanel/ohos_platform` bridge.
 - Any native UI must not bypass application layering or call API clients directly
 
 ### Multi-Theme / Multi-Design-System Direction
@@ -143,6 +143,7 @@ The project follows **Layered Architecture with MVVM** and clean separation of c
 ### Implementation Guidance
 - Follow platform strategy mapping while keeping Dart non-UI layers shared
 - Do not duplicate business logic across design systems or UI stacks
+- HarmonyOS platform capabilities must be accessed through `PlatformFileService`, `PlatformDiagnosticsService`, `PlatformDownloadService`, `PlatformMediaService`, or another reviewed facade. Do not scatter raw `MethodChannel` calls in business or UI code.
 - Any native page proposal should define bridge boundary, rollback path, and shared Dart state/service/repository contracts
 - The `桌面端适配` branch is a runnable implementation branch for desktop adaptation and may be used as concrete reference material, but it does not redefine the default repository baseline by itself
 - Desktop cached modules must stay inside the shared shell host; normal module switches should not push a second shell

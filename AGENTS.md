@@ -57,9 +57,10 @@
   - iOS/iPadOS/macOS：强制建设 SwiftUI 原生轨道，视觉方向适配 Liquid Glass 风格
   - Android：Dart MDUI3 为默认落地路径；原生实现仅允许经评审批准后引入
   - Linux：当前阶段以 Dart MDUI3 交付为主，原生容器能力按社区扩展路线规划
-  - HarmonyOS：纳入目标平台并规划原生里程碑，当前阶段允许 `UiTarget`/Channel/Provider 占位并保持共享业务在 Dart 层
+  - HarmonyOS：作为一等目标平台推进，当前以 Dart 共享业务核心 + ArkTS Platform Bridge 补齐系统能力，文件、下载、日志、媒体、认证等缺口优先走项目自有 facade 与 ArkTS 桥接
 - 无论使用何种 UI 体系，共享业务逻辑都必须复用同一套 Dart State/Service/Repository/API，不得分叉为多套业务实现。
 - 原生 UI 同样必须遵守 `Presentation -> State -> Service/Repository -> API/Infra`，不得跨层直接访问 API。
+- HarmonyOS 原生层只承载平台能力，不得复制 1Panel 业务逻辑；Flutter 侧必须通过 `PlatformFileService`、`PlatformDiagnosticsService`、`PlatformDownloadService`、`PlatformMediaService` 等 facade 访问平台能力，禁止业务代码散落裸 `MethodChannel`。
 - 桌面缓存模块页必须禁用非当前页 Hero；带 `FloatingActionButton` 的页面必须显式设置 `heroTag` 或显式禁用 Hero。
 - 禁止可变 widget 自引用包装链（例如反复重写 `content` 并在后续 builder 中引用当前 `content`）。
 - 桌面模块切换必须留在统一壳内，普通切换不得再次 `push` 完整壳或首页。
@@ -156,6 +157,7 @@
 - 涉及 UI 改动时，必须运行 `dart run test/scripts/test_runner.dart ui`。
 - 涉及 Windows 原生 UI 轨道改动时，必须运行 `dotnet build windows/runner/native_host/OnePanelNativeHost/OnePanelNativeHost.csproj -c Debug`。
 - 涉及 Apple 原生 UI 轨道改动时，必须在 macOS/CI 环境运行 `xcodebuild`（iOS + macOS）构建门禁并附结果。
+- 涉及 HarmonyOS/OHOS 平台能力、依赖、存储、文件、下载、日志、媒体或构建配置时，必须运行 `hflutter build hap --release` 或等效完整 Flutter-OH 路径命令，并附 HAP 输出路径。
 - 原生 UI 适配门禁失败必须阻断推进，不允许“带失败继续”。
 - 回归基线使用 `dart run test/scripts/test_runner.dart all`。
 

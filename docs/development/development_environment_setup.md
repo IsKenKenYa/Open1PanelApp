@@ -241,16 +241,38 @@ flutter doctor --android-licenses
 flutter pub upgrade
 ```
 
-或删除`pubspec.lock`文件后重新运行`flutter pub get`。
+普通 Flutter 平台可以按需升级依赖，但 HarmonyOS/OHOS 构建必须优先使用仓库中的 `pubspec.lock`。不要为排障随意删除 `pubspec.lock`，否则可能把第三方包升级到未处理 `TargetPlatform.ohos` 的版本。
 
-### 13.3 Xcode版本不兼容问题
+### 13.3 HarmonyOS / OHOS 构建
+
+HarmonyOS 使用 Flutter-OH，不与官方 Flutter 共用 SDK。macOS 可直接使用完整路径：
+
+```bash
+/Volumes/FanXiangMac/DevTools/Flutter_HMOS/flutter_flutter/bin/flutter --version
+/Volumes/FanXiangMac/DevTools/Flutter_HMOS/flutter_flutter/bin/flutter build hap --release
+```
+
+Windows 使用 `flutter.bat` 完整路径，不依赖 `hflutter` shell 函数：
+
+```powershell
+D:\Huawei\Flutter\flutter_flutter\bin\flutter.bat --version
+D:\Huawei\Flutter\flutter_flutter\bin\flutter.bat build hap --release
+```
+
+当前已验证 Flutter-OH：`3.35.8-ohos-0.0.3`，framework revision `8957a7cf95`。构建产物位于 `build/ohos/hap/entry-default-signed.hap`。
+
+如果出现 `TargetPlatform.ohos` switch exhaustiveness 错误，先确认是否使用仓库 lock 和已验证 Flutter-OH revision；项目代码应增加 OHOS/default 分支，第三方包优先 pin 回已验证版本或通过项目自有 platform facade 绕开。
+
+完整指南见 `docs/development/harmonyos_build_and_sideload.md`。
+
+### 13.4 Xcode版本不兼容问题
 
 如果Xcode版本不兼容：
 
 1. 更新到最新版本的Xcode
 2. 或在`Podfile`中指定兼容的iOS版本
 
-### 13.4 模拟器启动缓慢问题
+### 13.5 模拟器启动缓慢问题
 
 如果Android模拟器启动缓慢，可以启用GPU加速或使用物理设备进行开发。
 

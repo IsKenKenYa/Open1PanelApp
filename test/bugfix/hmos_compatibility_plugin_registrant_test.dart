@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('HarmonyOS compatibility registrant keeps startup-critical plugins wired', () async {
+  test(
+      'HarmonyOS compatibility registrant keeps startup-critical plugins wired',
+      () async {
     final registrantFile = File(
       'ohos/entry/src/main/ets/plugins/OhosCompatibilityPluginRegistrant.ets',
     );
@@ -36,6 +38,10 @@ void main() {
     expect(
       registrant,
       contains('new OhosLocalAuthPlugin()'),
+    );
+    expect(
+      registrant,
+      contains('new OhosPlatformPlugin()'),
     );
     expect(
       entryAbility,

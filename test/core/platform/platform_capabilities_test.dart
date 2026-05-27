@@ -14,6 +14,11 @@ void main() {
     expect(snapshot.supportsBackgroundDownloader, isFalse);
     expect(snapshot.supportsOpenDownloadedFile, isFalse);
     expect(snapshot.supportsPasskeys, isFalse);
+    expect(snapshot.supportsNativeFilePicker, isTrue);
+    expect(snapshot.supportsNativeFileSave, isTrue);
+    expect(snapshot.supportsNativeDownloader, isTrue);
+    expect(snapshot.supportsNativeLogExport, isTrue);
+    expect(snapshot.supportsNativeMediaPreview, isTrue);
   });
 
   test('keeps Android capabilities enabled for non-OHOS hosts', () {
@@ -27,5 +32,10 @@ void main() {
     expect(snapshot.supportsBackgroundDownloader, isTrue);
     expect(snapshot.supportsOpenDownloadedFile, isTrue);
     expect(snapshot.supportsPasskeys, isTrue);
+    expect(snapshot.supportsNativeFilePicker, isFalse);
+    expect(snapshot.supportsNativeFileSave, isFalse);
+    expect(snapshot.supportsNativeDownloader, isFalse);
+    expect(snapshot.supportsNativeLogExport, isFalse);
+    expect(snapshot.supportsNativeMediaPreview, isFalse);
   });
 }
