@@ -76,12 +76,15 @@
 4. **添加服务器**：打开客户端，点击添加服务器。输入您的 1Panel 服务器地址（例如 `https://panel.example.com:port`）以及您刚才复制的 **API Key**。
 5. **连接**：测试连接并保存。现在您可以直接在客户端内管理服务器了！
 
-## 抢先体验版说明
+## 发布渠道
 
-- 当前 Android 版本主要用于抢先体验与收集用户反馈。
-- 这个渠道暂不支持应用内自动更新。
-- 后续版本将通过 GitHub Pre-release 持续发布。
-- 当前官方唯一反馈渠道为 GitHub Issues：
+- `debug-*` 标签：内部测试 APK，用于开发验证。
+- `beta-*` 标签：公开预览 APK，用于收集反馈。
+- `pre-release-*` 标签：正式发布前的候选 APK。
+- `v*` 标签：稳定版本发布。
+- 所有标签均从 `dev-v2` 分支创建。
+- 当前渠道暂不支持应用内自动更新。
+- 官方反馈渠道为 GitHub Issues：
   - [Issues](https://github.com/IsKenKenYa/1Panel-Client/issues)
 
 ## 近期更新
@@ -99,7 +102,7 @@
 
 ## 🛠️ 技术栈
 
-- **框架**: Flutter 3.16+ 配合 Material Design 3
+- **框架**: Flutter 3.22+ 配合 Material Design 3
 - **网络**: Dio HTTP客户端，具备全面错误处理和重试机制
 - **状态管理**: Provider模式
 - **认证**: 基于MD5 token的身份验证（1Panel专用）
@@ -179,7 +182,7 @@
 - ✅ **第 2 轮**: 深度模块分析和差距识别
 - ✅ **第 3 轮**: 最终完整性验证 - 确认生产就绪状态
 - ✅ **第 4 轮**: OpenAPI V2 规范分析，100% 覆盖验证
-- ✅ **当前状态**: 所有 34 个 API 模块已实现，60+ 数据模型
+- ✅ **当前状态**: 所有 34 个 API 模块已实现，68 数据模型
 
 ### 网络功能
 
@@ -195,7 +198,7 @@
 - ✅ **超时管理**: 所有操作的可配置超时
 - ✅ **多服务器支持**: 管理多个1Panel实例
 - ✅ **完整V2 API覆盖**: 所有已记录的端点，涵盖 34 个 V2 API 模块
-- ✅ **强类型模型**: 60+ 个全面的数据模型文件，支持JSON序列化
+- ✅ **强类型模型**: 68 个全面的数据模型文件，支持JSON序列化
 - ✅ **隐私保护**: 日志中自动脱敏公网 IP
 
 ### API集成状态
@@ -204,7 +207,7 @@
 **总覆盖**: 425+ API端点，来自官方1Panel V2文档的所有功能区域
 
 **API文件**: 34 个模块，完整实现所有功能
-**数据模型**: 60+ 个全面模型文件，涵盖所有功能区域并支持JSON序列化
+**数据模型**: 68 个全面模型文件，涵盖所有功能区域并支持JSON序列化
 **代码质量**: 所有文件遵循严格的 LOC 限制（≤1000 LOC 硬上限）
 
 #### ✅ **完整API实现（所有 34 个模块）**
@@ -242,7 +245,7 @@
 
 ## 📋 前置条件
 
-- Flutter 3.16+ 或更高版本
+- Flutter 3.22+ 或更高版本
 - Dart 3.6+
 - 具有API访问权限的1Panel服务器
 
@@ -280,9 +283,10 @@
 
 - ✅ **Android**: 完整支持
 - ✅ **iOS**: 完整支持
-- ✅ **Web**: 支持 (有限制)
-- ✅ **Windows**: 支持 (有限制)
-- ✅ **macOS**: 支持 (有限制)
+- ✅ **HarmonyOS**: 支持（通过 Flutter-OH）
+- ✅ **Windows**: 支持（桌面端原生轨道）
+- ✅ **macOS**: 支持（桌面端原生轨道）
+- ✅ **Linux**: 支持（MDUI3 通用轨道）
 
 ## 🏗️ 项目结构
 
@@ -344,7 +348,7 @@ lib/
 │   └── i18n/           # 国际化
 │       └── app_localizations.dart   # 本地化 ✅
 ├── data/               # 数据层
-│   └── models/         # 强类型数据模型（60+ 文件）
+│   └── models/         # 强类型数据模型（68 个文件）
 │       ├── common_models.dart       # 共享模型 ✅
 │       ├── ai_models.dart           # AI 管理模型 ✅
 │       ├── app_models.dart          # 应用模型 ✅
@@ -358,17 +362,45 @@ lib/
 │       ├── host_models.dart         # 主机管理模型 ✅
 │       ├── logs_models.dart         # 日志系统模型 ✅
 │       ├── system_group_models.dart # 系统组模型 ✅
-│       └── ... (50+ 其他模型文件) # 完整模型覆盖
-├── features/           # 功能模块
-│   ├── ai/             # AI 管理功能
-│   ├── dashboard/      # 仪表板功能
-│   └── settings/       # 设置功能
-├── pages/              # UI 页面
-│   ├── server/         # 服务器配置页面
-│   └── settings/       # 设置页面
-├── shared/             # 共享组件
-│   └── widgets/        # 可复用 UI 组件
-│       └── app_card.dart           # Material Design 卡片
+│       └── ... (55+ 其他模型文件) # 完整模型覆盖
+├── features/           # 34 个功能模块
+│   ├── ai/             # AI 管理（Ollama、MCP 服务器、代理）
+│   ├── apps/           # 应用商店管理
+│   ├── auth/           # 身份认证
+│   ├── backups/        # 备份与恢复
+│   ├── commands/       # 命令管理
+│   ├── containers/     # Docker 容器管理
+│   ├── cronjobs/       # 定时任务
+│   ├── dashboard/      # 仪表板
+│   ├── databases/      # 数据库管理
+│   ├── files/          # 文件管理
+│   ├── firewall/       # 防火墙管理
+│   ├── group/          # 分组管理
+│   ├── groups/         # 群组管理
+│   ├── host_assets/    # 主机资产管理
+│   ├── logs/           # 日志中心
+│   ├── monitoring/     # 监控面板
+│   ├── onboarding/     # 新手引导
+│   ├── openresty/      # OpenResty 管理
+│   ├── operations/     # 运维操作
+│   ├── operations_center/ # 运维中心
+│   ├── orchestration/  # Docker Compose 编排
+│   ├── processes/      # 进程管理
+│   ├── runtimes/       # 运行时管理
+│   ├── script_library/ # 脚本库
+│   ├── security/       # 应用安全锁
+│   ├── security_gateway/ # 安全网关
+│   ├── server/         # 服务器管理
+│   ├── settings/       # 系统设置
+│   ├── shell/          # 应用壳与导航
+│   ├── ssh/            # SSH 管理
+│   ├── terminal/       # 终端工作台
+│   ├── toolbox/        # 工具箱
+│   └── websites/       # 网站管理
+├── shared/             # 共享组件与常量
+│   ├── constants/      # 应用常量
+│   ├── widgets/        # 可复用 UI 组件
+│   └── security_gateway/ # 安全网关共享层
 └── main.dart           # 应用入口点
 ```
 

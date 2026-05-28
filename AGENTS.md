@@ -146,7 +146,7 @@
 - Dart 使用 2 空格缩进，启用 `flutter_lints`。
 - 文件命名使用小写下划线。
 - 后缀规范：`_page.dart`、`_widget.dart`、`_service.dart`、`_model.dart`、`_repository.dart`。
-- 日志规则：禁止使用 `print()` 或 `debugPrint()`，统一使用 `lib/core/services/logger_service.dart` 中的 `appLogger`。
+- 日志规则：禁止使用 `print()` 或 `debugPrint()`，统一使用 `lib/core/services/logger/logger_service.dart` 中的 `appLogger`。
 
 ## 测试规范与门禁
 - 测试文件以 `_test.dart` 结尾，按功能归档到 `test/` 子目录。
@@ -292,7 +292,7 @@
 | 文件规模限制 | 1000 LOC 硬上限 | 已强制执行 |
 | CI 门禁 | 8 个工作流（flutter-ci、ui-test、integration、windows、ios、macos、doc-sync、android-release） | 已上线 |
 | 测试门禁 | features 789/789、ui 8/8、api/core/data 219/219 | 全部通过 |
-| API 覆盖 | 27 模块对齐、0 缺失 | 已完成 |
+| API 覆盖 | 34 模块对齐、0 缺失 | 已完成 |
 | 原生轨道 | Windows/iOS/macOS 均有可用 Shell | 已完成 |
 
 > 最后更新：2026-05-08

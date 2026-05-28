@@ -97,7 +97,29 @@ class PlatformFileService {
       }
     }
 
-    await _openDirectoryWithHost(filePath);
+    if (Platform.isMacOS) {
+      await Process.run('open', <String>[filePath]);
+      return;
+    }
+    if (Platform.isWindows) {
+      await Process.run('cmd', <String>['/c', 'start', '', filePath],
+          runInShell: true);
+      return;
+    }
+    if (Platform.isLinux) {
+      await Process.run('xdg-open', <String>[filePath]);
+      return;
+    }
+    if (Platform.isAndroid || Platform.isIOS) {
+      appLogger.wWithPackage(
+        'core.platform.file_service',
+        '当前平台不支持直接打开文件，将打开文件所在目录',
+      );
+      await _openDirectoryWithHost(filePath);
+      return;
+    }
+
+    throw UnsupportedError('当前平台不支持打开文件');
   }
 
   Future<void> openDirectory(String path) async {
@@ -212,14 +234,19 @@ class PlatformFileService {
     final baseName = lastDot > 0 ? fileName.substring(0, lastDot) : fileName;
     final extension = lastDot > 0 ? fileName.substring(lastDot) : '';
 
+    const maxAttempts = 9999;
     var counter = 1;
-    while (true) {
+    while (counter <= maxAttempts) {
       final newPath = '$directory/${baseName}_$counter$extension';
       if (!await File(newPath).exists()) {
         return newPath;
       }
       counter++;
     }
+    throw FileSystemException(
+      '无法生成唯一文件名，已尝试 $maxAttempts 次',
+      '$directory/$fileName',
+    );
   }
 
   String _sanitizeFileName(String fileName) {

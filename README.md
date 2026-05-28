@@ -101,7 +101,7 @@ This release is still part of the `debug` channel and should be validated on the
 
 ## 🛠️ Technology Stack
 
-- **Framework**: Flutter 3.16+ with Material Design 3
+- **Framework**: Flutter 3.22+ with Material Design 3
 - **Networking**: Dio HTTP Client with comprehensive error handling and retry mechanism
 - **State Management**: Provider pattern
 - **Authentication**: MD5 token-based authentication (1Panel-specific)
@@ -181,7 +181,7 @@ After comprehensive analysis and implementation of the 1Panel V2 API, this proje
 - ✅ **Round 2**: Deep module analysis and gap identification
 - ✅ **Round 3**: Final integrity verification - Production ready status confirmed
 - ✅ **Round 4**: OpenAPI V2 specification analysis with 100% coverage verification
-- ✅ **Current Status**: All 34 API modules implemented with 60+ data models
+- ✅ **Current Status**: All 34 API modules implemented with 68 data models
 
 ### Network Features
 
@@ -197,7 +197,7 @@ After comprehensive analysis and implementation of the 1Panel V2 API, this proje
 - ✅ **Timeout Management**: Configurable timeouts for all operations
 - ✅ **Multi-server Support**: Manage multiple 1Panel instances
 - ✅ **Complete V2 API Coverage**: All documented endpoints across 34 V2 API modules
-- ✅ **Strong-Typed Models**: 60+ comprehensive data model files with JSON serialization
+- ✅ **Strong-Typed Models**: 68 comprehensive data model files with JSON serialization
 - ✅ **Privacy Protection**: Automatic public IP masking in logs
 
 ### API Integration Status
@@ -206,7 +206,7 @@ After comprehensive analysis and implementation of the 1Panel V2 API, this proje
 **Total Coverage**: 425+ API endpoints across all functional areas from official 1Panel V2 documentation
 
 **API Files**: 34 total modules with complete implementation
-**Data Models**: 60+ comprehensive model files covering all functional areas with JSON serialization
+**Data Models**: 68 comprehensive model files covering all functional areas with JSON serialization
 **Code Quality**: All files follow strict LOC limits (≤1000 LOC hard cap)
 
 #### ✅ **Complete API Implementation (All 34 modules)**
@@ -244,7 +244,7 @@ After comprehensive analysis and implementation of the 1Panel V2 API, this proje
 
 #### 🔧 **Architecture Highlights**
 
-**Complete Data Model Coverage** (60+ files):
+**Complete Data Model Coverage** (68 files):
 - `common_models.dart` - Shared models (OperateByID, PageResult, etc.)
 - `ai_models.dart` - AI and Ollama management models
 - `app_models.dart`, `app_config_models.dart`, `app_store_models.dart` - Application management
@@ -289,7 +289,7 @@ After comprehensive analysis and implementation of the 1Panel V2 API, this proje
 
 ## 📋 Prerequisites
 
-- Flutter 3.16+ or later
+- Flutter 3.22+ or later
 - Dart 3.6+
 - Access to a 1Panel server with API access enabled
 
@@ -327,9 +327,10 @@ After comprehensive analysis and implementation of the 1Panel V2 API, this proje
 
 - ✅ **Android**: Full support
 - ✅ **iOS**: Full support
-- ✅ **Web**: Supported (with limitations)
-- ✅ **Windows**: Supported (with limitations)
-- ✅ **macOS**: Supported (with limitations)
+- ✅ **HarmonyOS**: Supported (via Flutter-OH)
+- ✅ **Windows**: Supported (native desktop track)
+- ✅ **macOS**: Supported (native desktop track)
+- ✅ **Linux**: Supported (MDUI3 common track)
 
 ## 🏗️ Project Structure
 
@@ -391,7 +392,7 @@ lib/
 │   └── i18n/           # Internationalization
 │       └── app_localizations.dart   # Localizations ✅
 ├── data/               # Data layer
-│   └── models/         # Strong-typed data models (60+ files)
+│   └── models/         # Strong-typed data models (68 files)
 │       ├── common_models.dart       # Shared models ✅
 │       ├── ai_models.dart           # AI management models ✅
 │       ├── app_models.dart          # Application models ✅
@@ -405,17 +406,45 @@ lib/
 │       ├── host_models.dart         # Host management models ✅
 │       ├── logs_models.dart         # Logging system models ✅
 │       ├── system_group_models.dart # System group models ✅
-│       └── ... (50+ other model files) # Complete model coverage
-├── features/           # Feature modules
-│   ├── ai/             # AI management feature
-│   ├── dashboard/      # Dashboard feature
-│   └── settings/       # Settings feature
-├── pages/              # UI pages
-│   ├── server/         # Server configuration pages
-│   └── settings/       # Settings pages
-├── shared/             # Shared components
-│   └── widgets/        # Reusable UI components
-│       └── app_card.dart           # Material Design card
+│       └── ... (55+ other model files) # Complete model coverage
+├── features/           # 34 feature modules
+│   ├── ai/             # AI management (Ollama, MCP servers, agents)
+│   ├── apps/           # App store management
+│   ├── auth/           # Authentication
+│   ├── backups/        # Backup & restore
+│   ├── commands/       # Command management
+│   ├── containers/     # Docker container management
+│   ├── cronjobs/       # Scheduled tasks
+│   ├── dashboard/      # Dashboard
+│   ├── databases/      # Database management
+│   ├── files/          # File management
+│   ├── firewall/       # Firewall management
+│   ├── group/          # Group management
+│   ├── groups/         # Groups management
+│   ├── host_assets/    # Host asset management
+│   ├── logs/           # Log center
+│   ├── monitoring/     # Monitoring panel
+│   ├── onboarding/     # Onboarding guide
+│   ├── openresty/      # OpenResty management
+│   ├── operations/     # Operations
+│   ├── operations_center/ # Operations center
+│   ├── orchestration/  # Docker Compose orchestration
+│   ├── processes/      # Process management
+│   ├── runtimes/       # Runtime management
+│   ├── script_library/ # Script library
+│   ├── security/       # App security lock
+│   ├── security_gateway/ # Security gateway
+│   ├── server/         # Server management
+│   ├── settings/       # System settings
+│   ├── shell/          # App shell & navigation
+│   ├── ssh/            # SSH management
+│   ├── terminal/       # Terminal workbench
+│   ├── toolbox/        # Toolbox
+│   └── websites/       # Website management
+├── shared/             # Shared components & constants
+│   ├── constants/      # App constants
+│   ├── widgets/        # Reusable UI components
+│   └── security_gateway/ # Security gateway shared layer
 └── main.dart           # Application entry point
 ```
 

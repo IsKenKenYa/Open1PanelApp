@@ -16,7 +16,7 @@ EN: Read `AGENTS.md` first for mandatory rules, then `CLAUDE.md` for project det
 
 ## 项目概述 / Project Overview
 
-**1Panel Open** 是一个跨平台 Flutter 移动应用，提供对 1Panel Linux 服务器管理面板的移动访问。
+**1Panel Client** 是一个跨平台 Flutter 应用，提供对 1Panel Linux 服务器管理面板的移动与桌面访问。
 
 ## 1Panel 上游只读与能力基线
 
@@ -36,8 +36,10 @@ EN: Read `AGENTS.md` first for mandatory rules, then `CLAUDE.md` for project det
 - ✅ **Database Management**: MySQL, PostgreSQL, Redis operations
 - ✅ **File Management**: Browse, edit, upload/download, recycle bin, transfer manager
 - ✅ **Website Management**: SSL certificates, batch operations, domain management
-- 🚧 **Dashboard**: Planned enhancements
-- 🚧 **Additional Features**: Continuous improvements
+- ✅ **Dashboard**: Real-time system monitoring with CPU, memory, disk, network I/O
+- ✅ **Shell Architecture**: Adaptive shell with module switching and server-aware navigation
+- ✅ **HarmonyOS Support**: Full platform adaptation via Flutter-OH bridge
+- ✅ **34 Feature Modules**: Complete feature coverage across all 1Panel V2 API modules
 
 ## Development Commands
 
@@ -208,8 +210,23 @@ lib/
 ├── data/               # Data layer
 │   ├── models/         # Data models with JSON serialization
 │   └── repositories/   # Data repositories
-├── features/           # Feature modules (currently AI only)
-├── pages/              # UI pages/screens
+├── features/           # 34 feature modules
+│   ├── ai/             # AI management
+│   ├── apps/           # App store
+│   ├── auth/           # Authentication
+│   ├── backups/        # Backup & restore
+│   ├── containers/     # Docker management
+│   ├── dashboard/      # Dashboard
+│   ├── databases/      # Database management
+│   ├── files/          # File management
+│   ├── firewall/       # Firewall
+│   ├── monitoring/     # Monitoring
+│   ├── server/         # Server management
+│   ├── settings/       # System settings
+│   ├── shell/          # App shell & navigation
+│   ├── terminal/       # Terminal workbench
+│   ├── websites/       # Website management
+│   └── ... (19 more)   # commands, cronjobs, groups, host_assets, logs, onboarding, openresty, operations, operations_center, orchestration, processes, runtimes, script_library, security, security_gateway, ssh, toolbox
 ├── shared/             # Shared components
 │   ├── constants/      # App constants
 │   └── widgets/        # Reusable widgets

@@ -17,7 +17,9 @@
       "Bash(git -C \"/Volumes/FanXiangMac/MyOpenSource/Open1PanelApp\" diff \"docs/development/todo_wip.md\" | head -40)",
       "Bash(git -C \"/Volumes/FanXiangMac/MyOpenSource/Open1PanelApp\" diff \"docs/development/modules/module_planning_index.md\" | head -40)",
       "Bash(flutter test *)",
-      "Bash(dart run *)"
+      "Bash(dart run *)",
+      "Bash(gh pr *)",
+      "Bash(find *)"
     ],
     "deny": [],
     "ask": []

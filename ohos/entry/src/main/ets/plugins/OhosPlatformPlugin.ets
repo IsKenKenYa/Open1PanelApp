@@ -73,6 +73,8 @@ export default class OhosPlatformPlugin
           return;
         case 'openPath':
         case 'openDirectory':
+          // Both methods share the same implementation because HarmonyOS
+          // 'ohos.want.action.viewData' handles files and directories identically.
           result.success(await this.openPath(call));
           return;
         default:
@@ -122,7 +124,10 @@ export default class OhosPlatformPlugin
       fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE | fs.OpenMode.TRUNC,
     );
     try {
-      fs.writeSync(file.fd, bytes.buffer);
+      fs.writeSync(
+        file.fd,
+        bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
+      );
       fs.fsyncSync(file.fd);
     } finally {
       fs.closeSync(file);
@@ -171,14 +176,18 @@ export default class OhosPlatformPlugin
     const lastDot = fileName.lastIndexOf('.');
     const baseName = lastDot > 0 ? fileName.substring(0, lastDot) : fileName;
     const extension = lastDot > 0 ? fileName.substring(lastDot) : '';
+    const maxAttempts = 9999;
     let counter = 1;
-    while (true) {
+    while (counter <= maxAttempts) {
       const candidate = `${directory}/${baseName}_${counter}${extension}`;
       if (!this.exists(candidate)) {
         return candidate;
       }
       counter += 1;
     }
+    throw new Error(
+      `Failed to generate unique file name after ${maxAttempts} attempts: ${fileName}`,
+    );
   }
 
   private exists(path: string): boolean {
