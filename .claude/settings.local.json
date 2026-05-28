@@ -24,7 +24,12 @@
       "Bash(flutter build *)",
       "Bash(hflutter build *)",
       "Bash(graphify query *)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "Bash(codegraph status *)",
+      "Bash(codegraph query *)",
+      "Bash(codegraph callers *)",
+      "Bash(codegraph context *)",
+      "Bash(codegraph sync *)"
     ],
     "deny": [],
     "ask": []

@@ -1,13 +1,62 @@
 # 仓库开发规范
 
-> **适用范围**：本规范适用于所有 AI IDE（Kiro、Cursor、Windsurf、GitHub Copilot 等）和人工开发者。
-> 
+> **适用范围**：本规范适用于所有 AI IDE（Claude Code、Kiro、Cursor、Windsurf、GitHub Copilot 等）和人工开发者。
+>
 > **配套文档**：
-> - `AGENTS.md`（本文）：强制规则、架构规范、测试门禁
+> - `AGENTS.md`（本文）：硬性规则、架构规范、测试门禁、行为准则
 > - `CLAUDE.md`：Claude Code 专用补充说明
 > - `.kiro/steering/*.md`：Kiro 自动包含的开发指导
-> 
+>
 > **阅读优先级**：本文 > 配套文档 > 项目内其他文档
+
+## 行为准则（硬约束）
+
+**权衡**：这些准则偏向谨慎而非速度。对于简单任务，请自行判断。
+
+### 编码前思考 — 不要假设，不要隐藏困惑，暴露权衡
+
+- 明确陈述你的假设。不确定时，提问。
+- 存在多种合理解释时，全部呈现 — 不要默默选一种执行。
+- 存在更简单的做法时，提出异议。该推回时推回。
+- 某事不清楚时，停下来。指出不清楚的地方，提问。
+
+### 简洁优先 — 最少代码解决问题，不做投机性编写
+
+- 不添加要求之外的功能。
+- 不为单次使用代码创建抽象。
+- 不添加未请求的"灵活性"或"可配置性"。
+- 不为不可能发生的场景做错误处理。
+- 200 行能写成 50 行的，重写。
+- 检验标准：资深工程师会觉得过于复杂吗？如果是，简化。
+
+### 精准修改 — 只碰必须碰的，只清理自己的烂摊子
+
+编辑现有代码时：
+- 不要"改进"相邻代码、注释或格式。
+- 不要重构没坏的东西。
+- 匹配现有风格，即使你偏好不同写法。
+- 注意到无关死代码时提一下，不要自行删除。
+
+你的改动产生孤儿代码时：
+- 清理 **你自己的改动** 造成的无用 import/变量/函数。
+- 不要删除 **预先存在的** 死代码，除非被要求。
+- 检验标准：diff 中的每一行修改都应能直接追溯到用户的请求。
+
+### 目标驱动执行 — 定义成功标准，循环直到验证通过
+
+将指令式任务转化为可验证目标：
+- "添加验证" → "为无效输入写测试，然后让它们通过"
+- "修复 bug" → "写一个复现测试，然后让它通过"
+- "重构 X" → "确保重构前后测试都通过"
+
+多步骤任务先列简短计划，每步附验证方式：
+```
+1. [步骤] → 验证: [检查方式]
+2. [步骤] → 验证: [检查方式]
+3. [步骤] → 验证: [检查方式]
+```
+
+强成功标准让 Agent 能独立循环；弱标准（"让它工作"）需要不断澄清。
 
 ## 项目结构与模块组织
 - 业务源码位于 `lib/`，核心目录包括：
@@ -23,12 +72,10 @@
 
 ## 1Panel 只读与适配基线（强制）
 - `docs/OpenSource/1Panel/**` 为上游镜像与参考资料，整个目录只读。
-- 禁止直接或间接修改 `docs/OpenSource/1Panel/**` 下任何文件，包括 `frontend/`、`core/`、`agent/` 等子目录。
+- 禁止直接或间接修改 `docs/OpenSource/1Panel/**` 下任何文件。
 - 模块能力设计必须参考 1Panel Web 前端行为与交互语义，在客户端完成高保真功能还原。
 - 在能力还原基础上允许客户端增强，增强方向至少包含：多机统一管理、MFA（多因素认证）等移动端价值能力。
-- 当 Swagger、注解、路由与真实返回不一致时：
-  - 必须通过客户端 API 测试确认真实行为并在客户端兼容；
-  - 严禁通过修改 `docs/OpenSource/1Panel/**` 来“修复契约”。
+- 当 Swagger、注解、路由与真实返回不一致时：必须通过客户端 API 测试确认真实行为并在客户端兼容；严禁通过修改上游文件来"修复契约"。
 
 ## 架构与分层（强制）
 - 共享业务核心必须由 Dart 实现，原生层只承载 UI 容器与平台能力接入。
@@ -46,7 +93,7 @@
 
 ## 跨平台 UI 治理（非 Web，强制）
 - 适配范围：Android、iOS、iPadOS、macOS、Windows、Linux、HarmonyOS（目标平台）；Web 不在当前适配范围。
-- MDUI3 是全平台可用基线，必须持续可运行，不得降级为“仅回退方案”。
+- MDUI3 是全平台可用基线，必须持续可运行，不得降级为"仅回退方案"。
 - Apple（iOS/iPadOS/macOS）与 Windows 必须建设原生 UI 轨道，同时保留 MDUI3 通用轨道。
 - 允许并鼓励多设计系统与多主题，但必须走统一注册中心与主题控制，禁止页面私自定义独立体系。
 - 设计系统与主题是两层概念：
@@ -62,7 +109,7 @@
 - 原生 UI 同样必须遵守 `Presentation -> State -> Service/Repository -> API/Infra`，不得跨层直接访问 API。
 - HarmonyOS 原生层只承载平台能力，不得复制 1Panel 业务逻辑；Flutter 侧必须通过 `PlatformFileService`、`PlatformDiagnosticsService`、`PlatformDownloadService`、`PlatformMediaService` 等 facade 访问平台能力，禁止业务代码散落裸 `MethodChannel`。
 - 桌面缓存模块页必须禁用非当前页 Hero；带 `FloatingActionButton` 的页面必须显式设置 `heroTag` 或显式禁用 Hero。
-- 禁止可变 widget 自引用包装链（例如反复重写 `content` 并在后续 builder 中引用当前 `content`）。
+- 禁止可变 widget 自引用包装链。
 - 桌面模块切换必须留在统一壳内，普通切换不得再次 `push` 完整壳或首页。
 - 桌面 `Scaffold` / `AppBar` / `NavigationRail` / 壳内容区默认必须使用 `surface` 或 `surfaceContainer*`，禁止整页透明背景。
 
@@ -70,54 +117,16 @@
 
 ### 文件大小限制
 - 所有代码文件（文档与 Swagger 产物除外）硬上限为 `1000 LOC`，超出必须拆分。
-- 推荐阈值：
-  - 逻辑文件（Provider/ViewModel/Service/Repository/Model/Utils）建议不超过 `500 LOC`
-  - UI 文件（Page/复合 Widget）建议不超过 `800 LOC`
+- 推荐阈值：逻辑文件 ≤ `500 LOC`，UI 文件（Page/复合 Widget）≤ `800 LOC`。
 - 单一逻辑/架构文件不得承担 3 个及以上功能域（职责上限为 2 个）。
 - LOC 统计口径为非空非注释行，`*.g.dart`、`*.freezed.dart` 不计入。
 
-### 文件修改与重构原则（强制）
-1. **在原文件上修改，不创建副本**
-   - ✅ 正确：直接修改 `user_service.dart`
-   - ❌ 错误：创建 `user_service_fixed.dart`、`user_service_v2.dart`、`user_service_new.dart`
-
-2. **达到 1000 LOC 时才拆分**
-   - 文件未达到 1000 LOC 时，继续在原文件中修改
-   - 达到 1000 LOC 时，按职责拆分为多个文件
-   - 拆分后的文件使用有意义的名称，不使用版本后缀
-
-3. **禁止的文件命名模式**
-   - ❌ `{filename}_fixed.dart`：修复版
-   - ❌ `{filename}_new.dart`：新版
-   - ❌ `{filename}_v2.dart`：版本 2
-   - ❌ `{filename}_temp.dart`：临时版
-   - ❌ `{filename}_backup.dart`：备份版
-   - ❌ `{filename}_old.dart`：旧版
-
-4. **正确的文件拆分方式**
-   ```
-   # 错误示例（禁止）
-   lib/data/repositories/
-   ├── database_repository.dart        # 1200 LOC
-   ├── database_repository_fixed.dart  # ❌ 创建修复版
-   └── database_repository_v2.dart     # ❌ 创建新版本
-
-   # 正确示例
-   lib/data/repositories/database/
-   ├── database_repository.dart        # 400 LOC - 主入口
-   ├── mysql_repository.dart           # 300 LOC - MySQL 专用
-   ├── postgresql_repository.dart      # 300 LOC - PostgreSQL 专用
-   └── redis_repository.dart           # 200 LOC - Redis 专用
-   ```
-
-5. **重构流程**
-   - 步骤 1：在原文件中进行修改
-   - 步骤 2：运行测试确保功能正常
-   - 步骤 3：如果文件超过 1000 LOC，按职责拆分
-   - 步骤 4：删除旧文件，不保留备份版本（Git 已有历史记录）
+### 文件修改原则（强制）
+1. **在原文件上修改，不创建副本** — 禁止 `_fixed`、`_new`、`_v2`、`_temp`、`_backup`、`_old` 后缀。
+2. **达到 1000 LOC 时才拆分** — 未达到时继续在原文件中修改。
+3. **拆分后的文件使用有意义的名称** — 按职责命名，不使用版本后缀。Git 已有历史记录，不需要保留备份。
 
 ### 文件组织规则
-- 当同一功能模块达到 2 个及以上文件时，必须建立独立子目录（例如 `lib/core/auth/`）。
 - 子目录命名使用小写下划线，反映功能域。
 - 避免创建过深的目录层级（建议不超过 4 层）。
 
@@ -130,17 +139,23 @@
   5. 单元测试执行与修复
   6. 集成测试执行与修复（涉及 API/网络/数据写入时为必跑项）
   7. 文档与基线回写（模块文档、分析基线、兼容策略）
-- 任一步骤失败必须回到对应步骤修复后再继续，不允许“带失败推进”。
+- 任一步骤失败必须回到对应步骤修复后再继续，不允许"带失败推进"。
 
 ## 构建、测试与开发命令
-- `flutter pub get`：安装依赖
-- `flutter run`：调试运行
-- `flutter analyze`：静态分析
-- `flutter test`：执行全部测试
-- `flutter test test/<file>_test.dart`：执行单个测试文件
-- `flutter test --coverage`：生成覆盖率报告
-- `flutter packages pub run build_runner build`：生成模型与 Retrofit 代码
-- `flutter build apk --release` / `flutter build appbundle` / `flutter build ios --release`：发布构建
+
+```bash
+flutter pub get                              # 安装依赖
+flutter run                                  # 调试运行
+flutter analyze                              # 静态分析
+flutter test                                 # 执行全部测试
+flutter test test/<file>_test.dart           # 执行单个测试文件
+flutter test --coverage                      # 生成覆盖率报告
+flutter packages pub run build_runner build  # 生成模型与 Retrofit 代码
+flutter packages pub run build_runner watch  # 监听变更自动代码生成
+flutter build apk --release                  # 构建 Android APK
+flutter build appbundle                      # 构建 Android App Bundle
+flutter build ios --release                  # 构建 iOS（仅 macOS）
+```
 
 ## 编码风格与命名规范
 - Dart 使用 2 空格缩进，启用 `flutter_lints`。
@@ -158,7 +173,7 @@
 - 涉及 Windows 原生 UI 轨道改动时，必须运行 `dotnet build windows/runner/native_host/OnePanelNativeHost/OnePanelNativeHost.csproj -c Debug`。
 - 涉及 Apple 原生 UI 轨道改动时，必须在 macOS/CI 环境运行 `xcodebuild`（iOS + macOS）构建门禁并附结果。
 - 涉及 HarmonyOS/OHOS 平台能力、依赖、存储、文件、下载、日志、媒体或构建配置时，必须运行 `hflutter build hap --release` 或等效完整 Flutter-OH 路径命令，并附 HAP 输出路径。
-- 原生 UI 适配门禁失败必须阻断推进，不允许“带失败继续”。
+- 原生 UI 适配门禁失败必须阻断推进，不允许"带失败继续"。
 - 回归基线使用 `dart run test/scripts/test_runner.dart all`。
 
 ## AI 工具集成与知识管理
@@ -169,28 +184,40 @@
 - 不支持 MCP 的 AI IDE：通过阅读本文档和 Git 历史获取项目知识。
 
 ### 文档同步规则
-- 规范变更必须同步更新：
-  - `AGENTS.md`（本文，所有 AI IDE 的主要参考）
-  - `CLAUDE.md`（Claude Code 专用补充）
-  - `.kiro/steering/*.md`（Kiro 自动包含的指导文件）
-- 跨平台 UI 或原生扩展策略变更时，必须同步更新：
-  - `docs/development/cross_platform_ui_governance.md`
-  - `docs/模块适配专属工作流.md`
-  - `docs/原生UI适配专属工作流.md`
+- 规范变更必须同步更新 `AGENTS.md`（本文）、`CLAUDE.md`、`.kiro/steering/*.md`。
+- 跨平台 UI 或原生扩展策略变更时，必须同步更新 `docs/development/cross_platform_ui_governance.md`、`docs/模块适配专属工作流.md`、`docs/原生UI适配专属工作流.md`。
 
 ### AI IDE 特定配置
+- **Claude Code**：参考 `AGENTS.md` + `CLAUDE.md`
 - **Kiro**：使用 `.kiro/steering/*.md` 自动包含开发指导
 - **Cursor/Windsurf**：主要参考 `AGENTS.md` 和 `.cursorrules`（如存在）
 - **GitHub Copilot**：通过代码注释和文档上下文理解规范
-- **Claude Code**：参考 `AGENTS.md` + `CLAUDE.md`
 
-### 通用开发流程（所有 AI IDE 适用）
-1. **问题定位**：查看错误日志 → 运行 `flutter analyze`
-2. **查阅契约**：参考 `docs/OpenSource/1Panel/backend/swagger.json` 和前端代码
-3. **编写测试**：在 `test/bugfix/` 创建回归测试，注释中说明问题和修复
-4. **修复代码**：遵守分层架构，文件大小限制
-5. **验证修复**：运行测试门禁（analyze + unit + integration/ui）
-6. **热重启应用**：模型/API 改动需要热重启，不是热重载
+## 知识图谱与代码索引
+
+本项目同时使用两套代码智能工具，互相补充：
+
+### graphify — 跨文件概念关系图谱
+- 图谱位置：`graphify-out/`（已 gitignore）
+- 查询：`graphify query "问题"` — BFS 遍历图谱回答架构问题
+- 路径：`graphify path "模块A" "模块B"` — 两节点间最短路径
+- 解释：`graphify explain "概念"` — 节点及其关联的详细说明
+- 增量更新：`graphify update .` — 仅处理变更文件（代码自动，文档需手动）
+- 监控：`graphify watch .` — 后台监控代码变更，自动重建图谱（注意：`watch` 是子命令，不是 `--watch` flag）
+- 图谱报告：`graphify-out/GRAPH_REPORT.md` — God Nodes、意外连接、建议提问
+- 适用场景：架构决策追溯、跨模块概念关系、文档/论文/图片语义理解
+
+### CodeGraph — 代码符号索引与调用链
+- 索引位置：`.codegraph/`（已 gitignore）
+- 状态检查：`codegraph status`
+- 增量同步：`codegraph sync`
+- 监控：`codegraph serve --mcp`（MCP Server，自动同步，文件变更 2 秒后自动重建索引）
+- 适用场景：符号搜索、调用链追踪（callers/callees）、影响分析（impact）、上下文构建（context）
+
+### 使用优先级
+1. 代码符号查询（谁调用了 X、X 调用了谁）→ 优先用 CodeGraph
+2. 架构概念关系（模块间依赖、设计决策）→ 优先用 graphify
+3. 文档/论文/图片理解 → 只有 graphify 支持
 
 ## 提交与合并请求规范
 - 提交信息遵循 Conventional Commits，例如：`feat(scope): ...`、`fix(scope): ...`、`chore: ...`、`refactor: ...`。
@@ -201,111 +228,31 @@
 ## 发布分支与 CI
 - 长期主干分支：`dev-v2`，对标 1Panel 服务端 `dev-v2` 的单主干策略。
 - `main` 分支计划移除，所有功能集成、稳定验证与发布准备均围绕 `dev-v2` 展开。
-- Android APK 使用 tag 驱动发布：`debug-*`、`beta-*`、`pre-release-*`、`v*`。
-- tag 来源约束：
-  - `debug` / `beta` / `pre-release` / `v*` 均必须来自 `dev-v2`
-- 渠道映射：
-  - `debug -> Alpha`
-  - `beta -> Beta（公开预览）`
-  - `pre-release -> Pre-Release`
-  - `v* -> Release`
-- 版本号策略：
-  - 当前默认仍采用客户端自身语义化版本，如 `v0.6.0`
-  - 与 1Panel V2 版本号同步的方案暂缓实施，需在功能与服务端版本真正对齐后再评估，例如 `v2.1.0-client`
+- Android APK 使用 tag 驱动发布：`debug-*`（Alpha）、`beta-*`（Beta 公开预览）、`pre-release-*`（Pre-Release）、`v*`（Release）。
+- tag 来源约束：`debug` / `beta` / `pre-release` / `v*` 均必须来自 `dev-v2`。
+- 版本号策略：当前默认仍采用客户端自身语义化版本（如 `v0.6.0`），与 1Panel V2 版本号同步的方案暂缓实施。
 
 ## 文档治理
 
-### 文档创建原则（强制）
-1. **先搜索，再创建**
-   - 创建任何文档前，必须先搜索项目中是否已有相似/相关文档
-   - 优先在现有文档中补充内容，而不是创建新文档
-   - 避免为每个小功能创建独立文档，导致文档碎片化
-
-2. **文档合并优先**
-   - 多个相关主题应合并到同一文档的不同章节
-   - 例如：所有数据库相关问题记录在同一个测试文件的不同测试用例中
-   - 避免创建 `database_issue_1.md`、`database_issue_2.md` 等碎片文档
-
-3. **文档更新优先于创建**
-   - 现有文档可以满足需求时，更新现有文档
-   - 只有在主题完全不同且无法合并时，才创建新文档
+### 核心原则
+1. **先搜索，再创建** — 优先在现有文档中补充内容，避免碎片化。
+2. **文档合并优先** — 多个相关主题应合并到同一文档的不同章节。
+3. **文档更新优先于创建** — 现有文档可以满足需求时，更新现有文档。
 
 ### 允许的文档类型
-1. **核心规范文档**（主仓库根目录）
-   - `README.md`：项目介绍、快速开始
-   - `AGENTS.md`：开发规范（本文，所有 AI IDE 主要参考）
-   - `CLAUDE.md`：Claude Code 专用补充
-   - `CHANGELOG.md`：版本变更记录
+- 核心规范：`README.md`、`AGENTS.md`、`CLAUDE.md`、`CHANGELOG.md`
+- AI IDE 配置：`.kiro/steering/*.md`、`.cursorrules`、`.github/copilot-instructions.md`
+- 架构与策略：`docs/development/*.md`、`docs/模块适配专属工作流.md`、`docs/原生UI适配专属工作流.md`
+- 上游参考（只读）：`docs/OpenSource/1Panel/**`
 
-2. **AI IDE 配置文档**
-   - `.kiro/steering/*.md`：Kiro 自动包含的开发指导
-   - `.cursorrules`：Cursor/Windsurf 规则（如需要）
-   - `.github/copilot-instructions.md`：GitHub Copilot 指令（如需要）
-
-3. **架构与策略文档**
-   - `docs/development/cross_platform_ui_governance.md`：跨平台 UI 治理
-   - `docs/模块适配专属工作流.md`：模块适配流程
-   - `docs/原生UI适配专属工作流.md`：原生 UI 适配流程
-
-4. **上游参考文档**（只读）
-   - `docs/OpenSource/1Panel/**`：1Panel 上游镜像，禁止修改
-
-### 禁止的文档模式
-- ❌ 为每个 bug 创建独立文档：`docs/bugfix/issue_123.md`、`docs/bugfix/issue_456.md`
-- ❌ 为每个功能创建独立文档：`docs/features/feature_a.md`、`docs/features/feature_b.md`
-- ❌ 创建临时性文档：`修复指南.md`、`临时说明.md`、`问题排查_20240101.md`
-- ❌ 创建重复内容文档：多个文档描述相同或相似的内容
-- ❌ 使用版本后缀文档：`README_v2.md`、`AGENTS_fixed.md`、`开发规范_新版.md`
-
-### 信息记录位置规则
-| 信息类型 | 记录位置 | 示例 |
-|---------|---------|------|
-| Bug 修复说明 | `test/bugfix/*_test.dart` 注释 | 问题描述、错误信息、修复方案 |
-| 功能变更说明 | Git commit message | `fix(database): 修复搜索必填字段问题` |
-| 详细变更内容 | PR 描述 | 变更说明、测试结果、截图 |
-| 架构决策 | `agent-memory-mcp` (MCP 支持的 IDE) | `decision`/`pattern` 类型 |
-| 开发流程指导 | `.kiro/steering/*.md` 或 `AGENTS.md` | 通用开发流程、测试规范 |
-| 跨平台策略 | `docs/development/*.md` | UI 治理、适配流程 |
-
-### 文档更新触发条件
-- **必须更新 `AGENTS.md`**：架构规则变更、测试门禁变更、文件规模阈值调整
-- **必须更新 `CLAUDE.md`**：Claude Code 特定流程变更
-- **必须更新 `.kiro/steering/*.md`**：Kiro 开发指导变更
-- **必须更新跨平台文档**：原生 UI 策略变更、设计系统调整
-
-### 文档一致性检查
-所有 AI IDE 在修改规范时，必须确保：
-1. `AGENTS.md` 作为主文档已更新
-2. 相关配套文档（`CLAUDE.md`、`.kiro/steering/*.md`）同步更新
-3. 不创建与现有文档重复的新文档
-4. 不在代码仓库中保留过时文档
+### 信息记录位置
+| 信息类型 | 记录位置 |
+|---------|---------|
+| Bug 修复说明 | `test/bugfix/*_test.dart` 注释 |
+| 功能变更说明 | Git commit message |
+| 架构决策 | `agent-memory-mcp` (MCP 支持的 IDE) |
+| 开发流程指导 | `.kiro/steering/*.md` 或 `AGENTS.md` |
 
 ## 安全与配置说明
 - API 访问使用 1Panel API Key，禁止提交密钥或令牌。
 - 分享日志或复现步骤时必须脱敏 IP、用户名、凭据。
-
-## 落地进展
-
-| 领域 | 内容 | 状态 |
-|------|------|------|
-| 架构规则 | 六层分离、Provider 状态管理 | 已强制执行 |
-| 文件规模限制 | 1000 LOC 硬上限 | 已强制执行 |
-| CI 门禁 | 8 个工作流（flutter-ci、ui-test、integration、windows、ios、macos、doc-sync、android-release） | 已上线 |
-| 测试门禁 | features 789/789、ui 8/8、api/core/data 219/219 | 全部通过 |
-| API 覆盖 | 33 模块对齐、0 缺失 | 已完成 |
-| 原生轨道 | Windows/iOS/macOS 均有可用 Shell | 已完成 |
-
-> 最后更新：2026-05-08
-
-## graphify
-
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
-
-When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
-
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
