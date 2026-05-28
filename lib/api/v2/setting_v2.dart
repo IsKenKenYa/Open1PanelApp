@@ -5,38 +5,14 @@ import '../../core/network/network_exceptions.dart';
 import '../../core/config/api_constants.dart';
 import '../../data/models/setting_models.dart';
 import '../../data/models/ssh_settings_models.dart';
+import 'api_response_parser.dart';
 
 class SettingV2Api {
   final DioClient _client;
 
   SettingV2Api(this._client);
 
-  /// 从API响应中提取data字段
-  /// API响应结构: { "code": 200, "message": "", "data": {...} }
-  Map<String, dynamic>? _extractData(dynamic responseData) {
-    if (responseData is! Map<String, dynamic>) {
-      return null;
-    }
-    final inner = responseData['data'];
-    if (inner is Map<String, dynamic>) {
-      return inner;
-    }
-    return null;
-  }
-
-  /// 从API响应中提取data字段（List类型）
-  List<dynamic>? _extractDataList(dynamic responseData) {
-    if (responseData is! Map<String, dynamic>) {
-      return null;
-    }
-    final inner = responseData['data'];
-    if (inner is List<dynamic>) {
-      return inner;
-    }
-    return null;
-  }
-
-  /// 从API响应中提取data字段（原始类型）
+  /// 从API响应中提取data字段（原始类型），过滤HTML错误页面
   dynamic _extractDataRaw(dynamic responseData) {
     if (responseData is String) {
       final normalized = responseData.trimLeft().toLowerCase();
@@ -46,10 +22,7 @@ class SettingV2Api {
       }
       return responseData;
     }
-    if (responseData is! Map<String, dynamic>) {
-      return responseData;
-    }
-    return responseData['data'];
+    return ApiResponseParser.unwrap(responseData);
   }
 
   bool _shouldFallbackToLegacySettingsPath(Object error) {
@@ -72,7 +45,7 @@ class SettingV2Api {
     final response = await _client.post(
       ApiConstants.buildApiPath('/core/settings/search'),
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response(
       data: data != null ? SystemSettingInfo.fromJson(data) : null,
       statusCode: response.statusCode,
@@ -91,7 +64,7 @@ class SettingV2Api {
       ApiConstants.buildApiPath('/core/settings/by'),
       data: {'key': key},
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response(
       data: data != null ? SettingInfo.fromJson(data) : null,
       statusCode: response.statusCode,
@@ -130,7 +103,7 @@ class SettingV2Api {
     final response = await _client.get(
       ApiConstants.buildApiPath('/dashboard/base/os'),
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response(
       data: data != null ? SystemInfo.fromJson(data) : null,
       statusCode: response.statusCode,
@@ -147,7 +120,7 @@ class SettingV2Api {
     final response = await _client.post(
       ApiConstants.buildApiPath('/core/settings/terminal/search'),
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response(
       data: data != null ? TerminalInfo.fromJson(data) : null,
       statusCode: response.statusCode,
@@ -176,7 +149,7 @@ class SettingV2Api {
     final response = await _client.get(
       ApiConstants.buildApiPath('/core/settings/interface'),
     );
-    final data = _extractDataList(response.data);
+    final data = ApiResponseParser.asListOrNull(response.data);
     return Response(
       data: data != null ? List<String>.from(data) : null,
       statusCode: response.statusCode,
@@ -213,7 +186,7 @@ class SettingV2Api {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/core/settings/passkey/list'),
     );
-    final items = _extractDataList(response.data) ?? const <dynamic>[];
+    final items = ApiResponseParser.asListOrNull(response.data) ?? const <dynamic>[];
     return Response<List<PasskeyInfo>>(
       data: items
           .whereType<Map<String, dynamic>>()
@@ -236,7 +209,7 @@ class SettingV2Api {
       ApiConstants.buildApiPath('/core/settings/passkey/register/begin'),
       data: request.toJson(),
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response<PasskeyBeginResponse?>(
       data: data == null ? null : PasskeyBeginResponse.fromJson(data),
       statusCode: response.statusCode,
@@ -557,7 +530,7 @@ class SettingV2Api {
     final response = await _client.get(
       ApiConstants.buildApiPath('/core/settings/mfa/status'),
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response(
       data: data != null ? MfaStatus.fromJson(data) : null,
       statusCode: response.statusCode,
@@ -689,7 +662,7 @@ class SettingV2Api {
       ApiConstants.buildApiPath('/core/settings/upgrade/releases'),
     );
     return Response(
-      data: _extractDataList(response.data),
+      data: ApiResponseParser.asListOrNull(response.data),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -943,7 +916,7 @@ class SettingV2Api {
     final response = await _client.get(
       ApiConstants.buildApiPath('/hosts/monitor/setting'),
     );
-    final data = _extractData(response.data);
+    final data = ApiResponseParser.asMapOrNull(response.data);
     return Response(
       data: data,
       statusCode: response.statusCode,

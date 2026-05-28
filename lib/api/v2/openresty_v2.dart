@@ -4,20 +4,6 @@ import '../../core/config/api_constants.dart';
 import '../../data/models/openresty_models.dart';
 import 'api_response_parser.dart';
 
-class _Parser {
-  static Map<String, dynamic> extractMapData(
-      Response<Map<String, dynamic>> response) {
-    return ApiResponseParser.extractMapData(response);
-  }
-
-  static List<Map<String, dynamic>> extractListData(
-      Response<Map<String, dynamic>> response) {
-    return ApiResponseParser.extractListData(response)
-        .whereType<Map<String, dynamic>>()
-        .toList(growable: false);
-  }
-}
-
 class OpenRestyV2Api {
   final DioClient _client;
 
@@ -28,7 +14,7 @@ class OpenRestyV2Api {
       ApiConstants.buildApiPath('/openresty'),
     );
     return Response(
-      data: OpenrestyFile.fromJson(_Parser.extractMapData(response)),
+      data: OpenrestyFile.fromJson(ApiResponseParser.extractMapData(response)),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -55,7 +41,7 @@ class OpenRestyV2Api {
       ApiConstants.buildApiPath('/openresty/https'),
     );
     return Response(
-      data: OpenrestyHttpsConfig.fromJson(_Parser.extractMapData(response)),
+      data: OpenrestyHttpsConfig.fromJson(ApiResponseParser.extractMapData(response)),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -75,7 +61,7 @@ class OpenRestyV2Api {
       ApiConstants.buildApiPath('/openresty/modules'),
     );
     return Response(
-      data: OpenrestyBuildConfig.fromJson(_Parser.extractMapData(response)),
+      data: OpenrestyBuildConfig.fromJson(ApiResponseParser.extractMapData(response)),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -97,7 +83,7 @@ class OpenRestyV2Api {
       data: request.toJson(),
     );
     final items =
-        _Parser.extractListData(response).map(OpenrestyParam.fromJson).toList();
+        ApiResponseParser.extractListDataFromMap(response, OpenrestyParam.fromJson);
     return Response(
       data: items,
       statusCode: response.statusCode,
@@ -111,7 +97,7 @@ class OpenRestyV2Api {
       ApiConstants.buildApiPath('/openresty/status'),
     );
     return Response(
-      data: OpenrestyStatus.fromJson(_Parser.extractMapData(response)),
+      data: OpenrestyStatus.fromJson(ApiResponseParser.extractMapData(response)),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,

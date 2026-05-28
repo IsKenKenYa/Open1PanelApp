@@ -7,57 +7,6 @@ import '../../data/models/runtime_models.dart';
 import '../../data/models/setting_models.dart';
 import 'api_response_parser.dart';
 
-/// API响应解析帮助类
-class _Parser {
-  /// 从1Panel API响应中提取data字段
-  static T extractData<T>(Response<Map<String, dynamic>> response,
-      T Function(Map<String, dynamic>) fromJson) {
-    return ApiResponseParser.extractData(response, fromJson);
-  }
-
-  /// 从1Panel API响应中提取data字段（Map类型）
-  static Map<String, dynamic> extractMapData(
-      Response<Map<String, dynamic>> response) {
-    return ApiResponseParser.extractMapData(response);
-  }
-
-  static List<T> extractListDataFromMap<T>(
-      Response<Map<String, dynamic>> response,
-      T Function(Map<String, dynamic>) fromJson) {
-    final data = ApiResponseParser.asList(
-      response.data,
-      nestedItemsKey: 'items',
-    );
-    return data
-        .whereType<Map<String, dynamic>>()
-        .map(fromJson)
-        .toList(growable: false);
-  }
-
-  static List<Map<String, dynamic>> extractRawListDataFromMap(
-      Response<Map<String, dynamic>> response) {
-    final data = ApiResponseParser.asList(
-      response.data,
-      nestedItemsKey: 'items',
-    );
-    return data.whereType<Map<String, dynamic>>().toList(growable: false);
-  }
-
-  /// 从1Panel API响应中提取data字段（PageResult类型）
-  static PageResult<T> extractPageData<T>(
-      Response<Map<String, dynamic>> response,
-      T Function(Map<String, dynamic>) fromJson) {
-    final data = ApiResponseParser.asMap(response.data);
-    if (data.isNotEmpty) {
-      return PageResult.fromJson(
-        data,
-        (dynamic item) => fromJson(item as Map<String, dynamic>),
-      );
-    }
-    return PageResult(items: [], total: 0);
-  }
-}
-
 class ContainerV2Api {
   final DioClient _client;
 
@@ -153,7 +102,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, ContainerInfo.fromJson),
+      data: ApiResponseParser.extractPageData(response, ContainerInfo.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -166,7 +115,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/list'),
     );
     return Response(
-      data: _Parser.extractListDataFromMap(response, ContainerInfo.fromJson),
+      data: ApiResponseParser.extractListDataFromMap(response, ContainerInfo.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -179,7 +128,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/stats/$id'),
     );
     return Response(
-      data: _Parser.extractData(response, ContainerStats.fromJson),
+      data: ApiResponseParser.extractData(response, ContainerStats.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -193,7 +142,7 @@ class ContainerV2Api {
     );
     return Response(
       data:
-          _Parser.extractListDataFromMap(response, ContainerListStats.fromJson),
+          ApiResponseParser.extractListDataFromMap(response, ContainerListStats.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -207,7 +156,7 @@ class ContainerV2Api {
       data: {},
     );
     return Response(
-      data: _Parser.extractListDataFromMap(response, ContainerOption.fromJson),
+      data: ApiResponseParser.extractListDataFromMap(response, ContainerOption.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -222,7 +171,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractData(response, ContainerItemStats.fromJson),
+      data: ApiResponseParser.extractData(response, ContainerItemStats.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -255,7 +204,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/status'),
     );
     return Response(
-      data: _Parser.extractData(response, ContainerStatus.fromJson),
+      data: ApiResponseParser.extractData(response, ContainerStatus.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -268,7 +217,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/docker/status'),
     );
     return Response(
-      data: _Parser.extractData(response, DockerStatus.fromJson),
+      data: ApiResponseParser.extractData(response, DockerStatus.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -357,7 +306,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractData(response, ContainerOperate.fromJson),
+      data: ApiResponseParser.extractData(response, ContainerOperate.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -413,7 +362,7 @@ class ContainerV2Api {
     );
     return Response(
       data:
-          _Parser.extractListDataFromMap(response, ContainerFileInfo.fromJson),
+          ApiResponseParser.extractListDataFromMap(response, ContainerFileInfo.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -428,7 +377,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractData(response, ContainerFileContent.fromJson),
+      data: ApiResponseParser.extractData(response, ContainerFileContent.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -509,7 +458,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/limit'),
     );
     return Response(
-      data: _Parser.extractMapData(response),
+      data: ApiResponseParser.extractMapData(response),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -523,7 +472,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/image'),
     );
     return Response(
-      data: _Parser.extractRawListDataFromMap(response),
+      data: ApiResponseParser.extractRawListDataFromMap(response),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -591,7 +540,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractData(response, ContainerPruneReport.fromJson),
+      data: ApiResponseParser.extractData(response, ContainerPruneReport.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -614,7 +563,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, (json) => json),
+      data: ApiResponseParser.extractPageData(response, (json) => json),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -636,7 +585,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/network'),
     );
     return Response(
-      data: _Parser.extractRawListDataFromMap(response),
+      data: ApiResponseParser.extractRawListDataFromMap(response),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -667,7 +616,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, (json) => json),
+      data: ApiResponseParser.extractPageData(response, (json) => json),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -681,7 +630,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/volume'),
     );
     return Response(
-      data: _Parser.extractRawListDataFromMap(response),
+      data: ApiResponseParser.extractRawListDataFromMap(response),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -712,7 +661,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, (json) => json),
+      data: ApiResponseParser.extractPageData(response, (json) => json),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -726,7 +675,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/repo'),
     );
     return Response(
-      data: _Parser.extractListDataFromMap(response, ContainerRepo.fromJson),
+      data: ApiResponseParser.extractListDataFromMap(response, ContainerRepo.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -779,7 +728,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, ContainerRepo.fromJson),
+      data: ApiResponseParser.extractPageData(response, ContainerRepo.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -794,7 +743,7 @@ class ContainerV2Api {
     );
     return Response(
       data:
-          _Parser.extractListDataFromMap(response, ContainerTemplate.fromJson),
+          ApiResponseParser.extractListDataFromMap(response, ContainerTemplate.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -841,7 +790,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, ContainerTemplate.fromJson),
+      data: ApiResponseParser.extractPageData(response, ContainerTemplate.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -866,7 +815,7 @@ class ContainerV2Api {
       data: request.toJson(),
     );
     return Response(
-      data: _Parser.extractPageData(response, ContainerCompose.fromJson),
+      data: ApiResponseParser.extractPageData(response, ContainerCompose.fromJson),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -959,7 +908,7 @@ class ContainerV2Api {
       ApiConstants.buildApiPath('/containers/daemonjson'),
     );
     return Response(
-      data: _Parser.extractMapData(response),
+      data: ApiResponseParser.extractMapData(response),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
