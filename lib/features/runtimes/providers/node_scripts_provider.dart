@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/runtime_models.dart';
 import 'package:onepanel_client/features/runtimes/models/runtime_manage_args.dart';
 import 'package:onepanel_client/features/runtimes/services/node_runtime_service.dart';
 
-class NodeScriptsProvider extends ChangeNotifier with AsyncStateNotifier {
+class NodeScriptsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   NodeScriptsProvider({
     NodeRuntimeService? service,
   }) : _service = service ?? NodeRuntimeService();

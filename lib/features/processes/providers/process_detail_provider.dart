@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/process_detail_models.dart';
 import 'package:onepanel_client/features/processes/services/process_service.dart';
 
-class ProcessDetailProvider extends ChangeNotifier with AsyncStateNotifier {
+class ProcessDetailProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   ProcessDetailProvider({
     ProcessService? service,
   }) : _service = service ?? ProcessService();

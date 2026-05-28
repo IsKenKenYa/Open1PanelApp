@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/ai/agent_models.dart';
 
@@ -21,7 +22,7 @@ class AgentChannelSnapshot {
   final String policy;
 }
 
-class AgentsProvider extends ChangeNotifier {
+class AgentsProvider extends ChangeNotifier with SafeChangeNotifier {
   AgentsProvider({AgentsRepository? repository})
       : _repository = repository ?? AgentsRepository();
 

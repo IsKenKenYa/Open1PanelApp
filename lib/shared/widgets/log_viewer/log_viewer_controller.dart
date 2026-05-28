@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,7 +124,7 @@ class LogSettings {
   }
 }
 
-class LogViewerController extends ChangeNotifier {
+class LogViewerController extends ChangeNotifier with SafeChangeNotifier {
   static const _storageKey = 'log_viewer_settings';
 
   List<LogLine> _logs = [];

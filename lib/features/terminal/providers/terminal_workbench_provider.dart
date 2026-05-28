@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
@@ -12,7 +13,7 @@ import 'package:onepanel_client/features/terminal/models/terminal_runtime_models
 import 'package:onepanel_client/features/terminal/services/terminal_runtime_session.dart';
 import 'package:onepanel_client/features/terminal/services/terminal_workbench_service.dart';
 
-class TerminalWorkbenchProvider extends ChangeNotifier with AsyncStateNotifier {
+class TerminalWorkbenchProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   TerminalWorkbenchProvider({
     TerminalWorkbenchService? service,
   }) : _service = service ?? TerminalWorkbenchService();

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/app_models.dart';
@@ -8,7 +9,7 @@ import 'package:onepanel_client/features/backups/models/backup_recover_args.dart
 import 'package:onepanel_client/features/backups/models/backup_recover_source.dart';
 import 'package:onepanel_client/features/backups/services/backup_recover_service.dart';
 
-class BackupRecoverProvider extends ChangeNotifier with AsyncStateNotifier {
+class BackupRecoverProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   BackupRecoverProvider({
     BackupRecoverService? service,
   }) : _service = service ?? BackupRecoverService();

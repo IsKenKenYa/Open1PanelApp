@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/runtime_models.dart';
 import 'package:onepanel_client/features/runtimes/models/runtime_manage_args.dart';
 import 'package:onepanel_client/features/runtimes/services/php_runtime_service.dart';
 
-class PhpSupervisorProvider extends ChangeNotifier with AsyncStateNotifier {
+class PhpSupervisorProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   PhpSupervisorProvider({
     PhpRuntimeService? service,
   }) : _service = service ?? PhpRuntimeService();

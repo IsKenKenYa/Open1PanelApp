@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/backup_account_models.dart';
 import 'package:onepanel_client/features/backups/models/backup_account_form_args.dart';
 import 'package:onepanel_client/features/backups/services/backup_account_service.dart';
 
-class BackupAccountsProvider extends ChangeNotifier with AsyncStateNotifier {
+class BackupAccountsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   BackupAccountsProvider({
     BackupAccountService? service,
   }) : _service = service ?? BackupAccountService();

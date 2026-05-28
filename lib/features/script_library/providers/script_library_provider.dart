@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
@@ -7,7 +8,7 @@ import 'package:onepanel_client/data/models/script_library_models.dart';
 import 'package:onepanel_client/data/models/system_group_models.dart';
 import 'package:onepanel_client/features/script_library/services/script_library_service.dart';
 
-class ScriptLibraryProvider extends ChangeNotifier with AsyncStateNotifier {
+class ScriptLibraryProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   ScriptLibraryProvider({
     ScriptLibraryService? service,
   }) : _service = service ?? ScriptLibraryService();

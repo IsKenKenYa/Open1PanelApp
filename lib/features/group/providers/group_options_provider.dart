@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/system_group_models.dart';
 import 'package:onepanel_client/features/group/services/group_service.dart';
 
-class GroupOptionsProvider extends ChangeNotifier with AsyncStateNotifier {
+class GroupOptionsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   GroupOptionsProvider({
     GroupService? service,
   }) : _service = service ?? GroupService();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/security/app_local_auth_service.dart';
 import 'package:onepanel_client/core/security/app_lock_settings_store.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
@@ -6,7 +7,7 @@ import 'package:onepanel_client/core/services/logger/logger_service.dart';
 const String _appLockControllerPackage =
     'features.security.app_lock_controller';
 
-class AppLockController extends ChangeNotifier {
+class AppLockController extends ChangeNotifier with SafeChangeNotifier {
   AppLockController({
     AppLockSettingsStore? settingsStore,
     AppLocalAuthService? localAuthService,

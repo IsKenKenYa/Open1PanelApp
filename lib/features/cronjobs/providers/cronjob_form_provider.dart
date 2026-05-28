@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
@@ -11,7 +12,7 @@ import 'package:onepanel_client/features/cronjobs/models/cronjob_form_args.dart'
 import 'package:onepanel_client/features/cronjobs/models/cronjob_form_draft.dart';
 import 'package:onepanel_client/features/cronjobs/services/cronjob_form_service.dart';
 
-class CronjobFormProvider extends ChangeNotifier with AsyncStateNotifier {
+class CronjobFormProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   CronjobFormProvider({
     CronjobFormService? service,
   }) : _service = service ?? CronjobFormService();

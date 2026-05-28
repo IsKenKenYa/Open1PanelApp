@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/data/models/openresty_models.dart';
@@ -8,7 +9,7 @@ import 'package:onepanel_client/shared/security_gateway/security_gateway_snapsho
 
 part 'openresty_provider_operations.dart';
 
-class OpenRestyProvider extends ChangeNotifier {
+class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
   OpenRestyProvider({
     OpenRestyService? service,
     SecurityGatewaySnapshotStore? snapshotStore,

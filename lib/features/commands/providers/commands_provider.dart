@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
@@ -7,7 +8,7 @@ import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/system_group_models.dart';
 import 'package:onepanel_client/features/commands/services/command_service.dart';
 
-class CommandsProvider extends ChangeNotifier with AsyncStateNotifier {
+class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   CommandsProvider({
     CommandService? service,
   }) : _service = service ?? CommandService();

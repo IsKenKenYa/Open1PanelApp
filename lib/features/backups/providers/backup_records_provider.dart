@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
@@ -6,7 +7,7 @@ import 'package:onepanel_client/features/backups/models/backup_records_args.dart
 import 'package:onepanel_client/features/backups/models/backup_record_list_item.dart';
 import 'package:onepanel_client/features/backups/services/backup_record_service.dart';
 
-class BackupRecordsProvider extends ChangeNotifier with AsyncStateNotifier {
+class BackupRecordsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   BackupRecordsProvider({
     BackupRecordService? service,
   }) : _service = service ?? BackupRecordService();

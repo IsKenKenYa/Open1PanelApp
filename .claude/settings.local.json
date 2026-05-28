@@ -19,7 +19,10 @@
       "Bash(flutter test *)",
       "Bash(dart run *)",
       "Bash(gh pr *)",
-      "Bash(find *)"
+      "Bash(find *)",
+      "Bash(grep \"\\\\.dart$\")",
+      "Bash(flutter build *)",
+      "Bash(hflutter build *)"
     ],
     "deny": [],
     "ask": []

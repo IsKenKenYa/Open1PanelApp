@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/ssl_models.dart';
 import 'package:onepanel_client/features/openresty/services/openresty_service.dart';
 import 'package:onepanel_client/features/settings/panel_ssl/services/panel_ssl_service.dart';
@@ -13,7 +14,7 @@ enum SecurityGatewaySection {
   openresty,
 }
 
-class SecurityGatewayCenterProvider extends ChangeNotifier {
+class SecurityGatewayCenterProvider extends ChangeNotifier with SafeChangeNotifier {
   SecurityGatewayCenterProvider({
     this.initialWebsiteId,
     PanelSslService? panelSslService,

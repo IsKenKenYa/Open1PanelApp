@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ModuleSubnavController extends ChangeNotifier {
+class ModuleSubnavController extends ChangeNotifier with SafeChangeNotifier {
   ModuleSubnavController({
     required this.storageKey,
     required this.defaultOrder,

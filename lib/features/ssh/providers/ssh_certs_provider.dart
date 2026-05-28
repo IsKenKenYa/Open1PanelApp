@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/ssh_cert_models.dart';
 import 'package:onepanel_client/features/ssh/services/ssh_service.dart';
 
-class SshCertsProvider extends ChangeNotifier with AsyncStateNotifier {
+class SshCertsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   SshCertsProvider({
     SSHService? service,
   }) : _service = service ?? SSHService();

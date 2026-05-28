@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/common_models.dart';
 import '../../../data/models/firewall_models.dart';
 import '../firewall_service.dart';
 
-class FirewallRuleListProvider extends ChangeNotifier {
+class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
   FirewallRuleListProvider({
     this.type,
     this.useFilterApi = false,
@@ -383,7 +384,7 @@ class FirewallPortsProvider extends FirewallRuleListProvider {
   FirewallPortsProvider({super.service}) : super(type: 'port');
 }
 
-class FirewallRuleFormProvider extends ChangeNotifier {
+class FirewallRuleFormProvider extends ChangeNotifier with SafeChangeNotifier {
   FirewallRuleFormProvider({FirewallServiceInterface? service})
       : _service = service ?? FirewallService();
 

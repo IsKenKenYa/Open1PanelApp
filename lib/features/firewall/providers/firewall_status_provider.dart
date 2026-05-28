@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../firewall_service.dart';
 import '../../../data/models/firewall_models.dart';
 
-class FirewallStatusProvider extends ChangeNotifier {
+class FirewallStatusProvider extends ChangeNotifier with SafeChangeNotifier {
   FirewallStatusProvider({FirewallServiceInterface? service})
       : _service = service ?? FirewallService();
 

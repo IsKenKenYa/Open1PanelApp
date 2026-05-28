@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/features/settings/panel_ssl/services/panel_ssl_service.dart';
 import 'package:onepanel_client/shared/security_gateway/models/security_gateway_models.dart';
 import 'package:onepanel_client/shared/security_gateway/utils/security_gateway_utils.dart';
@@ -23,7 +24,7 @@ class PanelSslHistoryEntry {
   final int? bytes;
 }
 
-class PanelSslProvider extends ChangeNotifier {
+class PanelSslProvider extends ChangeNotifier with SafeChangeNotifier {
   final PanelSslService _service;
 
   PanelSslProvider({PanelSslService? service})

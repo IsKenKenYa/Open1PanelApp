@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
@@ -18,7 +19,7 @@ enum RetryDownloadTaskWithNewAuthResult {
 }
 
 @pragma('vm:entry-point')
-class TransferManager extends ChangeNotifier {
+class TransferManager extends ChangeNotifier with SafeChangeNotifier {
   static final TransferManager _instance = TransferManager._internal();
   @pragma('vm:entry-point')
   factory TransferManager() => _instance;

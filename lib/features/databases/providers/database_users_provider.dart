@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
 import 'package:onepanel_client/features/databases/services/database_user_service.dart';
 
@@ -16,7 +17,7 @@ class DatabaseUsersState {
   final DatabaseUserContext? context;
 }
 
-class DatabaseUsersProvider extends ChangeNotifier {
+class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
   DatabaseUsersProvider({
     required this.item,
     DatabaseUserService? service,

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/backup_account_models.dart'
     as backup;
 import 'package:onepanel_client/data/models/common_models.dart';
@@ -21,7 +22,7 @@ class DatabaseBackupState {
   List<backup.BackupRecord> get items => page.items;
 }
 
-class DatabaseBackupProvider extends ChangeNotifier {
+class DatabaseBackupProvider extends ChangeNotifier with SafeChangeNotifier {
   DatabaseBackupProvider({
     required this.item,
     DatabaseBackupService? service,

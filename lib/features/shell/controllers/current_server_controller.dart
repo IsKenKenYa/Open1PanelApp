@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/config/api_config.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 
-class CurrentServerController extends ChangeNotifier {
+class CurrentServerController extends ChangeNotifier with SafeChangeNotifier {
   bool _isLoading = false;
   List<ApiConfig> _servers = const [];
   ApiConfig? _currentServer;

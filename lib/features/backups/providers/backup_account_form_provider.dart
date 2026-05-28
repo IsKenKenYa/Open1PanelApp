@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,7 @@ import 'package:onepanel_client/features/backups/models/backup_account_form_args
 import 'package:onepanel_client/features/backups/services/backup_account_service.dart';
 import 'package:onepanel_client/features/backups/services/backup_oauth_callback_service.dart';
 
-class BackupAccountFormProvider extends ChangeNotifier with AsyncStateNotifier {
+class BackupAccountFormProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   BackupAccountFormProvider({
     BackupAccountService? service,
     BackupOauthCallbackService? callbackService,

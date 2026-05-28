@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/runtime_models.dart';
@@ -8,7 +9,7 @@ import 'package:onepanel_client/features/runtimes/services/php_runtime_service.d
 part 'php_config_provider_deep.dart';
 part 'php_config_provider_deep_save.dart';
 
-class PhpConfigProvider extends ChangeNotifier with AsyncStateNotifier {
+class PhpConfigProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   PhpConfigProvider({
     PhpRuntimeService? service,
   }) : _service = service ?? PhpRuntimeService();

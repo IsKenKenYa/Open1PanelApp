@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/theme/ui_render_mode.dart';
 
-class AppSettingsController extends ChangeNotifier {
+class AppSettingsController extends ChangeNotifier with SafeChangeNotifier {
   AppSettingsController({AppPreferencesService? preferencesService})
       : _preferencesService = preferencesService ?? AppPreferencesService();
 

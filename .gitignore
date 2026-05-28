@@ -121,3 +121,4 @@ coverage/
 !/dev/ci/**/Gemfile.lock
 test_output.txt
 key/
+graphify-out/

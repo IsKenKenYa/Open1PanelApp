@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/passkey_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/auth_models.dart';
@@ -12,7 +13,7 @@ enum AuthStatus {
   mfaRequired
 }
 
-class AuthProvider extends ChangeNotifier {
+class AuthProvider extends ChangeNotifier with SafeChangeNotifier {
   AuthProvider({
     AuthService? service,
     PasskeyService? passkeyService,

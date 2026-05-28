@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/host_asset_models.dart';
@@ -7,7 +8,7 @@ import 'package:onepanel_client/data/models/system_group_models.dart';
 import 'package:onepanel_client/features/host_assets/models/host_asset_test_state.dart';
 import 'package:onepanel_client/features/host_assets/services/host_asset_service.dart';
 
-class HostAssetsProvider extends ChangeNotifier with AsyncStateNotifier {
+class HostAssetsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   HostAssetsProvider({
     HostAssetService? service,
   }) : _service = service ?? HostAssetService();

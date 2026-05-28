@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/features/settings/settings_service.dart';
 import 'package:onepanel_client/api/v2/setting_v2.dart' as api;
 
-class MenuSettingsProvider extends ChangeNotifier {
+class MenuSettingsProvider extends ChangeNotifier with SafeChangeNotifier {
   MenuSettingsProvider({SettingsService? service})
       : _service = service ?? SettingsService();
 

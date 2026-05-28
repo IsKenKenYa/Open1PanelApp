@@ -283,6 +283,13 @@ appLogger.d('[auth.service] 这是一条调试信息');
 - CN: 原生 UI 门禁失败必须阻断推进。EN: Native UI gate failures must block progression.
 - CN: 回归基线使用 `dart run test/scripts/test_runner.dart all`。EN: Regression baseline uses `dart run test/scripts/test_runner.dart all`.
 
+## Knowledge Graph (graphify)
+- 项目知识图谱可通过 `graphify .` 生成，输出在 `graphify-out/` 目录（已 gitignore）
+- 查询图谱：`graphify query "问题"` — 比逐文件搜索快 100x+，返回结构化上下文
+- 路径查找：`graphify path "模块A" "模块B"` — 追踪模块间依赖链
+- 增量更新：`graphify . --update` — 仅处理变更文件
+- 代码问题优先用图谱查询，再回退到文件搜索
+
 ## Skills & MCP (agent-memory-mcp)
 - CN: 重大架构/约定/踩坑需要 `memory_write` 写入知识库（type: `decision`/`pattern`）。EN: Record key architecture decisions/patterns via `memory_write` (type: `decision`/`pattern`).
 - CN: 实施前先 `memory_search` 检索已有决策。EN: Use `memory_search` before implementation.
