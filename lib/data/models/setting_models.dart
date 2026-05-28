@@ -856,27 +856,6 @@ class SettingsImport extends Equatable {
 
 // ==================== MFA相关模型 ====================
 
-/// MFA凭证
-@JsonSerializable()
-class MfaCredential extends Equatable {
-  final String code;
-  final int interval;
-  final String secret;
-
-  const MfaCredential({
-    required this.code,
-    this.interval = 30,
-    required this.secret,
-  });
-
-  factory MfaCredential.fromJson(Map<String, dynamic> json) =>
-      _$MfaCredentialFromJson(json);
-  Map<String, dynamic> toJson() => _$MfaCredentialToJson(this);
-
-  @override
-  List<Object?> get props => [code, interval, secret];
-}
-
 /// MFA加载请求
 @JsonSerializable()
 class MfaLoadRequest extends Equatable {

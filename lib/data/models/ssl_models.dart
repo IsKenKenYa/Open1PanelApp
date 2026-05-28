@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 export 'package:onepanel_client/data/models/ssl_detail_models.dart';
+export 'package:onepanel_client/data/models/website_ssl_crud_models.dart';
 
 /// SSL certificate type enumeration
 enum SSLCertificateType {

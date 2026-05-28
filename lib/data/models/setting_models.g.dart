@@ -454,20 +454,6 @@ Map<String, dynamic> _$SettingsImportToJson(SettingsImport instance) =>
       'overwrite': instance.overwrite,
     };
 
-MfaCredential _$MfaCredentialFromJson(Map<String, dynamic> json) =>
-    MfaCredential(
-      code: json['code'] as String,
-      interval: (json['interval'] as num?)?.toInt() ?? 30,
-      secret: json['secret'] as String,
-    );
-
-Map<String, dynamic> _$MfaCredentialToJson(MfaCredential instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'interval': instance.interval,
-      'secret': instance.secret,
-    };
-
 MfaLoadRequest _$MfaLoadRequestFromJson(Map<String, dynamic> json) =>
     MfaLoadRequest(
       title: json['title'] as String,

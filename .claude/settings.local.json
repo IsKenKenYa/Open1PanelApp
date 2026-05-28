@@ -23,7 +23,8 @@
       "Bash(grep \"\\\\.dart$\")",
       "Bash(flutter build *)",
       "Bash(hflutter build *)",
-      "Bash(graphify query *)"
+      "Bash(graphify query *)",
+      "Bash(grep *)"
     ],
     "deny": [],
     "ask": []

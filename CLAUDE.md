@@ -28,7 +28,7 @@ EN: Read `AGENTS.md` first for mandatory rules, then `CLAUDE.md` for project det
 
 ### Current Implementation Status
 - ✅ **AI Management Module**: Complete (Ollama models, GPU monitoring, domain binding)
-- ✅ **Complete API Coverage**: All 34 V2 API modules with 425+ endpoints
+- ✅ **Complete API Coverage**: All 33 V2 API modules with 425+ endpoints
 - ✅ **Data Models**: 60+ comprehensive model files with JSON serialization
 - ✅ **Server Configuration**: Multi-server support with API key authentication
 - ✅ **Core Infrastructure**: Logging with IP masking, i18n (EN/ZH), navigation, Material Design 3
@@ -39,7 +39,7 @@ EN: Read `AGENTS.md` first for mandatory rules, then `CLAUDE.md` for project det
 - ✅ **Dashboard**: Real-time system monitoring with CPU, memory, disk, network I/O
 - ✅ **Shell Architecture**: Adaptive shell with module switching and server-aware navigation
 - ✅ **HarmonyOS Support**: Full platform adaptation via Flutter-OH bridge
-- ✅ **34 Feature Modules**: Complete feature coverage across all 1Panel V2 API modules
+- ✅ **33 Feature Modules**: Complete feature coverage across all 1Panel V2 API modules
 
 ## Development Commands
 
@@ -110,7 +110,7 @@ The project follows **Layered Architecture with MVVM** and clean separation of c
 ```
 
 ### Key Technologies
-- **Flutter**: 3.16+ with Material Design 3
+- **Flutter**: 3.22+ with Material Design 3
 - **State Management**: Provider pattern (ChangeNotifier)
 - **Networking**: Dio + Retrofit for type-safe HTTP clients
 - **Storage**: Flutter Secure Storage + SharedPreferences
@@ -210,7 +210,7 @@ lib/
 ├── data/               # Data layer
 │   ├── models/         # Data models with JSON serialization
 │   └── repositories/   # Data repositories
-├── features/           # 34 feature modules
+├── features/           # 33 feature modules
 │   ├── ai/             # AI management
 │   ├── apps/           # App store
 │   ├── auth/           # Authentication

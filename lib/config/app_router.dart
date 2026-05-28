@@ -21,7 +21,6 @@ import 'package:onepanel_client/features/server/server_form_page.dart';
 import 'package:onepanel_client/features/server/server_list_page.dart';
 import 'package:onepanel_client/features/server/server_models.dart';
 import 'package:onepanel_client/features/security/security_verification_page.dart';
-import 'package:onepanel_client/features/security/app_lock_controller.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/ui/routing/ui_route_host.dart';
@@ -165,775 +164,11 @@ class AppRouter {
       return registryRoute;
     }
 
-    switch (settings.name) {
-      case AppRoutes.splash:
-        return MaterialPageRoute(builder: (_) => const SplashPage());
-      case AppRoutes.onboarding:
-        return MaterialPageRoute(builder: (_) => const OnboardingPage());
-      case AppRoutes.home:
-        return MaterialPageRoute(
-          builder: (_) => UiRouteHost(settings: settings),
-        );
-      case AppRoutes.server:
-      case AppRoutes.serverSelection:
-        return MaterialPageRoute(
-            builder: (_) => const ServerListPage(enableCoach: false));
-      case AppRoutes.serverConfig:
-        return MaterialPageRoute(builder: (_) => const ServerFormPage());
-      case AppRoutes.serverDetail:
-        final arg = settings.arguments;
-        if (arg is ServerCardViewModel) {
-          return MaterialPageRoute(
-              builder: (_) => ServerDetailPage(server: arg));
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.files:
-        return MaterialPageRoute(
-          builder: (_) => const UiRouteHost(
-            settings: RouteSettings(
-              name: AppRoutes.home,
-              arguments: {'tab': 1, 'module': 'files'},
-            ),
-          ),
-        );
-      case AppRoutes.databases:
-        return MaterialPageRoute(builder: (_) => const DatabasesPage());
-      case AppRoutes.databaseDetail:
-        final arg = settings.arguments;
-        if (arg is DatabaseListItem) {
-          return MaterialPageRoute(
-            builder: (_) => DatabaseDetailPage(item: arg),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.databaseForm:
-        final arg = settings.arguments;
-        final scope = arg is Map<String, dynamic>
-            ? _readDatabaseScope(arg['scope'])
-            : DatabaseScope.mysql;
-        return MaterialPageRoute(
-          builder: (_) => DatabaseFormPage(initialScope: scope),
-        );
-      case AppRoutes.databaseRemote:
-        return MaterialPageRoute(builder: (_) => const DatabaseRemotePage());
-      case AppRoutes.databaseRedisConfig:
-        final arg = settings.arguments;
-        if (arg is DatabaseListItem) {
-          return MaterialPageRoute(
-            builder: (_) => DatabaseRedisPage(item: arg),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.databaseBackups:
-        final backupArg = settings.arguments;
-        if (backupArg is DatabaseListItem) {
-          return MaterialPageRoute(
-            builder: (_) => DatabaseBackupPage(item: backupArg),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.databaseUsers:
-        final userArg = settings.arguments;
-        if (userArg is DatabaseListItem) {
-          return MaterialPageRoute(
-            builder: (_) => DatabaseUsersPage(item: userArg),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.firewall:
-        return MaterialPageRoute(builder: (_) => const FirewallPage());
-      case AppRoutes.firewallRules:
-        return MaterialPageRoute(
-          builder: (_) => const FirewallPage(initialTab: 1),
-        );
-      case AppRoutes.firewallIps:
-        return MaterialPageRoute(
-          builder: (_) => const FirewallPage(initialTab: 2),
-        );
-      case AppRoutes.firewallPorts:
-        return MaterialPageRoute(
-          builder: (_) => const FirewallPage(initialTab: 3),
-        );
-      case AppRoutes.firewallRuleForm:
-        final arg = settings.arguments;
-        if (arg is FirewallRuleFormArguments) {
-          return MaterialPageRoute(
-            builder: (_) => FirewallRuleFormPage(arguments: arg),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.terminal:
-        return MaterialPageRoute(builder: (_) => const TerminalPage());
-      case AppRoutes.monitoring:
-        return MaterialPageRoute(builder: (_) => const MonitoringPage());
-      case AppRoutes.dashboard:
-        return MaterialPageRoute(
-          builder: (_) => const UiRouteHost(
-            settings: RouteSettings(
-              name: AppRoutes.home,
-              arguments: {'tab': 0, 'module': 'servers'},
-            ),
-          ),
-        );
-      case AppRoutes.securityVerification:
-        return MaterialPageRoute(
-          builder: (_) => const SecurityVerificationPage(),
-        );
-      case AppRoutes.settings:
-        return MaterialPageRoute(builder: (_) => const SettingsPage());
-      case AppRoutes.settingsLanguage:
-        return MaterialPageRoute(
-          builder: (_) => const LanguageSettingsPage(),
-        );
-      case AppRoutes.settingsFeedbackCenter:
-        return MaterialPageRoute(
-          builder: (_) => const FeedbackCenterPage(),
-        );
-      case AppRoutes.settingsLegalCenter:
-        return MaterialPageRoute(
-          builder: (_) => const LegalCenterPage(),
-        );
-      case AppRoutes.settingsMainlandSdkDisclosure:
-        return MaterialPageRoute(
-          builder: (_) => const MainlandSdkDisclosurePage(),
-        );
-      case AppRoutes.systemSettings:
-        return MaterialPageRoute(builder: (_) => const SystemSettingsPage());
-      case AppRoutes.menuSettings:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<MenuSettingsProvider>(
-            create: (_) => MenuSettingsProvider(),
-            child: const MenuSettingsPage(),
-          ),
-        );
-
-      case AppRoutes.appStore:
-        return MaterialPageRoute(
-            builder: (_) => const AppsPage(initialTabIndex: 1));
-
-      case AppRoutes.appDetail:
-        final arg = settings.arguments;
-        if (arg is AppItem) {
-          return MaterialPageRoute(builder: (_) => AppDetailPage(app: arg));
-        } else if (arg is Map<String, dynamic>) {
-          final appItem = AppItem(
-            id: int.tryParse(arg['appId']?.toString() ?? ''),
-            key: arg['key'] as String?,
-            versions:
-                arg['version'] != null ? [arg['version'] as String] : null,
-            type: arg['type'] as String?,
-          );
-          return MaterialPageRoute(builder: (_) => AppDetailPage(app: appItem));
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-
-      case AppRoutes.installedAppDetail:
-        final arg = settings.arguments;
-        if (arg is AppInstallInfo) {
-          return MaterialPageRoute(
-              builder: (_) => InstalledAppDetailPage(appInfo: arg));
-        } else if (arg is Map<String, dynamic> && arg.containsKey('appId')) {
-          return MaterialPageRoute(
-              builder: (_) =>
-                  InstalledAppDetailPage(appId: arg['appId'] as String));
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-
-      case AppRoutes.containerDetail:
-        final arg = settings.arguments;
-        if (arg is ContainerInfo) {
-          return MaterialPageRoute(
-              builder: (_) => ContainerDetailPage(container: arg));
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-
-      case AppRoutes.ai:
-        return MaterialPageRoute(
-          builder: (_) => MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: (_) => AIProvider()),
-              ChangeNotifierProvider(create: (_) => AgentsProvider()),
-              ChangeNotifierProvider(create: (_) => McpServerProvider()),
-            ],
-            child: const AIPage(),
-          ),
-        );
-
-      case AppRoutes.orchestration:
-        return MaterialPageRoute(builder: (_) => const OrchestrationPage());
-      case AppRoutes.websites:
-        return MaterialPageRoute(builder: (_) => const WebsitesPage());
-
-      case AppRoutes.websiteCreate:
-        return MaterialPageRoute(builder: (_) => const WebsiteCreateFlowPage());
-
-      case AppRoutes.websiteEdit:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteCreateFlowPage.edit(websiteId: websiteId),
-          );
-        }
-
-      case AppRoutes.websiteDetail:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteDetailPage(websiteId: websiteId),
-          );
-        }
-
-      case AppRoutes.websiteConfigCenter:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteConfigCenterPage(
-              websiteId: websiteId,
-              displayName: arg['displayName'] as String?,
-            ),
-          );
-        }
-
-      case AppRoutes.websiteRoutingRules:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteRoutingRulesPage(
-              websiteId: websiteId,
-              displayName: arg['displayName'] as String?,
-            ),
-          );
-        }
-
-      case AppRoutes.websiteSecurityAccess:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteSecurityAccessPage(
-              websiteId: websiteId,
-              displayName: arg['displayName'] as String?,
-            ),
-          );
-        }
-
-      case AppRoutes.websiteDomains:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteDomainPage(
-              websiteId: websiteId,
-              primaryDomain: arg['primaryDomain'] as String?,
-            ),
-          );
-        }
-
-      case AppRoutes.websiteSiteSsl:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final websiteId = arg['websiteId'] as int?;
-          if (websiteId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) => WebsiteSiteSslPage(
-              websiteId: websiteId,
-              displayName: arg['displayName'] as String?,
-            ),
-          );
-        }
-
-      case AppRoutes.websiteSslCenter:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          return MaterialPageRoute(
-            builder: (_) => WebsiteSslCenterPage(
-              initialWebsiteId: arg['websiteId'] as int?,
-            ),
-          );
-        }
-
-      case AppRoutes.websiteCertificateDetail:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          final certificateId = arg['certificateId'] as int?;
-          if (certificateId == null) {
-            return MaterialPageRoute(builder: (_) => const NotFoundPage());
-          }
-          return MaterialPageRoute(
-            builder: (_) =>
-                WebsiteCertificateDetailPage(certificateId: certificateId),
-          );
-        }
-
-      case AppRoutes.panelSsl:
-        return MaterialPageRoute(builder: (_) => const SslSettingsPage());
-
-      case AppRoutes.operations:
-        return MaterialPageRoute(builder: (_) => const OperationsCenterPage());
-      case AppRoutes.groupCenter:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<GroupCenterProvider>(
-            create: (_) => GroupCenterProvider(),
-            child: const GroupCenterPage(),
-          ),
-        );
-
-      case AppRoutes.toolbox:
-        return MaterialPageRoute(builder: (_) => const ToolboxCenterPage());
-
-      case AppRoutes.toolboxDevice:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ToolboxDeviceProvider>(
-            create: (_) => ToolboxDeviceProvider(),
-            child: const ToolboxDevicePage(),
-          ),
-        );
-      case AppRoutes.toolboxDisk:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ToolboxDiskProvider>(
-            create: (_) => ToolboxDiskProvider(),
-            child: const ToolboxDiskPage(),
-          ),
-        );
-
-      case AppRoutes.toolboxClam:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ToolboxClamProvider>(
-            create: (_) => ToolboxClamProvider(),
-            child: const ToolboxClamPage(),
-          ),
-        );
-
-      case AppRoutes.toolboxFail2ban:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ToolboxFail2banProvider>(
-            create: (_) => ToolboxFail2banProvider(),
-            child: const ToolboxFail2banPage(),
-          ),
-        );
-
-      case AppRoutes.toolboxFtp:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ToolboxFtpProvider>(
-            create: (_) => ToolboxFtpProvider(),
-            child: const ToolboxFtpPage(),
-          ),
-        );
-      case AppRoutes.toolboxHostTool:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ToolboxHostToolProvider>(
-            create: (_) => ToolboxHostToolProvider(),
-            child: const ToolboxHostToolPage(),
-          ),
-        );
-
-      case AppRoutes.commands:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<CommandsProvider>(
-            create: (_) => CommandsProvider(),
-            child: const CommandsPage(),
-          ),
-        );
-      case AppRoutes.commandForm:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<CommandFormProvider>(
-            create: (context) {
-              final provider = CommandFormProvider();
-              final currentServer = Provider.of<CurrentServerController?>(
-                context,
-                listen: false,
-              );
-              if (currentServer?.hasServer ?? false) {
-                provider.initialize(
-                  CommandFormArgs(
-                    initialValue: settings.arguments as CommandInfo?,
-                  ),
-                );
-              }
-              return provider;
-            },
-            child: CommandFormPage(
-              args: CommandFormArgs(
-                initialValue: settings.arguments as CommandInfo?,
-              ),
-            ),
-          ),
-        );
-      case AppRoutes.hostAssets:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<HostAssetsProvider>(
-            create: (_) => HostAssetsProvider(),
-            child: const HostAssetsPage(),
-          ),
-        );
-      case AppRoutes.hostAssetForm:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<HostAssetFormProvider>(
-            create: (context) {
-              final provider = HostAssetFormProvider();
-              final currentServer = Provider.of<CurrentServerController?>(
-                context,
-                listen: false,
-              );
-              if (currentServer?.hasServer ?? false) {
-                provider.initialize(
-                  HostAssetFormArgs(
-                    initialValue: settings.arguments as HostInfo?,
-                  ),
-                );
-              }
-              return provider;
-            },
-            child: HostAssetFormPage(
-              args: HostAssetFormArgs(
-                initialValue: settings.arguments as HostInfo?,
-              ),
-            ),
-          ),
-        );
-      case AppRoutes.ssh:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<SshSettingsProvider>(
-            create: (_) => SshSettingsProvider(),
-            child: const SshSettingsPage(),
-          ),
-        );
-      case AppRoutes.sshCerts:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<SshCertsProvider>(
-            create: (_) => SshCertsProvider(),
-            child: const SshCertsPage(),
-          ),
-        );
-      case AppRoutes.sshLogs:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<SshLogsProvider>(
-            create: (_) => SshLogsProvider(),
-            child: const SshLogsPage(),
-          ),
-        );
-      case AppRoutes.sshSessions:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<SshSessionsProvider>(
-            create: (_) => SshSessionsProvider(),
-            child: const SshSessionsPage(),
-          ),
-        );
-      case AppRoutes.processes:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ProcessesProvider>(
-            create: (_) => ProcessesProvider(),
-            child: const ProcessesPage(),
-          ),
-        );
-      case AppRoutes.processDetail:
-        final arg = settings.arguments;
-        if (arg is int) {
-          return MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider<ProcessDetailProvider>(
-              create: (_) => ProcessDetailProvider(),
-              child: ProcessDetailPage(pid: arg),
-            ),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.cronjobs:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<CronjobsProvider>(
-            create: (_) => CronjobsProvider(),
-            child: const CronjobsPage(),
-          ),
-        );
-      case AppRoutes.cronjobForm:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<CronjobFormProvider>(
-            create: (context) {
-              final provider = CronjobFormProvider();
-              final currentServer = Provider.of<CurrentServerController?>(
-                context,
-                listen: false,
-              );
-              if (currentServer?.hasServer ?? false) {
-                provider.initialize(
-                  settings.arguments as CronjobFormArgs? ??
-                      const CronjobFormArgs(),
-                );
-              }
-              return provider;
-            },
-            child: CronjobFormPage(
-              args: settings.arguments as CronjobFormArgs? ??
-                  const CronjobFormArgs(),
-            ),
-          ),
-        );
-      case AppRoutes.cronjobRecords:
-        final cronjobRecordArg = settings.arguments;
-        if (cronjobRecordArg is CronjobRecordsArgs) {
-          return MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider<CronjobRecordsProvider>(
-              create: (_) => CronjobRecordsProvider(),
-              child: CronjobRecordsPage(args: cronjobRecordArg),
-            ),
-          );
-        }
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-      case AppRoutes.scripts:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<ScriptLibraryProvider>(
-            create: (_) => ScriptLibraryProvider(),
-            child: const ScriptLibraryPage(),
-          ),
-        );
-      case AppRoutes.backups:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<BackupAccountsProvider>(
-            create: (_) => BackupAccountsProvider(),
-            child: const BackupAccountsPage(),
-          ),
-        );
-      case AppRoutes.backupAccountForm:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<BackupAccountFormProvider>(
-            create: (context) {
-              final provider = BackupAccountFormProvider();
-              final currentServer = Provider.of<CurrentServerController?>(
-                context,
-                listen: false,
-              );
-              if (currentServer?.hasServer ?? false) {
-                provider.initialize(
-                  settings.arguments as BackupAccountFormArgs? ??
-                      const BackupAccountFormArgs(),
-                );
-              }
-              return provider;
-            },
-            child: BackupAccountFormPage(
-              args: settings.arguments as BackupAccountFormArgs? ??
-                  const BackupAccountFormArgs(),
-            ),
-          ),
-        );
-      case AppRoutes.backupRecords:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<BackupRecordsProvider>(
-            create: (_) => BackupRecordsProvider(),
-            child: BackupRecordsPage(
-              args: settings.arguments as BackupRecordsArgs? ??
-                  const BackupRecordsArgs(),
-            ),
-          ),
-        );
-      case AppRoutes.backupRecover:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<BackupRecoverProvider>(
-            create: (_) => BackupRecoverProvider(),
-            child: BackupRecoverPage(
-              args: settings.arguments as BackupRecoverArgs? ??
-                  const BackupRecoverArgs(),
-            ),
-          ),
-        );
-      case AppRoutes.logs:
-        return MaterialPageRoute(
-          builder: (_) => MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LogsProvider>(
-                create: (_) => LogsProvider(),
-              ),
-              ChangeNotifierProvider<TaskLogsProvider>(
-                create: (_) => TaskLogsProvider(),
-              ),
-              ChangeNotifierProvider<SystemLogsProvider>(
-                create: (_) => SystemLogsProvider(),
-              ),
-            ],
-            child: const LogsCenterPage(),
-          ),
-        );
-      case AppRoutes.systemLogViewer:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<SystemLogsProvider>(
-            create: (_) => SystemLogsProvider(),
-            child: SystemLogViewerPage(
-              args: settings.arguments as SystemLogViewerArgs? ??
-                  const SystemLogViewerArgs(),
-            ),
-          ),
-        );
-      case AppRoutes.taskLogDetail:
-        final args = settings.arguments;
-        if (args is! TaskLogDetailArgs) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<TaskLogsProvider>(
-            create: (_) => TaskLogsProvider(),
-            child: TaskLogDetailPage(args: args),
-          ),
-        );
-      case AppRoutes.runtimes:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<RuntimesProvider>(
-            create: (_) => RuntimesProvider(),
-            child: const RuntimesCenterPage(),
-          ),
-        );
-      case AppRoutes.runtimeDetail:
-        final detailArgs = settings.arguments;
-        if (detailArgs is! RuntimeDetailArgs) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<RuntimeDetailProvider>(
-            create: (_) => RuntimeDetailProvider(),
-            child: RuntimeDetailPage(args: detailArgs),
-          ),
-        );
-      case AppRoutes.runtimeForm:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<RuntimeFormProvider>(
-            create: (_) => RuntimeFormProvider(),
-            child: RuntimeFormPage(
-              args: settings.arguments as RuntimeFormArgs? ??
-                  const RuntimeFormArgs(),
-            ),
-          ),
-        );
-      case AppRoutes.phpExtensions:
-        final phpExtensionsArgs = _readRuntimeManageArgs(
-          settings.arguments,
-          runtimeKind: 'php',
-        );
-        if (phpExtensionsArgs == null) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<PhpExtensionsProvider>(
-            create: (_) => PhpExtensionsProvider(),
-            child: PhpExtensionsPage(args: phpExtensionsArgs),
-          ),
-        );
-      case AppRoutes.phpConfig:
-        final phpConfigArgs = _readRuntimeManageArgs(
-          settings.arguments,
-          runtimeKind: 'php',
-        );
-        if (phpConfigArgs == null) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<PhpConfigProvider>(
-            create: (_) => PhpConfigProvider(),
-            child: PhpConfigPage(args: phpConfigArgs),
-          ),
-        );
-      case AppRoutes.phpSupervisor:
-        final phpSupervisorArgs = _readRuntimeManageArgs(
-          settings.arguments,
-          runtimeKind: 'php',
-        );
-        if (phpSupervisorArgs == null) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<PhpSupervisorProvider>(
-            create: (_) => PhpSupervisorProvider(),
-            child: PhpSupervisorPage(args: phpSupervisorArgs),
-          ),
-        );
-      case AppRoutes.nodeModules:
-        final nodeModulesArgs = _readRuntimeManageArgs(
-          settings.arguments,
-          runtimeKind: 'node',
-        );
-        if (nodeModulesArgs == null) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<NodeModulesProvider>(
-            create: (_) => NodeModulesProvider(),
-            child: NodeModulesPage(args: nodeModulesArgs),
-          ),
-        );
-      case AppRoutes.nodeScripts:
-        final nodeScriptsArgs = _readRuntimeManageArgs(
-          settings.arguments,
-          runtimeKind: 'node',
-        );
-        if (nodeScriptsArgs == null) {
-          return MaterialPageRoute(builder: (_) => const NotFoundPage());
-        }
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<NodeScriptsProvider>(
-            create: (_) => NodeScriptsProvider(),
-            child: NodeScriptsPage(args: nodeScriptsArgs),
-          ),
-        );
-
-      case AppRoutes.openrestySourceEditor:
-        {
-          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
-          return MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider(
-              create: (_) => OpenRestyProvider()..loadAll(),
-              child: OpenRestySourceEditorPage(
-                initialContent: arg['initialContent'] as String?,
-              ),
-            ),
-          );
-        }
-
-      case AppRoutes.containers:
-        return MaterialPageRoute(
-          builder: (_) => const UiRouteHost(
-            settings: RouteSettings(
-              name: AppRoutes.home,
-              arguments: {'tab': 2, 'module': 'containers'},
-            ),
-          ),
-        );
-
-      case AppRoutes.apps:
-        return MaterialPageRoute(
-          builder: (_) => const AppsPage(),
-        );
-      case '/container-create':
-        return MaterialPageRoute(builder: (_) => const ContainerCreatePage());
-
-      case AppRoutes.openrestyCenter:
-        return MaterialPageRoute(builder: (_) => const OpenRestyPage());
-      case '/help':
-        return MaterialPageRoute(builder: (_) => const LegacyRedirectPage());
-      default:
-        return MaterialPageRoute(builder: (_) => const NotFoundPage());
-    }
+    // All routes are now served by the registry. Unknown names get 404.
+    return MaterialPageRoute(builder: (_) => const NotFoundPage());
   }
+
+  // --- legacy switch block removed; all routes served by registry ---
 
   static void _ensureRouteRegistryInitialized() {
     if (_routeRegistryInitialized) {
@@ -1102,6 +337,96 @@ class AppRouter {
             return const NotFoundPage();
           }
           return WebsiteDetailPage(websiteId: websiteId);
+        },
+      ),
+      AppRoutes.websiteConfigCenter: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteConfigCenter,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteConfigCenterPage(
+            websiteId: websiteId,
+            displayName: arg['displayName'] as String?,
+          );
+        },
+      ),
+      AppRoutes.websiteRoutingRules: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteRoutingRules,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteRoutingRulesPage(
+            websiteId: websiteId,
+            displayName: arg['displayName'] as String?,
+          );
+        },
+      ),
+      AppRoutes.websiteSecurityAccess: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteSecurityAccess,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteSecurityAccessPage(
+            websiteId: websiteId,
+            displayName: arg['displayName'] as String?,
+          );
+        },
+      ),
+      AppRoutes.websiteDomains: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteDomains,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteDomainPage(
+            websiteId: websiteId,
+            primaryDomain: arg['primaryDomain'] as String?,
+          );
+        },
+      ),
+      AppRoutes.websiteSiteSsl: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteSiteSsl,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteSiteSslPage(
+            websiteId: websiteId,
+            displayName: arg['displayName'] as String?,
+          );
+        },
+      ),
+      AppRoutes.websiteSslCenter: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteSslCenter,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          return WebsiteSslCenterPage(
+            initialWebsiteId: arg['websiteId'] as int?,
+          );
+        },
+      ),
+      AppRoutes.websiteCertificateDetail: _shellAwareModuleEntry(
+        routeName: AppRoutes.websiteCertificateDetail,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final certificateId = arg['certificateId'] as int?;
+          if (certificateId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteCertificateDetailPage(certificateId: certificateId);
         },
       ),
       AppRoutes.ai: _shellAwareModuleEntry(
