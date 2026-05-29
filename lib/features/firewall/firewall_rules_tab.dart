@@ -14,6 +14,15 @@ import 'providers/firewall_rule_list_provider.dart';
 import 'widgets/firewall_rule_list_controls_widget.dart';
 import 'widgets/firewall_tab_error.dart';
 
+String _resolveFirewallError(String error, AppLocalizations l10n) {
+  switch (error) {
+    case 'firewallForwardStrategyToggleError':
+      return l10n.firewallForwardStrategyToggleError;
+    default:
+      return error;
+  }
+}
+
 class FirewallRulesTab extends StatefulWidget {
   const FirewallRulesTab({super.key});
 
@@ -56,7 +65,7 @@ class _FirewallRulesTabState extends State<FirewallRulesTab> {
 
     if (provider.error != null && provider.items.isEmpty) {
       return FirewallTabError(
-        error: provider.error!,
+        error: _resolveFirewallError(provider.error!, context.l10n),
         onRetry: () => provider.load(),
         l10n: context.l10n,
       );

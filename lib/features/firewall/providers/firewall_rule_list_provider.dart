@@ -5,6 +5,9 @@ import '../../../data/models/common_models.dart';
 import '../../../data/models/firewall_models.dart';
 import '../firewall_service.dart';
 
+const _kForwardStrategyToggleError =
+    'firewallForwardStrategyToggleError';
+
 class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
   FirewallRuleListProvider({
     this.type,
@@ -185,7 +188,7 @@ class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
 
     final inferredType = type ?? _inferType(rule);
     if (inferredType == 'forward') {
-      _error = 'Forward rules do not support strategy toggling';
+      _error = _kForwardStrategyToggleError;
       notifyListeners();
       return false;
     }

@@ -181,7 +181,8 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                   const SizedBox(height: AppDesignTokens.spacingMd),
                   ConfigDiffPreviewCard(
                     title: l10n.websiteSiteSslStrategyDiffTitle,
-                    items: pendingDiff,
+                    items: localizeWebsiteSiteSslDiffItems(
+                        context, pendingDiff),
                     onApply: provider.isSaving
                         ? null
                         : () async {

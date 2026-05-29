@@ -176,19 +176,20 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                             : l10n.securityGatewayUnavailable),
                     _MetricRow(
                       label: l10n.securityGatewayRiskLabel,
-                      value: provider.riskNotices
-                              .where((notice) =>
-                                  notice.title == 'Panel TLS expired')
-                              .isEmpty
-                          ? l10n.securityGatewayNoPanelTlsRisk
-                          : localizeSecurityGatewayRiskNotices(
-                              context, provider.riskNotices)
-                              .firstWhere(
-                                  (notice) =>
-                                      notice.title ==
-                                      l10n
-                                          .securityGatewayRiskPanelTlsExpiredTitle)
-                              .message,
+                      value: () {
+                        final localizedNotices =
+                            localizeSecurityGatewayRiskNotices(
+                                context, provider.riskNotices);
+                        final tlsExpired = localizedNotices
+                            .where((notice) =>
+                                notice.title ==
+                                l10n
+                                    .securityGatewayRiskPanelTlsExpiredTitle)
+                            .toList();
+                        return tlsExpired.isEmpty
+                            ? l10n.securityGatewayNoPanelTlsRisk
+                            : tlsExpired.first.message;
+                      }(),
                     ),
                     _MetricRow(
                       label: l10n.securityGatewayRecentLabel,

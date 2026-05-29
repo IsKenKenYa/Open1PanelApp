@@ -9,6 +9,9 @@ List<RiskNotice> localizeSecurityGatewayRiskNotices(
 ) {
   final l10n = context.l10n;
   return notices.map((notice) {
+    // NOTE: switch keys are canonical English titles from the provider.
+    // If the provider changes these strings, the default branch will
+    // return the original (unlocalized) notice. Update both sides together.
     switch (notice.title) {
       case 'Panel TLS expired':
         return RiskNotice(

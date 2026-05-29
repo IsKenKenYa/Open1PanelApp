@@ -51,26 +51,13 @@ class ContainersPageCreateDialogs {
 
     if (result != null && context.mounted) {
       final provider = context.read<NetworkProvider>();
-      final labelsStr = result['labels'] as String? ?? '';
-      Map<String, String>? labels;
-      if (labelsStr.isNotEmpty) {
-        labels = {};
-        for (final pair in labelsStr.split(',')) {
-          final trimmed = pair.trim();
-          if (trimmed.contains('=')) {
-            final idx = trimmed.indexOf('=');
-            labels[trimmed.substring(0, idx)] = trimmed.substring(idx + 1);
-          }
-        }
-        if (labels.isEmpty) labels = null;
-      }
       final request = NetworkCreate(
         name: result['name'],
         driver: result['driver'],
         subnet: result['subnet'],
         gateway: result['gateway'],
         enableIPv6: result['enableIPv6'] as bool? ?? false,
-        labels: labels,
+        labels: _parseKeyValuePairs(result['labels'] as String? ?? ''),
         ipv4: true,
       );
       final success = await provider.createNetwork(request);
