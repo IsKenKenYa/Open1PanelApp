@@ -112,7 +112,9 @@ class _FirewallRulesTabState extends State<FirewallRulesTab> {
                                 ? null
                                 : () => _toggleFilterChainBinding(provider),
                             child: Text(
-                              provider.isFilterChainBound ? 'Unbind' : 'Bind',
+                              provider.isFilterChainBound
+                                  ? context.l10n.firewallUnbindAction
+                                  : context.l10n.firewallBindAction,
                             ),
                           ),
                         ],

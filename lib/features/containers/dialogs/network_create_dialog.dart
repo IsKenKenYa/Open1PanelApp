@@ -11,9 +11,9 @@ class NetworkCreateDialog extends StatefulWidget {
 class _NetworkCreateDialogState extends State<NetworkCreateDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _driverController = TextEditingController();
   final _subnetController = TextEditingController();
   final _gatewayController = TextEditingController();
+  final _labelsController = TextEditingController();
 
   final List<String> _drivers = [
     'bridge',
@@ -24,13 +24,14 @@ class _NetworkCreateDialogState extends State<NetworkCreateDialog> {
     'overlay'
   ];
   String _selectedDriver = 'bridge';
+  bool _enableIPv6 = false;
 
   @override
   void dispose() {
     _nameController.dispose();
-    _driverController.dispose();
     _subnetController.dispose();
     _gatewayController.dispose();
+    _labelsController.dispose();
     super.dispose();
   }
 
@@ -95,6 +96,26 @@ class _NetworkCreateDialogState extends State<NetworkCreateDialog> {
                   border: const OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 8),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.containerNetworkEnableIPv6),
+                value: _enableIPv6,
+                onChanged: (value) {
+                  setState(() {
+                    _enableIPv6 = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _labelsController,
+                decoration: InputDecoration(
+                  labelText: l10n.containerNetworkLabelsLabel,
+                  hintText: l10n.containerNetworkLabelsHint,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
             ],
           ),
         ),
@@ -112,6 +133,8 @@ class _NetworkCreateDialogState extends State<NetworkCreateDialog> {
                 'driver': _selectedDriver,
                 'subnet': _subnetController.text,
                 'gateway': _gatewayController.text,
+                'enableIPv6': _enableIPv6,
+                'labels': _labelsController.text,
               });
             }
           },

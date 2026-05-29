@@ -30,11 +30,33 @@ class ImageCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        image.tags.isNotEmpty ? image.tags.first : image.id,
-                        style: theme.textTheme.titleMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              image.tags.isNotEmpty
+                                  ? image.tags.first
+                                  : image.id,
+                              style: theme.textTheme.titleMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (image.isUsed)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Chip(
+                                label: Text(
+                                  l10n.orchestrationImageInUse,
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(

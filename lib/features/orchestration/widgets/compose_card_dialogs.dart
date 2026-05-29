@@ -194,4 +194,75 @@ class ComposeCardDialogs {
       ),
     );
   }
+
+  static Future<void> showDeleteComposeDialog(
+    BuildContext context,
+    ComposeProvider provider, {
+    required ComposeProject compose,
+  }) async {
+    final l10n = context.l10n;
+    bool forceDelete = false;
+    bool deleteFile = false;
+
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(l10n.orchestrationComposeDelete),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.orchestrationComposeDeleteConfirm(compose.name)),
+              const SizedBox(height: 16),
+              CheckboxListTile(
+                value: forceDelete,
+                onChanged: (value) {
+                  setState(() => forceDelete = value ?? false);
+                },
+                title: Text(l10n.orchestrationComposeForceDelete),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+              CheckboxListTile(
+                value: deleteFile,
+                onChanged: (value) {
+                  setState(() => deleteFile = value ?? false);
+                },
+                title: Text(l10n.orchestrationComposeDeleteFile),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+              child: Text(l10n.orchestrationComposeDelete),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (shouldDelete != true || !context.mounted) return;
+    await ComposeCardActions.runAction(
+      context,
+      provider,
+      () => provider.deleteCompose(
+        compose,
+        force: forceDelete,
+        withFile: deleteFile,
+      ),
+    );
+  }
 }

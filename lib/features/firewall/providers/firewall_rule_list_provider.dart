@@ -185,7 +185,7 @@ class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
 
     final inferredType = type ?? _inferType(rule);
     if (inferredType == 'forward') {
-      _error = 'Forward rules do not support strategy toggling.';
+      _error = 'Forward rules do not support strategy toggling';
       notifyListeners();
       return false;
     }

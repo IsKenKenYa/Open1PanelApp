@@ -693,6 +693,13 @@
   "firewallRestartConfirmMessage": "确定重启防火墙服务吗？现有连接可能会短暂中断。",
   "firewallAddressRequired": "请输入地址。",
   "firewallPortRequired": "请输入端口。",
+  "firewallChainLabel": "链",
+  "firewallBindAction": "绑定",
+  "firewallUnbindAction": "解绑",
+  "firewallForwardStrategyToggleError": "转发规则不支持切换策略。",
+  "firewallTargetIPLabel": "目标 IP",
+  "firewallTargetPortLabel": "目标端口",
+  "firewallInterfaceLabel": "接口",
   "serverModuleTerminal": "终端",
   "serverModuleMonitoring": "监控",
   "serverModuleFiles": "文件管理",
@@ -1983,14 +1990,27 @@
       "name": { "type": "String" }
     }
   },
+  "orchestrationComposeDelete": "删除编排",
+  "orchestrationComposeDeleteConfirm": "停止并删除 {name} 中的所有容器？",
+  "@orchestrationComposeDeleteConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "orchestrationComposeForceDelete": "强制删除",
+  "orchestrationComposeDeleteFile": "删除编排文件",
   "orchestrationStatusUnknown": "未知",
   "orchestrationServicesLabel": "服务",
   "orchestrationImageBuild": "构建镜像",
   "orchestrationImageLoad": "加载镜像",
   "orchestrationImageSearch": "搜索镜像",
   "orchestrationImageSearchResult": "搜索结果",
+  "orchestrationImageId": "ID",
+  "orchestrationImageDigest": "摘要",
+  "orchestrationImageTags": "标签",
   "orchestrationImageSizeLabel": "大小",
   "orchestrationImageCreatedLabel": "创建时间",
+  "orchestrationImageInUse": "使用中",
   "appActionWeb": "Web",
   "containerManagement": "容器管理",
   "orchestration": "容器编排",
@@ -3129,5 +3149,144 @@
   "aiAgentsPairingCode": "配对码",
   "aiAgentsApprovePairing": "审批配对",
   "aiAgentsPairingCodeRequired": "请输入配对码",
-  "aiAgentsPairingApproveSuccess": "配对审批成功"
+  "aiAgentsPairingApproveSuccess": "配对审批成功",
+  "containerNetworkIdLabel": "ID",
+  "containerNetworkDriverLabel": "驱动",
+  "containerNetworkScopeLabel": "作用域",
+  "containerNetworkInternalLabel": "内部",
+  "containerNetworkAttachableLabel": "可连接",
+  "containerNetworkDriverChip": "驱动: {driver}",
+  "@containerNetworkDriverChip": {
+    "placeholders": {
+      "driver": { "type": "String" }
+    }
+  },
+  "containerNetworkSystemChip": "系统",
+  "containerNetworkEnableIPv6": "启用 IPv6",
+  "containerNetworkLabelsLabel": "标签",
+  "containerNetworkLabelsHint": "key1=value1,key2=value2",
+  "volumeDetailDriver": "驱动",
+  "volumeDetailMountpoint": "挂载点",
+  "volumeDetailLabels": "标签",
+  "volumeDetailOptions": "选项",
+  "volumeFormLabels": "标签",
+  "volumeFormLabelsHint": "每行一个 key=value",
+  "volumeFormOptions": "挂载选项",
+  "volumeFormOptionsHint": "每行一个 key=value",
+  "securityGatewayPageTitle": "安全与网关",
+  "securityGatewayUnifiedSummaryTitle": "统一安全摘要",
+  "securityGatewaySummarySection": "安全摘要",
+  "securityGatewayEntryFocusLabel": "入口焦点",
+  "securityGatewayAvailable": "可用",
+  "securityGatewayUnavailable": "不可用",
+  "securityGatewayWebsiteExpiringLabel": "网站证书过期",
+  "securityGatewayCertificateCount": "{count} 个证书",
+  "@securityGatewayCertificateCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayLatestApplyLabel": "最近操作",
+  "securityGatewayQuickActionsSection": "快捷操作",
+  "securityGatewayCertificateCenterAction": "证书中心",
+  "securityGatewayOpenRestyHttpsAction": "OpenResty HTTPS",
+  "securityGatewayRollbackSuccess": "已回滚最近的本地快照。",
+  "securityGatewayRollbackEmpty": "无可用回滚快照。",
+  "securityGatewayRollbackLatestAction": "回滚最近",
+  "securityGatewayPanelTlsSection": "面板 TLS",
+  "securityGatewayStatusLabel": "状态",
+  "securityGatewayLoaded": "已加载",
+  "securityGatewayRiskLabel": "风险",
+  "securityGatewayNoPanelTlsRisk": "未检测到面板 TLS 风险",
+  "securityGatewayRecentLabel": "最近",
+  "securityGatewayOpenPanelTlsAction": "打开面板 TLS 详情",
+  "securityGatewayWebsiteCertsSection": "网站证书",
+  "securityGatewaySummaryLabel": "摘要",
+  "securityGatewayCertsLoadedCount": "已加载 {count} 个证书",
+  "@securityGatewayCertsLoadedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayExpiringSoonCount": "{count} 个即将过期",
+  "@securityGatewayExpiringSoonCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayOpenCertCenterAction": "打开证书中心",
+  "securityGatewayOpenWebsiteStrategyAction": "打开当前网站策略",
+  "securityGatewayOpenRestyGatewaySection": "OpenResty 网关",
+  "securityGatewayOpenOpenRestyAction": "打开 OpenResty 控制台",
+  "securityGatewayEntryPanelTls": "面板 TLS",
+  "securityGatewayEntryWebsiteCerts": "网站证书",
+  "securityGatewayEntryOpenResty": "OpenResty 网关",
+  "securityGatewayOpenRestyLabel": "OpenResty",
+  "securityGatewayRunning": "运行中",
+  "securityGatewayInactive": "未运行",
+  "securityGatewayEnabled": "已启用",
+  "securityGatewayDisabled": "已禁用",
+  "securityGatewayRiskPanelTlsExpiredTitle": "面板 TLS 已过期",
+  "securityGatewayRiskPanelTlsExpiredMessage": "面板 TLS 证书已过期，需要更换。",
+  "securityGatewayRiskWebsiteCertsExpiringTitle": "网站证书即将过期",
+  "securityGatewayRiskWebsiteCertsExpiringMessage": "{count} 个网站证书将在 30 天内过期。",
+  "@securityGatewayRiskWebsiteCertsExpiringMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayRiskOpenRestyUnavailableTitle": "OpenResty 状态不可用",
+  "securityGatewayRiskOpenRestyUnavailableMessage": "网关未报告为活跃状态。",
+  "securityGatewayNoRecentSnapshot": "无最近本地快照",
+  "websiteSiteSslPageTitle": "HTTPS 策略",
+  "websiteSiteSslPageTitleWithDomain": "HTTPS 策略 · {domain}",
+  "@websiteSiteSslPageTitleWithDomain": {
+    "placeholders": {
+      "domain": { "type": "String" }
+    }
+  },
+  "websiteSiteSslRiskNoticesTitle": "风险提示",
+  "websiteSiteSslCurrentCertSection": "当前证书",
+  "websiteSiteSslNoCertificateBound": "未绑定证书",
+  "websiteSiteSslProviderRow": "提供商",
+  "websiteSiteSslExpirationRow": "到期时间",
+  "websiteSiteSslCurrentModeRow": "当前模式",
+  "websiteSiteSslStrategySection": "HTTPS 策略",
+  "websiteSiteSslHttpModeRow": "HTTP 模式",
+  "websiteSiteSslCertTypeRow": "证书类型",
+  "websiteSiteSslEditStrategyAction": "编辑策略",
+  "websiteSiteSslPreviewDiffAction": "预览差异",
+  "websiteSiteSslStrategyDiffTitle": "策略差异预览",
+  "websiteSiteSslCertActionsSection": "证书操作",
+  "websiteSiteSslSelectedCertRow": "已选证书",
+  "websiteSiteSslOpenCertCenterAction": "打开证书中心",
+  "websiteSiteSslRollbackSuccess": "已回滚上一次成功的 HTTPS 策略。",
+  "websiteSiteSslRollbackAction": "回滚上次变更",
+  "websiteSiteSslAdvancedSection": "高级",
+  "websiteSiteSslAdvancedDescription": "使用高级页面处理证书获取/上传/更新等不在绑定策略路径中的流程。",
+  "websiteSiteSslOpenAdvancedAction": "打开高级 SSL 页面",
+  "websiteSiteSslUpdateDialogTitle": "更新 HTTPS 策略",
+  "websiteSiteSslEnableHttpsLabel": "启用 HTTPS",
+  "websiteSiteSslNoCertificate": "无证书",
+  "websiteSiteSslPreviewAction": "预览",
+  "websiteSiteSslRiskNoCertTitle": "启用 HTTPS 但未选择证书",
+  "websiteSiteSslRiskNoCertMessage": "请先选择有效证书再启用 HTTPS。",
+  "websiteSiteSslRiskDomainMismatchTitle": "域名不匹配",
+  "websiteSiteSslRiskDomainMismatchMessage": "所选证书的主域名与当前网站域名不匹配。",
+  "websiteSiteSslRiskExpiredCertTitle": "证书已过期",
+  "websiteSiteSslRiskExpiredCertMessage": "所选证书已过期。",
+  "websiteSiteSslRiskExpiringSoonTitle": "证书即将过期",
+  "websiteSiteSslRiskExpiringSoonMessage": "所选证书应尽快更换。",
+  "websiteSiteSslDiffLabelHttps": "HTTPS",
+  "websiteSiteSslDiffLabelHttpMode": "HTTP 模式",
+  "websiteSiteSslDiffLabelCertificate": "证书",
+  "websiteSiteSslDiffLabelExpiration": "到期时间",
+  "websiteSiteSslDiffLabelProvider": "提供商",
+  "phpExtensionsRecordsTitle": "{title} 记录",
+  "@phpExtensionsRecordsTitle": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "phpExtensionsLabel": "扩展"
 }

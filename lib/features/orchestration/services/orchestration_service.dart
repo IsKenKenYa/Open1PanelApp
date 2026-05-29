@@ -40,6 +40,14 @@ class OrchestrationService {
     return _repository.restartCompose(compose);
   }
 
+  Future<void> deleteCompose(
+    ComposeProject compose, {
+    bool force = false,
+    bool withFile = false,
+  }) {
+    return _repository.deleteCompose(compose, force: force, withFile: withFile);
+  }
+
   Future<void> updateCompose(ContainerComposeUpdateRequest request) {
     return _repository.updateCompose(request);
   }

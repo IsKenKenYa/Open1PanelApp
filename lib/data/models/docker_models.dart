@@ -8,6 +8,7 @@ class DockerImage extends Equatable {
   final int size;
   final String created;
   final String? digest;
+  final bool isUsed;
 
   const DockerImage({
     required this.id,
@@ -15,6 +16,7 @@ class DockerImage extends Equatable {
     required this.size,
     required this.created,
     this.digest,
+    this.isUsed = false,
   });
 
   factory DockerImage.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class DockerImage extends Equatable {
       size: json['size'] as int? ?? 0,
       created: json['created'] as String? ?? '',
       digest: json['digest'] as String?,
+      isUsed: json['isUsed'] as bool? ?? false,
     );
   }
 
@@ -34,11 +37,12 @@ class DockerImage extends Equatable {
       'size': size,
       'created': created,
       'digest': digest,
+      'isUsed': isUsed,
     };
   }
 
   @override
-  List<Object?> get props => [id, tags, size, created, digest];
+  List<Object?> get props => [id, tags, size, created, digest, isUsed];
 }
 
 /// Docker 网络模型

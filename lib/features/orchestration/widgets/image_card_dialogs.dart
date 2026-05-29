@@ -12,6 +12,7 @@ class ImageCardDialogs {
     BuildContext context, {
     required DockerImage image,
   }) async {
+    final l10n = context.l10n;
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -28,28 +29,28 @@ class ImageCardDialogs {
               ),
               const SizedBox(height: 12),
               OrchestrationDetailLineWidget(
-                label: 'ID',
+                label: l10n.orchestrationImageId,
                 value: image.id,
                 labelWidth: 90,
               ),
               OrchestrationDetailLineWidget(
-                label: 'Digest',
+                label: l10n.orchestrationImageDigest,
                 value: image.digest,
                 labelWidth: 90,
               ),
               OrchestrationDetailLineWidget(
-                label: 'Created',
+                label: l10n.orchestrationImageCreatedLabel,
                 value: image.created,
                 labelWidth: 90,
               ),
               OrchestrationDetailLineWidget(
-                label: 'Size',
+                label: l10n.orchestrationImageSizeLabel,
                 value: '${image.size} B',
                 labelWidth: 90,
               ),
               if (image.tags.isNotEmpty)
                 OrchestrationDetailLineWidget(
-                  label: 'Tags',
+                  label: l10n.orchestrationImageTags,
                   value: image.tags.join(', '),
                   labelWidth: 90,
                 ),

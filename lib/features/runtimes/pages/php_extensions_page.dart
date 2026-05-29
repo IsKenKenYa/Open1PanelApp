@@ -101,7 +101,7 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              '${l10n.operationsPhpExtensionsTitle} Records',
+                              l10n.phpExtensionsRecordsTitle(l10n.operationsPhpExtensionsTitle),
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
@@ -256,7 +256,7 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
                 controller: extensionsController,
                 minLines: 2,
                 maxLines: 6,
-                decoration: const InputDecoration(labelText: 'Extensions'),
+                decoration: InputDecoration(labelText: l10n.phpExtensionsLabel),
               ),
             ],
           ),

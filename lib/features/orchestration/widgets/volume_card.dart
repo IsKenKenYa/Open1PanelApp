@@ -40,6 +40,7 @@ class VolumeCard extends StatelessWidget {
   }
 
   Future<void> _showDetailsSheet(BuildContext context) async {
+    final l10n = context.l10n;
     final labels = volume.labels ?? const <String, String>{};
     final options = volume.options ?? const <String, String>{};
 
@@ -55,18 +56,18 @@ class VolumeCard extends StatelessWidget {
             children: [
               Text(volume.name, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
-              _DetailLine(label: 'Driver', value: volume.driver),
-              _DetailLine(label: 'Mountpoint', value: volume.mountpoint),
+              _DetailLine(label: l10n.volumeDetailDriver, value: volume.driver),
+              _DetailLine(label: l10n.volumeDetailMountpoint, value: volume.mountpoint),
               if (labels.isNotEmpty)
                 _DetailLine(
-                  label: 'Labels',
+                  label: l10n.volumeDetailLabels,
                   value: labels.entries
                       .map((entry) => '${entry.key}=${entry.value}')
                       .join(', '),
                 ),
               if (options.isNotEmpty)
                 _DetailLine(
-                  label: 'Options',
+                  label: l10n.volumeDetailOptions,
                   value: options.entries
                       .map((entry) => '${entry.key}=${entry.value}')
                       .join(', '),
@@ -128,12 +129,12 @@ class VolumeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Driver: ${volume.driver}',
+                    '${l10n.volumeDetailDriver}: ${volume.driver}',
                     style: theme.textTheme.bodySmall,
                   ),
                   if (volume.mountpoint != null)
                     Text(
-                      'Mountpoint: ${volume.mountpoint}',
+                      '${l10n.volumeDetailMountpoint}: ${volume.mountpoint}',
                       style: theme.textTheme.bodySmall,
                     ),
                 ],

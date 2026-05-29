@@ -220,7 +220,6 @@ void main() {
    - 或者需要特定的初始化流程
 
 2. 可用的专门更新接口：
-   - /core/settings/port/update - 更新端口
    - /core/settings/bind/update - 更新绑定地址
    - /core/settings/terminal/update - 更新终端设置
    - /core/settings/ssl/update - 更新SSL设置

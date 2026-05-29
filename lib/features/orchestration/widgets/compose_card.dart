@@ -165,6 +165,13 @@ class ComposeCard extends StatelessWidget {
                         compose: compose,
                       );
                     }
+                    if (value == 'delete') {
+                      ComposeCardDialogs.showDeleteComposeDialog(
+                        context,
+                        provider,
+                        compose: compose,
+                      );
+                    }
                   },
                   itemBuilder: (context) => [
                     PopupMenuItem(
@@ -178,6 +185,13 @@ class ComposeCard extends StatelessWidget {
                     PopupMenuItem(
                       value: 'cleanLog',
                       child: Text(l10n.orchestrationComposeCleanLog),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Text(
+                        l10n.orchestrationComposeDelete,
+                        style: TextStyle(color: theme.colorScheme.error),
+                      ),
                     ),
                   ],
                 ),

@@ -162,7 +162,6 @@ void main() {
 
 4. 可编辑的设置:
    ✅ 终端设置 - /core/settings/terminal/update
-   ✅ 端口 - /core/settings/port/update
    ✅ 绑定地址 - /core/settings/bind/update
    ✅ 系统监控设置 - /settings/update (monitorInterval等)
 

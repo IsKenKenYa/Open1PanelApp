@@ -1548,6 +1548,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get firewallPortRequired => '请输入端口。';
 
   @override
+  String get firewallChainLabel => '链';
+
+  @override
+  String get firewallBindAction => '绑定';
+
+  @override
+  String get firewallUnbindAction => '解绑';
+
+  @override
+  String get firewallForwardStrategyToggleError => '转发规则不支持切换策略。';
+
+  @override
+  String get firewallTargetIPLabel => '目标 IP';
+
+  @override
+  String get firewallTargetPortLabel => '目标端口';
+
+  @override
+  String get firewallInterfaceLabel => '接口';
+
+  @override
   String get serverModuleTerminal => '终端';
 
   @override
@@ -4642,6 +4663,20 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get orchestrationComposeDelete => '删除编排';
+
+  @override
+  String orchestrationComposeDeleteConfirm(String name) {
+    return '停止并删除 $name 中的所有容器？';
+  }
+
+  @override
+  String get orchestrationComposeForceDelete => '强制删除';
+
+  @override
+  String get orchestrationComposeDeleteFile => '删除编排文件';
+
+  @override
   String get orchestrationStatusUnknown => '未知';
 
   @override
@@ -4660,10 +4695,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get orchestrationImageSearchResult => '搜索结果';
 
   @override
+  String get orchestrationImageId => 'ID';
+
+  @override
+  String get orchestrationImageDigest => '摘要';
+
+  @override
+  String get orchestrationImageTags => '标签';
+
+  @override
   String get orchestrationImageSizeLabel => '大小';
 
   @override
   String get orchestrationImageCreatedLabel => '创建时间';
+
+  @override
+  String get orchestrationImageInUse => '使用中';
 
   @override
   String get appActionWeb => 'Web';
@@ -7404,4 +7451,331 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get aiAgentsPairingApproveSuccess => '配对审批成功';
+
+  @override
+  String get containerNetworkIdLabel => 'ID';
+
+  @override
+  String get containerNetworkDriverLabel => '驱动';
+
+  @override
+  String get containerNetworkScopeLabel => '作用域';
+
+  @override
+  String get containerNetworkInternalLabel => '内部';
+
+  @override
+  String get containerNetworkAttachableLabel => '可连接';
+
+  @override
+  String containerNetworkDriverChip(String driver) {
+    return '驱动: $driver';
+  }
+
+  @override
+  String get containerNetworkSystemChip => '系统';
+
+  @override
+  String get containerNetworkEnableIPv6 => '启用 IPv6';
+
+  @override
+  String get containerNetworkLabelsLabel => '标签';
+
+  @override
+  String get containerNetworkLabelsHint => 'key1=value1,key2=value2';
+
+  @override
+  String get volumeDetailDriver => '驱动';
+
+  @override
+  String get volumeDetailMountpoint => '挂载点';
+
+  @override
+  String get volumeDetailLabels => '标签';
+
+  @override
+  String get volumeDetailOptions => '选项';
+
+  @override
+  String get volumeFormLabels => '标签';
+
+  @override
+  String get volumeFormLabelsHint => '每行一个 key=value';
+
+  @override
+  String get volumeFormOptions => '挂载选项';
+
+  @override
+  String get volumeFormOptionsHint => '每行一个 key=value';
+
+  @override
+  String get securityGatewayPageTitle => '安全与网关';
+
+  @override
+  String get securityGatewayUnifiedSummaryTitle => '统一安全摘要';
+
+  @override
+  String get securityGatewaySummarySection => '安全摘要';
+
+  @override
+  String get securityGatewayEntryFocusLabel => '入口焦点';
+
+  @override
+  String get securityGatewayAvailable => '可用';
+
+  @override
+  String get securityGatewayUnavailable => '不可用';
+
+  @override
+  String get securityGatewayWebsiteExpiringLabel => '网站证书过期';
+
+  @override
+  String securityGatewayCertificateCount(int count) {
+    return '$count 个证书';
+  }
+
+  @override
+  String get securityGatewayLatestApplyLabel => '最近操作';
+
+  @override
+  String get securityGatewayQuickActionsSection => '快捷操作';
+
+  @override
+  String get securityGatewayCertificateCenterAction => '证书中心';
+
+  @override
+  String get securityGatewayOpenRestyHttpsAction => 'OpenResty HTTPS';
+
+  @override
+  String get securityGatewayRollbackSuccess => '已回滚最近的本地快照。';
+
+  @override
+  String get securityGatewayRollbackEmpty => '无可用回滚快照。';
+
+  @override
+  String get securityGatewayRollbackLatestAction => '回滚最近';
+
+  @override
+  String get securityGatewayPanelTlsSection => '面板 TLS';
+
+  @override
+  String get securityGatewayStatusLabel => '状态';
+
+  @override
+  String get securityGatewayLoaded => '已加载';
+
+  @override
+  String get securityGatewayRiskLabel => '风险';
+
+  @override
+  String get securityGatewayNoPanelTlsRisk => '未检测到面板 TLS 风险';
+
+  @override
+  String get securityGatewayRecentLabel => '最近';
+
+  @override
+  String get securityGatewayOpenPanelTlsAction => '打开面板 TLS 详情';
+
+  @override
+  String get securityGatewayWebsiteCertsSection => '网站证书';
+
+  @override
+  String get securityGatewaySummaryLabel => '摘要';
+
+  @override
+  String securityGatewayCertsLoadedCount(int count) {
+    return '已加载 $count 个证书';
+  }
+
+  @override
+  String securityGatewayExpiringSoonCount(int count) {
+    return '$count 个即将过期';
+  }
+
+  @override
+  String get securityGatewayOpenCertCenterAction => '打开证书中心';
+
+  @override
+  String get securityGatewayOpenWebsiteStrategyAction => '打开当前网站策略';
+
+  @override
+  String get securityGatewayOpenRestyGatewaySection => 'OpenResty 网关';
+
+  @override
+  String get securityGatewayOpenOpenRestyAction => '打开 OpenResty 控制台';
+
+  @override
+  String get securityGatewayEntryPanelTls => '面板 TLS';
+
+  @override
+  String get securityGatewayEntryWebsiteCerts => '网站证书';
+
+  @override
+  String get securityGatewayEntryOpenResty => 'OpenResty 网关';
+
+  @override
+  String get securityGatewayOpenRestyLabel => 'OpenResty';
+
+  @override
+  String get securityGatewayRunning => '运行中';
+
+  @override
+  String get securityGatewayInactive => '未运行';
+
+  @override
+  String get securityGatewayEnabled => '已启用';
+
+  @override
+  String get securityGatewayDisabled => '已禁用';
+
+  @override
+  String get securityGatewayRiskPanelTlsExpiredTitle => '面板 TLS 已过期';
+
+  @override
+  String get securityGatewayRiskPanelTlsExpiredMessage => '面板 TLS 证书已过期，需要更换。';
+
+  @override
+  String get securityGatewayRiskWebsiteCertsExpiringTitle => '网站证书即将过期';
+
+  @override
+  String securityGatewayRiskWebsiteCertsExpiringMessage(int count) {
+    return '$count 个网站证书将在 30 天内过期。';
+  }
+
+  @override
+  String get securityGatewayRiskOpenRestyUnavailableTitle => 'OpenResty 状态不可用';
+
+  @override
+  String get securityGatewayRiskOpenRestyUnavailableMessage => '网关未报告为活跃状态。';
+
+  @override
+  String get securityGatewayNoRecentSnapshot => '无最近本地快照';
+
+  @override
+  String get websiteSiteSslPageTitle => 'HTTPS 策略';
+
+  @override
+  String websiteSiteSslPageTitleWithDomain(String domain) {
+    return 'HTTPS 策略 · $domain';
+  }
+
+  @override
+  String get websiteSiteSslRiskNoticesTitle => '风险提示';
+
+  @override
+  String get websiteSiteSslCurrentCertSection => '当前证书';
+
+  @override
+  String get websiteSiteSslNoCertificateBound => '未绑定证书';
+
+  @override
+  String get websiteSiteSslProviderRow => '提供商';
+
+  @override
+  String get websiteSiteSslExpirationRow => '到期时间';
+
+  @override
+  String get websiteSiteSslCurrentModeRow => '当前模式';
+
+  @override
+  String get websiteSiteSslStrategySection => 'HTTPS 策略';
+
+  @override
+  String get websiteSiteSslHttpModeRow => 'HTTP 模式';
+
+  @override
+  String get websiteSiteSslCertTypeRow => '证书类型';
+
+  @override
+  String get websiteSiteSslEditStrategyAction => '编辑策略';
+
+  @override
+  String get websiteSiteSslPreviewDiffAction => '预览差异';
+
+  @override
+  String get websiteSiteSslStrategyDiffTitle => '策略差异预览';
+
+  @override
+  String get websiteSiteSslCertActionsSection => '证书操作';
+
+  @override
+  String get websiteSiteSslSelectedCertRow => '已选证书';
+
+  @override
+  String get websiteSiteSslOpenCertCenterAction => '打开证书中心';
+
+  @override
+  String get websiteSiteSslRollbackSuccess => '已回滚上一次成功的 HTTPS 策略。';
+
+  @override
+  String get websiteSiteSslRollbackAction => '回滚上次变更';
+
+  @override
+  String get websiteSiteSslAdvancedSection => '高级';
+
+  @override
+  String get websiteSiteSslAdvancedDescription =>
+      '使用高级页面处理证书获取/上传/更新等不在绑定策略路径中的流程。';
+
+  @override
+  String get websiteSiteSslOpenAdvancedAction => '打开高级 SSL 页面';
+
+  @override
+  String get websiteSiteSslUpdateDialogTitle => '更新 HTTPS 策略';
+
+  @override
+  String get websiteSiteSslEnableHttpsLabel => '启用 HTTPS';
+
+  @override
+  String get websiteSiteSslNoCertificate => '无证书';
+
+  @override
+  String get websiteSiteSslPreviewAction => '预览';
+
+  @override
+  String get websiteSiteSslRiskNoCertTitle => '启用 HTTPS 但未选择证书';
+
+  @override
+  String get websiteSiteSslRiskNoCertMessage => '请先选择有效证书再启用 HTTPS。';
+
+  @override
+  String get websiteSiteSslRiskDomainMismatchTitle => '域名不匹配';
+
+  @override
+  String get websiteSiteSslRiskDomainMismatchMessage => '所选证书的主域名与当前网站域名不匹配。';
+
+  @override
+  String get websiteSiteSslRiskExpiredCertTitle => '证书已过期';
+
+  @override
+  String get websiteSiteSslRiskExpiredCertMessage => '所选证书已过期。';
+
+  @override
+  String get websiteSiteSslRiskExpiringSoonTitle => '证书即将过期';
+
+  @override
+  String get websiteSiteSslRiskExpiringSoonMessage => '所选证书应尽快更换。';
+
+  @override
+  String get websiteSiteSslDiffLabelHttps => 'HTTPS';
+
+  @override
+  String get websiteSiteSslDiffLabelHttpMode => 'HTTP 模式';
+
+  @override
+  String get websiteSiteSslDiffLabelCertificate => '证书';
+
+  @override
+  String get websiteSiteSslDiffLabelExpiration => '到期时间';
+
+  @override
+  String get websiteSiteSslDiffLabelProvider => '提供商';
+
+  @override
+  String phpExtensionsRecordsTitle(String title) {
+    return '$title 记录';
+  }
+
+  @override
+  String get phpExtensionsLabel => '扩展';
 }

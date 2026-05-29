@@ -47,36 +47,52 @@ class NetworkCard extends StatelessWidget {
   Future<void> _showDetailsSheet(BuildContext context) async {
     await showModalBottomSheet<void>(
       context: context,
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(network.name, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 12),
-              _DetailLine(label: 'ID', value: network.id),
-              _DetailLine(label: 'Driver', value: network.driver),
-              _DetailLine(label: 'Scope', value: network.scope),
-              _DetailLine(
-                label: 'Internal',
-                value: network.internal == null
-                    ? null
-                    : (network.internal! ? 'true' : 'false'),
-              ),
-              _DetailLine(
-                label: 'Attachable',
-                value: network.attachable == null
-                    ? null
-                    : (network.attachable! ? 'true' : 'false'),
-              ),
-              _DetailLine(label: 'Subnet', value: network.subnet),
-              _DetailLine(label: 'Gateway', value: network.gateway),
-            ],
+      builder: (context) {
+        final l10n = context.l10n;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(network.name,
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 12),
+                _DetailLine(label: l10n.containerNetworkIdLabel, value: network.id),
+                _DetailLine(
+                    label: l10n.containerNetworkDriverLabel,
+                    value: network.driver),
+                _DetailLine(
+                    label: l10n.containerNetworkScopeLabel,
+                    value: network.scope),
+                _DetailLine(
+                  label: l10n.containerNetworkInternalLabel,
+                  value: network.internal == null
+                      ? null
+                      : (network.internal!
+                          ? l10n.commonYes
+                          : l10n.commonNo),
+                ),
+                _DetailLine(
+                  label: l10n.containerNetworkAttachableLabel,
+                  value: network.attachable == null
+                      ? null
+                      : (network.attachable!
+                          ? l10n.commonYes
+                          : l10n.commonNo),
+                ),
+                _DetailLine(
+                    label: l10n.containerNetworkSubnetLabel,
+                    value: network.subnet),
+                _DetailLine(
+                    label: l10n.containerNetworkGatewayLabel,
+                    value: network.gateway),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -143,12 +159,13 @@ class NetworkCard extends StatelessWidget {
                     children: [
                       Chip(
                         visualDensity: VisualDensity.compact,
-                        label: Text('Driver: ${network.driver}'),
+                        label: Text(
+                            l10n.containerNetworkDriverChip(network.driver)),
                       ),
                       if (_isSystemNetwork)
                         Chip(
                           visualDensity: VisualDensity.compact,
-                          label: const Text('System'),
+                          label: Text(l10n.containerNetworkSystemChip),
                         ),
                     ],
                   ),

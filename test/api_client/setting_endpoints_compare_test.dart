@@ -148,15 +148,6 @@ void main() {
 
       final testCases = [
         {
-          'endpoint': '/core/settings/port/update',
-          'data': {
-            'serverPort':
-                int.tryParse(settings?['serverPort']?.toString() ?? '9999') ??
-                    9999
-          },
-          'desc': '端口更新',
-        },
-        {
           'endpoint': '/core/settings/bind/update',
           'data': {
             'bindAddress': settings?['bindAddress'] ?? '::',
@@ -220,7 +211,6 @@ void main() {
    两者都使用相同的 dto.SettingUpdate，结果相同
 
 2. 可用的专门更新接口:
-   ✅ /core/settings/port/update - 端口更新
    ✅ /core/settings/bind/update - 绑定地址更新
    ✅ /core/settings/terminal/update - 终端设置更新
    ✅ /core/settings/proxy/update - 代理设置更新

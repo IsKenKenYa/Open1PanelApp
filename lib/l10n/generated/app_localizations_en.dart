@@ -1587,6 +1587,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firewallPortRequired => 'Port is required.';
 
   @override
+  String get firewallChainLabel => 'Chain';
+
+  @override
+  String get firewallBindAction => 'Bind';
+
+  @override
+  String get firewallUnbindAction => 'Unbind';
+
+  @override
+  String get firewallForwardStrategyToggleError =>
+      'Forward rules do not support strategy toggling.';
+
+  @override
+  String get firewallTargetIPLabel => 'Target IP';
+
+  @override
+  String get firewallTargetPortLabel => 'Target Port';
+
+  @override
+  String get firewallInterfaceLabel => 'Interface';
+
+  @override
   String get serverModuleTerminal => 'Terminal';
 
   @override
@@ -4789,6 +4811,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get orchestrationComposeDelete => 'Delete Compose';
+
+  @override
+  String orchestrationComposeDeleteConfirm(String name) {
+    return 'Stop and remove all containers in $name?';
+  }
+
+  @override
+  String get orchestrationComposeForceDelete => 'Force Delete';
+
+  @override
+  String get orchestrationComposeDeleteFile => 'Delete Compose File';
+
+  @override
   String get orchestrationStatusUnknown => 'Unknown';
 
   @override
@@ -4807,10 +4843,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orchestrationImageSearchResult => 'Search Results';
 
   @override
+  String get orchestrationImageId => 'ID';
+
+  @override
+  String get orchestrationImageDigest => 'Digest';
+
+  @override
+  String get orchestrationImageTags => 'Tags';
+
+  @override
   String get orchestrationImageSizeLabel => 'Size';
 
   @override
   String get orchestrationImageCreatedLabel => 'Created';
+
+  @override
+  String get orchestrationImageInUse => 'In Use';
 
   @override
   String get appActionWeb => 'Web';
@@ -7597,4 +7645,343 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiAgentsPairingApproveSuccess => 'Pairing approved';
+
+  @override
+  String get containerNetworkIdLabel => 'ID';
+
+  @override
+  String get containerNetworkDriverLabel => 'Driver';
+
+  @override
+  String get containerNetworkScopeLabel => 'Scope';
+
+  @override
+  String get containerNetworkInternalLabel => 'Internal';
+
+  @override
+  String get containerNetworkAttachableLabel => 'Attachable';
+
+  @override
+  String containerNetworkDriverChip(String driver) {
+    return 'Driver: $driver';
+  }
+
+  @override
+  String get containerNetworkSystemChip => 'System';
+
+  @override
+  String get containerNetworkEnableIPv6 => 'Enable IPv6';
+
+  @override
+  String get containerNetworkLabelsLabel => 'Labels';
+
+  @override
+  String get containerNetworkLabelsHint => 'key1=value1,key2=value2';
+
+  @override
+  String get volumeDetailDriver => 'Driver';
+
+  @override
+  String get volumeDetailMountpoint => 'Mountpoint';
+
+  @override
+  String get volumeDetailLabels => 'Labels';
+
+  @override
+  String get volumeDetailOptions => 'Options';
+
+  @override
+  String get volumeFormLabels => 'Labels';
+
+  @override
+  String get volumeFormLabelsHint => 'key=value, one per line';
+
+  @override
+  String get volumeFormOptions => 'Mount Options';
+
+  @override
+  String get volumeFormOptionsHint => 'key=value, one per line';
+
+  @override
+  String get securityGatewayPageTitle => 'Security & Gateway';
+
+  @override
+  String get securityGatewayUnifiedSummaryTitle => 'Unified security summary';
+
+  @override
+  String get securityGatewaySummarySection => 'Security Summary';
+
+  @override
+  String get securityGatewayEntryFocusLabel => 'Entry Focus';
+
+  @override
+  String get securityGatewayAvailable => 'Available';
+
+  @override
+  String get securityGatewayUnavailable => 'Unavailable';
+
+  @override
+  String get securityGatewayWebsiteExpiringLabel => 'Website Expiring';
+
+  @override
+  String securityGatewayCertificateCount(int count) {
+    return '$count certificate(s)';
+  }
+
+  @override
+  String get securityGatewayLatestApplyLabel => 'Latest Apply';
+
+  @override
+  String get securityGatewayQuickActionsSection => 'Quick Actions';
+
+  @override
+  String get securityGatewayCertificateCenterAction => 'Certificate Center';
+
+  @override
+  String get securityGatewayOpenRestyHttpsAction => 'OpenResty HTTPS';
+
+  @override
+  String get securityGatewayRollbackSuccess =>
+      'Rolled back the latest local snapshot.';
+
+  @override
+  String get securityGatewayRollbackEmpty => 'No rollback snapshot available.';
+
+  @override
+  String get securityGatewayRollbackLatestAction => 'Rollback Latest';
+
+  @override
+  String get securityGatewayPanelTlsSection => 'Panel TLS';
+
+  @override
+  String get securityGatewayStatusLabel => 'Status';
+
+  @override
+  String get securityGatewayLoaded => 'Loaded';
+
+  @override
+  String get securityGatewayRiskLabel => 'Risk';
+
+  @override
+  String get securityGatewayNoPanelTlsRisk => 'No panel TLS risk detected';
+
+  @override
+  String get securityGatewayRecentLabel => 'Recent';
+
+  @override
+  String get securityGatewayOpenPanelTlsAction => 'Open Panel TLS details';
+
+  @override
+  String get securityGatewayWebsiteCertsSection => 'Website Certificates';
+
+  @override
+  String get securityGatewaySummaryLabel => 'Summary';
+
+  @override
+  String securityGatewayCertsLoadedCount(int count) {
+    return '$count certificates loaded';
+  }
+
+  @override
+  String securityGatewayExpiringSoonCount(int count) {
+    return '$count expiring soon';
+  }
+
+  @override
+  String get securityGatewayOpenCertCenterAction => 'Open certificate center';
+
+  @override
+  String get securityGatewayOpenWebsiteStrategyAction =>
+      'Open current website strategy';
+
+  @override
+  String get securityGatewayOpenRestyGatewaySection => 'OpenResty Gateway';
+
+  @override
+  String get securityGatewayOpenOpenRestyAction => 'Open OpenResty console';
+
+  @override
+  String get securityGatewayEntryPanelTls => 'Panel TLS';
+
+  @override
+  String get securityGatewayEntryWebsiteCerts => 'Website Certificates';
+
+  @override
+  String get securityGatewayEntryOpenResty => 'OpenResty Gateway';
+
+  @override
+  String get securityGatewayOpenRestyLabel => 'OpenResty';
+
+  @override
+  String get securityGatewayRunning => 'Running';
+
+  @override
+  String get securityGatewayInactive => 'Inactive';
+
+  @override
+  String get securityGatewayEnabled => 'Enabled';
+
+  @override
+  String get securityGatewayDisabled => 'Disabled';
+
+  @override
+  String get securityGatewayRiskPanelTlsExpiredTitle => 'Panel TLS expired';
+
+  @override
+  String get securityGatewayRiskPanelTlsExpiredMessage =>
+      'The panel TLS certificate is expired and should be replaced.';
+
+  @override
+  String get securityGatewayRiskWebsiteCertsExpiringTitle =>
+      'Website certificates expiring';
+
+  @override
+  String securityGatewayRiskWebsiteCertsExpiringMessage(int count) {
+    return '$count website certificate(s) expire within 30 days.';
+  }
+
+  @override
+  String get securityGatewayRiskOpenRestyUnavailableTitle =>
+      'OpenResty status unavailable';
+
+  @override
+  String get securityGatewayRiskOpenRestyUnavailableMessage =>
+      'The gateway is not reporting as active.';
+
+  @override
+  String get securityGatewayNoRecentSnapshot => 'No recent local snapshot';
+
+  @override
+  String get websiteSiteSslPageTitle => 'HTTPS Strategy';
+
+  @override
+  String websiteSiteSslPageTitleWithDomain(String domain) {
+    return 'HTTPS Strategy · $domain';
+  }
+
+  @override
+  String get websiteSiteSslRiskNoticesTitle => 'Risk notices';
+
+  @override
+  String get websiteSiteSslCurrentCertSection => 'Current Certificate';
+
+  @override
+  String get websiteSiteSslNoCertificateBound => 'No certificate bound';
+
+  @override
+  String get websiteSiteSslProviderRow => 'Provider';
+
+  @override
+  String get websiteSiteSslExpirationRow => 'Expiration';
+
+  @override
+  String get websiteSiteSslCurrentModeRow => 'Current Mode';
+
+  @override
+  String get websiteSiteSslStrategySection => 'HTTPS Strategy';
+
+  @override
+  String get websiteSiteSslHttpModeRow => 'HTTP Mode';
+
+  @override
+  String get websiteSiteSslCertTypeRow => 'Certificate Type';
+
+  @override
+  String get websiteSiteSslEditStrategyAction => 'Edit strategy';
+
+  @override
+  String get websiteSiteSslPreviewDiffAction => 'Preview diff';
+
+  @override
+  String get websiteSiteSslStrategyDiffTitle => 'Strategy diff preview';
+
+  @override
+  String get websiteSiteSslCertActionsSection => 'Certificate Actions';
+
+  @override
+  String get websiteSiteSslSelectedCertRow => 'Selected Certificate';
+
+  @override
+  String get websiteSiteSslOpenCertCenterAction => 'Open certificate center';
+
+  @override
+  String get websiteSiteSslRollbackSuccess =>
+      'Rolled back last successful HTTPS strategy.';
+
+  @override
+  String get websiteSiteSslRollbackAction => 'Rollback last change';
+
+  @override
+  String get websiteSiteSslAdvancedSection => 'Advanced';
+
+  @override
+  String get websiteSiteSslAdvancedDescription =>
+      'Use the advanced page for certificate obtain/upload/update flows that are outside the binding strategy path.';
+
+  @override
+  String get websiteSiteSslOpenAdvancedAction => 'Open advanced SSL page';
+
+  @override
+  String get websiteSiteSslUpdateDialogTitle => 'Update HTTPS strategy';
+
+  @override
+  String get websiteSiteSslEnableHttpsLabel => 'Enable HTTPS';
+
+  @override
+  String get websiteSiteSslNoCertificate => 'No certificate';
+
+  @override
+  String get websiteSiteSslPreviewAction => 'Preview';
+
+  @override
+  String get websiteSiteSslRiskNoCertTitle =>
+      'HTTPS enabled without certificate';
+
+  @override
+  String get websiteSiteSslRiskNoCertMessage =>
+      'Enable HTTPS only after selecting a valid certificate.';
+
+  @override
+  String get websiteSiteSslRiskDomainMismatchTitle => 'Domain mismatch';
+
+  @override
+  String get websiteSiteSslRiskDomainMismatchMessage =>
+      'The selected certificate primary domain does not match the current website domain.';
+
+  @override
+  String get websiteSiteSslRiskExpiredCertTitle => 'Expired certificate';
+
+  @override
+  String get websiteSiteSslRiskExpiredCertMessage =>
+      'The selected certificate is already expired.';
+
+  @override
+  String get websiteSiteSslRiskExpiringSoonTitle => 'Certificate expiring soon';
+
+  @override
+  String get websiteSiteSslRiskExpiringSoonMessage =>
+      'The selected certificate should be rotated soon.';
+
+  @override
+  String get websiteSiteSslDiffLabelHttps => 'HTTPS';
+
+  @override
+  String get websiteSiteSslDiffLabelHttpMode => 'HTTP Mode';
+
+  @override
+  String get websiteSiteSslDiffLabelCertificate => 'Certificate';
+
+  @override
+  String get websiteSiteSslDiffLabelExpiration => 'Expiration';
+
+  @override
+  String get websiteSiteSslDiffLabelProvider => 'Provider';
+
+  @override
+  String phpExtensionsRecordsTitle(String title) {
+    return '$title Records';
+  }
+
+  @override
+  String get phpExtensionsLabel => 'Extensions';
 }

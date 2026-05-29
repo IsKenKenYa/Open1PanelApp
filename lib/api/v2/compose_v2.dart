@@ -107,6 +107,21 @@ class ComposeV2Api {
     return _operateCompose(compose.name, 'restart', path: compose.path);
   }
 
+  /// Delete Compose project
+  Future<Response> deleteCompose(
+    ComposeProject compose, {
+    bool force = false,
+    bool withFile = false,
+  }) async {
+    return _operateCompose(
+      compose.name,
+      'delete',
+      path: compose.path,
+      withFile: withFile,
+      force: force,
+    );
+  }
+
   /// Load Compose environment variables
   Future<Response<List<String>>> loadComposeEnv(FilePath request) async {
     final response = await _client.post<Map<String, dynamic>>(

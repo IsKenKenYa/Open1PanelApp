@@ -131,46 +131,7 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('3. 端口更新 - 使用正确参数', () async {
-      if (!hasApiKey) {
-        debugPrint('⚠️  跳过测试: API密钥未配置');
-        return;
-      }
-
-      final dio = client.dio;
-
-      debugPrint('\n========================================');
-      debugPrint('测试端口更新');
-      debugPrint('========================================');
-
-      // 获取当前端口
-      final searchResponse = await dio.post('/api/v2/core/settings/search');
-      final searchData = searchResponse.data as Map<String, dynamic>;
-      final data = searchData['data'] as Map<String, dynamic>?;
-      final currentPort =
-          int.tryParse(data?['serverPort']?.toString() ?? '9999') ?? 9999;
-
-      debugPrint('当前端口: $currentPort');
-
-      // 尝试更新端口
-      debugPrint('\n--- 尝试更新端口 ---');
-      try {
-        final updateResponse = await dio.post(
-          '/api/v2/core/settings/port/update',
-          data: {'serverPort': currentPort},
-        );
-
-        final updateData = updateResponse.data as Map<String, dynamic>;
-        debugPrint(
-            '更新响应: code=${updateData['code']}, message=${updateData['message']}');
-        debugPrint('更新成功: ${updateData['code'] == 200}');
-      } catch (e) {
-        debugPrint('更新受限: $e');
-      }
-      debugPrint('========================================\n');
-    });
-
-    test('4. 绑定地址更新 - 使用正确参数', () async {
+    test('3. 绑定地址更新 - 使用正确参数', () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -332,7 +293,6 @@ void main() {
   - /core/settings/terminal/search - 获取终端设置
   - /core/settings/terminal/update - 更新终端设置
   - /core/settings/update - 更新通用设置（需要 key + value 参数）
-  - /core/settings/port/update - 更新端口
   - /core/settings/bind/update - 更新绑定地址
   - /core/settings/upgrade/releases - 获取升级版本列表
   - /settings/snapshot/search - 获取快照列表（需要分页参数）

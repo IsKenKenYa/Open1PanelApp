@@ -6,6 +6,7 @@ import 'package:onepanel_client/features/websites/pages/website_ssl_center_page.
 import 'package:onepanel_client/features/websites/providers/website_site_ssl_provider.dart';
 import 'package:onepanel_client/features/websites/widgets/website_async_state_view.dart';
 import 'package:onepanel_client/features/websites/website_ssl_page.dart';
+import 'package:onepanel_client/features/websites/widgets/website_site_ssl_localizations.dart';
 import 'package:onepanel_client/shared/security_gateway/models/security_gateway_models.dart';
 import 'package:onepanel_client/shared/security_gateway/utils/security_gateway_utils.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/config_diff_preview_card.dart';
@@ -55,8 +56,8 @@ class _WebsiteSiteSslBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final title = displayName == null
-        ? 'HTTPS Strategy'
-        : 'HTTPS Strategy · $displayName';
+        ? l10n.websiteSiteSslPageTitle
+        : l10n.websiteSiteSslPageTitleWithDomain(displayName!);
 
     return Scaffold(
       appBar: AppBar(
@@ -86,10 +87,10 @@ class _WebsiteSiteSslBody extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
               children: [
-                RiskNoticeBanner(notices: notices, title: 'Risk notices'),
+                RiskNoticeBanner(notices: localizeWebsiteSiteSslRiskNotices(context, notices), title: l10n.websiteSiteSslRiskNoticesTitle),
                 const SizedBox(height: AppDesignTokens.spacingMd),
                 _SectionCard(
-                  title: 'Current Certificate',
+                  title: l10n.websiteSiteSslCurrentCertSection,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -98,7 +99,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                           Expanded(
                             child: Text(
                               boundCertificate?.primaryDomain ??
-                                  'No certificate bound',
+                                  l10n.websiteSiteSslNoCertificateBound,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleMedium
@@ -108,7 +109,8 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                             ),
                           ),
                           SecurityStatusChip(
-                            label: describeCertificateHealth(
+                            label: _localizedHealthLabel(
+                              context,
                               resolveCertificateHealthStatus(
                                   boundCertificate?.expireDate),
                             ),
@@ -122,34 +124,34 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                       ),
                       const SizedBox(height: AppDesignTokens.spacingMd),
                       _InfoRow(
-                          label: 'Provider',
+                          label: l10n.websiteSiteSslProviderRow,
                           value: boundCertificate?.provider ?? '-'),
                       _InfoRow(
-                          label: 'Expiration',
+                          label: l10n.websiteSiteSslExpirationRow,
                           value: boundCertificate?.expireDate ?? '-'),
                       _InfoRow(
-                          label: 'Current Mode',
+                          label: l10n.websiteSiteSslCurrentModeRow,
                           value: currentConfig?.httpConfig ?? '-'),
                     ],
                   ),
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
                 _SectionCard(
-                  title: 'HTTPS Strategy',
+                  title: l10n.websiteSiteSslStrategySection,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _InfoRow(
-                        label: 'HTTPS',
+                        label: l10n.openrestyTabHttps,
                         value: (currentConfig?.enable ?? false)
-                            ? 'Enabled'
-                            : 'Disabled',
+                            ? l10n.systemSettingsEnabled
+                            : l10n.systemSettingsDisabled,
                       ),
                       _InfoRow(
-                          label: 'HTTP Mode',
+                          label: l10n.websiteSiteSslHttpModeRow,
                           value: currentConfig?.httpConfig ?? '-'),
                       _InfoRow(
-                        label: 'Certificate Type',
+                        label: l10n.websiteSiteSslCertTypeRow,
                         value: currentConfig?.ssl?.type ?? 'existed',
                       ),
                       const SizedBox(height: AppDesignTokens.spacingSm),
@@ -162,13 +164,13 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                                 ? null
                                 : () => _showStrategyDialog(context, provider),
                             icon: const Icon(Icons.tune),
-                            label: const Text('Edit strategy'),
+                            label: Text(l10n.websiteSiteSslEditStrategyAction),
                           ),
                           if (pendingDiff.isNotEmpty)
                             OutlinedButton.icon(
                               onPressed: () {},
                               icon: const Icon(Icons.preview_outlined),
-                              label: const Text('Preview diff'),
+                              label: Text(l10n.websiteSiteSslPreviewDiffAction),
                             ),
                         ],
                       ),
@@ -178,7 +180,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                 if (pendingDiff.isNotEmpty) ...[
                   const SizedBox(height: AppDesignTokens.spacingMd),
                   ConfigDiffPreviewCard(
-                    title: 'Strategy diff preview',
+                    title: l10n.websiteSiteSslStrategyDiffTitle,
                     items: pendingDiff,
                     onApply: provider.isSaving
                         ? null
@@ -203,12 +205,12 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                 ],
                 const SizedBox(height: AppDesignTokens.spacingMd),
                 _SectionCard(
-                  title: 'Certificate Actions',
+                  title: l10n.websiteSiteSslCertActionsSection,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _InfoRow(
-                        label: 'Selected Certificate',
+                        label: l10n.websiteSiteSslSelectedCertRow,
                         value: provider.selectedCertificate?.primaryDomain ??
                             boundCertificate?.primaryDomain ??
                             '-',
@@ -226,7 +228,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                               ),
                             ),
                             icon: const Icon(Icons.workspace_premium_outlined),
-                            label: const Text('Open certificate center'),
+                            label: Text(l10n.websiteSiteSslOpenCertCenterAction),
                           ),
                           OutlinedButton.icon(
                             onPressed: provider.canRollback &&
@@ -241,7 +243,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                                       SnackBar(
                                         content: Text(
                                           success
-                                              ? 'Rolled back last successful HTTPS strategy.'
+                                              ? l10n.websiteSiteSslRollbackSuccess
                                               : (provider.error ??
                                                   l10n.commonSaveFailed),
                                         ),
@@ -250,7 +252,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                                   }
                                 : null,
                             icon: const Icon(Icons.history),
-                            label: const Text('Rollback last change'),
+                            label: Text(l10n.websiteSiteSslRollbackAction),
                           ),
                         ],
                       ),
@@ -259,12 +261,12 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
                 _SectionCard(
-                  title: 'Advanced',
+                  title: l10n.websiteSiteSslAdvancedSection,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Use the advanced page for certificate obtain/upload/update flows that are outside the binding strategy path.',
+                        l10n.websiteSiteSslAdvancedDescription,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(height: AppDesignTokens.spacingMd),
@@ -278,7 +280,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                           ),
                         ),
                         icon: const Icon(Icons.open_in_new),
-                        label: const Text('Open advanced SSL page'),
+                        label: Text(l10n.websiteSiteSslOpenAdvancedAction),
                       ),
                     ],
                   ),
@@ -295,6 +297,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
     BuildContext context,
     WebsiteSiteSslProvider provider,
   ) async {
+    final l10n = context.l10n;
     bool enable = provider.currentStrategy.enable ?? false;
     String httpConfig = provider.currentStrategy.httpConfig ?? 'HTTPAlso';
     int? selectedCertificateId =
@@ -304,21 +307,21 @@ class _WebsiteSiteSslBody extends StatelessWidget {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Update HTTPS strategy'),
+          title: Text(l10n.websiteSiteSslUpdateDialogTitle),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Enable HTTPS'),
+                  title: Text(l10n.websiteSiteSslEnableHttpsLabel),
                   value: enable,
                   onChanged: (value) => setState(() => enable = value),
                 ),
                 const SizedBox(height: AppDesignTokens.spacingSm),
                 DropdownButtonFormField<String>(
                   initialValue: httpConfig,
-                  decoration: const InputDecoration(labelText: 'HTTP Mode'),
+                  decoration: InputDecoration(labelText: l10n.websiteSiteSslHttpModeRow),
                   items: const [
                     DropdownMenuItem(
                         value: 'HTTPAlso', child: Text('HTTPAlso')),
@@ -333,11 +336,11 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                 const SizedBox(height: AppDesignTokens.spacingSm),
                 DropdownButtonFormField<int?>(
                   initialValue: selectedCertificateId,
-                  decoration: const InputDecoration(labelText: 'Certificate'),
+                  decoration: InputDecoration(labelText: l10n.websiteSiteSslDiffLabelCertificate),
                   items: [
-                    const DropdownMenuItem<int?>(
+                    DropdownMenuItem<int?>(
                       value: null,
-                      child: Text('No certificate'),
+                      child: Text(l10n.websiteSiteSslNoCertificate),
                     ),
                     ...provider.certificates.map(
                       (certificate) => DropdownMenuItem<int?>(
@@ -375,7 +378,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                 );
                 Navigator.pop(dialogContext);
               },
-              child: const Text('Preview'),
+              child: Text(l10n.websiteSiteSslPreviewAction),
             ),
           ],
         ),
@@ -393,6 +396,21 @@ class _WebsiteSiteSslBody extends StatelessWidget {
         return Theme.of(context).colorScheme.error;
       case CertificateHealthStatus.unknown:
         return Theme.of(context).colorScheme.secondary;
+    }
+  }
+
+  String _localizedHealthLabel(
+      BuildContext context, CertificateHealthStatus status) {
+    final l10n = context.l10n;
+    switch (status) {
+      case CertificateHealthStatus.healthy:
+        return l10n.websitesSslHealthHealthy;
+      case CertificateHealthStatus.expiringSoon:
+        return l10n.websitesSslHealthExpiringSoon;
+      case CertificateHealthStatus.expired:
+        return l10n.websitesSslHealthExpired;
+      case CertificateHealthStatus.unknown:
+        return l10n.websitesSslHealthUnknown;
     }
   }
 }

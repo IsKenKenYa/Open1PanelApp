@@ -3,6 +3,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/features/openresty/openresty_page.dart';
 import 'package:onepanel_client/features/security_gateway/providers/security_gateway_center_provider.dart';
+import 'package:onepanel_client/features/security_gateway/widgets/security_gateway_localizations.dart';
 import 'package:onepanel_client/features/settings/panel_ssl/pages/panel_ssl_page.dart';
 import 'package:onepanel_client/features/websites/pages/website_site_ssl_page.dart';
 import 'package:onepanel_client/features/websites/pages/website_ssl_center_page.dart';
@@ -58,7 +59,7 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
       builder: (context, provider, _) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Security & Gateway'),
+            title: Text(l10n.securityGatewayPageTitle),
             actions: [
               IconButton(
                 onPressed: provider.load,
@@ -72,40 +73,44 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
             children: [
               if (provider.isLoading) const LinearProgressIndicator(),
               RiskNoticeBanner(
-                  notices: provider.riskNotices,
-                  title: 'Unified security summary'),
+                  notices: localizeSecurityGatewayRiskNotices(
+                      context, provider.riskNotices),
+                  title: l10n.securityGatewayUnifiedSummaryTitle),
               const SizedBox(height: AppDesignTokens.spacingMd),
               _SectionCard(
-                title: 'Security Summary',
+                title: l10n.securityGatewaySummarySection,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _MetricRow(
-                        label: 'Entry Focus',
-                        value: _entryLabel(initialSection)),
+                        label: l10n.securityGatewayEntryFocusLabel,
+                        value: _entryLabel(context, initialSection)),
                     _MetricRow(
-                        label: 'Panel TLS',
+                        label: l10n.securityGatewayPanelTlsSection,
                         value: provider.panelTlsEnabled
-                            ? 'Available'
-                            : 'Unavailable'),
+                            ? l10n.securityGatewayAvailable
+                            : l10n.securityGatewayUnavailable),
                     _MetricRow(
-                      label: 'Website Expiring',
-                      value:
-                          '${provider.expiringCertificateCount} certificate(s)',
+                      label: l10n.securityGatewayWebsiteExpiringLabel,
+                      value: l10n.securityGatewayCertificateCount(
+                          provider.expiringCertificateCount),
                     ),
                     _MetricRow(
-                      label: 'OpenResty',
-                      value: provider.openRestyRunning ? 'Running' : 'Inactive',
+                      label: l10n.securityGatewayOpenRestyLabel,
+                      value: provider.openRestyRunning
+                          ? l10n.securityGatewayRunning
+                          : l10n.securityGatewayInactive,
                     ),
                     _MetricRow(
-                        label: 'Latest Apply',
-                        value: provider.latestApplyResult),
+                        label: l10n.securityGatewayLatestApplyLabel,
+                        value: localizeSecurityGatewayLatestApply(
+                            context, provider)),
                   ],
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
               _SectionCard(
-                title: 'Quick Actions',
+                title: l10n.securityGatewayQuickActionsSection,
                 child: Wrap(
                   spacing: AppDesignTokens.spacingSm,
                   runSpacing: AppDesignTokens.spacingSm,
@@ -115,7 +120,7 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                         MaterialPageRoute(builder: (_) => const PanelSslPage()),
                       ),
                       icon: const Icon(Icons.download_outlined),
-                      label: const Text('Panel TLS'),
+                      label: Text(l10n.securityGatewayPanelTlsSection),
                     ),
                     OutlinedButton.icon(
                       onPressed: () => Navigator.of(context).push(
@@ -125,7 +130,7 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                         ),
                       ),
                       icon: const Icon(Icons.workspace_premium_outlined),
-                      label: const Text('Certificate Center'),
+                      label: Text(l10n.securityGatewayCertificateCenterAction),
                     ),
                     OutlinedButton.icon(
                       onPressed: () => Navigator.of(context).push(
@@ -133,7 +138,7 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                             builder: (_) => const OpenRestyPage()),
                       ),
                       icon: const Icon(Icons.hub_outlined),
-                      label: const Text('OpenResty HTTPS'),
+                      label: Text(l10n.securityGatewayOpenRestyHttpsAction),
                     ),
                     OutlinedButton.icon(
                       key: const Key('security-gateway-rollback-action'),
@@ -146,70 +151,77 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                           SnackBar(
                             content: Text(
                               success
-                                  ? 'Rolled back the latest local snapshot.'
-                                  : 'No rollback snapshot available.',
+                                  ? l10n.securityGatewayRollbackSuccess
+                                  : l10n.securityGatewayRollbackEmpty,
                             ),
                           ),
                         );
                       },
                       icon: const Icon(Icons.history),
-                      label: const Text('Rollback Latest'),
+                      label: Text(l10n.securityGatewayRollbackLatestAction),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
               _SectionCard(
-                title: 'Panel TLS',
+                title: l10n.securityGatewayPanelTlsSection,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _MetricRow(
-                        label: 'Status',
+                        label: l10n.securityGatewayStatusLabel,
                         value: provider.panelTlsEnabled
-                            ? 'Loaded'
-                            : 'Unavailable'),
+                            ? l10n.securityGatewayLoaded
+                            : l10n.securityGatewayUnavailable),
                     _MetricRow(
-                      label: 'Risk',
+                      label: l10n.securityGatewayRiskLabel,
                       value: provider.riskNotices
-                              .where((notice) => notice.title.contains('Panel'))
+                              .where((notice) =>
+                                  notice.title == 'Panel TLS expired')
                               .isEmpty
-                          ? 'No panel TLS risk detected'
-                          : provider.riskNotices
+                          ? l10n.securityGatewayNoPanelTlsRisk
+                          : localizeSecurityGatewayRiskNotices(
+                              context, provider.riskNotices)
                               .firstWhere(
-                                  (notice) => notice.title.contains('Panel'))
+                                  (notice) =>
+                                      notice.title ==
+                                      l10n
+                                          .securityGatewayRiskPanelTlsExpiredTitle)
                               .message,
                     ),
                     _MetricRow(
-                      label: 'Recent',
-                      value: provider.recentSnapshotSummary('panel'),
+                      label: l10n.securityGatewayRecentLabel,
+                      value: localizeSecurityGatewayRecentSummary(
+                          context, provider, 'panel'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const PanelSslPage()),
                       ),
-                      child: const Text('Open Panel TLS details'),
+                      child: Text(l10n.securityGatewayOpenPanelTlsAction),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
               _SectionCard(
-                title: 'Website Certificates',
+                title: l10n.securityGatewayWebsiteCertsSection,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _MetricRow(
-                        label: 'Summary',
-                        value:
-                            '${provider.certificates.length} certificates loaded'),
+                        label: l10n.securityGatewaySummaryLabel,
+                        value: l10n.securityGatewayCertsLoadedCount(
+                            provider.certificates.length)),
                     _MetricRow(
-                        label: 'Risk',
-                        value:
-                            '${provider.expiringCertificateCount} expiring soon'),
+                        label: l10n.securityGatewayRiskLabel,
+                        value: l10n.securityGatewayExpiringSoonCount(
+                            provider.expiringCertificateCount)),
                     _MetricRow(
-                      label: 'Recent',
-                      value: provider.recentSnapshotSummary('website_https'),
+                      label: l10n.securityGatewayRecentLabel,
+                      value: localizeSecurityGatewayRecentSummary(
+                          context, provider, 'website_https'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).push(
@@ -218,7 +230,7 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                               initialWebsiteId: initialWebsiteId),
                         ),
                       ),
-                      child: const Text('Open certificate center'),
+                      child: Text(l10n.securityGatewayOpenCertCenterAction),
                     ),
                     if (initialWebsiteId != null)
                       TextButton(
@@ -230,37 +242,40 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                             ),
                           ),
                         ),
-                        child: const Text('Open current website strategy'),
+                        child: Text(
+                            l10n.securityGatewayOpenWebsiteStrategyAction),
                       ),
                   ],
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
               _SectionCard(
-                title: 'OpenResty Gateway',
+                title: l10n.securityGatewayOpenRestyGatewaySection,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _MetricRow(
-                        label: 'Status',
-                        value:
-                            provider.openRestyRunning ? 'Running' : 'Inactive'),
+                        label: l10n.securityGatewayStatusLabel,
+                        value: provider.openRestyRunning
+                            ? l10n.securityGatewayRunning
+                            : l10n.securityGatewayInactive),
                     _MetricRow(
-                      label: 'HTTPS',
+                      label: l10n.openrestyTabHttps,
                       value: provider.openRestySnapshot.https['https'] == true
-                          ? 'Enabled'
-                          : 'Disabled',
+                          ? l10n.securityGatewayEnabled
+                          : l10n.securityGatewayDisabled,
                     ),
                     _MetricRow(
-                      label: 'Recent',
-                      value: provider.recentSnapshotSummary('openresty_'),
+                      label: l10n.securityGatewayRecentLabel,
+                      value: localizeSecurityGatewayRecentSummary(
+                          context, provider, 'openresty_'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (_) => const OpenRestyPage()),
                       ),
-                      child: const Text('Open OpenResty console'),
+                      child: Text(l10n.securityGatewayOpenOpenRestyAction),
                     ),
                   ],
                 ),
@@ -272,14 +287,16 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
     );
   }
 
-  String _entryLabel(SecurityGatewaySection section) {
+  String _entryLabel(
+      BuildContext context, SecurityGatewaySection section) {
+    final l10n = context.l10n;
     switch (section) {
       case SecurityGatewaySection.panelTls:
-        return 'Panel TLS';
+        return l10n.securityGatewayEntryPanelTls;
       case SecurityGatewaySection.websiteCertificates:
-        return 'Website Certificates';
+        return l10n.securityGatewayEntryWebsiteCerts;
       case SecurityGatewaySection.openresty:
-        return 'OpenResty Gateway';
+        return l10n.securityGatewayEntryOpenResty;
     }
   }
 }

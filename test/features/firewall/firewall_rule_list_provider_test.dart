@@ -219,4 +219,261 @@ void main() {
     expect(service.lastPortUpdate, isNotNull);
     expect(service.lastPortUpdate!.newRule.strategy, 'drop');
   });
+
+  test('FirewallPortsProvider loads with type port', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallPortsProvider(service: service);
+    await provider.load();
+    expect(service.lastType, 'port');
+  });
+
+  test('FirewallRuleListProvider toggleStrategy fails for forward rules',
+      () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRuleListProvider(
+      service: service,
+      useFilterApi: false,
+    );
+
+    await provider.load();
+    final ok = await provider.toggleStrategy(
+      const FirewallRule(
+        targetIP: '10.0.0.1',
+        targetPort: '8080',
+        port: '80',
+        protocol: 'tcp',
+        strategy: 'accept',
+      ),
+      'drop',
+    );
+
+    expect(ok, isFalse);
+    expect(provider.error, contains('Forward'));
+  });
+
+  test('FirewallRulesProvider toggleFilterChainBinding calls service', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRulesProvider(service: service);
+
+    await provider.load();
+    final ok = await provider.toggleFilterChainBinding(true);
+
+    expect(ok, isTrue);
+    expect(service.lastFilterChainOperation, isNotNull);
+    expect(service.lastFilterChainOperation!.operate, 'bind');
+  });
+
+  test('FirewallRulesProvider toggleFilterChainBinding unbind', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRulesProvider(service: service);
+
+    await provider.load();
+    final ok = await provider.toggleFilterChainBinding(false);
+
+    expect(ok, isTrue);
+    expect(service.lastFilterChainOperation!.operate, 'unbind');
+  });
+
+  test('FirewallRulesProvider switchFilterChain skips when same chain',
+      () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRulesProvider(service: service);
+
+    await provider.load();
+    final pageBefore = service.lastPage;
+    await provider.switchFilterChain('1PANEL_INPUT');
+
+    expect(provider.filterChain, '1PANEL_INPUT');
+    expect(service.lastPage, pageBefore);
+  });
+
+  test('FirewallRulesProvider deleteRules uses filter batch API', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRulesProvider(service: service);
+
+    await provider.load();
+    await provider.deleteRules([
+      const FirewallRule(id: 1, address: '1.1.1.1', strategy: 'accept'),
+    ]);
+
+    expect(service.lastFilterBatchOperation, isNotNull);
+    expect(service.lastFilterBatchOperation!.rules, hasLength(1));
+    expect(service.lastFilterBatchOperation!.rules.first.operation, 'remove');
+  });
+
+  test('FirewallRulesProvider updateDescription uses filter batch API',
+      () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRulesProvider(service: service);
+
+    await provider.load();
+    await provider.updateDescription(
+      const FirewallRule(id: 1, address: '1.1.1.1', strategy: 'accept'),
+      'new description',
+    );
+
+    expect(service.lastFilterBatchOperation, isNotNull);
+    expect(service.lastFilterBatchOperation!.rules, hasLength(2));
+    expect(service.lastFilterBatchOperation!.rules.first.operation, 'remove');
+    expect(service.lastFilterBatchOperation!.rules.last.operation, 'add');
+  });
+
+  test('FirewallIpProvider toggleStrategy uses IP update API', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallIpProvider(service: service);
+
+    await provider.load();
+    await provider.toggleStrategy(
+      const FirewallRule(address: '1.1.1.1', strategy: 'accept'),
+      'drop',
+    );
+
+    expect(service.lastIpUpdate, isNotNull);
+    expect(service.lastIpUpdate!.newRule.strategy, 'drop');
+    expect(service.lastIpUpdate!.oldRule.strategy, 'accept');
+  });
+
+  test('FirewallPortsProvider deleteRules builds batch request', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallPortsProvider(service: service);
+
+    await provider.deleteRules([
+      const FirewallRule(
+        address: '',
+        port: '443',
+        protocol: 'tcp',
+        strategy: 'accept',
+      ),
+    ]);
+
+    expect(service.lastDeleteRequest, isNotNull);
+    expect(service.lastDeleteRequest!.type, 'port');
+  });
+
+  test('FirewallRuleFormProvider submitPort succeeds', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRuleFormProvider(service: service);
+
+    final ok = await provider.submitPort(
+      payload: const FirewallPortRulePayload(
+        operation: 'add',
+        address: '',
+        port: '80',
+        source: 'anyWhere',
+        protocol: 'tcp',
+        strategy: 'accept',
+      ),
+    );
+
+    expect(ok, isTrue);
+    expect(provider.isSubmitting, isFalse);
+    expect(provider.error, isNull);
+  });
+
+  test('FirewallRuleFormProvider submitIp succeeds', () async {
+    final service = _FakeFirewallRuleService();
+    final provider = FirewallRuleFormProvider(service: service);
+
+    final ok = await provider.submitIp(
+      payload: const FirewallIpRulePayload(
+        operation: 'add',
+        address: '10.0.0.0/8',
+        strategy: 'drop',
+      ),
+    );
+
+    expect(ok, isTrue);
+    expect(provider.error, isNull);
+  });
+
+  test('FirewallRuleFormProvider surfaces errors', () async {
+    final service = _ThrowingFormService();
+    final provider = FirewallRuleFormProvider(service: service);
+
+    final ok = await provider.submitPort(
+      payload: const FirewallPortRulePayload(
+        operation: 'add',
+        address: '',
+        port: '80',
+        source: 'anyWhere',
+        protocol: 'tcp',
+        strategy: 'accept',
+      ),
+    );
+
+    expect(ok, isFalse);
+    expect(provider.error, contains('form failed'));
+  });
+}
+
+class _ThrowingFormService implements FirewallServiceInterface {
+  @override
+  Future<FirewallBaseInfo> loadBaseInfo({String tab = 'base'}) async =>
+      const FirewallBaseInfo();
+
+  @override
+  Future<PageResult<FirewallRule>> searchRules({
+    required int page,
+    required int pageSize,
+    String? type,
+    String? info,
+    String? strategy,
+  }) async =>
+      const PageResult(items: [], total: 0);
+
+  @override
+  Future<PageResult<FirewallRule>> searchFilterRules({
+    required int page,
+    required int pageSize,
+    required String type,
+    String? info,
+  }) async =>
+      const PageResult(items: [], total: 0);
+
+  @override
+  Future<FirewallFilterChainStatus> loadFilterChainStatus({
+    required String name,
+  }) async =>
+      const FirewallFilterChainStatus();
+
+  @override
+  Future<void> operateFilterChain({
+    required FirewallFilterChainOperation operation,
+  }) async {}
+
+  @override
+  Future<void> operateFilterRule(FirewallFilterRuleOperation request) async {}
+
+  @override
+  Future<void> batchOperateFilterRules(
+    FirewallFilterBatchOperation request,
+  ) async {}
+
+  @override
+  Future<void> operateForwardRules(
+    FirewallForwardOperateRequest request,
+  ) async {}
+
+  @override
+  Future<void> operateFirewall({required FirewallOperation operation}) async {}
+
+  @override
+  Future<void> createIpRule(FirewallIpRulePayload payload) async {}
+
+  @override
+  Future<void> createPortRule(FirewallPortRulePayload payload) async =>
+      throw Exception('form failed');
+
+  @override
+  Future<void> deleteRules(FirewallBatchRuleRequest request) async {}
+
+  @override
+  Future<void> updateDescription(FirewallDescriptionUpdate request) async {}
+
+  @override
+  Future<void> updateIpRule(FirewallUpdateIpRequest request) async {}
+
+  @override
+  Future<void> updatePortRule(FirewallUpdatePortRequest request) async =>
+      throw Exception('form failed');
 }

@@ -11,6 +11,8 @@ class VolumeCreateDialog extends StatefulWidget {
 class _VolumeCreateDialogState extends State<VolumeCreateDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _labelsController = TextEditingController();
+  final _optionsController = TextEditingController();
 
   final List<String> _drivers = ['local'];
   String _selectedDriver = 'local';
@@ -18,6 +20,8 @@ class _VolumeCreateDialogState extends State<VolumeCreateDialog> {
   @override
   void dispose() {
     _nameController.dispose();
+    _labelsController.dispose();
+    _optionsController.dispose();
     super.dispose();
   }
 
@@ -64,6 +68,26 @@ class _VolumeCreateDialogState extends State<VolumeCreateDialog> {
                   });
                 },
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _labelsController,
+                decoration: InputDecoration(
+                  labelText: l10n.volumeFormLabels,
+                  hintText: l10n.volumeFormLabelsHint,
+                  border: const OutlineInputBorder(),
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _optionsController,
+                decoration: InputDecoration(
+                  labelText: l10n.volumeFormOptions,
+                  hintText: l10n.volumeFormOptionsHint,
+                  border: const OutlineInputBorder(),
+                ),
+                maxLines: 2,
+              ),
             ],
           ),
         ),
@@ -79,6 +103,8 @@ class _VolumeCreateDialogState extends State<VolumeCreateDialog> {
               Navigator.of(context).pop({
                 'name': _nameController.text,
                 'driver': _selectedDriver,
+                'labels': _labelsController.text,
+                'options': _optionsController.text,
               });
             }
           },

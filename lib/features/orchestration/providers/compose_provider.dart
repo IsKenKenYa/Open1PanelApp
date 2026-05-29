@@ -80,6 +80,27 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
     return _operateCompose(compose, _service.restartCompose);
   }
 
+  Future<bool> deleteCompose(
+    ComposeProject compose, {
+    bool force = false,
+    bool withFile = false,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.deleteCompose(compose, force: force, withFile: withFile);
+      await loadComposes();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> _operateCompose(
     ComposeProject compose,
     Future<void> Function(ComposeProject compose) operation,

@@ -693,6 +693,13 @@
   "firewallRestartConfirmMessage": "Restart the firewall service? Existing connections may be interrupted briefly.",
   "firewallAddressRequired": "Address is required.",
   "firewallPortRequired": "Port is required.",
+  "firewallChainLabel": "Chain",
+  "firewallBindAction": "Bind",
+  "firewallUnbindAction": "Unbind",
+  "firewallForwardStrategyToggleError": "Forward rules do not support strategy toggling.",
+  "firewallTargetIPLabel": "Target IP",
+  "firewallTargetPortLabel": "Target Port",
+  "firewallInterfaceLabel": "Interface",
   "serverModuleTerminal": "Terminal",
   "serverModuleMonitoring": "Monitoring",
   "serverModuleFiles": "File Manager",
@@ -2035,14 +2042,27 @@
       "name": { "type": "String" }
     }
   },
+  "orchestrationComposeDelete": "Delete Compose",
+  "orchestrationComposeDeleteConfirm": "Stop and remove all containers in {name}?",
+  "@orchestrationComposeDeleteConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "orchestrationComposeForceDelete": "Force Delete",
+  "orchestrationComposeDeleteFile": "Delete Compose File",
   "orchestrationStatusUnknown": "Unknown",
   "orchestrationServicesLabel": "Services",
   "orchestrationImageBuild": "Build Image",
   "orchestrationImageLoad": "Load Image",
   "orchestrationImageSearch": "Search Images",
   "orchestrationImageSearchResult": "Search Results",
+  "orchestrationImageId": "ID",
+  "orchestrationImageDigest": "Digest",
+  "orchestrationImageTags": "Tags",
   "orchestrationImageSizeLabel": "Size",
   "orchestrationImageCreatedLabel": "Created",
+  "orchestrationImageInUse": "In Use",
   "appActionWeb": "Web",
   "containerManagement": "Container Management",
   "orchestration": "Orchestration",
@@ -3191,5 +3211,144 @@
   "aiAgentsPairingCode": "Pairing code",
   "aiAgentsApprovePairing": "Approve pairing",
   "aiAgentsPairingCodeRequired": "Pairing code is required",
-  "aiAgentsPairingApproveSuccess": "Pairing approved"
+  "aiAgentsPairingApproveSuccess": "Pairing approved",
+  "containerNetworkIdLabel": "ID",
+  "containerNetworkDriverLabel": "Driver",
+  "containerNetworkScopeLabel": "Scope",
+  "containerNetworkInternalLabel": "Internal",
+  "containerNetworkAttachableLabel": "Attachable",
+  "containerNetworkDriverChip": "Driver: {driver}",
+  "@containerNetworkDriverChip": {
+    "placeholders": {
+      "driver": { "type": "String" }
+    }
+  },
+  "containerNetworkSystemChip": "System",
+  "containerNetworkEnableIPv6": "Enable IPv6",
+  "containerNetworkLabelsLabel": "Labels",
+  "containerNetworkLabelsHint": "key1=value1,key2=value2",
+  "volumeDetailDriver": "Driver",
+  "volumeDetailMountpoint": "Mountpoint",
+  "volumeDetailLabels": "Labels",
+  "volumeDetailOptions": "Options",
+  "volumeFormLabels": "Labels",
+  "volumeFormLabelsHint": "key=value, one per line",
+  "volumeFormOptions": "Mount Options",
+  "volumeFormOptionsHint": "key=value, one per line",
+  "securityGatewayPageTitle": "Security & Gateway",
+  "securityGatewayUnifiedSummaryTitle": "Unified security summary",
+  "securityGatewaySummarySection": "Security Summary",
+  "securityGatewayEntryFocusLabel": "Entry Focus",
+  "securityGatewayAvailable": "Available",
+  "securityGatewayUnavailable": "Unavailable",
+  "securityGatewayWebsiteExpiringLabel": "Website Expiring",
+  "securityGatewayCertificateCount": "{count} certificate(s)",
+  "@securityGatewayCertificateCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayLatestApplyLabel": "Latest Apply",
+  "securityGatewayQuickActionsSection": "Quick Actions",
+  "securityGatewayCertificateCenterAction": "Certificate Center",
+  "securityGatewayOpenRestyHttpsAction": "OpenResty HTTPS",
+  "securityGatewayRollbackSuccess": "Rolled back the latest local snapshot.",
+  "securityGatewayRollbackEmpty": "No rollback snapshot available.",
+  "securityGatewayRollbackLatestAction": "Rollback Latest",
+  "securityGatewayPanelTlsSection": "Panel TLS",
+  "securityGatewayStatusLabel": "Status",
+  "securityGatewayLoaded": "Loaded",
+  "securityGatewayRiskLabel": "Risk",
+  "securityGatewayNoPanelTlsRisk": "No panel TLS risk detected",
+  "securityGatewayRecentLabel": "Recent",
+  "securityGatewayOpenPanelTlsAction": "Open Panel TLS details",
+  "securityGatewayWebsiteCertsSection": "Website Certificates",
+  "securityGatewaySummaryLabel": "Summary",
+  "securityGatewayCertsLoadedCount": "{count} certificates loaded",
+  "@securityGatewayCertsLoadedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayExpiringSoonCount": "{count} expiring soon",
+  "@securityGatewayExpiringSoonCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayOpenCertCenterAction": "Open certificate center",
+  "securityGatewayOpenWebsiteStrategyAction": "Open current website strategy",
+  "securityGatewayOpenRestyGatewaySection": "OpenResty Gateway",
+  "securityGatewayOpenOpenRestyAction": "Open OpenResty console",
+  "securityGatewayEntryPanelTls": "Panel TLS",
+  "securityGatewayEntryWebsiteCerts": "Website Certificates",
+  "securityGatewayEntryOpenResty": "OpenResty Gateway",
+  "securityGatewayOpenRestyLabel": "OpenResty",
+  "securityGatewayRunning": "Running",
+  "securityGatewayInactive": "Inactive",
+  "securityGatewayEnabled": "Enabled",
+  "securityGatewayDisabled": "Disabled",
+  "securityGatewayRiskPanelTlsExpiredTitle": "Panel TLS expired",
+  "securityGatewayRiskPanelTlsExpiredMessage": "The panel TLS certificate is expired and should be replaced.",
+  "securityGatewayRiskWebsiteCertsExpiringTitle": "Website certificates expiring",
+  "securityGatewayRiskWebsiteCertsExpiringMessage": "{count} website certificate(s) expire within 30 days.",
+  "@securityGatewayRiskWebsiteCertsExpiringMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "securityGatewayRiskOpenRestyUnavailableTitle": "OpenResty status unavailable",
+  "securityGatewayRiskOpenRestyUnavailableMessage": "The gateway is not reporting as active.",
+  "securityGatewayNoRecentSnapshot": "No recent local snapshot",
+  "websiteSiteSslPageTitle": "HTTPS Strategy",
+  "websiteSiteSslPageTitleWithDomain": "HTTPS Strategy · {domain}",
+  "@websiteSiteSslPageTitleWithDomain": {
+    "placeholders": {
+      "domain": { "type": "String" }
+    }
+  },
+  "websiteSiteSslRiskNoticesTitle": "Risk notices",
+  "websiteSiteSslCurrentCertSection": "Current Certificate",
+  "websiteSiteSslNoCertificateBound": "No certificate bound",
+  "websiteSiteSslProviderRow": "Provider",
+  "websiteSiteSslExpirationRow": "Expiration",
+  "websiteSiteSslCurrentModeRow": "Current Mode",
+  "websiteSiteSslStrategySection": "HTTPS Strategy",
+  "websiteSiteSslHttpModeRow": "HTTP Mode",
+  "websiteSiteSslCertTypeRow": "Certificate Type",
+  "websiteSiteSslEditStrategyAction": "Edit strategy",
+  "websiteSiteSslPreviewDiffAction": "Preview diff",
+  "websiteSiteSslStrategyDiffTitle": "Strategy diff preview",
+  "websiteSiteSslCertActionsSection": "Certificate Actions",
+  "websiteSiteSslSelectedCertRow": "Selected Certificate",
+  "websiteSiteSslOpenCertCenterAction": "Open certificate center",
+  "websiteSiteSslRollbackSuccess": "Rolled back last successful HTTPS strategy.",
+  "websiteSiteSslRollbackAction": "Rollback last change",
+  "websiteSiteSslAdvancedSection": "Advanced",
+  "websiteSiteSslAdvancedDescription": "Use the advanced page for certificate obtain/upload/update flows that are outside the binding strategy path.",
+  "websiteSiteSslOpenAdvancedAction": "Open advanced SSL page",
+  "websiteSiteSslUpdateDialogTitle": "Update HTTPS strategy",
+  "websiteSiteSslEnableHttpsLabel": "Enable HTTPS",
+  "websiteSiteSslNoCertificate": "No certificate",
+  "websiteSiteSslPreviewAction": "Preview",
+  "websiteSiteSslRiskNoCertTitle": "HTTPS enabled without certificate",
+  "websiteSiteSslRiskNoCertMessage": "Enable HTTPS only after selecting a valid certificate.",
+  "websiteSiteSslRiskDomainMismatchTitle": "Domain mismatch",
+  "websiteSiteSslRiskDomainMismatchMessage": "The selected certificate primary domain does not match the current website domain.",
+  "websiteSiteSslRiskExpiredCertTitle": "Expired certificate",
+  "websiteSiteSslRiskExpiredCertMessage": "The selected certificate is already expired.",
+  "websiteSiteSslRiskExpiringSoonTitle": "Certificate expiring soon",
+  "websiteSiteSslRiskExpiringSoonMessage": "The selected certificate should be rotated soon.",
+  "websiteSiteSslDiffLabelHttps": "HTTPS",
+  "websiteSiteSslDiffLabelHttpMode": "HTTP Mode",
+  "websiteSiteSslDiffLabelCertificate": "Certificate",
+  "websiteSiteSslDiffLabelExpiration": "Expiration",
+  "websiteSiteSslDiffLabelProvider": "Provider",
+  "phpExtensionsRecordsTitle": "{title} Records",
+  "@phpExtensionsRecordsTitle": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "phpExtensionsLabel": "Extensions"
 }

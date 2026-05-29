@@ -95,39 +95,7 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('3. 测试端口更新接口 - /core/settings/port/update', () async {
-      if (!hasApiKey) {
-        debugPrint('⚠️  跳过测试: API密钥未配置');
-        return;
-      }
-
-      final dio = client.dio;
-
-      debugPrint('\n========================================');
-      debugPrint('测试端口更新接口');
-      debugPrint('========================================');
-
-      // 获取当前端口
-      final searchResponse = await dio.post('/api/v2/core/settings/search');
-      final searchData = searchResponse.data as Map<String, dynamic>;
-      final data = searchData['data'] as Map<String, dynamic>?;
-      final currentPort =
-          int.tryParse(data?['serverPort']?.toString() ?? '9999') ?? 9999;
-
-      debugPrint('当前端口: $currentPort');
-
-      // 尝试更新端口 (使用 serverPort 参数)
-      debugPrint('\n--- 尝试更新端口 ---');
-      final updateResponse = await dio.post(
-        '/api/v2/core/settings/port/update',
-        data: {'serverPort': currentPort},
-      );
-
-      debugPrint('更新响应: ${jsonEncode(updateResponse.data)}');
-      debugPrint('========================================\n');
-    });
-
-    test('4. 测试绑定地址更新接口 - /core/settings/bind/update', () async {
+    test('3. 测试绑定地址更新接口 - /core/settings/bind/update', () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -268,12 +236,6 @@ void main() {
           'path': '/core/settings/upgrade/releases',
           'method': 'POST',
           'data': {},
-        },
-        {
-          'name': '端口更新',
-          'path': '/core/settings/port/update',
-          'method': 'POST',
-          'data': {'serverPort': 9999},
         },
         {
           'name': '绑定地址更新',

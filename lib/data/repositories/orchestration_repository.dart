@@ -54,6 +54,15 @@ class OrchestrationRepository {
     await api.restartCompose(compose);
   }
 
+  Future<void> deleteCompose(
+    ComposeProject compose, {
+    bool force = false,
+    bool withFile = false,
+  }) async {
+    final api = await _getComposeApi();
+    await api.deleteCompose(compose, force: force, withFile: withFile);
+  }
+
   Future<void> updateCompose(ContainerComposeUpdateRequest request) async {
     final api = await _getComposeApi();
     await api.updateCompose(request);

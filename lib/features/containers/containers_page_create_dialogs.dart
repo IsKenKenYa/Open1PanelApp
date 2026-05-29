@@ -51,11 +51,26 @@ class ContainersPageCreateDialogs {
 
     if (result != null && context.mounted) {
       final provider = context.read<NetworkProvider>();
+      final labelsStr = result['labels'] as String? ?? '';
+      Map<String, String>? labels;
+      if (labelsStr.isNotEmpty) {
+        labels = {};
+        for (final pair in labelsStr.split(',')) {
+          final trimmed = pair.trim();
+          if (trimmed.contains('=')) {
+            final idx = trimmed.indexOf('=');
+            labels[trimmed.substring(0, idx)] = trimmed.substring(idx + 1);
+          }
+        }
+        if (labels.isEmpty) labels = null;
+      }
       final request = NetworkCreate(
         name: result['name'],
         driver: result['driver'],
         subnet: result['subnet'],
         gateway: result['gateway'],
+        enableIPv6: result['enableIPv6'] as bool? ?? false,
+        labels: labels,
         ipv4: true,
       );
       final success = await provider.createNetwork(request);
@@ -91,6 +106,8 @@ class ContainersPageCreateDialogs {
       final request = VolumeCreate(
         name: result['name'],
         driver: result['driver'],
+        labels: _parseKeyValuePairs(result['labels'] as String? ?? ''),
+        driverOpts: _parseKeyValuePairs(result['options'] as String? ?? ''),
       );
       final success = await provider.createVolume(request);
       if (context.mounted) {
@@ -137,5 +154,20 @@ class ContainersPageCreateDialogs {
         SnackBar(content: Text(l10n.containerOperateSuccess)),
       );
     }
+  }
+
+  static Map<String, String>? _parseKeyValuePairs(String input) {
+    if (input.trim().isEmpty) return null;
+    final map = <String, String>{};
+    for (final line in input.split(RegExp(r'[\n,]'))) {
+      final trimmed = line.trim();
+      if (trimmed.isEmpty) continue;
+      final idx = trimmed.indexOf('=');
+      if (idx > 0) {
+        map[trimmed.substring(0, idx).trim()] =
+            trimmed.substring(idx + 1).trim();
+      }
+    }
+    return map.isEmpty ? null : map;
   }
 }

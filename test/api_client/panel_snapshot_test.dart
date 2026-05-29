@@ -123,46 +123,7 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('3. 测试端口更新接口', () async {
-      if (!hasApiKey) {
-        debugPrint('⚠️  跳过测试: API密钥未配置');
-        return;
-      }
-
-      final dio = client.dio;
-
-      debugPrint('\n========================================');
-      debugPrint('测试端口更新');
-      debugPrint('========================================');
-
-      // 获取当前端口
-      final searchResponse = await dio.post('/api/v2/core/settings/search');
-      final searchData = searchResponse.data as Map<String, dynamic>;
-      final data = searchData['data'] as Map<String, dynamic>?;
-      final currentPort =
-          int.tryParse(data?['serverPort']?.toString() ?? '9999') ?? 9999;
-
-      debugPrint('当前端口: $currentPort');
-
-      // 尝试更新（使用相同端口测试接口是否正常）
-      try {
-        final response = await dio.post(
-          '/api/v2/core/settings/port/update',
-          data: {'serverPort': currentPort},
-        );
-
-        final responseData = response.data as Map<String, dynamic>;
-        debugPrint(
-            '响应: code=${responseData['code']}, message=${responseData['message']}');
-        debugPrint('接口可用: ${responseData['code'] == 200}');
-      } catch (e) {
-        debugPrint('错误: $e');
-      }
-
-      debugPrint('========================================\n');
-    });
-
-    test('4. 测试绑定地址更新接口', () async {
+    test('3. 测试绑定地址更新接口', () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -353,7 +314,6 @@ void main() {
 
 ✅ 可编辑的接口:
   - /core/settings/terminal/update - 终端设置（需要字符串参数）
-  - /core/settings/port/update - 端口设置（需要数字参数）
   - /core/settings/bind/update - 绑定地址设置（需要ipv6参数）
 
 ❌ 不可编辑的接口:

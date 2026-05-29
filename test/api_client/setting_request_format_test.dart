@@ -177,18 +177,6 @@ void main() {
         debugPrint('错误: $e');
       }
 
-      // 测试 /core/settings/port/update
-      debugPrint('\n--- 测试 /core/settings/port/update ---');
-      try {
-        final response = await dio.post(
-          '/api/v2/core/settings/port/update',
-          data: {'port': '9999'},
-        );
-        debugPrint('响应: ${jsonEncode(response.data)}');
-      } catch (e) {
-        debugPrint('错误: $e');
-      }
-
       debugPrint('========================================\n');
     });
 

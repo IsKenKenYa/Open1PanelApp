@@ -3062,6 +3062,48 @@ abstract class AppLocalizations {
   /// **'Port is required.'**
   String get firewallPortRequired;
 
+  /// No description provided for @firewallChainLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chain'**
+  String get firewallChainLabel;
+
+  /// No description provided for @firewallBindAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Bind'**
+  String get firewallBindAction;
+
+  /// No description provided for @firewallUnbindAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unbind'**
+  String get firewallUnbindAction;
+
+  /// No description provided for @firewallForwardStrategyToggleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward rules do not support strategy toggling.'**
+  String get firewallForwardStrategyToggleError;
+
+  /// No description provided for @firewallTargetIPLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target IP'**
+  String get firewallTargetIPLabel;
+
+  /// No description provided for @firewallTargetPortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Port'**
+  String get firewallTargetPortLabel;
+
+  /// No description provided for @firewallInterfaceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface'**
+  String get firewallInterfaceLabel;
+
   /// No description provided for @serverModuleTerminal.
   ///
   /// In en, this message translates to:
@@ -9020,6 +9062,30 @@ abstract class AppLocalizations {
   /// **'Clean logs for {name}?'**
   String orchestrationComposeCleanLogConfirm(String name);
 
+  /// No description provided for @orchestrationComposeDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Compose'**
+  String get orchestrationComposeDelete;
+
+  /// No description provided for @orchestrationComposeDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop and remove all containers in {name}?'**
+  String orchestrationComposeDeleteConfirm(String name);
+
+  /// No description provided for @orchestrationComposeForceDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Force Delete'**
+  String get orchestrationComposeForceDelete;
+
+  /// No description provided for @orchestrationComposeDeleteFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Compose File'**
+  String get orchestrationComposeDeleteFile;
+
   /// No description provided for @orchestrationStatusUnknown.
   ///
   /// In en, this message translates to:
@@ -9056,6 +9122,24 @@ abstract class AppLocalizations {
   /// **'Search Results'**
   String get orchestrationImageSearchResult;
 
+  /// No description provided for @orchestrationImageId.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get orchestrationImageId;
+
+  /// No description provided for @orchestrationImageDigest.
+  ///
+  /// In en, this message translates to:
+  /// **'Digest'**
+  String get orchestrationImageDigest;
+
+  /// No description provided for @orchestrationImageTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get orchestrationImageTags;
+
   /// No description provided for @orchestrationImageSizeLabel.
   ///
   /// In en, this message translates to:
@@ -9067,6 +9151,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Created'**
   String get orchestrationImageCreatedLabel;
+
+  /// No description provided for @orchestrationImageInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'In Use'**
+  String get orchestrationImageInUse;
 
   /// No description provided for @appActionWeb.
   ///
@@ -14348,6 +14438,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pairing approved'**
   String get aiAgentsPairingApproveSuccess;
+
+  /// No description provided for @containerNetworkIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ID'**
+  String get containerNetworkIdLabel;
+
+  /// No description provided for @containerNetworkDriverLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get containerNetworkDriverLabel;
+
+  /// No description provided for @containerNetworkScopeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scope'**
+  String get containerNetworkScopeLabel;
+
+  /// No description provided for @containerNetworkInternalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal'**
+  String get containerNetworkInternalLabel;
+
+  /// No description provided for @containerNetworkAttachableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachable'**
+  String get containerNetworkAttachableLabel;
+
+  /// No description provided for @containerNetworkDriverChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver: {driver}'**
+  String containerNetworkDriverChip(String driver);
+
+  /// No description provided for @containerNetworkSystemChip.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get containerNetworkSystemChip;
+
+  /// No description provided for @containerNetworkEnableIPv6.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable IPv6'**
+  String get containerNetworkEnableIPv6;
+
+  /// No description provided for @containerNetworkLabelsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Labels'**
+  String get containerNetworkLabelsLabel;
+
+  /// No description provided for @containerNetworkLabelsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'key1=value1,key2=value2'**
+  String get containerNetworkLabelsHint;
+
+  /// No description provided for @volumeDetailDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get volumeDetailDriver;
+
+  /// No description provided for @volumeDetailMountpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Mountpoint'**
+  String get volumeDetailMountpoint;
+
+  /// No description provided for @volumeDetailLabels.
+  ///
+  /// In en, this message translates to:
+  /// **'Labels'**
+  String get volumeDetailLabels;
+
+  /// No description provided for @volumeDetailOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Options'**
+  String get volumeDetailOptions;
+
+  /// No description provided for @volumeFormLabels.
+  ///
+  /// In en, this message translates to:
+  /// **'Labels'**
+  String get volumeFormLabels;
+
+  /// No description provided for @volumeFormLabelsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'key=value, one per line'**
+  String get volumeFormLabelsHint;
+
+  /// No description provided for @volumeFormOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Mount Options'**
+  String get volumeFormOptions;
+
+  /// No description provided for @volumeFormOptionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'key=value, one per line'**
+  String get volumeFormOptionsHint;
+
+  /// No description provided for @securityGatewayPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security & Gateway'**
+  String get securityGatewayPageTitle;
+
+  /// No description provided for @securityGatewayUnifiedSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unified security summary'**
+  String get securityGatewayUnifiedSummaryTitle;
+
+  /// No description provided for @securityGatewaySummarySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Summary'**
+  String get securityGatewaySummarySection;
+
+  /// No description provided for @securityGatewayEntryFocusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry Focus'**
+  String get securityGatewayEntryFocusLabel;
+
+  /// No description provided for @securityGatewayAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get securityGatewayAvailable;
+
+  /// No description provided for @securityGatewayUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get securityGatewayUnavailable;
+
+  /// No description provided for @securityGatewayWebsiteExpiringLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Website Expiring'**
+  String get securityGatewayWebsiteExpiringLabel;
+
+  /// No description provided for @securityGatewayCertificateCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} certificate(s)'**
+  String securityGatewayCertificateCount(int count);
+
+  /// No description provided for @securityGatewayLatestApplyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Apply'**
+  String get securityGatewayLatestApplyLabel;
+
+  /// No description provided for @securityGatewayQuickActionsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get securityGatewayQuickActionsSection;
+
+  /// No description provided for @securityGatewayCertificateCenterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Center'**
+  String get securityGatewayCertificateCenterAction;
+
+  /// No description provided for @securityGatewayOpenRestyHttpsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty HTTPS'**
+  String get securityGatewayOpenRestyHttpsAction;
+
+  /// No description provided for @securityGatewayRollbackSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Rolled back the latest local snapshot.'**
+  String get securityGatewayRollbackSuccess;
+
+  /// No description provided for @securityGatewayRollbackEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No rollback snapshot available.'**
+  String get securityGatewayRollbackEmpty;
+
+  /// No description provided for @securityGatewayRollbackLatestAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Rollback Latest'**
+  String get securityGatewayRollbackLatestAction;
+
+  /// No description provided for @securityGatewayPanelTlsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Panel TLS'**
+  String get securityGatewayPanelTlsSection;
+
+  /// No description provided for @securityGatewayStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get securityGatewayStatusLabel;
+
+  /// No description provided for @securityGatewayLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Loaded'**
+  String get securityGatewayLoaded;
+
+  /// No description provided for @securityGatewayRiskLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk'**
+  String get securityGatewayRiskLabel;
+
+  /// No description provided for @securityGatewayNoPanelTlsRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'No panel TLS risk detected'**
+  String get securityGatewayNoPanelTlsRisk;
+
+  /// No description provided for @securityGatewayRecentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get securityGatewayRecentLabel;
+
+  /// No description provided for @securityGatewayOpenPanelTlsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Panel TLS details'**
+  String get securityGatewayOpenPanelTlsAction;
+
+  /// No description provided for @securityGatewayWebsiteCertsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Website Certificates'**
+  String get securityGatewayWebsiteCertsSection;
+
+  /// No description provided for @securityGatewaySummaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get securityGatewaySummaryLabel;
+
+  /// No description provided for @securityGatewayCertsLoadedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} certificates loaded'**
+  String securityGatewayCertsLoadedCount(int count);
+
+  /// No description provided for @securityGatewayExpiringSoonCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} expiring soon'**
+  String securityGatewayExpiringSoonCount(int count);
+
+  /// No description provided for @securityGatewayOpenCertCenterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open certificate center'**
+  String get securityGatewayOpenCertCenterAction;
+
+  /// No description provided for @securityGatewayOpenWebsiteStrategyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open current website strategy'**
+  String get securityGatewayOpenWebsiteStrategyAction;
+
+  /// No description provided for @securityGatewayOpenRestyGatewaySection.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty Gateway'**
+  String get securityGatewayOpenRestyGatewaySection;
+
+  /// No description provided for @securityGatewayOpenOpenRestyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open OpenResty console'**
+  String get securityGatewayOpenOpenRestyAction;
+
+  /// No description provided for @securityGatewayEntryPanelTls.
+  ///
+  /// In en, this message translates to:
+  /// **'Panel TLS'**
+  String get securityGatewayEntryPanelTls;
+
+  /// No description provided for @securityGatewayEntryWebsiteCerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Website Certificates'**
+  String get securityGatewayEntryWebsiteCerts;
+
+  /// No description provided for @securityGatewayEntryOpenResty.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty Gateway'**
+  String get securityGatewayEntryOpenResty;
+
+  /// No description provided for @securityGatewayOpenRestyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty'**
+  String get securityGatewayOpenRestyLabel;
+
+  /// No description provided for @securityGatewayRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get securityGatewayRunning;
+
+  /// No description provided for @securityGatewayInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get securityGatewayInactive;
+
+  /// No description provided for @securityGatewayEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get securityGatewayEnabled;
+
+  /// No description provided for @securityGatewayDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get securityGatewayDisabled;
+
+  /// No description provided for @securityGatewayRiskPanelTlsExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Panel TLS expired'**
+  String get securityGatewayRiskPanelTlsExpiredTitle;
+
+  /// No description provided for @securityGatewayRiskPanelTlsExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The panel TLS certificate is expired and should be replaced.'**
+  String get securityGatewayRiskPanelTlsExpiredMessage;
+
+  /// No description provided for @securityGatewayRiskWebsiteCertsExpiringTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Website certificates expiring'**
+  String get securityGatewayRiskWebsiteCertsExpiringTitle;
+
+  /// No description provided for @securityGatewayRiskWebsiteCertsExpiringMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} website certificate(s) expire within 30 days.'**
+  String securityGatewayRiskWebsiteCertsExpiringMessage(int count);
+
+  /// No description provided for @securityGatewayRiskOpenRestyUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty status unavailable'**
+  String get securityGatewayRiskOpenRestyUnavailableTitle;
+
+  /// No description provided for @securityGatewayRiskOpenRestyUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The gateway is not reporting as active.'**
+  String get securityGatewayRiskOpenRestyUnavailableMessage;
+
+  /// No description provided for @securityGatewayNoRecentSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent local snapshot'**
+  String get securityGatewayNoRecentSnapshot;
+
+  /// No description provided for @websiteSiteSslPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS Strategy'**
+  String get websiteSiteSslPageTitle;
+
+  /// No description provided for @websiteSiteSslPageTitleWithDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS Strategy · {domain}'**
+  String websiteSiteSslPageTitleWithDomain(String domain);
+
+  /// No description provided for @websiteSiteSslRiskNoticesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk notices'**
+  String get websiteSiteSslRiskNoticesTitle;
+
+  /// No description provided for @websiteSiteSslCurrentCertSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Certificate'**
+  String get websiteSiteSslCurrentCertSection;
+
+  /// No description provided for @websiteSiteSslNoCertificateBound.
+  ///
+  /// In en, this message translates to:
+  /// **'No certificate bound'**
+  String get websiteSiteSslNoCertificateBound;
+
+  /// No description provided for @websiteSiteSslProviderRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get websiteSiteSslProviderRow;
+
+  /// No description provided for @websiteSiteSslExpirationRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get websiteSiteSslExpirationRow;
+
+  /// No description provided for @websiteSiteSslCurrentModeRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Mode'**
+  String get websiteSiteSslCurrentModeRow;
+
+  /// No description provided for @websiteSiteSslStrategySection.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS Strategy'**
+  String get websiteSiteSslStrategySection;
+
+  /// No description provided for @websiteSiteSslHttpModeRow.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP Mode'**
+  String get websiteSiteSslHttpModeRow;
+
+  /// No description provided for @websiteSiteSslCertTypeRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Type'**
+  String get websiteSiteSslCertTypeRow;
+
+  /// No description provided for @websiteSiteSslEditStrategyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit strategy'**
+  String get websiteSiteSslEditStrategyAction;
+
+  /// No description provided for @websiteSiteSslPreviewDiffAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview diff'**
+  String get websiteSiteSslPreviewDiffAction;
+
+  /// No description provided for @websiteSiteSslStrategyDiffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Strategy diff preview'**
+  String get websiteSiteSslStrategyDiffTitle;
+
+  /// No description provided for @websiteSiteSslCertActionsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Actions'**
+  String get websiteSiteSslCertActionsSection;
+
+  /// No description provided for @websiteSiteSslSelectedCertRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Certificate'**
+  String get websiteSiteSslSelectedCertRow;
+
+  /// No description provided for @websiteSiteSslOpenCertCenterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open certificate center'**
+  String get websiteSiteSslOpenCertCenterAction;
+
+  /// No description provided for @websiteSiteSslRollbackSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Rolled back last successful HTTPS strategy.'**
+  String get websiteSiteSslRollbackSuccess;
+
+  /// No description provided for @websiteSiteSslRollbackAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Rollback last change'**
+  String get websiteSiteSslRollbackAction;
+
+  /// No description provided for @websiteSiteSslAdvancedSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get websiteSiteSslAdvancedSection;
+
+  /// No description provided for @websiteSiteSslAdvancedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the advanced page for certificate obtain/upload/update flows that are outside the binding strategy path.'**
+  String get websiteSiteSslAdvancedDescription;
+
+  /// No description provided for @websiteSiteSslOpenAdvancedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open advanced SSL page'**
+  String get websiteSiteSslOpenAdvancedAction;
+
+  /// No description provided for @websiteSiteSslUpdateDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update HTTPS strategy'**
+  String get websiteSiteSslUpdateDialogTitle;
+
+  /// No description provided for @websiteSiteSslEnableHttpsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable HTTPS'**
+  String get websiteSiteSslEnableHttpsLabel;
+
+  /// No description provided for @websiteSiteSslNoCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'No certificate'**
+  String get websiteSiteSslNoCertificate;
+
+  /// No description provided for @websiteSiteSslPreviewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get websiteSiteSslPreviewAction;
+
+  /// No description provided for @websiteSiteSslRiskNoCertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS enabled without certificate'**
+  String get websiteSiteSslRiskNoCertTitle;
+
+  /// No description provided for @websiteSiteSslRiskNoCertMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable HTTPS only after selecting a valid certificate.'**
+  String get websiteSiteSslRiskNoCertMessage;
+
+  /// No description provided for @websiteSiteSslRiskDomainMismatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain mismatch'**
+  String get websiteSiteSslRiskDomainMismatchTitle;
+
+  /// No description provided for @websiteSiteSslRiskDomainMismatchMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected certificate primary domain does not match the current website domain.'**
+  String get websiteSiteSslRiskDomainMismatchMessage;
+
+  /// No description provided for @websiteSiteSslRiskExpiredCertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired certificate'**
+  String get websiteSiteSslRiskExpiredCertTitle;
+
+  /// No description provided for @websiteSiteSslRiskExpiredCertMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected certificate is already expired.'**
+  String get websiteSiteSslRiskExpiredCertMessage;
+
+  /// No description provided for @websiteSiteSslRiskExpiringSoonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate expiring soon'**
+  String get websiteSiteSslRiskExpiringSoonTitle;
+
+  /// No description provided for @websiteSiteSslRiskExpiringSoonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected certificate should be rotated soon.'**
+  String get websiteSiteSslRiskExpiringSoonMessage;
+
+  /// No description provided for @websiteSiteSslDiffLabelHttps.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTPS'**
+  String get websiteSiteSslDiffLabelHttps;
+
+  /// No description provided for @websiteSiteSslDiffLabelHttpMode.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP Mode'**
+  String get websiteSiteSslDiffLabelHttpMode;
+
+  /// No description provided for @websiteSiteSslDiffLabelCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate'**
+  String get websiteSiteSslDiffLabelCertificate;
+
+  /// No description provided for @websiteSiteSslDiffLabelExpiration.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get websiteSiteSslDiffLabelExpiration;
+
+  /// No description provided for @websiteSiteSslDiffLabelProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get websiteSiteSslDiffLabelProvider;
+
+  /// No description provided for @phpExtensionsRecordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} Records'**
+  String phpExtensionsRecordsTitle(String title);
+
+  /// No description provided for @phpExtensionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Extensions'**
+  String get phpExtensionsLabel;
 }
 
 class _AppLocalizationsDelegate
