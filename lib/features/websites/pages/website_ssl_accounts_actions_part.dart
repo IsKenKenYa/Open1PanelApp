@@ -138,7 +138,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     final name = nameController.text.trim();
                     final type = selectedType;
                     if (name.isEmpty) {
-                      _showError(
+                      SnackBarUtils.showError(
                         context,
                         l10n.websitesSslAccountsValidationNameRequired,
                       );
@@ -155,7 +155,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                       }
                       if (auth.values
                           .every((v) => (v as String).isEmpty)) {
-                        _showError(
+                        SnackBarUtils.showError(
                           context,
                           l10n.websitesSslAccountsValidationAuthorizationRequired,
                         );
@@ -167,14 +167,14 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                         authorizationController.text,
                       );
                       if (authorization == null) {
-                        _showError(
+                        SnackBarUtils.showError(
                           context,
                           l10n.websitesSslAccountsValidationAuthorizationInvalid,
                         );
                         return;
                       }
                       if (authorization.isEmpty) {
-                        _showError(
+                        SnackBarUtils.showError(
                           context,
                           l10n.websitesSslAccountsValidationAuthorizationRequired,
                         );
@@ -185,7 +185,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     late final bool ok;
                     if (isEdit) {
                       if (id == null) {
-                        _showError(
+                        SnackBarUtils.showError(
                             context, l10n.websitesSslAccountsMissingId);
                         return;
                       }
@@ -208,10 +208,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     }
                     if (ok) {
                       Navigator.of(dialogContext).pop();
-                      _showSuccess(context, l10n.websitesOperateSuccess);
+                      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
                       return;
                     }
-                    _showError(
+                    SnackBarUtils.showError(
                       context,
                       provider.operationError ?? l10n.websitesOperateFailed,
                     );
@@ -361,7 +361,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                   onPressed: () async {
                     final email = emailController.text.trim();
                     if (!isEdit && email.isEmpty) {
-                      _showError(
+                      SnackBarUtils.showError(
                         context,
                         l10n.websitesSslAccountsValidationEmailRequired,
                       );
@@ -371,7 +371,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     late final bool ok;
                     if (isEdit) {
                       if (id == null) {
-                        _showError(context, l10n.websitesSslAccountsMissingId);
+                        SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingId);
                         return;
                       }
                       ok = await provider.updateAcmeAccount(
@@ -392,10 +392,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     }
                     if (ok) {
                       Navigator.of(dialogContext).pop();
-                      _showSuccess(context, l10n.websitesOperateSuccess);
+                      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
                       return;
                     }
-                    _showError(
+                    SnackBarUtils.showError(
                       context,
                       provider.operationError ?? l10n.websitesOperateFailed,
                     );
@@ -520,7 +520,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     final country = countryController.text.trim();
                     final organization = organizationController.text.trim();
                     if (name.isEmpty) {
-                      _showError(
+                      SnackBarUtils.showError(
                         context,
                         l10n.websitesSslAccountsValidationNameRequired,
                       );
@@ -529,7 +529,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     if (commonName.isEmpty ||
                         country.isEmpty ||
                         organization.isEmpty) {
-                      _showError(
+                      SnackBarUtils.showError(
                         context,
                         l10n.websitesSslAccountsValidationRequiredFields,
                       );
@@ -552,10 +552,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     }
                     if (ok) {
                       Navigator.of(dialogContext).pop();
-                      _showSuccess(context, l10n.websitesOperateSuccess);
+                      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
                       return;
                     }
-                    _showError(
+                    SnackBarUtils.showError(
                       context,
                       provider.operationError ?? l10n.websitesOperateFailed,
                     );
@@ -588,7 +588,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final l10n = context.l10n;
     final id = provider.resolveAccountId(item);
     if (id == null) {
-      _showError(context, l10n.websitesSslAccountsMissingId);
+      SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingId);
       return;
     }
 
@@ -674,14 +674,14 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     final domains = domainsController.text.trim();
                     final time = int.tryParse(timeController.text.trim());
                     if (domains.isEmpty) {
-                      _showError(
+                      SnackBarUtils.showError(
                         context,
                         l10n.websitesSslAccountsValidationDomainsRequired,
                       );
                       return;
                     }
                     if (time == null || time <= 0) {
-                      _showError(
+                      SnackBarUtils.showError(
                         context,
                         l10n.websitesSslAccountsValidationTimeInvalid,
                       );
@@ -699,10 +699,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                     }
                     if (ok) {
                       Navigator.of(dialogContext).pop();
-                      _showSuccess(context, l10n.websitesOperateSuccess);
+                      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
                       return;
                     }
-                    _showError(
+                    SnackBarUtils.showError(
                       context,
                       provider.operationError ?? l10n.websitesOperateFailed,
                     );
@@ -730,7 +730,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final l10n = context.l10n;
     final sslId = provider.resolveCertificateSslId(item);
     if (sslId == null) {
-      _showError(context, l10n.websitesSslAccountsMissingSslId);
+      SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingSslId);
       return;
     }
 
@@ -761,10 +761,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
       return;
     }
     if (ok) {
-      _showSuccess(context, l10n.websitesOperateSuccess);
+      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
       return;
     }
-    _showError(context, provider.operationError ?? l10n.websitesOperateFailed);
+    SnackBarUtils.showError(context, provider.operationError ?? l10n.websitesOperateFailed);
   }
 
   Future<void> _downloadCertificate(
@@ -775,7 +775,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final l10n = context.l10n;
     final id = provider.resolveAccountId(item);
     if (id == null) {
-      _showError(context, l10n.websitesSslAccountsMissingId);
+      SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingId);
       return;
     }
 
@@ -784,11 +784,11 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
       return;
     }
     if (link == null) {
-      _showError(
+      SnackBarUtils.showError(
           context, provider.operationError ?? l10n.websitesOperateFailed);
       return;
     }
-    _showSuccess(context, l10n.websitesSslAccountsDownloadSuccess);
+    SnackBarUtils.showSuccess(context, l10n.websitesSslAccountsDownloadSuccess);
   }
 
   Future<void> _confirmDeleteDns(
@@ -799,7 +799,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final l10n = context.l10n;
     final id = provider.resolveAccountId(item);
     if (id == null) {
-      _showError(context, l10n.websitesSslAccountsMissingId);
+      SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingId);
       return;
     }
 
@@ -831,10 +831,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
       return;
     }
     if (ok) {
-      _showSuccess(context, l10n.websitesOperateSuccess);
+      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
       return;
     }
-    _showError(context, provider.operationError ?? l10n.websitesOperateFailed);
+    SnackBarUtils.showError(context, provider.operationError ?? l10n.websitesOperateFailed);
   }
 
   Future<void> _confirmDeleteAcme(
@@ -845,7 +845,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final l10n = context.l10n;
     final id = provider.resolveAccountId(item);
     if (id == null) {
-      _showError(context, l10n.websitesSslAccountsMissingId);
+      SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingId);
       return;
     }
 
@@ -877,10 +877,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
       return;
     }
     if (ok) {
-      _showSuccess(context, l10n.websitesOperateSuccess);
+      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
       return;
     }
-    _showError(context, provider.operationError ?? l10n.websitesOperateFailed);
+    SnackBarUtils.showError(context, provider.operationError ?? l10n.websitesOperateFailed);
   }
 
   Future<void> _confirmDeleteCertificateAuthority(
@@ -891,7 +891,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final l10n = context.l10n;
     final id = provider.resolveAccountId(item);
     if (id == null) {
-      _showError(context, l10n.websitesSslAccountsMissingId);
+      SnackBarUtils.showError(context, l10n.websitesSslAccountsMissingId);
       return;
     }
 
@@ -923,10 +923,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
       return;
     }
     if (ok) {
-      _showSuccess(context, l10n.websitesOperateSuccess);
+      SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
       return;
     }
-    _showError(context, provider.operationError ?? l10n.websitesOperateFailed);
+    SnackBarUtils.showError(context, provider.operationError ?? l10n.websitesOperateFailed);
   }
 
   Map<String, dynamic>? _parseAuthorization(String value) {
@@ -967,17 +967,6 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     });
   }
 
-  void _showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
-  void _showSuccess(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
 }
 
 // ---------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 import '../../../data/models/openresty_models.dart';
 import '../../../data/models/runtime_models.dart';
 import '../../../data/models/website_models.dart';
@@ -112,13 +113,11 @@ class _WebsiteConfigBodyState extends State<_WebsiteConfigBody> {
                 onUpdate: () async {
                   final success = await provider.updatePhpVersion();
                   if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        success ? l10n.commonSaveSuccess : l10n.commonSaveFailed,
-                      ),
-                    ),
-                  );
+                  if (success) {
+                    SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                  } else {
+                    SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                  }
                 },
               ),
             ],

@@ -7,16 +7,13 @@ import 'package:onepanel_client/data/models/database_models.dart';
 import 'package:onepanel_client/features/databases/databases_provider.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class DatabaseDetailActionsWidget extends StatelessWidget {
   const DatabaseDetailActionsWidget({super.key});
 
   void _showSubmitResult(BuildContext context, bool success) {
     final l10n = context.l10n;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(success ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, success ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
   }
 
   @override

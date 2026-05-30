@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
 import 'package:provider/provider.dart';
@@ -333,15 +334,11 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     if (!context.mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? context.l10n.commonSaveSuccess
-              : context.l10n.commonSaveFailed,
-        ),
-      ),
-    );
+    if (success) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
+    }
   }
 
   void _showPasskeyRegisterDialog(
@@ -374,12 +371,13 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               if (!dialogContext.mounted) {
                 return;
               }
-              final message = success
-                  ? l10n.commonSaveSuccess
-                  : (provider.data.error ?? l10n.commonSaveFailed);
-              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                SnackBar(content: Text(message)),
-              );
+              if (success) {
+                SnackBarUtils.showSuccess(
+                    dialogContext, l10n.commonSaveSuccess);
+              } else {
+                SnackBarUtils.showError(
+                    dialogContext, provider.data.error ?? l10n.commonSaveFailed);
+              }
               if (success) {
                 Navigator.pop(dialogContext);
               }
@@ -424,12 +422,12 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               if (!context.mounted) {
                 return;
               }
-              final message = success
-                  ? l10n.commonDelete
-                  : (provider.data.error ?? l10n.commonSaveFailed);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
-              );
+              if (success) {
+                SnackBarUtils.showSuccess(context, l10n.commonDelete);
+              } else {
+                SnackBarUtils.showError(
+                    context, provider.data.error ?? l10n.commonSaveFailed);
+              }
             },
             child: Text(l10n.commonDelete),
           ),
@@ -476,13 +474,11 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               if (!context.mounted) {
                 return;
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    success ? l10n.commonSaveSuccess : l10n.commonSaveFailed,
-                  ),
-                ),
-              );
+              if (success) {
+                SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+              } else {
+                SnackBarUtils.showError(context, l10n.commonSaveFailed);
+              }
             },
             child: Text(l10n.commonSave),
           ),
@@ -564,11 +560,8 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               onPressed: () async {
                 if (newPasswordController.text !=
                     confirmPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.securitySettingsPasswordMismatch),
-                    ),
-                  );
+                  SnackBarUtils.showError(
+                      context, l10n.securitySettingsPasswordMismatch);
                   return;
                 }
                 Navigator.pop(context);
@@ -577,15 +570,13 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                   newPasswordController.text,
                 );
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        success
-                            ? l10n.commonSaveSuccess
-                            : l10n.commonSaveFailed,
-                      ),
-                    ),
-                  );
+                  if (success) {
+                    SnackBarUtils.showSuccess(
+                        context, l10n.commonSaveSuccess);
+                  } else {
+                    SnackBarUtils.showError(
+                        context, l10n.commonSaveFailed);
+                  }
                 }
               },
               child: Text(l10n.commonSave),
@@ -649,13 +640,13 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                 success = await provider.unbindMfa(codeController.text);
               }
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      success ? l10n.commonSaveSuccess : l10n.commonSaveFailed,
-                    ),
-                  ),
-                );
+                if (success) {
+                  SnackBarUtils.showSuccess(
+                      context, l10n.commonSaveSuccess);
+                } else {
+                  SnackBarUtils.showError(
+                      context, l10n.commonSaveFailed);
+                }
               }
             },
             child: Text(l10n.commonConfirm),

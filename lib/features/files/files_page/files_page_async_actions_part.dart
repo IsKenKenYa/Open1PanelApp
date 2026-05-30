@@ -44,16 +44,11 @@ extension _FilesViewAsyncActions on _FilesViewState {
 
     provider.downloadFile(file).then((savePath) {
       if (savePath != null && context.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.filesDownloadSuccess),
+        SnackBarUtils.showSuccess(context, l10n.filesDownloadSuccess,
             action: SnackBarAction(
               label: l10n.commonConfirm,
               onPressed: () {},
-            ),
-          ),
-        );
+            ));
       }
     }).catchError((e, stackTrace) async {
       appLogger.eWithPackage(
@@ -63,12 +58,9 @@ extension _FilesViewAsyncActions on _FilesViewState {
         stackTrace: stackTrace,
       );
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).clearSnackBars();
       final errorMsg = e.toString();
       if (errorMsg.contains('cancelled')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesDownloadCancelled)),
-        );
+        SnackBarUtils.showInfo(context, l10n.filesDownloadCancelled);
       } else {
         DebugErrorDialog.show(
           context,
@@ -91,9 +83,7 @@ extension _FilesViewAsyncActions on _FilesViewState {
 
     if (isFavorite) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesFavoritesAdded)),
-        );
+        SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       }
       return;
     }
@@ -101,18 +91,14 @@ extension _FilesViewAsyncActions on _FilesViewState {
     try {
       await provider.addToFavorites(file);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesFavoritesAdded)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.filesFavoritesAdded);
       }
     } on DioException catch (e) {
       appLogger.eWithPackage('files_page', '_toggleFavorite: 失败', error: e);
       if (!context.mounted) return;
       final errorMsg = e.response?.data?.toString() ?? e.message ?? '';
       if (errorMsg.contains('已收藏') || errorMsg.contains('already')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesFavoritesAdded)),
-        );
+        SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       } else {
         DebugErrorDialog.show(context, l10n.filesFavoritesLoadFailed, e);
       }
@@ -126,9 +112,7 @@ extension _FilesViewAsyncActions on _FilesViewState {
       if (!context.mounted) return;
       final errorMsg = e.toString();
       if (errorMsg.contains('已收藏') || errorMsg.contains('already')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesFavoritesAdded)),
-        );
+        SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       } else {
         DebugErrorDialog.show(
           context,

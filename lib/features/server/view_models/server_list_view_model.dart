@@ -11,6 +11,7 @@ import 'package:onepanel_client/features/server/server_models.dart';
 import 'package:onepanel_client/features/server/server_provider.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class ServerListViewModel extends ChangeNotifier with SafeChangeNotifier {
   ServerListViewModel({
     this.enableCoach = true,
@@ -216,11 +217,10 @@ class ServerListViewModel extends ChangeNotifier with SafeChangeNotifier {
       await _serverProvider.delete(item.config.id);
       await currentServerController.refresh();
       if (!context.mounted) return;
-      messenger.showSnackBar(SnackBar(content: Text(successMessage)));
+      SnackBarUtils.showSuccess(context, successMessage);
     } catch (error) {
       if (!context.mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.serverDeleteFailed(error.toString()))),
+      SnackBarUtils.showSuccess(context, l10n.serverDeleteFailed(error.toString()),
       );
     }
   }

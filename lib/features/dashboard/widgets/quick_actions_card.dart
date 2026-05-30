@@ -6,6 +6,7 @@ import '../../../core/i18n/l10n_x.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../dashboard_provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class QuickActionsCard extends StatelessWidget {
   const QuickActionsCard({super.key});
 
@@ -74,17 +75,10 @@ class QuickActionsCard extends StatelessWidget {
               try {
                 await context.read<DashboardProvider>().restartSystem();
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.dashboardRestartSuccess)),
-                );
+                SnackBarUtils.showSuccess(context, l10n.dashboardRestartSuccess);
               } catch (e) {
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.dashboardRestartFailed(e.toString())),
-                    backgroundColor: colorScheme.error,
-                  ),
-                );
+                SnackBarUtils.showError(context, l10n.dashboardRestartFailed(e.toString()));
               }
             },
             child: Text(l10n.commonConfirm),
@@ -113,14 +107,10 @@ class QuickActionsCard extends StatelessWidget {
               try {
                 await context.read<DashboardProvider>().upgradeSystem();
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.dashboardUpdateSuccess)),
-                );
+                SnackBarUtils.showSuccess(context, l10n.dashboardUpdateSuccess);
               } catch (e) {
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(l10n.dashboardUpdateFailed(e.toString()))),
+                SnackBarUtils.showSuccess(context, l10n.dashboardUpdateFailed(e.toString()),
                 );
               }
             },

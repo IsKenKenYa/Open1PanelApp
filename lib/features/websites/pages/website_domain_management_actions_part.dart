@@ -61,10 +61,7 @@ extension _WebsiteDomainActions on _WebsiteDomainBody {
                   if (defaultPort == null ||
                       defaultPort < 1 ||
                       defaultPort > 65535) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text(l10n.websitesDomainValidationPort)),
-                    );
+                    SnackBarUtils.showError(context, l10n.websitesDomainValidationPort);
                     return;
                   }
 
@@ -76,9 +73,7 @@ extension _WebsiteDomainActions on _WebsiteDomainBody {
                     ssl: ssl,
                   );
                   if (parseResult.error != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(parseResult.error!)),
-                    );
+                    SnackBarUtils.showError(context, parseResult.error!);
                     return;
                   }
                   await provider.addDomainsBatch(parseResult.domains);
@@ -86,9 +81,7 @@ extension _WebsiteDomainActions on _WebsiteDomainBody {
                     return;
                   }
                   if (provider.error != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(provider.error!)),
-                    );
+                    SnackBarUtils.showError(context, provider.error!);
                     return;
                   }
                   Navigator.of(ctx).pop();
@@ -170,9 +163,7 @@ extension _WebsiteDomainActions on _WebsiteDomainBody {
                     port: port,
                   );
                   if (validation != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(validation)),
-                    );
+                    SnackBarUtils.showError(context, validation);
                     return;
                   }
                   if (existing == null) {
@@ -193,9 +184,7 @@ extension _WebsiteDomainActions on _WebsiteDomainBody {
                     return;
                   }
                   if (provider.error != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(provider.error!)),
-                    );
+                    SnackBarUtils.showError(context, provider.error!);
                     return;
                   }
                   Navigator.of(ctx).pop();
@@ -320,9 +309,7 @@ extension _WebsiteDomainActions on _WebsiteDomainBody {
         return;
       }
       if (provider.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(provider.error!)),
-        );
+        SnackBarUtils.showError(context, provider.error!);
       }
     }
   }

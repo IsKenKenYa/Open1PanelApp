@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
 
@@ -43,17 +44,12 @@ class ContainersPageContainerEditDialogs {
       final provider = context.read<ContainersProvider>();
       final success = await provider.renameContainer(name, result);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? l10n.containerOperateSuccess
-                  : l10n.containerOperateFailed(
-                      provider.data.error ?? l10n.commonUnknownError,
-                    ),
-            ),
-          ),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
+        } else {
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.data.error ?? l10n.commonUnknownError));
+        }
       }
     }
   }
@@ -119,17 +115,12 @@ class ContainersPageContainerEditDialogs {
       );
       final success = await provider.updateContainer(request);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? l10n.containerOperateSuccess
-                  : l10n.containerOperateFailed(
-                      provider.data.error ?? l10n.commonUnknownError,
-                    ),
-            ),
-          ),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
+        } else {
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.data.error ?? l10n.commonUnknownError));
+        }
       }
     }
   }
@@ -161,17 +152,12 @@ class ContainersPageContainerEditDialogs {
       final provider = context.read<ContainersProvider>();
       final success = await provider.cleanContainerLog(name);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? l10n.containerOperateSuccess
-                  : l10n.containerOperateFailed(
-                      provider.data.error ?? l10n.commonUnknownError,
-                    ),
-            ),
-          ),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
+        } else {
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.data.error ?? l10n.commonUnknownError));
+        }
       }
     }
   }

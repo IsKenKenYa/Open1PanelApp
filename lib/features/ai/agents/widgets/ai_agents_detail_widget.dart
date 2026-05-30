@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'ai_agents_detail_sections_widget.dart';
 import 'ai_agents_detail_top_sections_widget.dart';
 
+import '../../../../core/utils/snackbar_utils.dart';
 class AIAgentsDetailWidget extends StatefulWidget {
   const AIAgentsDetailWidget({super.key});
 
@@ -120,9 +121,7 @@ class _AIAgentsDetailWidgetState extends State<AIAgentsDetailWidget> {
       npmRegistry: _npmRegistryController.text.trim(),
     );
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.commonSaveSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
     }
   }
 }

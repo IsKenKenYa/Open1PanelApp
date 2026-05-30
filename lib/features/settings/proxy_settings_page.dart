@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
 
 class ProxySettingsPage extends StatefulWidget {
@@ -188,11 +189,11 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
     );
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                success ? l10n.proxySettingsSaved : l10n.proxySettingsFailed)),
-      );
+      if (success) {
+        SnackBarUtils.showSuccess(context, l10n.proxySettingsSaved);
+      } else {
+        SnackBarUtils.showError(context, l10n.proxySettingsFailed);
+      }
     }
   }
 }

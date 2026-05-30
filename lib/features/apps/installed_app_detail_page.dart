@@ -14,6 +14,7 @@ import 'package:onepanel_client/features/apps/widgets/app_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class InstalledAppDetailPage extends StatelessWidget {
   final AppInstallInfo? appInfo;
   final String? appId;
@@ -90,15 +91,12 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     try {
       await installedProvider.updateApp(app!.id.toString());
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appUpdateSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.appUpdateSuccess);
       }
       await detailProvider.refresh();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appUpdateFailed(e.toString()))),
+        SnackBarUtils.showSuccess(context, l10n.appUpdateFailed(e.toString()),
         );
       }
     }
@@ -141,15 +139,12 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     try {
       await installedProvider.ignoreUpdate(app!.id!, reason);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appIgnoreUpdateSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.appIgnoreUpdateSuccess);
       }
       await detailProvider.refresh();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appIgnoreUpdateFailed(e.toString()))),
+        SnackBarUtils.showSuccess(context, l10n.appIgnoreUpdateFailed(e.toString()),
         );
       }
     }
@@ -199,9 +194,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.appConnInfoFailed}: $e')),
-        );
+        SnackBarUtils.showSuccess(context, '${l10n.appConnInfoFailed}: $e');
       }
     }
   }
@@ -214,15 +207,12 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     try {
       final ok = await launchUrl(url, mode: LaunchMode.externalApplication);
       if (!ok && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(l10n.appOperateFailed(l10n.commonUnknownError))),
+        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(l10n.commonUnknownError),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateFailed(e.toString()))),
+        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }
@@ -243,9 +233,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       if (!mounted) return;
       Navigator.pop(context);
       if (container == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.notFoundDesc)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.notFoundDesc);
         return;
       }
 
@@ -257,9 +245,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     } catch (e) {
       if (!mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${l10n.commonLoadFailedTitle}: $e')),
-      );
+      SnackBarUtils.showSuccess(context, '${l10n.commonLoadFailedTitle}: $e');
     }
   }
 
@@ -273,15 +259,12 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     try {
       await installedProvider.operateApp(app!.id.toString(), operation);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.appOperateSuccess);
       }
       await detailProvider.syncInstallInfo();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateFailed(e.toString()))),
+        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }
@@ -333,13 +316,10 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       await installedProvider.uninstallApp(app!.id.toString());
       if (!mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.appOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.appOperateSuccess);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateFailed(e.toString()))),
+        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }

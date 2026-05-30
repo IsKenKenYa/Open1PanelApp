@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
 
 class ApiKeySettingsPage extends StatelessWidget {
@@ -127,9 +128,7 @@ class ApiKeySettingsPage extends StatelessWidget {
             icon: const Icon(Icons.copy_outlined, size: 18),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: value));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(context.l10n.commonCopied)),
-              );
+              SnackBarUtils.showSuccess(context, context.l10n.commonCopied);
             },
           ),
         ],
@@ -175,11 +174,11 @@ class ApiKeySettingsPage extends StatelessWidget {
         validityTime: validityTimeInt,
       );
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  success ? l10n.commonSaveSuccess : l10n.commonSaveFailed)),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+        } else {
+          SnackBarUtils.showError(context, l10n.commonSaveFailed);
+        }
       }
     }
   }
@@ -207,12 +206,12 @@ class ApiKeySettingsPage extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       final success = await provider.generateApiKey();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(success
-                  ? l10n.apiKeySettingsRegenerateSuccess
-                  : l10n.commonSaveFailed)),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(
+              context, l10n.apiKeySettingsRegenerateSuccess);
+        } else {
+          SnackBarUtils.showError(context, l10n.commonSaveFailed);
+        }
       }
     }
   }

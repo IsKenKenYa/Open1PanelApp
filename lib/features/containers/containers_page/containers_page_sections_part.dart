@@ -189,21 +189,14 @@ extension _ContainersPageSections on _ContainersPageViewState {
       return;
     }
 
-    final messenger = ScaffoldMessenger.of(context);
-    final message = success
-        ? l10n.containerOperateSuccess
-        : l10n.containerOperateFailed(
-            provider.data.error ?? l10n.commonUnknownError,
-          );
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor:
-              success ? Theme.of(context).colorScheme.tertiary : null,
-        ),
-      );
+    if (success) {
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
+    } else {
+      SnackBarUtils.showError(
+          context,
+          l10n.containerOperateFailed(
+              provider.data.error ?? l10n.commonUnknownError));
+    }
   }
 
   String _actionLabel(dynamic l10n, _ContainerLifecycleAction action) {

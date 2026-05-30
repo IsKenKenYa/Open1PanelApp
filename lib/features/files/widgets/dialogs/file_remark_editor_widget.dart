@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
 
 class FileRemarkEditorWidget extends StatefulWidget {
@@ -70,17 +71,13 @@ class _FileRemarkEditorWidgetState extends State<FileRemarkEditorWidget> {
         refreshAfterSave: false,
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.commonSaveSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _remarkError = e.toString();
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.commonSaveFailed)),
-      );
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
     } finally {
       if (mounted) {
         setState(() {

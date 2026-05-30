@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/ssl_models.dart';
 import 'package:onepanel_client/features/websites/pages/website_ssl_center_page.dart';
 import 'package:onepanel_client/features/websites/providers/website_site_ssl_provider.dart';
@@ -190,16 +191,13 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                             if (!context.mounted) {
                               return;
                             }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  success
-                                      ? l10n.commonSaveSuccess
-                                      : (provider.error ??
-                                          l10n.commonSaveFailed),
-                                ),
-                              ),
-                            );
+                            if (success) {
+                              SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                            } else {
+                              SnackBarUtils.showError(
+                                  context,
+                                  provider.error ?? l10n.commonSaveFailed);
+                            }
                           },
                     onDiscard: provider.discardDraft,
                   ),
@@ -240,16 +238,16 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                                     if (!context.mounted) {
                                       return;
                                     }
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          success
-                                              ? l10n.websiteSiteSslRollbackSuccess
-                                              : (provider.error ??
-                                                  l10n.commonSaveFailed),
-                                        ),
-                                      ),
-                                    );
+                                    if (success) {
+                                      SnackBarUtils.showSuccess(
+                                          context,
+                                          l10n.websiteSiteSslRollbackSuccess);
+                                    } else {
+                                      SnackBarUtils.showError(
+                                          context,
+                                          provider.error ??
+                                              l10n.commonSaveFailed);
+                                    }
                                   }
                                 : null,
                             icon: const Icon(Icons.history),

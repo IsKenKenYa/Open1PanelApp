@@ -6,6 +6,7 @@ import '../../../data/models/app_models.dart';
 import '../../../shared/widgets/app_card.dart';
 import 'app_icon.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 /// 已安装应用卡片
 class InstalledAppCard extends StatelessWidget {
   final AppInstallInfo app;
@@ -160,17 +161,13 @@ class InstalledAppCard extends StatelessWidget {
       try {
         if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content:
-                      Text(l10n.appOperateFailed(l10n.commonUnknownError))),
+            SnackBarUtils.showSuccess(context, l10n.appOperateFailed(l10n.commonUnknownError),
             );
           }
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.appOperateFailed(e.toString()))),
+          SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
           );
         }
       }

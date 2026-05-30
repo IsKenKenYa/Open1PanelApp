@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/menu_settings_provider.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:provider/provider.dart';
@@ -125,18 +126,16 @@ class _MenuSettingsPageState extends State<MenuSettingsPage> {
                 ? null
                 : () async {
                     final menuProvider = context.read<MenuSettingsProvider>();
-                    final messenger = ScaffoldMessenger.of(context);
                     final success = await menuProvider.save();
-                    if (!mounted) return;
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          success
-                              ? l10n.menuSettingsSaveSuccess
-                              : (menuProvider.error ?? l10n.commonSaveFailed),
-                        ),
-                      ),
-                    );
+                    if (!context.mounted) return;
+                    if (success) {
+                      SnackBarUtils.showSuccess(
+                          context, l10n.menuSettingsSaveSuccess);
+                    } else {
+                      SnackBarUtils.showError(
+                          context,
+                          menuProvider.error ?? l10n.commonSaveFailed);
+                    }
                   },
             icon: const Icon(Icons.save_outlined),
             label: Text(l10n.commonSave),

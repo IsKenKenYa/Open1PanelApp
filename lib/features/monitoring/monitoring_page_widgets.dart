@@ -474,14 +474,10 @@ class _MonitorSettingsDialogState extends State<_MonitorSettingsDialog> {
       });
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.monitorSettingsSaved)),
-        );
+        SnackBarUtils.showSuccess(context, context.l10n.monitorSettingsSaved);
         Navigator.of(context).pop();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.monitorSettingsFailed)),
-        );
+        SnackBarUtils.showSuccess(context, context.l10n.monitorSettingsFailed);
       }
     }
   }
@@ -511,12 +507,8 @@ class _MonitorSettingsDialogState extends State<_MonitorSettingsDialog> {
       final success = await provider.cleanData();
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                success ? l10n.monitorCleanSuccess : l10n.monitorCleanFailed),
-          ),
-        );
+        SnackBarUtils.showSuccess(context, 
+                success ? l10n.monitorCleanSuccess : l10n.monitorCleanFailed);
         // 清理后重新加载数据
         if (success) {
           provider.load();

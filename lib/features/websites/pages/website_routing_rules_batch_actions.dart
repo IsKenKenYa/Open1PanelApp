@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 import '../providers/website_routing_rules_provider.dart';
 import 'website_routing_rules_single_actions.dart';
@@ -110,10 +111,7 @@ class WebsiteRoutingRulesBatchActions {
               onPressed: () async {
                 final ids = parseWebsiteIds(idsController.text);
                 if (ids.isEmpty) {
-                  WebsiteRoutingRulesSingleActions.showSnackBar(
-                    context,
-                    'No valid website IDs.',
-                  );
+                  SnackBarUtils.showError(context, 'No valid website IDs.');
                   return;
                 }
 
@@ -145,10 +143,13 @@ class WebsiteRoutingRulesBatchActions {
 
                 if (!ctx.mounted) return;
                 Navigator.of(ctx).pop();
-                WebsiteRoutingRulesSingleActions.showSnackBar(
-                  context,
-                  'Batch done: success ${result.succeeded}, failed ${result.failed}.',
-                );
+                final batchMsg =
+                    'Batch done: success ${result.succeeded}, failed ${result.failed}.';
+                if (result.failed > 0) {
+                  SnackBarUtils.showWarning(context, batchMsg);
+                } else {
+                  SnackBarUtils.showSuccess(context, batchMsg);
+                }
               },
               child: Text(context.l10n.commonSave),
             ),

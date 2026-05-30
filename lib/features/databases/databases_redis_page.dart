@@ -10,6 +10,7 @@ import 'package:onepanel_client/shared/widgets/app_card.dart';
 import 'databases_provider.dart';
 import 'databases_service.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class DatabaseRedisPage extends StatelessWidget {
   const DatabaseRedisPage({
     super.key,
@@ -185,11 +186,7 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
 
   void _showSaveResult(bool success) {
     final l10n = context.l10n;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(success ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, success ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
   }
 }
 

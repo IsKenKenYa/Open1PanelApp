@@ -6,6 +6,7 @@ import 'package:onepanel_client/core/config/build_metadata_config.dart';
 import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -186,18 +187,14 @@ class _AboutPageState extends State<AboutPage> {
       mode: LaunchMode.externalApplication,
     );
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.aboutLinkOpenFailed)),
-      );
+      SnackBarUtils.showError(context, context.l10n.aboutLinkOpenFailed);
     }
   }
 
   Future<void> _copyText(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.commonCopied)),
-    );
+    SnackBarUtils.showSuccess(context, context.l10n.commonCopied);
   }
 
   String _channelLabel(BuildContext context) {

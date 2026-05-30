@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
 
@@ -51,21 +52,14 @@ class _ContainerCreatePageState extends State<ContainerCreatePage> {
 
     if (ok) {
       Navigator.of(context).pop(true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          l10n.containerOperateFailed(
-            provider.data.error ?? l10n.commonUnknownError,
-          ),
-        ),
-      ),
-    );
+    SnackBarUtils.showError(
+        context,
+        l10n.containerOperateFailed(
+            provider.data.error ?? l10n.commonUnknownError));
   }
 
   @override

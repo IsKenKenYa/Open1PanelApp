@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/platform/services/platform_diagnostics_service.dart';
-import 'package:onepanel_client/core/services/file_save_service.dart' as fs;
 import 'package:onepanel_client/core/services/logger/log_export_service.dart';
 import 'package:onepanel_client/core/services/logger/log_file_manager_service.dart';
 import 'package:onepanel_client/core/services/logger/log_level.dart';
@@ -137,9 +137,7 @@ class _FeedbackCenterPageState extends State<FeedbackCenterPage> {
       mode: LaunchMode.externalApplication,
     );
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.settingsFeedbackOpenFailed)),
-      );
+      SnackBarUtils.showSuccess(context, context.l10n.settingsFeedbackOpenFailed);
     }
   }
 
@@ -176,9 +174,7 @@ $platformTemplate
 ''';
     await Clipboard.setData(ClipboardData(text: template.trim()));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.commonCopied)),
-    );
+    SnackBarUtils.showSuccess(context, l10n.commonCopied);
   }
 
   Future<void> _exportAppLogs(BuildContext context) async {
@@ -210,25 +206,11 @@ $platformTemplate
     if (!context.mounted) return;
 
     if (!result.success) {
-      _showExportResultSnackBar(context, result);
+      SnackBarUtils.showError(context, '${l10n.commonSaveFailed}: ${result.errorMessage ?? ''}');
       return;
     }
 
-    _showExportResultSnackBar(context, result);
-  }
-
-  void _showExportResultSnackBar(
-      BuildContext context, fs.FileSaveResult result) {
-    final l10n = context.l10n;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          result.success
-              ? '${l10n.commonSaveSuccess}: ${result.filePath ?? ''}'
-              : '${l10n.commonSaveFailed}: ${result.errorMessage ?? ''}',
-        ),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, '${l10n.commonSaveSuccess}: ${result.filePath ?? ''}');
   }
 
   Future<void> _clearAppLogs(BuildContext context) async {
@@ -254,9 +236,7 @@ $platformTemplate
     if (!confirmed) return;
     await LogFileManagerService().clearLogs();
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.systemSettingsAppLogsCleared)),
-    );
+    SnackBarUtils.showSuccess(context, l10n.systemSettingsAppLogsCleared);
   }
 
   String _logLevelLabel(AppLocalizations l10n, AppLogLevel level) {
@@ -317,13 +297,8 @@ $platformTemplate
 
     if (!context.mounted) return;
     setState(() {});
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${l10n.commonSaveSuccess}: ${_logLevelLabel(l10n, appLogger.minLogLevel)}',
-        ),
-      ),
-    );
+    SnackBarUtils.showSuccess(context,
+        '${l10n.commonSaveSuccess}: ${_logLevelLabel(l10n, appLogger.minLogLevel)}');
   }
 
   AppLogLevel _channelMinLogLevelFloor() {
@@ -340,9 +315,7 @@ $platformTemplate
   }
 
   void _showLogLevelLockedHint(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.systemSettingsAppLogsLevelLocked)),
-    );
+    SnackBarUtils.showSuccess(context, context.l10n.systemSettingsAppLogsLevelLocked);
   }
 
   String _channelLabel(AppLocalizations l10n) {

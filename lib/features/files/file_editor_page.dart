@@ -3,6 +3,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/features/files/files_service.dart';
 import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 class FileEditorPage extends StatefulWidget {
   final String filePath;
@@ -138,12 +139,7 @@ class _FileEditorPageState extends State<FileEditorPage> {
           _hasChanges = false;
           _originalContent = _controller.text;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.commonSaveSuccess),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
       }
     } catch (e, stackTrace) {
       appLogger.eWithPackage('file_editor', '_saveContent: 保存失败',

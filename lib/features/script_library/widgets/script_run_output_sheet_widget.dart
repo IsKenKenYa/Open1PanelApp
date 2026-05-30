@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class ScriptRunOutputSheetWidget extends StatelessWidget {
   const ScriptRunOutputSheetWidget({
     super.key,
@@ -38,11 +39,7 @@ class ScriptRunOutputSheetWidget extends StatelessWidget {
                       : () async {
                           await Clipboard.setData(ClipboardData(text: output));
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(context.l10n.commonCopySuccess),
-                            ),
-                          );
+                          SnackBarUtils.showSuccess(context, context.l10n.commonCopySuccess);
                         },
                   icon: const Icon(Icons.copy_all_outlined),
                   tooltip: context.l10n.commonCopy,

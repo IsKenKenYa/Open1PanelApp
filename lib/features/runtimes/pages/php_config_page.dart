@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/runtimes/models/runtime_manage_args.dart';
 import 'package:onepanel_client/features/runtimes/providers/php_config_provider.dart';
 import 'package:onepanel_client/features/runtimes/utils/runtime_l10n_helper.dart';
@@ -226,42 +227,52 @@ class _PhpConfigPageState extends State<PhpConfigPage> {
 
   Future<void> _saveBasic() async {
     final success = await context.read<PhpConfigProvider>().save();
-    _showSaveSnackBar(success);
+    if (!mounted) return;
+    if (success) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _saveFpmConfig() async {
     final success = await context.read<PhpConfigProvider>().saveFpmConfig();
-    _showSaveSnackBar(success);
+    if (!mounted) return;
+    if (success) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _saveContainerConfig() async {
     final success =
         await context.read<PhpConfigProvider>().saveContainerConfig();
-    _showSaveSnackBar(success);
+    if (!mounted) return;
+    if (success) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _savePhpFile() async {
     final success = await context.read<PhpConfigProvider>().savePhpFile();
-    _showSaveSnackBar(success);
+    if (!mounted) return;
+    if (success) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _saveFpmFile() async {
     final success = await context.read<PhpConfigProvider>().saveFpmFile();
-    _showSaveSnackBar(success);
-  }
-
-  void _showSaveSnackBar(bool success) {
-    if (!mounted) {
-      return;
+    if (!mounted) return;
+    if (success) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? context.l10n.commonSaveSuccess
-              : context.l10n.commonSaveFailed,
-        ),
-      ),
-    );
   }
 }

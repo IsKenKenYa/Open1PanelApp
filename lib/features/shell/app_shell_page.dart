@@ -19,6 +19,7 @@ import 'package:onepanel_client/features/shell/widgets/shell_drawer_scope.dart';
 import 'package:onepanel_client/features/shell/widgets/server_switcher_action.dart';
 import 'package:onepanel_client/widgets/navigation/app_bottom_navigation_bar.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class AppShellPage extends StatefulWidget {
   const AppShellPage({
     super.key,
@@ -235,13 +236,9 @@ class _AppShellPageState extends State<AppShellPage> {
       return false;
     }
     if (!success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      SnackBarUtils.showSuccess(context, 
             appLockController.lastError ?? context.l10n.appLockAuthFailed,
-          ),
-        ),
-      );
+          );
     }
     return success;
   }

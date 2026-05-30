@@ -13,6 +13,7 @@ import 'package:onepanel_client/shared/widgets/app_card.dart';
 
 import 'databases_provider.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class DatabasesPage extends StatefulWidget {
   const DatabasesPage({super.key});
 
@@ -482,9 +483,7 @@ class _DatabaseGridCard extends StatelessWidget {
                     : () async {
                         await Clipboard.setData(ClipboardData(text: detail));
                         if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.commonCopied)),
-                        );
+                        SnackBarUtils.showSuccess(context, l10n.commonCopied);
                       },
                 icon: const Icon(Icons.content_copy_outlined),
                 label: Text(l10n.commonCopy),

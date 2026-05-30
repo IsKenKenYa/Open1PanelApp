@@ -4,6 +4,7 @@ import 'package:onepanel_client/l10n/generated/app_localizations.dart';
 import '../../../data/models/app_models.dart';
 import '../app_service.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class AppInstallDialog extends StatefulWidget {
   final AppItem app;
 
@@ -126,8 +127,7 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
     } catch (e) {
       if (mounted && showError) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateFailed(_formatError(e)))),
+        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(_formatError(e)),
         );
       }
     } finally {
@@ -167,8 +167,7 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
     if (!_formKey.currentState!.validate()) return;
     if (_currentDetailId == null) {
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.appOperateFailed(l10n.commonUnknownError))),
+      SnackBarUtils.showSuccess(context, l10n.appOperateFailed(l10n.commonUnknownError),
       );
       return;
     }
@@ -225,21 +224,11 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
 
       if (mounted) {
         Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).appOperateSuccess),
-          ),
-        );
+        SnackBarUtils.showSuccess(context, AppLocalizations.of(context).appOperateSuccess);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                AppLocalizations.of(context).appOperateFailed(_formatError(e))),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        SnackBarUtils.showError(context, AppLocalizations.of(context).appOperateFailed(_formatError(e)));
       }
     } finally {
       if (mounted) {

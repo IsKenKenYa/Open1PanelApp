@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/panel_settings_page.dart';
 import 'package:onepanel_client/features/settings/security_settings_page.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
@@ -511,14 +512,13 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
               if (!dialogContext.mounted) {
                 return;
               }
-              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                SnackBar(
-                  content:
-                      Text(ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-                ),
-              );
               if (ok) {
+                SnackBarUtils.showSuccess(
+                    dialogContext, l10n.commonSaveSuccess);
                 Navigator.of(dialogContext).pop();
+              } else {
+                SnackBarUtils.showError(
+                    dialogContext, l10n.commonSaveFailed);
               }
             },
             child: Text(l10n.commonSave),
@@ -567,14 +567,13 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
               if (!dialogContext.mounted) {
                 return;
               }
-              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                SnackBar(
-                  content:
-                      Text(ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-                ),
-              );
               if (ok) {
+                SnackBarUtils.showSuccess(
+                    dialogContext, l10n.commonSaveSuccess);
                 Navigator.of(dialogContext).pop();
+              } else {
+                SnackBarUtils.showError(
+                    dialogContext, l10n.commonSaveFailed);
               }
             },
             child: Text(l10n.commonSave),
@@ -681,14 +680,13 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
               if (!dialogContext.mounted) {
                 return;
               }
-              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                SnackBar(
-                  content:
-                      Text(ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-                ),
-              );
               if (ok) {
+                SnackBarUtils.showSuccess(
+                    dialogContext, l10n.commonSaveSuccess);
                 Navigator.of(dialogContext).pop();
+              } else {
+                SnackBarUtils.showError(
+                    dialogContext, l10n.commonSaveFailed);
               }
             },
             child: Text(l10n.commonSave),
@@ -782,15 +780,13 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     final result =
         await LogExportService().exportLogs(minLevel: appLogger.minLogLevel);
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          result.success
-              ? '${l10n.commonSaveSuccess}: ${result.filePath ?? ''}'
-              : '${l10n.commonSaveFailed}: ${result.errorMessage ?? ''}',
-        ),
-      ),
-    );
+    if (result.success) {
+      SnackBarUtils.showSuccess(
+          context, '${l10n.commonSaveSuccess}: ${result.filePath ?? ''}');
+    } else {
+      SnackBarUtils.showError(
+          context, '${l10n.commonSaveFailed}: ${result.errorMessage ?? ''}');
+    }
   }
 
   Future<void> _clearAppLogs(BuildContext context) async {
@@ -816,9 +812,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     if (!confirmed) return;
     await LogFileManagerService().clearLogs();
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.systemSettingsAppLogsCleared)),
-    );
+    SnackBarUtils.showSuccess(context, l10n.systemSettingsAppLogsCleared);
   }
 
   String _logLevelLabel(AppLocalizations l10n, AppLogLevel level) {
@@ -877,13 +871,9 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     await appLogger.applyReleaseChannelPolicy();
     if (!context.mounted) return;
     setState(() {});
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${l10n.commonSaveSuccess}: ${_logLevelLabel(l10n, appLogger.minLogLevel)}',
-        ),
-      ),
-    );
+    SnackBarUtils.showSuccess(
+        context,
+        '${l10n.commonSaveSuccess}: ${_logLevelLabel(l10n, appLogger.minLogLevel)}');
   }
 
   AppLogLevel _channelMinLogLevelFloor() {
@@ -901,8 +891,6 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
 
   void _showLogLevelLockedHint(BuildContext context) {
     final l10n = context.l10n;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.systemSettingsAppLogsLevelLocked)),
-    );
+    SnackBarUtils.showInfo(context, l10n.systemSettingsAppLogsLevelLocked);
   }
 }

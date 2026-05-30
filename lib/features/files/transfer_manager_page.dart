@@ -6,6 +6,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/transfer/transfer_task.dart';
 import 'package:onepanel_client/core/services/transfer/transfer_manager.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart';
@@ -475,7 +476,7 @@ class _DownloadTaskTile extends StatelessWidget {
                   onRefresh();
                   break;
                 case RetryDownloadTaskWithNewAuthResult.fileAlreadyDownloaded:
-                  _showFloatingSnackBar(
+                  SnackBarUtils.showInfo(
                     context,
                     l10n.transferFileAlreadyDownloaded,
                   );
@@ -572,11 +573,13 @@ class _DownloadTaskTile extends StatelessWidget {
     final file = File(filePath);
     if (!await file.exists()) {
       if (context.mounted) {
-        _showFloatingSnackBar(
+        SnackBarUtils.showError(
           context,
           l10n.transferFileNotFound,
-          actionLabel: l10n.transferCopyPath,
-          onAction: () => _copyToClipboard(context, filePath),
+          action: SnackBarAction(
+            label: l10n.transferCopyPath,
+            onPressed: () => _copyToClipboard(context, filePath),
+          ),
         );
       }
       return;
@@ -592,11 +595,13 @@ class _DownloadTaskTile extends StatelessWidget {
 
         final result = await OpenFilex.open(filePath);
         if (result.type != ResultType.done && context.mounted) {
-          _showFloatingSnackBar(
+          SnackBarUtils.showError(
             context,
             l10n.transferOpenFileError,
-            actionLabel: l10n.transferCopyPath,
-            onAction: () => _copyToClipboard(context, filePath),
+            action: SnackBarAction(
+              label: l10n.transferCopyPath,
+              onPressed: () => _copyToClipboard(context, filePath),
+            ),
           );
         }
         return;
@@ -604,11 +609,13 @@ class _DownloadTaskTile extends StatelessWidget {
 
       if (!capabilities.supportsOpenDownloadedFile) {
         if (context.mounted) {
-          _showFloatingSnackBar(
+          SnackBarUtils.showError(
             context,
             l10n.transferOpenDownloadedFileUnsupported,
-            actionLabel: l10n.transferCopyPath,
-            onAction: () => _copyToClipboard(context, filePath),
+            action: SnackBarAction(
+              label: l10n.transferCopyPath,
+              onPressed: () => _copyToClipboard(context, filePath),
+            ),
           );
         }
         return;
@@ -616,15 +623,17 @@ class _DownloadTaskTile extends StatelessWidget {
 
       await FileSaveService().openFileLocation(filePath);
       if (context.mounted) {
-        _showFloatingSnackBar(context, l10n.transferFileLocationOpened);
+        SnackBarUtils.showSuccess(context, l10n.transferFileLocationOpened);
       }
     } catch (_) {
       if (context.mounted) {
-        _showFloatingSnackBar(
+        SnackBarUtils.showError(
           context,
           l10n.transferOpenFileError,
-          actionLabel: l10n.transferCopyPath,
-          onAction: () => _copyToClipboard(context, filePath),
+          action: SnackBarAction(
+            label: l10n.transferCopyPath,
+            onPressed: () => _copyToClipboard(context, filePath),
+          ),
         );
       }
     }
@@ -660,11 +669,13 @@ class _DownloadTaskTile extends StatelessWidget {
                   final ok = await FileSaveService().openDownloadsDirectory();
                   if (!context.mounted) return;
                   if (!ok) {
-                    _showFloatingSnackBar(
+                    SnackBarUtils.showError(
                       context,
                       l10n.transferOpenFileError,
-                      actionLabel: l10n.transferCopyDirectoryPath,
-                      onAction: () => _copyToClipboard(context, dirPath),
+                      action: SnackBarAction(
+                        label: l10n.transferCopyDirectoryPath,
+                        onPressed: () => _copyToClipboard(context, dirPath),
+                      ),
                     );
                     return;
                   }
@@ -699,7 +710,7 @@ class _DownloadTaskTile extends StatelessWidget {
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    _showFloatingSnackBar(context, context.l10n.commonCopied);
+    SnackBarUtils.showSuccess(context, context.l10n.commonCopied);
   }
 
   Color _getStatusColor(DownloadTaskStatus status, ThemeData theme) {
@@ -955,27 +966,3 @@ class _UploadTaskTile extends StatelessWidget {
   }
 }
 
-void _showFloatingSnackBar(
-  BuildContext context,
-  String message, {
-  String? actionLabel,
-  VoidCallback? onAction,
-}) {
-  final theme = Theme.of(context);
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      behavior: SnackBarBehavior.floating,
-      showCloseIcon: true,
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      backgroundColor: theme.colorScheme.inverseSurface,
-      action: (actionLabel != null && onAction != null)
-          ? SnackBarAction(
-              label: actionLabel,
-              onPressed: onAction,
-            )
-          : null,
-    ),
-  );
-}

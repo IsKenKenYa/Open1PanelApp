@@ -4,6 +4,7 @@ import 'package:onepanel_client/data/models/docker_models.dart';
 import 'package:onepanel_client/features/orchestration/providers/network_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class NetworkCard extends StatelessWidget {
   const NetworkCard({super.key, required this.network});
 
@@ -24,24 +25,16 @@ class NetworkCard extends StatelessWidget {
     if (!context.mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
       return;
     }
 
     final error = provider.error ?? l10n.commonUnknownError;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.containerOperateFailed(error)),
+    SnackBarUtils.showError(context, l10n.containerOperateFailed(error),
         action: SnackBarAction(
           label: l10n.commonRetry,
-          onPressed: () {
-            action();
-          },
-        ),
-      ),
-    );
+          onPressed: () => action(),
+        ));
   }
 
   Future<void> _showDetailsSheet(BuildContext context) async {
@@ -103,9 +96,7 @@ class NetworkCard extends StatelessWidget {
     final l10n = context.l10n;
 
     if (_isSystemNetwork) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerSystemProtectedNetwork)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerSystemProtectedNetwork);
       return;
     }
 

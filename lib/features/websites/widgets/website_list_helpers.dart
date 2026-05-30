@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:onepanel_client/config/app_router.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/website_models.dart';
 import 'package:onepanel_client/data/models/website_group_models.dart';
 import 'package:onepanel_client/features/websites/providers/websites_provider.dart';
@@ -53,14 +54,10 @@ Future<void> runWebsiteBatchDelete(
   }
   if (ok) {
     clearSelection();
+    SnackBarUtils.showSuccess(context, l10n.websitesDeleteSuccess);
+  } else {
+    SnackBarUtils.showError(context, l10n.websitesOperateFailed);
   }
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        ok ? l10n.websitesDeleteSuccess : l10n.websitesOperateFailed,
-      ),
-    ),
-  );
 }
 
 Future<void> runWebsiteBatchSetGroup(
@@ -83,14 +80,8 @@ Future<void> runWebsiteBatchSetGroup(
   }
   if (ok) {
     clearSelection();
+    SnackBarUtils.showSuccess(context, context.l10n.websitesOperateSuccess);
+  } else {
+    SnackBarUtils.showError(context, context.l10n.websitesOperateFailed);
   }
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        ok
-            ? context.l10n.websitesOperateSuccess
-            : context.l10n.websitesOperateFailed,
-      ),
-    ),
-  );
 }

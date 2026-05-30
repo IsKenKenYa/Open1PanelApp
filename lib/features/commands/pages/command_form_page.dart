@@ -5,6 +5,7 @@ import 'package:onepanel_client/features/commands/providers/command_form_provide
 import 'package:onepanel_client/features/commands/widgets/command_preview_box_widget.dart';
 import 'package:onepanel_client/features/group/widgets/group_selector_sheet_widget.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -143,10 +144,9 @@ class _CommandFormPageState extends State<CommandFormPage> {
       Navigator.of(context).pop(true);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(context.read<CommandFormProvider>().errorMessage ??
-              context.l10n.commonSaveFailed)),
-    );
+    SnackBarUtils.showError(
+        context,
+        context.read<CommandFormProvider>().errorMessage ??
+            context.l10n.commonSaveFailed);
   }
 }

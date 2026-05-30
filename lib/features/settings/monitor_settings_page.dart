@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/monitoring/monitoring_provider.dart';
 
 class MonitorSettingsPage extends StatelessWidget {
@@ -31,12 +32,13 @@ class MonitorSettingsPage extends StatelessWidget {
                     final success =
                         await provider.updateSettings(enabled: value);
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(success
-                                ? l10n.monitorSettingsSaved
-                                : l10n.monitorSettingsFailed)),
-                      );
+                      if (success) {
+                        SnackBarUtils.showSuccess(
+                            context, l10n.monitorSettingsSaved);
+                      } else {
+                        SnackBarUtils.showError(
+                            context, l10n.monitorSettingsFailed);
+                      }
                     }
                   },
                 ),
@@ -161,12 +163,13 @@ class MonitorSettingsPage extends StatelessWidget {
               }
 
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(success
-                          ? context.l10n.monitorSettingsSaved
-                          : context.l10n.monitorSettingsFailed)),
-                );
+                if (success) {
+                  SnackBarUtils.showSuccess(
+                      context, context.l10n.monitorSettingsSaved);
+                } else {
+                  SnackBarUtils.showError(
+                      context, context.l10n.monitorSettingsFailed);
+                }
               }
             },
             child: Text(context.l10n.commonSave),
@@ -194,12 +197,13 @@ class MonitorSettingsPage extends StatelessWidget {
               Navigator.pop(context);
               final success = await provider.cleanData();
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(success
-                          ? context.l10n.monitorCleanSuccess
-                          : context.l10n.monitorCleanFailed)),
-                );
+                if (success) {
+                  SnackBarUtils.showSuccess(
+                      context, context.l10n.monitorCleanSuccess);
+                } else {
+                  SnackBarUtils.showError(
+                      context, context.l10n.monitorCleanFailed);
+                }
               }
             },
             child: Text(context.l10n.commonConfirm),

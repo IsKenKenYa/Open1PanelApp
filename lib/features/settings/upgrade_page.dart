@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
 
 class UpgradePage extends StatefulWidget {
@@ -306,12 +307,11 @@ class _UpgradePageState extends State<UpgradePage> {
               Navigator.pop(context);
               final success = await provider.upgrade(version: version);
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(success
-                          ? l10n.upgradeStarted
-                          : l10n.commonSaveFailed)),
-                );
+                if (success) {
+                  SnackBarUtils.showSuccess(context, l10n.upgradeStarted);
+                } else {
+                  SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                }
               }
             },
             child: Text(

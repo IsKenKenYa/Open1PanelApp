@@ -9,6 +9,7 @@ import 'package:onepanel_client/shared/widgets/app_card.dart';
 import 'package:onepanel_client/features/apps/widgets/app_icon.dart';
 import 'app_install_dialog.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class AppStoreView extends StatefulWidget {
   const AppStoreView({super.key});
 
@@ -77,16 +78,12 @@ class _AppStoreViewState extends State<AppStoreView> {
     try {
       await provider.syncApps();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.appStoreSyncSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, context.l10n.appStoreSyncSuccess);
         _loadApps(refresh: true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${context.l10n.appStoreSyncFailed}: $e')),
-        );
+        SnackBarUtils.showSuccess(context, '${context.l10n.appStoreSyncFailed}: $e');
       }
     }
   }
@@ -299,12 +296,7 @@ class _AppStoreViewState extends State<AppStoreView> {
     if (!mounted) return;
 
     if (provider.error != null) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(
-          content: Text(provider.error!),
-          backgroundColor: colorScheme.error,
-        ),
-      );
+      SnackBarUtils.showError(context, provider.error!);
     }
 
     if (result == true) {

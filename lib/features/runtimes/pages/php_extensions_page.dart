@@ -10,6 +10,7 @@ import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class PhpExtensionsPage extends StatefulWidget {
   const PhpExtensionsPage({
     super.key,
@@ -225,11 +226,7 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(success ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, success ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
   }
 
   Future<void> _showRecordDialog({PHPExtensionRecord? record}) async {
@@ -292,11 +289,7 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
   }
 
   Future<void> _deleteRecord(PHPExtensionRecord record) async {
@@ -318,10 +311,6 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
   }
 }

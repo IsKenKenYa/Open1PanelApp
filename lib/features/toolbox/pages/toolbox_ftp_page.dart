@@ -6,6 +6,7 @@ import 'package:onepanel_client/features/toolbox/providers/toolbox_ftp_provider.
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 part 'toolbox_ftp_page_actions_part.dart';
 
 class ToolboxFtpPage extends StatefulWidget {
@@ -216,15 +217,11 @@ class _ToolboxFtpPageState extends State<ToolboxFtpPage>
                         if (!context.mounted) {
                           return;
                         }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
+                        SnackBarUtils.showSuccess(context, 
                               success
                                   ? l10n.toolboxFtpSyncSuccess
                                   : (provider.error ??
                                       l10n.toolboxFtpSyncFailed),
-                            ),
-                          ),
                         );
                       },
                 icon: const Icon(Icons.sync_outlined),

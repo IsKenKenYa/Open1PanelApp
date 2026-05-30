@@ -6,6 +6,7 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/features/security/security_provider.dart';
 import 'package:onepanel_client/features/shell/widgets/server_switcher_action.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class SecurityVerificationPage extends StatefulWidget {
   const SecurityVerificationPage({super.key});
 
@@ -118,18 +119,13 @@ class _SecurityVerificationPageState extends State<SecurityVerificationPage> {
                                 if (!context.mounted) {
                                   return;
                                 }
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(l10n.securityBindSuccess)),
-                                );
+                                SnackBarUtils.showSuccess(context, l10n.securityBindSuccess);
                               } catch (e) {
                                 if (!context.mounted) {
                                   return;
                                 }
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(l10n
-                                          .securityBindFailed(e.toString()))),
+                                SnackBarUtils.showSuccess(context, l10n
+                                          .securityBindFailed(e.toString()),
                                 );
                               }
                             },

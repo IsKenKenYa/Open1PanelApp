@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/openresty/providers/openresty_provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class OpenRestySourceEditorPage extends StatefulWidget {
   final String? initialContent;
 
@@ -46,13 +47,10 @@ class _OpenRestySourceEditorPageState extends State<OpenRestySourceEditorPage> {
           .read<OpenRestyProvider>()
           .updateConfigSource(_controller.text);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.commonSaveSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+      SnackBarUtils.showSuccess(context, e.toString(),
       );
     }
   }

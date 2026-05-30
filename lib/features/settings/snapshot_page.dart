@@ -6,6 +6,7 @@ import 'package:onepanel_client/features/settings/settings_provider.dart';
 import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 const String _snapshotPagePackage = 'features.settings.snapshot_page';
 
 class SnapshotPage extends StatefulWidget {
@@ -275,12 +276,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
                             'createSnapshot result: $success',
                           );
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(success
+                            SnackBarUtils.showSuccess(context, success
                                       ? l10n.snapshotCreateSuccess
-                                      : l10n.snapshotCreateFailed)),
-                            );
+                                      : l10n.snapshotCreateFailed);
                           }
                         } catch (e, stackTrace) {
                           if (context.mounted) {
@@ -324,12 +322,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
               try {
                 final success = await provider.importSnapshot(controller.text);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(success
+                  SnackBarUtils.showSuccess(context, success
                             ? l10n.snapshotImportSuccess
-                            : l10n.snapshotImportFailed)),
-                  );
+                            : l10n.snapshotImportFailed);
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
@@ -384,12 +379,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
               try {
                 final success = await provider.recoverSnapshot(id);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(success
+                  SnackBarUtils.showSuccess(context, success
                             ? l10n.snapshotRecoverSuccess
-                            : l10n.snapshotRecoverFailed)),
-                  );
+                            : l10n.snapshotRecoverFailed);
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
@@ -423,12 +415,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
               try {
                 final success = await provider.rollbackSnapshot(id);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(success
+                  SnackBarUtils.showSuccess(context, success
                             ? l10n.snapshotRollbackSuccess
-                            : l10n.snapshotRollbackFailed)),
-                  );
+                            : l10n.snapshotRollbackFailed);
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
@@ -471,12 +460,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 final success = await provider.updateSnapshotDescription(
                     id, controller.text);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(success
+                  SnackBarUtils.showSuccess(context, success
                             ? l10n.snapshotEditDescSuccess
-                            : l10n.snapshotEditDescFailed)),
-                  );
+                            : l10n.snapshotEditDescFailed);
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
@@ -511,12 +497,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
               try {
                 final success = await provider.deleteSnapshot(ids);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(success
+                  SnackBarUtils.showSuccess(context, success
                             ? l10n.snapshotDeleteSuccess
-                            : l10n.snapshotDeleteFailed)),
-                  );
+                            : l10n.snapshotDeleteFailed);
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {

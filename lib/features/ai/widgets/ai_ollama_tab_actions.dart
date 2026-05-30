@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/ai/ai_provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class AIOllamaTabActions {
   static Future<void> handleCreate(
     BuildContext context,
@@ -50,9 +51,7 @@ class AIOllamaTabActions {
 
     if (shouldCreate != true || !context.mounted) return;
     if (nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.aiModelNameRequired)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.aiModelNameRequired);
       return;
     }
 
@@ -131,23 +130,15 @@ class AIOllamaTabActions {
     if (!context.mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.aiOperationSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.aiOperationSuccess);
       return;
     }
 
     final error = provider.errorMessage ?? l10n.commonUnknownError;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.aiOperationFailed(error)),
+    SnackBarUtils.showError(context, l10n.aiOperationFailed(error),
         action: SnackBarAction(
           label: l10n.commonRetry,
-          onPressed: () {
-            action();
-          },
-        ),
-      ),
-    );
+          onPressed: () => action(),
+        ));
   }
 }

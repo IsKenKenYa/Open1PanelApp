@@ -12,6 +12,7 @@ import 'package:onepanel_client/shared/i18n/backup_l10n_helper.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class BackupAccountFormPage extends StatefulWidget {
   const BackupAccountFormPage({
     super.key,
@@ -138,16 +139,8 @@ class _BackupAccountFormPageState extends State<BackupAccountFormPage> {
       Navigator.of(context).pop(true);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          localizeBackupError(
-                context.l10n,
-                context.read<BackupAccountFormProvider>().errorMessage,
-              ) ??
-              context.l10n.commonSaveFailed,
-        ),
-      ),
-    );
+    SnackBarUtils.showError(context,
+        localizeBackupError(context.l10n, context.read<BackupAccountFormProvider>().errorMessage) ??
+            context.l10n.commonSaveFailed);
   }
 }

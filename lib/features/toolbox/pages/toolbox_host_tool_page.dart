@@ -6,6 +6,7 @@ import 'package:onepanel_client/features/toolbox/providers/toolbox_host_tool_pro
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class ToolboxHostToolPage extends StatefulWidget {
   const ToolboxHostToolPage({super.key});
 
@@ -265,14 +266,10 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
               );
               if (!mounted || !dialogContext.mounted) return;
               Navigator.of(dialogContext).pop();
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(
+              SnackBarUtils.showSuccess(context, 
                     success
                         ? l10n.toolboxHostToolSaveSuccess
                         : (provider.error ?? l10n.commonSaveFailed),
-                  ),
-                ),
               );
             },
             child: Text(l10n.commonConfirm),
@@ -313,14 +310,10 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
                   await provider.saveSupervisorConfig(controller.text);
               if (!mounted || !dialogContext.mounted) return;
               Navigator.of(dialogContext).pop();
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(
+              SnackBarUtils.showSuccess(context, 
                     success
                         ? l10n.toolboxHostToolSaveSuccess
                         : (provider.error ?? l10n.commonSaveFailed),
-                  ),
-                ),
               );
             },
             child: Text(l10n.commonSave),
@@ -428,14 +421,10 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
                   );
                   if (!mounted || !dialogContext.mounted) return;
                   Navigator.of(dialogContext).pop();
-                  messenger.showSnackBar(
-                    SnackBar(
-                      content: Text(
+                  SnackBarUtils.showSuccess(context, 
                         success
                             ? l10n.toolboxHostToolSaveSuccess
                             : (provider.error ?? l10n.commonSaveFailed),
-                      ),
-                    ),
                   );
                 },
                 child: Text(l10n.commonSave),
@@ -493,14 +482,10 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
                 );
                 if (!mounted || !dialogContext.mounted) return;
                 Navigator.of(dialogContext).pop();
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text(
+                SnackBarUtils.showSuccess(context, 
                       success
                           ? l10n.toolboxHostToolSaveSuccess
                           : (provider.error ?? l10n.commonSaveFailed),
-                    ),
-                  ),
                 );
               },
               child: Text(l10n.commonClear),
@@ -515,14 +500,10 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
                 );
                 if (!mounted || !dialogContext.mounted) return;
                 Navigator.of(dialogContext).pop();
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text(
+                SnackBarUtils.showSuccess(context, 
                       success
                           ? l10n.toolboxHostToolSaveSuccess
                           : (provider.error ?? l10n.commonSaveFailed),
-                    ),
-                  ),
                 );
               },
               child: Text(l10n.commonSave),

@@ -10,6 +10,7 @@ import 'package:onepanel_client/features/ssh/widgets/ssh_section_nav_widget.dart
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class SshLogsPage extends StatefulWidget {
   const SshLogsPage({super.key});
 
@@ -144,8 +145,7 @@ class _SshLogsPageState extends State<SshLogsPage> {
       ),
     );
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(context.l10n.sshLogCopied)));
+    SnackBarUtils.showSuccess(context, context.l10n.sshLogCopied);
   }
 
   Future<void> _exportLogs() async {
@@ -154,7 +154,6 @@ class _SshLogsPageState extends State<SshLogsPage> {
     final message = result.success
         ? context.l10n.sshLogsExportSaved(result.filePath ?? '')
         : (result.errorMessage ?? context.l10n.commonSaveFailed);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    SnackBarUtils.showSuccess(context, message);
   }
 }

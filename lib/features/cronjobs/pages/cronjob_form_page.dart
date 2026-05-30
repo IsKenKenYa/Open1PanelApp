@@ -16,6 +16,7 @@ import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class CronjobFormPage extends StatefulWidget {
   const CronjobFormPage({
     super.key,
@@ -248,17 +249,9 @@ class _CronjobFormPageState extends State<CronjobFormPage> {
       Navigator.of(context).pop(true);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          localizeCronjobFormError(
-                context.l10n,
-                context.read<CronjobFormProvider>().errorMessage,
-              ) ??
-              context.l10n.commonSaveFailed,
-        ),
-      ),
-    );
+    SnackBarUtils.showError(context,
+        localizeCronjobFormError(context.l10n, context.read<CronjobFormProvider>().errorMessage) ??
+            context.l10n.commonSaveFailed);
   }
 
   Future<void> _delete() async {

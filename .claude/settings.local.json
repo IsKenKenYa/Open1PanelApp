@@ -29,7 +29,8 @@
       "Bash(codegraph query *)",
       "Bash(codegraph callers *)",
       "Bash(codegraph context *)",
-      "Bash(codegraph sync *)"
+      "Bash(codegraph sync *)",
+      "Bash(flutter run *)"
     ],
     "deny": [],
     "ask": []

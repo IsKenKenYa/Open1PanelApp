@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/providers/recycle_bin_provider.dart';
 import 'package:provider/provider.dart';
@@ -340,9 +341,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
       try {
         await provider.restoreSelected();
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.recycleBinRestoreSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.recycleBinRestoreSuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
         DebugErrorDialog.show(
@@ -388,9 +387,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
       try {
         await provider.deletePermanentlySelected();
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.recycleBinDeletePermanentlySuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.recycleBinDeletePermanentlySuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
         DebugErrorDialog.show(
@@ -431,9 +428,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
       try {
         await provider.restoreSingle(file);
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.recycleBinRestoreSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.recycleBinRestoreSuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
         DebugErrorDialog.show(
@@ -479,9 +474,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
       try {
         await provider.deletePermanentlySingle(file);
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.recycleBinDeletePermanentlySuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.recycleBinDeletePermanentlySuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
         DebugErrorDialog.show(
@@ -524,9 +517,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
       try {
         await provider.clearRecycleBin();
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.recycleBinClearSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.recycleBinClearSuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
         DebugErrorDialog.show(

@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/openresty_models.dart';
 import 'package:onepanel_client/features/openresty/providers/openresty_provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class OpenRestyCenterDialogs {
   const OpenRestyCenterDialogs._();
 
@@ -223,15 +224,11 @@ class OpenRestyCenterDialogs {
               );
               if (context.mounted) {
                 Navigator.pop(dialogContext);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
+                SnackBarUtils.showSuccess(context, 
                       mirror.isEmpty
                           ? l10n.openrestyBuildSubmittedMessage
                           : l10n
                               .openrestyBuildSubmittedWithMirrorMessage(mirror),
-                    ),
-                  ),
                 );
               }
             },

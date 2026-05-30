@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 import '../providers/website_routing_rules_provider.dart';
 
@@ -52,9 +53,9 @@ class WebsiteRoutingRulesSingleActions {
                     nameController.text.trim(), contentController.text);
                 if (!ctx.mounted) return;
                 Navigator.of(ctx).pop();
-                showSnackBar(context, l10n.commonSaveSuccess);
+                SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
               } catch (e) {
-                showSnackBar(context, '${l10n.commonSaveFailed}: $e');
+                SnackBarUtils.showError(context, '${l10n.commonSaveFailed}: $e');
               }
             },
             child: Text(l10n.commonSave),
@@ -104,9 +105,9 @@ class WebsiteRoutingRulesSingleActions {
                   await provider.deleteProxy(name: nameController.text.trim());
                   if (!ctx.mounted) return;
                   Navigator.of(ctx).pop();
-                  showSnackBar(context, l10n.websitesOperateSuccess);
+                  SnackBarUtils.showSuccess(context, l10n.websitesOperateSuccess);
                 } catch (e) {
-                  showSnackBar(context, '${l10n.websitesOperateFailed}: $e');
+                  SnackBarUtils.showError(context, '${l10n.websitesOperateFailed}: $e');
                 }
               },
               child: Text(l10n.commonDelete),
@@ -120,9 +121,9 @@ class WebsiteRoutingRulesSingleActions {
                   );
                   if (!ctx.mounted) return;
                   Navigator.of(ctx).pop();
-                  showSnackBar(context, l10n.commonSaveSuccess);
+                  SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
                 } catch (e) {
-                  showSnackBar(context, '${l10n.commonSaveFailed}: $e');
+                  SnackBarUtils.showError(context, '${l10n.commonSaveFailed}: $e');
                 }
               },
               child: Text(l10n.commonSave),
@@ -134,8 +135,4 @@ class WebsiteRoutingRulesSingleActions {
     nameController.dispose();
   }
 
-  static void showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
 }

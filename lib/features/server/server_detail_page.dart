@@ -14,6 +14,7 @@ import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/mobile_pinned_modules_customizer_sheet.dart';
 import 'package:onepanel_client/features/shell/widgets/server_switcher_action.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class ServerDetailPage extends StatelessWidget {
   const ServerDetailPage({
     super.key,
@@ -98,9 +99,7 @@ class ServerDetailPage extends StatelessWidget {
     await provider.load();
     await provider.loadMetrics();
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.commonRefresh)),
-    );
+    SnackBarUtils.showSuccess(context, l10n.commonRefresh);
   }
 
   ServerDetailSectionItem _buildClientModuleItem(
@@ -224,16 +223,12 @@ class ServerDetailPage extends StatelessWidget {
       if (!context.mounted) {
         return;
       }
-      messenger.showSnackBar(
-        SnackBar(content: Text(successMessage)),
-      );
+      SnackBarUtils.showSuccess(context, successMessage);
     } catch (error) {
       if (!context.mounted) {
         return;
       }
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.serverDeleteFailed(error.toString())),
+      SnackBarUtils.showSuccess(context, l10n.serverDeleteFailed(error.toString(),
         ),
       );
     }

@@ -11,6 +11,7 @@ import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffol
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class RuntimeFormPage extends StatefulWidget {
   const RuntimeFormPage({
     super.key,
@@ -123,9 +124,7 @@ class _RuntimeFormPageState extends State<RuntimeFormPage> {
             context.read<RuntimeFormProvider>().errorMessage,
           ) ??
           context.l10n.commonSaveFailed;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      SnackBarUtils.showSuccess(context, message);
     }
   }
 }

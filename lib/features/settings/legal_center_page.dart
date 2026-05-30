@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 
 class LegalCenterPage extends StatelessWidget {
@@ -116,9 +117,7 @@ class LegalCenterPage extends StatelessWidget {
       mode: LaunchMode.externalApplication,
     );
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.aboutLinkOpenFailed)),
-      );
+      SnackBarUtils.showError(context, context.l10n.aboutLinkOpenFailed);
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
 
@@ -83,9 +84,7 @@ class ContainersPageContainerMaintenanceDialogs {
       );
       if (!context.mounted) return;
       final message = report?.message ?? l10n.containerOperateSuccess;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      SnackBarUtils.showSuccess(context, message);
     }
   }
 
@@ -114,9 +113,7 @@ class ContainersPageContainerMaintenanceDialogs {
               final success = await provider.deleteContainer(containerId);
               if (!parentContext.mounted) return;
               if (success) {
-                ScaffoldMessenger.of(parentContext).showSnackBar(
-                  SnackBar(content: Text(l10n.containerOperateSuccess)),
-                );
+                SnackBarUtils.showSuccess(parentContext, l10n.containerOperateSuccess);
               }
             },
             style: FilledButton.styleFrom(

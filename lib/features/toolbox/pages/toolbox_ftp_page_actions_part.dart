@@ -12,14 +12,10 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
     if (!context.mounted) {
       return;
     }
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
+    SnackBarUtils.showSuccess(context, 
           success
               ? l10n.commonSaveSuccess
               : (provider.error ?? l10n.commonSaveFailed),
-        ),
-      ),
     );
   }
 
@@ -79,15 +75,11 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
           FilledButton(
             onPressed: () async {
               if (userController.text.trim().isEmpty) {
-                messenger.showSnackBar(
-                  SnackBar(content: Text(l10n.authUsernameRequired)),
-                );
+                SnackBarUtils.showSuccess(context, l10n.authUsernameRequired);
                 return;
               }
               if (!isEdit && passwordController.text.trim().isEmpty) {
-                messenger.showSnackBar(
-                  SnackBar(content: Text(l10n.authPasswordRequired)),
-                );
+                SnackBarUtils.showSuccess(context, l10n.authPasswordRequired);
                 return;
               }
 
@@ -124,14 +116,10 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
               if (success) {
                 Navigator.pop(dialogContext);
               }
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(
+              SnackBarUtils.showSuccess(context, 
                     success
                         ? l10n.commonSaveSuccess
                         : (provider.error ?? l10n.commonSaveFailed),
-                  ),
-                ),
               );
             },
             child: Text(l10n.commonSave),
@@ -174,14 +162,10 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
     if (!context.mounted) {
       return;
     }
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
+    SnackBarUtils.showSuccess(context, 
           success
               ? l10n.commonSaveSuccess
               : (provider.error ?? l10n.commonSaveFailed),
-        ),
-      ),
     );
   }
 }

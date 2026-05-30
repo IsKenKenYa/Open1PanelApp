@@ -6,6 +6,7 @@ import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/services/cache/file_preview_cache_manager.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class CacheSettingsPage extends StatelessWidget {
   const CacheSettingsPage({super.key});
 
@@ -280,9 +281,7 @@ class _ClearCacheButton extends StatelessWidget {
         if (confirmed == true && context.mounted) {
           await FilePreviewCacheManager().clearAllCache();
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.settingsCacheCleared)),
-            );
+            SnackBarUtils.showSuccess(context, l10n.settingsCacheCleared);
           }
         }
       },

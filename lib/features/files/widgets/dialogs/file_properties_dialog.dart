@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/widgets/dialogs/file_remark_editor_widget.dart';
 
 class FilePropertiesDialog extends StatelessWidget {
@@ -112,9 +113,7 @@ class FilePropertiesDialog extends StatelessWidget {
                   icon: const Icon(Icons.copy, size: 16),
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: value));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(context.l10n.commonCopySuccess)),
-                    );
+                    SnackBarUtils.showSuccess(context, context.l10n.commonCopySuccess);
                   },
                   tooltip: context.l10n.commonCopy,
                   visualDensity: VisualDensity.compact,

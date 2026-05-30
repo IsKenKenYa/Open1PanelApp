@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import '../containers_provider.dart';
 
 class ConfigTab extends StatefulWidget {
@@ -79,14 +80,11 @@ class _ConfigTabState extends State<ConfigTab> {
               const SizedBox(height: 16),
               FilledButton.icon(
                 onPressed: () async {
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
                   final success =
                       await provider.updateDaemonJson(_controller.text);
                   if (!mounted) return;
                   if (success) {
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(content: Text(l10n.commonSaveSuccess)),
-                    );
+                    SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
                   }
                 },
                 icon: const Icon(Icons.save),

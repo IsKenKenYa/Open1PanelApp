@@ -23,12 +23,9 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
     if (!context.mounted) {
       return;
     }
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(success
+    SnackBarUtils.showSuccess(context, success
             ? l10n.commonSaveSuccess
-            : (provider.error ?? l10n.commonSaveFailed)),
-      ),
+            : (provider.error ?? l10n.commonSaveFailed),
     );
   }
 
@@ -43,12 +40,9 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
     if (!context.mounted) {
       return;
     }
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(success
+    SnackBarUtils.showSuccess(context, success
             ? l10n.commonSaveSuccess
-            : (provider.error ?? l10n.commonSaveFailed)),
-      ),
+            : (provider.error ?? l10n.commonSaveFailed),
     );
   }
 
@@ -123,14 +117,10 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
                 if (!context.mounted) {
                   return;
                 }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
+                SnackBarUtils.showSuccess(context, 
                       success
                           ? l10n.commonSaveSuccess
                           : (provider.error ?? l10n.commonSaveFailed),
-                    ),
-                  ),
                 );
               },
               child: Text(l10n.commonSave),

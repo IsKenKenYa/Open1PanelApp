@@ -5,6 +5,7 @@ import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/platform_utils.dart';
 import 'package:onepanel_client/core/utils/keyboard_utils.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/website_group_models.dart';
 import 'package:onepanel_client/data/models/website_models.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
@@ -373,15 +374,11 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
       },
     );
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          ok
-              ? context.l10n.websitesOperateSuccess
-              : context.l10n.websitesOperateFailed,
-        ),
-      ),
-    );
+    if (ok) {
+      SnackBarUtils.showSuccess(context, context.l10n.websitesOperateSuccess);
+    } else {
+      SnackBarUtils.showError(context, context.l10n.websitesOperateFailed);
+    }
   }
 
   Future<void> _batchOperate(BuildContext context, String action) async {
@@ -391,17 +388,11 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
           action: action,
         );
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          ok
-              ? context.l10n.websitesOperateSuccess
-              : context.l10n.websitesOperateFailed,
-        ),
-      ),
-    );
     if (ok) {
+      SnackBarUtils.showSuccess(context, context.l10n.websitesOperateSuccess);
       setState(() => _selectedIds.clear());
+    } else {
+      SnackBarUtils.showError(context, context.l10n.websitesOperateFailed);
     }
   }
 

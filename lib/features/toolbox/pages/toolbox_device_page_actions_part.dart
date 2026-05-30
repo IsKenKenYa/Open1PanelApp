@@ -66,14 +66,10 @@ mixin _ToolboxDevicePageActionsPart on State<ToolboxDevicePage> {
               if (!context.mounted) {
                 return;
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
+              SnackBarUtils.showSuccess(context, 
                     success
                         ? l10n.commonSaveSuccess
                         : (provider.error ?? l10n.commonSaveFailed),
-                  ),
-                ),
               );
             },
             child: Text(l10n.commonSave),
@@ -93,16 +89,12 @@ mixin _ToolboxDevicePageActionsPart on State<ToolboxDevicePage> {
     if (!context.mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
+    SnackBarUtils.showSuccess(context, 
           success
               ? l10n.toolboxDeviceCheckDnsSuccess
               : (provider.error == 'dns-empty'
                   ? l10n.toolboxDeviceDnsRequired
                   : l10n.toolboxDeviceCheckDnsFailed),
-        ),
-      ),
     );
   }
 
@@ -165,18 +157,14 @@ mixin _ToolboxDevicePageActionsPart on State<ToolboxDevicePage> {
               if (success) {
                 Navigator.pop(dialogContext);
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    success
-                        ? l10n.commonSaveSuccess
-                        : _localizedError(
+              if (success) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, _localizedError(
                             context,
                             provider.error ?? l10n.commonSaveFailed,
-                          ),
-                  ),
-                ),
-              );
+                          ));
+    }
             },
             child: Text(l10n.commonSave),
           ),
@@ -216,18 +204,14 @@ mixin _ToolboxDevicePageActionsPart on State<ToolboxDevicePage> {
               if (success) {
                 Navigator.pop(dialogContext);
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    success
-                        ? l10n.commonSaveSuccess
-                        : _localizedError(
+              if (success) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, _localizedError(
                             context,
                             provider.error ?? l10n.commonSaveFailed,
-                          ),
-                  ),
-                ),
-              );
+                          ));
+    }
             },
             child: Text(l10n.commonSave),
           ),

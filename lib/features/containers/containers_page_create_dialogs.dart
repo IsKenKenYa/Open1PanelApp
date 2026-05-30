@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/dialogs/compose_create_dialog.dart';
 import 'package:onepanel_client/features/containers/dialogs/network_create_dialog.dart';
@@ -24,19 +25,10 @@ class ContainersPageCreateDialogs {
       final success = await provider.createCompose(result);
       if (context.mounted) {
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.containerOperateSuccess)),
-          );
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.containerOperateFailed(
-                  provider.error ?? l10n.commonUnknownError,
-                ),
-              ),
-            ),
-          );
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.error ?? l10n.commonUnknownError));
         }
       }
     }
@@ -63,19 +55,10 @@ class ContainersPageCreateDialogs {
       final success = await provider.createNetwork(request);
       if (context.mounted) {
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.containerOperateSuccess)),
-          );
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.containerOperateFailed(
-                  provider.error ?? l10n.commonUnknownError,
-                ),
-              ),
-            ),
-          );
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.error ?? l10n.commonUnknownError));
         }
       }
     }
@@ -99,19 +82,10 @@ class ContainersPageCreateDialogs {
       final success = await provider.createVolume(request);
       if (context.mounted) {
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.containerOperateSuccess)),
-          );
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                l10n.containerOperateFailed(
-                  provider.error ?? l10n.commonUnknownError,
-                ),
-              ),
-            ),
-          );
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.error ?? l10n.commonUnknownError));
         }
       }
     }
@@ -124,9 +98,7 @@ class ContainersPageCreateDialogs {
       builder: (context) => const RepoCreateDialog(),
     );
     if (result == true && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
     }
   }
 
@@ -137,9 +109,7 @@ class ContainersPageCreateDialogs {
       builder: (context) => const TemplateCreateDialog(),
     );
     if (result == true && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
     }
   }
 

@@ -9,6 +9,7 @@ import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffol
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class PhpSupervisorPage extends StatefulWidget {
   const PhpSupervisorPage({
     super.key,
@@ -262,9 +263,7 @@ class _PhpSupervisorPageState extends State<PhpSupervisorPage> {
         ? context.l10n.commonSaveSuccess
         : (localizeRuntimeError(context.l10n, provider.errorMessage) ??
             context.l10n.commonSaveFailed);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    SnackBarUtils.showSuccess(context, message);
   }
 
   Future<void> _openFile({
@@ -283,9 +282,7 @@ class _PhpSupervisorPageState extends State<PhpSupervisorPage> {
       final message =
           localizeRuntimeError(context.l10n, provider.fileErrorMessage) ??
               context.l10n.commonSaveFailed;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      SnackBarUtils.showSuccess(context, message);
       return;
     }
 
@@ -440,9 +437,7 @@ class _PhpSupervisorPageState extends State<PhpSupervisorPage> {
         ? context.l10n.commonSaveSuccess
         : (localizeRuntimeError(context.l10n, provider.fileErrorMessage) ??
             context.l10n.commonSaveFailed);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    SnackBarUtils.showSuccess(context, message);
   }
 
   Future<void> _clearActiveLog() async {
@@ -456,9 +451,7 @@ class _PhpSupervisorPageState extends State<PhpSupervisorPage> {
         ? context.l10n.commonSaveSuccess
         : (localizeRuntimeError(context.l10n, provider.fileErrorMessage) ??
             context.l10n.commonSaveFailed);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    SnackBarUtils.showSuccess(context, message);
   }
 
   Future<void> _openProcessEditor({
@@ -598,10 +591,7 @@ class _PhpSupervisorPageState extends State<PhpSupervisorPage> {
                                         Navigator.of(sheetContext).canPop()) {
                                       Navigator.of(sheetContext).pop();
                                     }
-                                    ScaffoldMessenger.of(sheetContext)
-                                        .showSnackBar(
-                                      SnackBar(content: Text(message)),
-                                    );
+                                    SnackBarUtils.showSuccess(sheetContext, message);
                                   },
                             child: provider.isOperating
                                 ? const SizedBox.square(

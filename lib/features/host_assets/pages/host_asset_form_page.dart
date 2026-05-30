@@ -10,6 +10,7 @@ import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffol
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class HostAssetFormPage extends StatefulWidget {
   const HostAssetFormPage({
     super.key,
@@ -216,13 +217,7 @@ class _HostAssetFormPageState extends State<HostAssetFormPage> {
       Navigator.of(context).pop(true);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.read<HostAssetFormProvider>().errorMessage ??
-              context.l10n.commonSaveFailed,
-        ),
-      ),
-    );
+    SnackBarUtils.showError(context,
+        context.read<HostAssetFormProvider>().errorMessage ?? context.l10n.commonSaveFailed);
   }
 }

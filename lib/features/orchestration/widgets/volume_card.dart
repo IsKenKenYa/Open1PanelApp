@@ -4,6 +4,7 @@ import 'package:onepanel_client/data/models/docker_models.dart';
 import 'package:onepanel_client/features/orchestration/providers/volume_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class VolumeCard extends StatelessWidget {
   const VolumeCard({super.key, required this.volume});
 
@@ -19,24 +20,16 @@ class VolumeCard extends StatelessWidget {
     if (!context.mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
       return;
     }
 
     final error = provider.error ?? l10n.commonUnknownError;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.containerOperateFailed(error)),
+    SnackBarUtils.showError(context, l10n.containerOperateFailed(error),
         action: SnackBarAction(
           label: l10n.commonRetry,
-          onPressed: () {
-            action();
-          },
-        ),
-      ),
-    );
+          onPressed: () => action(),
+        ));
   }
 
   Future<void> _showDetailsSheet(BuildContext context) async {

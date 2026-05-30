@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'server_connection_service.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class ServerFormPage extends StatefulWidget {
   const ServerFormPage({super.key});
 
@@ -41,9 +42,7 @@ class _ServerFormPageState extends State<ServerFormPage> {
   Future<void> _testConnection() async {
     if (_urlController.text.trim().isEmpty ||
         _apiKeyController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.serverFormRequired)),
-      );
+      SnackBarUtils.showSuccess(context, context.l10n.serverFormRequired);
       return;
     }
 
@@ -66,22 +65,11 @@ class _ServerFormPageState extends State<ServerFormPage> {
       });
 
       if (result.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${context.l10n.serverTestSuccess} (${result.responseTime?.inMilliseconds}ms)',
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
+        SnackBarUtils.showSuccess(context,
+            '${context.l10n.serverTestSuccess} (${result.responseTime?.inMilliseconds}ms)');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '${context.l10n.serverTestFailed}: ${result.errorMessage}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        SnackBarUtils.showError(context,
+            '${context.l10n.serverTestFailed}: ${result.errorMessage}');
       }
     } finally {
       if (mounted) {
@@ -120,9 +108,7 @@ class _ServerFormPageState extends State<ServerFormPage> {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.serverFormSaveSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.serverFormSaveSuccess);
       if (Navigator.of(context).canPop()) {
         Navigator.pop(context, true);
         return;
@@ -133,8 +119,7 @@ class _ServerFormPageState extends State<ServerFormPage> {
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.serverFormSaveFailed(e.toString()))),
+      SnackBarUtils.showSuccess(context, l10n.serverFormSaveFailed(e.toString()),
       );
     } finally {
       if (mounted) {

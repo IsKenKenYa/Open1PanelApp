@@ -14,6 +14,7 @@ import 'package:onepanel_client/features/group/widgets/group_selector_sheet_widg
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -181,8 +182,7 @@ class _CommandsPageState extends State<CommandsPage> {
   Future<void> _copyCommand(CommandInfo item) async {
     await Clipboard.setData(ClipboardData(text: item.command ?? ''));
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(context.l10n.commonCopySuccess)));
+    SnackBarUtils.showSuccess(context, context.l10n.commonCopySuccess);
   }
 
   Future<void> _pickImportFile() async {
@@ -204,9 +204,7 @@ class _CommandsPageState extends State<CommandsPage> {
     );
     if (!mounted || provider.importPreviewItems.isEmpty) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.commandsImportPreviewEmpty)),
-        );
+        SnackBarUtils.showInfo(context, context.l10n.commandsImportPreviewEmpty);
       }
       return;
     }
@@ -231,9 +229,7 @@ class _CommandsPageState extends State<CommandsPage> {
                 if (!pageContext.mounted) return;
                 if (success) {
                   Navigator.of(context).pop();
-                  ScaffoldMessenger.of(pageContext).showSnackBar(
-                    SnackBar(content: Text(pageContext.l10n.commonImport)),
-                  );
+                  SnackBarUtils.showSuccess(pageContext, pageContext.l10n.commonImport);
                 }
               },
               emptyTitle: context.l10n.commandsImportPreviewEmptyTitle,
@@ -264,8 +260,9 @@ class _CommandsPageState extends State<CommandsPage> {
     final message = result.success
         ? context.l10n.commandsExportSaved(result.filePath ?? '')
         : (result.errorMessage ?? context.l10n.commonSaveFailed);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    result.success
+        ? SnackBarUtils.showSuccess(context, message)
+        : SnackBarUtils.showError(context, message);
   }
 
   Future<void> _pickGroupFilter(CommandsProvider provider) async {

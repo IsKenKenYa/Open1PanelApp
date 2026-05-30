@@ -12,6 +12,7 @@ import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class SshSettingsPage extends StatefulWidget {
   const SshSettingsPage({super.key});
 
@@ -284,9 +285,7 @@ class _SshSettingsPageState extends State<SshSettingsPage> {
   Future<void> _copyRawConfig() async {
     await Clipboard.setData(ClipboardData(text: _rawFileController.text));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.commonCopySuccess)),
-    );
+    SnackBarUtils.showSuccess(context, context.l10n.commonCopySuccess);
   }
 
   Future<void> _confirmSaveRawFile() async {

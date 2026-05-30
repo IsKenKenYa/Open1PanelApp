@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_service.dart';
 import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 
 class FavoritesPage extends StatelessWidget {
@@ -87,9 +88,7 @@ class _FavoritesViewState extends State<FavoritesView> {
           _favorites.removeWhere((f) => f.path == path);
           _favoritePaths.remove(path);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesFavoritesRemoved)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.filesFavoritesRemoved);
       }
     } catch (e, stackTrace) {
       appLogger.eWithPackage('favorites_page', '_removeFavorite: 失败',

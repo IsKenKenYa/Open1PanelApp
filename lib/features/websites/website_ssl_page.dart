@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 import '../../data/models/ssl_models.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'providers/website_ssl_provider.dart';
@@ -106,9 +107,7 @@ class _WebsiteSslBody extends StatelessWidget {
   ) async {
     final l10n = context.l10n;
     if ((ssl.primaryDomain ?? '').isEmpty || (ssl.provider ?? '').isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.websitesSslAutoRenewMissingFields)),
-      );
+      SnackBarUtils.showWarning(context, l10n.websitesSslAutoRenewMissingFields);
       return;
     }
 
@@ -122,9 +121,7 @@ class _WebsiteSslBody extends StatelessWidget {
     );
 
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.commonSaveSuccess)),
-    );
+    SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
   }
 
   Future<void> _downloadCertificate(
@@ -137,9 +134,7 @@ class _WebsiteSslBody extends StatelessWidget {
     if (id == null) return;
     final link = await provider.downloadCertificate(id);
     if (!context.mounted || link == null || link.isEmpty) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.websitesSslDownloadHint(link))),
-    );
+    SnackBarUtils.showInfo(context, l10n.websitesSslDownloadHint(link));
   }
 
   Future<void> _confirmDelete(

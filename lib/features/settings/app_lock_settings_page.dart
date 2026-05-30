@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/security/app_lock_controller.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
 import 'package:provider/provider.dart';
@@ -63,11 +64,10 @@ class AppLockSettingsPage extends StatelessWidget {
                                   return;
                                 }
                                 if (!success) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(controller.lastError ??
-                                          l10n.appLockAuthFailed),
-                                    ),
+                                  SnackBarUtils.showError(
+                                    context,
+                                    controller.lastError ??
+                                        l10n.appLockAuthFailed,
                                   );
                                 }
                                 return;

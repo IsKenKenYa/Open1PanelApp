@@ -3,6 +3,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/docker_models.dart';
 import 'package:onepanel_client/features/orchestration/providers/image_provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class ImageCardActions {
   static String imageReference(DockerImage image) {
     return image.tags.isNotEmpty ? image.tags.first : image.id;
@@ -29,23 +30,15 @@ class ImageCardActions {
     if (!context.mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.containerOperateSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
       return;
     }
 
     final error = provider.error ?? l10n.commonUnknownError;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.containerOperateFailed(error)),
+    SnackBarUtils.showError(context, l10n.containerOperateFailed(error),
         action: SnackBarAction(
           label: l10n.commonRetry,
-          onPressed: () {
-            action();
-          },
-        ),
-      ),
-    );
+          onPressed: () => action(),
+        ));
   }
 }

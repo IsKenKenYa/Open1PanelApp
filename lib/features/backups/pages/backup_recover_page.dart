@@ -12,6 +12,7 @@ import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class BackupRecoverPage extends StatefulWidget {
   const BackupRecoverPage({
     super.key,
@@ -96,16 +97,8 @@ class _BackupRecoverPageState extends State<BackupRecoverPage> {
       Navigator.of(context).pop(true);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          localizeBackupError(
-                context.l10n,
-                context.read<BackupRecoverProvider>().errorMessage,
-              ) ??
-              context.l10n.commonUnknownError,
-        ),
-      ),
-    );
+    SnackBarUtils.showError(context,
+        localizeBackupError(context.l10n, context.read<BackupRecoverProvider>().errorMessage) ??
+            context.l10n.commonUnknownError);
   }
 }

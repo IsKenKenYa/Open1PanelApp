@@ -6,6 +6,7 @@ import 'package:onepanel_client/features/toolbox/providers/toolbox_disk_provider
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class ToolboxDiskPage extends StatefulWidget {
   const ToolboxDiskPage({super.key});
 
@@ -180,14 +181,10 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
                   );
                   if (!mounted || !dialogContext.mounted) return;
                   Navigator.of(dialogContext).pop();
-                  messenger.showSnackBar(
-                    SnackBar(
-                      content: Text(
+                  SnackBarUtils.showSuccess(context, 
                         success
                             ? l10n.toolboxDiskMountSuccess
                             : (diskProvider.error ?? l10n.commonSaveFailed),
-                      ),
-                    ),
                   );
                 },
                 child: Text(l10n.commonConfirm),
@@ -266,14 +263,10 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
                   );
                   if (!mounted || !dialogContext.mounted) return;
                   Navigator.of(dialogContext).pop();
-                  messenger.showSnackBar(
-                    SnackBar(
-                      content: Text(
+                  SnackBarUtils.showSuccess(context, 
                         success
                             ? l10n.toolboxDiskPartitionSuccess
                             : (diskProvider.error ?? l10n.commonSaveFailed),
-                      ),
-                    ),
                   );
                 },
                 child: Text(l10n.commonConfirm),
@@ -293,14 +286,10 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
       DiskUnmountRequest(mountPoint: disk.mountPoint),
     );
     if (!mounted) return;
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
+    SnackBarUtils.showSuccess(context, 
           success
               ? l10n.toolboxDiskUnmountSuccess
               : (diskProvider.error ?? l10n.commonSaveFailed),
-        ),
-      ),
     );
   }
 

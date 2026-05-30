@@ -7,6 +7,7 @@ import 'package:onepanel_client/features/security_gateway/widgets/security_gatew
 import 'package:onepanel_client/features/settings/panel_ssl/pages/panel_ssl_page.dart';
 import 'package:onepanel_client/features/websites/pages/website_site_ssl_page.dart';
 import 'package:onepanel_client/features/websites/pages/website_ssl_center_page.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
 import 'package:provider/provider.dart';
 
@@ -147,15 +148,11 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                         if (!context.mounted) {
                           return;
                         }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              success
-                                  ? l10n.securityGatewayRollbackSuccess
-                                  : l10n.securityGatewayRollbackEmpty,
-                            ),
-                          ),
-                        );
+                        success
+                            ? SnackBarUtils.showSuccess(
+                                context, l10n.securityGatewayRollbackSuccess)
+                            : SnackBarUtils.showInfo(
+                                context, l10n.securityGatewayRollbackEmpty);
                       },
                       icon: const Icon(Icons.history),
                       label: Text(l10n.securityGatewayRollbackLatestAction),

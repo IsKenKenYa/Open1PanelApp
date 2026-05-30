@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
 import 'package:onepanel_client/features/files/models/models.dart';
 
@@ -89,62 +90,27 @@ void showWgetDialog(BuildContext context, FilesProvider provider) {
                 final status = provider.data.wgetStatus;
                 if (status != null &&
                     status.state == WgetDownloadState.success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          Icon(Icons.check_circle,
-                              color: Theme.of(context).colorScheme.onPrimary),
-                          const SizedBox(width: 8),
-                          Expanded(
-                              child: Text(status.message ??
-                                  l10n.filesWgetSuccess(
-                                      status.filePath ?? ''))),
-                        ],
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      action: SnackBarAction(
-                        label: l10n.commonConfirm,
-                        textColor: Theme.of(context).colorScheme.onPrimary,
-                        onPressed: () {},
-                      ),
+                  SnackBarUtils.showSuccess(
+                    context,
+                    status.message ??
+                        l10n.filesWgetSuccess(status.filePath ?? ''),
+                    action: SnackBarAction(
+                      label: l10n.commonConfirm,
+                      onPressed: () {},
                     ),
                   );
                 } else if (status != null &&
                     status.state == WgetDownloadState.error) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          Icon(Icons.error_outline,
-                              color: Theme.of(context).colorScheme.onError),
-                          const SizedBox(width: 8),
-                          Expanded(
-                              child:
-                                  Text(status.message ?? l10n.filesWgetFailed)),
-                        ],
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
-                      action: SnackBarAction(
-                        label: l10n.commonConfirm,
-                        textColor: Theme.of(context).colorScheme.onError,
-                        onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: status.message ?? ''));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.commonCopied),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        },
-                      ),
+                  SnackBarUtils.showError(
+                    context,
+                    status.message ?? l10n.filesWgetFailed,
+                    action: SnackBarAction(
+                      label: l10n.commonConfirm,
+                      onPressed: () {
+                        Clipboard.setData(
+                            ClipboardData(text: status.message ?? ''));
+                        SnackBarUtils.showInfo(context, l10n.commonCopied);
+                      },
                     ),
                   );
                 }
@@ -154,33 +120,15 @@ void showWgetDialog(BuildContext context, FilesProvider provider) {
               appLogger.eWithPackage('wget_dialog', 'showWgetDialog: wget下载失败',
                   error: e, stackTrace: stackTrace);
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      children: [
-                        Icon(Icons.error_outline,
-                            color: Theme.of(context).colorScheme.onError),
-                        const SizedBox(width: 8),
-                        Expanded(child: Text(e.toString())),
-                      ],
-                    ),
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    action: SnackBarAction(
-                      label: l10n.commonConfirm,
-                      textColor: Theme.of(context).colorScheme.onError,
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: e.toString()));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.commonCopied),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
-                    ),
+                SnackBarUtils.showError(
+                  context,
+                  e.toString(),
+                  action: SnackBarAction(
+                    label: l10n.commonConfirm,
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: e.toString()));
+                      SnackBarUtils.showInfo(context, l10n.commonCopied);
+                    },
                   ),
                 );
               }

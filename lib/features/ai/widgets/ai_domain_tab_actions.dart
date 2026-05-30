@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/ai/ai_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -38,9 +39,7 @@ class AIDomainTabActions {
     final appInstallId = parseInt(appInstallIdController.text);
 
     if (appInstallId == null || appInstallId <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.aiAppInstallIdRequired)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.aiAppInstallIdRequired);
       return;
     }
 
@@ -55,25 +54,28 @@ class AIDomainTabActions {
         sslIdController: sslIdController,
         websiteIdController: websiteIdController,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.aiOperationSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, l10n.aiOperationSuccess);
       return;
     }
 
-    _showFailureSnackbar(
+    SnackBarUtils.showError(
       context,
-      provider,
-      onRetry: () {
-        loadDomainBinding(
-          context,
-          appInstallIdController: appInstallIdController,
-          domainController: domainController,
-          ipListController: ipListController,
-          sslIdController: sslIdController,
-          websiteIdController: websiteIdController,
-        );
-      },
+      l10n.aiOperationFailed(
+        provider.errorMessage ?? l10n.commonUnknownError,
+      ),
+      action: SnackBarAction(
+        label: l10n.commonRetry,
+        onPressed: () {
+          loadDomainBinding(
+            context,
+            appInstallIdController: appInstallIdController,
+            domainController: domainController,
+            ipListController: ipListController,
+            sslIdController: sslIdController,
+            websiteIdController: websiteIdController,
+          );
+        },
+      ),
     );
   }
 
@@ -103,6 +105,8 @@ class AIDomainTabActions {
 
     if (!context.mounted) return;
 
+    final l10n = context.l10n;
+
     if (success) {
       fillFromProvider(
         provider: provider,
@@ -111,47 +115,30 @@ class AIDomainTabActions {
         sslIdController: sslIdController,
         websiteIdController: websiteIdController,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.aiOperationSuccess)),
-      );
+      SnackBarUtils.showSuccess(context, context.l10n.aiOperationSuccess);
       return;
     }
 
-    _showFailureSnackbar(
+    SnackBarUtils.showError(
       context,
-      provider,
-      onRetry: () {
-        submitDomainBinding(
-          context,
-          formKey: formKey,
-          appInstallIdController: appInstallIdController,
-          domainController: domainController,
-          ipListController: ipListController,
-          sslIdController: sslIdController,
-          websiteIdController: websiteIdController,
-        );
-      },
-    );
-  }
-
-  static void _showFailureSnackbar(
-    BuildContext context,
-    AIProvider provider, {
-    required VoidCallback onRetry,
-  }) {
-    final l10n = context.l10n;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          l10n.aiOperationFailed(
-            provider.errorMessage ?? l10n.commonUnknownError,
-          ),
-        ),
-        action: SnackBarAction(
-          label: l10n.commonRetry,
-          onPressed: onRetry,
-        ),
+      l10n.aiOperationFailed(
+        provider.errorMessage ?? l10n.commonUnknownError,
+      ),
+      action: SnackBarAction(
+        label: l10n.commonRetry,
+        onPressed: () {
+          submitDomainBinding(
+            context,
+            formKey: formKey,
+            appInstallIdController: appInstallIdController,
+            domainController: domainController,
+            ipListController: ipListController,
+            sslIdController: sslIdController,
+            websiteIdController: websiteIdController,
+          );
+        },
       ),
     );
   }
+
 }

@@ -87,12 +87,7 @@ mixin _ToolboxClamPageActionsPart on State<ToolboxClamPage> {
                 final path = pathController.text.trim();
                 final timeout = int.tryParse(timeoutController.text.trim());
                 if (name.isEmpty || path.isEmpty || timeout == null) {
-                  messenger.showSnackBar(
-                    SnackBar(
-                      content:
-                          Text(l10n.websitesSslAccountsValidationRequiredFields),
-                    ),
-                  );
+                  SnackBarUtils.showSuccess(context, l10n.websitesSslAccountsValidationRequiredFields);
                   return;
                 }
 
@@ -131,14 +126,10 @@ mixin _ToolboxClamPageActionsPart on State<ToolboxClamPage> {
                 if (success) {
                   Navigator.pop(dialogContext);
                 }
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text(
+                SnackBarUtils.showSuccess(context, 
                       success
                           ? l10n.commonSaveSuccess
                           : (provider.error ?? l10n.commonSaveFailed),
-                    ),
-                  ),
                 );
               },
               child: Text(l10n.commonSave),
@@ -264,14 +255,10 @@ mixin _ToolboxClamPageActionsPart on State<ToolboxClamPage> {
     if (!context.mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
+    SnackBarUtils.showSuccess(context, 
           success
               ? l10n.commonSaveSuccess
               : (provider.error ?? l10n.commonSaveFailed),
-        ),
-      ),
     );
   }
 }

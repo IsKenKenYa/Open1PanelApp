@@ -7,6 +7,7 @@ import 'package:onepanel_client/features/logs/utils/logs_l10n_helper.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/log_viewer/log_viewer.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_empty_state_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -46,9 +47,7 @@ class _TaskLogDetailPageState extends State<TaskLogDetailPage> {
   Future<void> _copyContent(TaskLogsProvider provider) async {
     await Clipboard.setData(ClipboardData(text: provider.detailContent));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.commonCopySuccess)),
-    );
+    SnackBarUtils.showSuccess(context, context.l10n.commonCopySuccess);
   }
 
   @override

@@ -9,6 +9,7 @@ import '../../../data/models/app_models.dart';
 import '../providers/installed_apps_provider.dart';
 import 'installed_app_card.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class InstalledAppsView extends StatefulWidget {
   const InstalledAppsView({super.key});
 
@@ -68,15 +69,11 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
                 try {
                   await provider.uninstallApp(app.id.toString());
                   if (mounted) {
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(content: Text(l10n.appOperateSuccess)),
-                    );
+                    SnackBarUtils.showSuccess(context, l10n.appOperateSuccess);
                   }
                 } catch (e) {
                   if (mounted) {
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(
-                          content: Text(l10n.appOperateFailed(e.toString()))),
+                    SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
                     );
                   }
                 }
@@ -97,14 +94,11 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
     try {
       await context.read<InstalledAppsProvider>().operateApp(id, operation);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.appOperateSuccess);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appOperateFailed(e.toString()))),
+        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }

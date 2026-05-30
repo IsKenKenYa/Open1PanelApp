@@ -6,6 +6,7 @@ import 'package:onepanel_client/data/models/app_config_models.dart';
 import 'package:onepanel_client/data/models/app_models.dart';
 import 'package:onepanel_client/features/apps/providers/installed_apps_provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class EditAppConfigDialog extends StatefulWidget {
   final int appInstallId;
   final AppConfig appConfig;
@@ -145,18 +146,14 @@ class _EditAppConfigDialogState extends State<EditAppConfigDialog> {
 
       if (mounted) {
         navigator.pop(true);
-        scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text(l10n.commonSaveSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text('${l10n.commonSaveFailed}: $e')),
-        );
+        SnackBarUtils.showSuccess(context, '${l10n.commonSaveFailed}: $e');
       }
     }
   }

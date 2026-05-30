@@ -15,6 +15,7 @@ import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/shell_drawer_scope.dart';
 import 'package:onepanel_client/pages/settings/cache_settings_page.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -173,11 +174,8 @@ class _SettingsBody extends StatelessWidget {
                                 }
                                 settings.updateUIRenderMode(value);
                                 Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(l10n
-                                          .settingsUIRenderModeRestartHint)),
-                                );
+                                SnackBarUtils.showSuccess(context, l10n
+                                          .settingsUIRenderModeRestartHint);
                               },
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -312,9 +310,7 @@ class _SettingsBody extends StatelessWidget {
                   if (!context.mounted) {
                     return;
                   }
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.settingsResetOnboardingDone)),
-                  );
+                  SnackBarUtils.showSuccess(context, l10n.settingsResetOnboardingDone);
                 },
               ),
             ],

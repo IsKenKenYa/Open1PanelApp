@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/orchestration/providers/image_provider.dart';
 
@@ -48,15 +49,11 @@ class ContainersPageImageDialogs {
 
       final success = await provider.pullImage(image, tag: tag);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? l10n.orchestrationPullSuccess
-                  : l10n.orchestrationPullFailed,
-            ),
-          ),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.orchestrationPullSuccess);
+        } else {
+          SnackBarUtils.showError(context, l10n.orchestrationPullFailed);
+        }
       }
     }
   }
@@ -141,17 +138,12 @@ class ContainersPageImageDialogs {
       );
       final success = await provider.buildImage(request);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? l10n.containerOperateSuccess
-                  : l10n.containerOperateFailed(
-                      provider.error ?? l10n.commonUnknownError,
-                    ),
-            ),
-          ),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
+        } else {
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.error ?? l10n.commonUnknownError));
+        }
       }
     }
   }
@@ -187,17 +179,12 @@ class ContainersPageImageDialogs {
       final provider = context.read<DockerImageProvider>();
       final success = await provider.loadImage(ImageLoad(filePath: result));
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? l10n.containerOperateSuccess
-                  : l10n.containerOperateFailed(
-                      provider.error ?? l10n.commonUnknownError,
-                    ),
-            ),
-          ),
-        );
+        if (success) {
+          SnackBarUtils.showSuccess(context, l10n.containerOperateSuccess);
+        } else {
+          SnackBarUtils.showError(context,
+              l10n.containerOperateFailed(provider.error ?? l10n.commonUnknownError));
+        }
       }
     }
   }

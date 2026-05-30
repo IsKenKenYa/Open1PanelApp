@@ -5,6 +5,7 @@ import 'package:onepanel_client/features/apps/widgets/app_store_view.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/app_models.dart';
 
+import '../../core/utils/snackbar_utils.dart';
 class AppStorePage extends StatelessWidget {
   const AppStorePage({super.key, this.provider});
 
@@ -56,15 +57,11 @@ class AppStorePage extends StatelessWidget {
     try {
       await provider.syncLocalApps();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.appStoreSyncLocalSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.appStoreSyncLocalSuccess);
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.appStoreSyncLocalFailed}: $e')),
-        );
+        SnackBarUtils.showSuccess(context, '${l10n.appStoreSyncLocalFailed}: $e');
       }
     }
   }
@@ -78,9 +75,7 @@ class AppStorePage extends StatelessWidget {
       ignoredApps = await provider.loadIgnoredUpdates();
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.appIgnoredUpdatesLoadFailed}: $e')),
-        );
+        SnackBarUtils.showSuccess(context, '${l10n.appIgnoredUpdatesLoadFailed}: $e');
       }
       return;
     }

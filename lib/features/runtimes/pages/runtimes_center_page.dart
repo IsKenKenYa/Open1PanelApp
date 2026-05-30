@@ -15,6 +15,7 @@ import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class RuntimesCenterPage extends StatefulWidget {
   const RuntimesCenterPage({super.key});
 
@@ -213,9 +214,7 @@ class _RuntimesCenterPageState extends State<RuntimesCenterPage> {
     final dependencies = await provider.checkDeleteDependency(item);
     if (!mounted) return;
     if (dependencies == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.commonLoadFailedTitle)),
-      );
+      SnackBarUtils.showSuccess(context, context.l10n.commonLoadFailedTitle);
       return;
     }
 

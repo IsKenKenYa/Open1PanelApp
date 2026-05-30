@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
@@ -100,7 +101,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                             cursorBlink: value ? 'Enable' : 'Disable',
                           );
                           if (context.mounted) {
-                            _showResultSnackBar(context, success, l10n);
+                            if (success) {
+                              SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                            } else {
+                              SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                            }
                           }
                         },
                       ),
@@ -279,7 +284,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                             visible: value,
                           );
                           if (context.mounted) {
-                            _showResultSnackBar(context, success, l10n);
+                            if (success) {
+                              SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                            } else {
+                              SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                            }
                           }
                         },
                       ),
@@ -383,7 +392,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                     cursorStyle: 'block',
                   );
                   if (mounted) {
-                    _showResultSnackBar(context, success, l10n);
+                    if (success) {
+                      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                    } else {
+                      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                    }
                   }
                 },
               ),
@@ -398,7 +411,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                     cursorStyle: 'underline',
                   );
                   if (mounted) {
-                    _showResultSnackBar(context, success, l10n);
+                    if (success) {
+                      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                    } else {
+                      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                    }
                   }
                 },
               ),
@@ -412,7 +429,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                     cursorStyle: 'bar',
                   );
                   if (mounted) {
-                    _showResultSnackBar(context, success, l10n);
+                    if (success) {
+                      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                    } else {
+                      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                    }
                   }
                 },
               ),
@@ -511,7 +532,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                               fontFamily: families,
                             );
                             if (!mounted) return;
-                            _showResultSnackBar(this.context, success, l10n);
+                            if (success) {
+                              SnackBarUtils.showSuccess(this.context, l10n.commonSaveSuccess);
+                            } else {
+                              SnackBarUtils.showError(this.context, l10n.commonSaveFailed);
+                            }
                           },
                           child: Text(l10n.commonSave),
                         ),
@@ -609,7 +634,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                             Navigator.pop(sheetContext);
                             final success = await onSave(value);
                             if (context.mounted) {
-                              _showResultSnackBar(context, success, l10n);
+                              if (success) {
+                                SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                              } else {
+                                SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                              }
                             }
                           },
                           child: Text(l10n.commonSave),
@@ -658,7 +687,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                 Navigator.pop(dialogContext);
                 final success = await onSave(selected);
                 if (context.mounted) {
-                  _showResultSnackBar(context, success, l10n);
+                  if (success) {
+                    SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                  } else {
+                    SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                  }
                 }
               },
               child: Text(l10n.commonSave),
@@ -790,15 +823,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                           : passPhraseController.text.trim(),
                     );
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            ok
-                                ? l10n.commonSaveSuccess
-                                : l10n.commonSaveFailed,
-                          ),
-                        ),
-                      );
+                      if (ok) {
+                        SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                      } else {
+                        SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                      }
                     }
                   },
                   child: Text(l10n.terminalSettingsTestConnection),
@@ -828,13 +857,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                     if (!dialogContext.mounted) {
                       return;
                     }
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed,
-                        ),
-                      ),
-                    );
+                    if (ok) {
+                      SnackBarUtils.showSuccess(dialogContext, l10n.commonSaveSuccess);
+                    } else {
+                      SnackBarUtils.showError(dialogContext, l10n.commonSaveFailed);
+                    }
                     if (ok) {
                       Navigator.pop(dialogContext);
                     }
@@ -886,19 +913,6 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
     return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
   }
 
-  void _showResultSnackBar(
-    BuildContext context,
-    bool success,
-    AppLocalizations l10n,
-  ) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success ? l10n.commonSaveSuccess : l10n.commonSaveFailed,
-        ),
-      ),
-    );
-  }
 }
 
 class _PreviewCard extends StatelessWidget {

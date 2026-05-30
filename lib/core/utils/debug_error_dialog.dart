@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../theme/app_design_tokens.dart';
 
 class DebugErrorDialog {
   static void show(BuildContext context, String title, dynamic error,
@@ -72,14 +74,29 @@ class DebugErrorDialog {
   static void showErrorSnackBar(BuildContext context, String message,
       {dynamic error}) {
     if (!kDebugMode) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(
+          content: Row(children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 18),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ]),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesignTokens.radiusSm),
+          ),
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          showCloseIcon: true,
+          duration: const Duration(seconds: 5),
+        ));
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,8 +118,7 @@ class DebugErrorDialog {
           onPressed: () => show(context, message, error),
         ),
         duration: const Duration(seconds: 5),
-      ),
-    );
+      ));
   }
 }
 
@@ -115,9 +131,8 @@ extension DebugErrorCatch<T> on Future<T> {
         DebugErrorDialog.show(context, title ?? '操作失败', e,
             stackTrace: stackTrace);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(title != null ? '$title: $e' : '操作失败: $e')),
-        );
+        DebugErrorDialog.showErrorSnackBar(
+            context, title != null ? '$title: $e' : '操作失败: $e');
       }
       return null;
     }

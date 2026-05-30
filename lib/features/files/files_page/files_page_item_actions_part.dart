@@ -152,9 +152,7 @@ extension _FilesViewItemOpeners on _FilesViewState {
 
       final outputFormat = outputFormatController.text.trim();
       if (outputFormat.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.commonEmpty)),
-        );
+        SnackBarUtils.showWarning(context, l10n.commonEmpty);
         return;
       }
 
@@ -168,16 +166,12 @@ extension _FilesViewItemOpeners on _FilesViewState {
         if (!context.mounted) {
           return;
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesEncodingConvertDone)),
-        );
+        SnackBarUtils.showSuccess(context, l10n.filesEncodingConvertDone);
       } catch (_) {
         if (!context.mounted) {
           return;
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.filesEncodingConvertFailed)),
-        );
+        SnackBarUtils.showError(context, l10n.filesEncodingConvertFailed);
       }
     } finally {
       outputPathController.dispose();

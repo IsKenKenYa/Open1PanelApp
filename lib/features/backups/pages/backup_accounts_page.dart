@@ -16,6 +16,7 @@ import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class BackupAccountsPage extends StatefulWidget {
   const BackupAccountsPage({super.key});
 
@@ -209,25 +210,22 @@ class _BackupAccountsPageState extends State<BackupAccountsPage> {
     final result =
         await context.read<BackupAccountsProvider>().testAccount(account);
     if (!mounted || result == null) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          localizeBackupError(context.l10n, result.msg) ??
-              (result.isOk
-                  ? context.l10n.backupAccountsConnectionOk
-                  : context.l10n.backupAccountsConnectionFailed),
-        ),
-      ),
-    );
+    final msg = localizeBackupError(context.l10n, result.msg) ??
+        (result.isOk
+            ? context.l10n.backupAccountsConnectionOk
+            : context.l10n.backupAccountsConnectionFailed);
+    if (result.isOk) {
+      SnackBarUtils.showSuccess(context, msg);
+    } else {
+      SnackBarUtils.showError(context, msg);
+    }
   }
 
   Future<void> _refreshToken(BackupAccountInfo account) async {
     final success =
         await context.read<BackupAccountsProvider>().refreshToken(account);
     if (!mounted || !success) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.backupAccountsTokenRefreshed)),
-    );
+    SnackBarUtils.showSuccess(context, context.l10n.backupAccountsTokenRefreshed);
   }
 
   Future<void> _browseFiles(BackupAccountInfo account) async {

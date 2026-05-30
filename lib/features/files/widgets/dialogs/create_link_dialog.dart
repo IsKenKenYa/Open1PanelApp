@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
 
 class CreateLinkDialog extends StatefulWidget {
@@ -110,9 +111,7 @@ class _CreateLinkDialogState extends State<CreateLinkDialog> {
       );
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.commonCreateSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, context.l10n.commonCreateSuccess);
       }
     } catch (e) {
       if (mounted) {

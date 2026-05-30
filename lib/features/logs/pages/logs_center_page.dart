@@ -9,6 +9,7 @@ import 'package:onepanel_client/features/logs/widgets/logs_operation_tab_widget.
 import 'package:onepanel_client/features/logs/widgets/logs_system_tab_widget.dart';
 import 'package:onepanel_client/features/logs/widgets/logs_task_tab_widget.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:provider/provider.dart';
 
@@ -60,9 +61,7 @@ class _LogsCenterPageState extends State<LogsCenterPage> {
   Future<void> _copyText(String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.commonCopySuccess)),
-    );
+    SnackBarUtils.showSuccess(context, context.l10n.commonCopySuccess);
   }
 
   @override

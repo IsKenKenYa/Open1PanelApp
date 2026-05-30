@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
@@ -149,9 +150,7 @@ class _PermissionDialogState extends State<_PermissionDialog> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(widget.l10n.filesPermissionSuccess)),
-        );
+        SnackBarUtils.showSuccess(context, widget.l10n.filesPermissionSuccess);
       }
     } catch (e, stackTrace) {
       appLogger.eWithPackage('permission_dialog', '_savePermission: 保存失败',

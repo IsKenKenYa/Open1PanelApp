@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/panel_ssl/providers/panel_ssl_provider.dart';
 import 'package:onepanel_client/shared/security_gateway/models/security_gateway_models.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
@@ -289,15 +290,13 @@ class _PanelSslBody extends StatelessWidget {
                 if (!context.mounted) {
                   return;
                 }
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      success
-                          ? l10n.commonSaveSuccess
-                          : (provider.error ?? l10n.commonSaveFailed),
-                    ),
-                  ),
-                );
+                if (success) {
+                  SnackBarUtils.showSuccess(
+                      context, l10n.commonSaveSuccess);
+                } else {
+                  SnackBarUtils.showError(
+                      context, provider.error ?? l10n.commonSaveFailed);
+                }
               },
               child: Text(l10n.commonSave),
             ),
@@ -337,15 +336,13 @@ class _PanelSslBody extends StatelessWidget {
       return;
     }
     final bytes = provider.lastDownloadedBytes;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success
-              ? l10n.panelTlsDownloadSuccess(bytes ?? 0)
-              : (provider.error ?? l10n.commonSaveFailed),
-        ),
-      ),
-    );
+    if (success) {
+      SnackBarUtils.showSuccess(
+          context, l10n.panelTlsDownloadSuccess(bytes ?? 0));
+    } else {
+      SnackBarUtils.showError(
+          context, provider.error ?? l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _copySummary(
@@ -356,9 +353,7 @@ class _PanelSslBody extends StatelessWidget {
     if (!context.mounted) {
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.commonCopySuccess)),
-    );
+    SnackBarUtils.showSuccess(context, l10n.commonCopySuccess);
   }
 
   String _localizedHealthLabel(

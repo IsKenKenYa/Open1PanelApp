@@ -8,6 +8,7 @@ import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffol
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/utils/snackbar_utils.dart';
 class NodeScriptsPage extends StatefulWidget {
   const NodeScriptsPage({
     super.key,
@@ -112,11 +113,7 @@ class _NodeScriptsPageState extends State<NodeScriptsPage> {
       _ => context.l10n.runtimeNodeScriptFailedWithStatus(statusText),
     };
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    SnackBarUtils.showSuccess(context, message);
   }
 
   Widget _buildExecutionFeedbackCard(
