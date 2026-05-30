@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 import '../containers_provider.dart';
 
 class ConfigTab extends StatefulWidget {
@@ -47,24 +49,19 @@ class _ConfigTabState extends State<ConfigTab> {
         }
 
         if (provider.configState.error != null && config.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(provider.configState.error!),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: provider.loadConfig,
-                  child: Text(l10n.commonRetry),
-                ),
-              ],
-            ),
+          return ModuleErrorStateWidget(
+            message: provider.configState.error,
+            onRetry: provider.loadConfig,
           );
         }
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+        return PartialErrorToastListener(
+          errorMessage: provider.configState.error,
+          hasCachedData: config.isNotEmpty,
+          onRetry: provider.loadConfig,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextField(
@@ -91,6 +88,7 @@ class _ConfigTabState extends State<ConfigTab> {
                 label: Text(l10n.commonSave),
               ),
             ],
+          ),
           ),
         );
       },

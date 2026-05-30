@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 import 'package:onepanel_client/features/containers/providers/container_detail_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -17,29 +19,9 @@ class ContainerStatsView extends StatelessWidget {
     }
 
     if (provider.statsError != null && provider.stats == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline,
-                  size: 48, color: scheme.error.withValues(alpha: 0.6)),
-              const SizedBox(height: 12),
-              Text(
-                l10n.containerOperateFailed(provider.statsError!),
-                style: TextStyle(color: scheme.onSurfaceVariant),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              FilledButton.icon(
-                onPressed: provider.loadStats,
-                icon: const Icon(Icons.refresh),
-                label: Text(l10n.commonRetry),
-              ),
-            ],
-          ),
-        ),
+      return ModuleErrorStateWidget(
+        message: l10n.containerOperateFailed(provider.statsError!),
+        onRetry: provider.loadStats,
       );
     }
 
@@ -49,7 +31,13 @@ class ContainerStatsView extends StatelessWidget {
 
     final stats = provider.stats!;
 
-    return SingleChildScrollView(
+    return PartialErrorToastListener(
+      errorMessage: provider.statsError != null
+          ? l10n.containerOperateFailed(provider.statsError!)
+          : null,
+      hasCachedData: true,
+      onRetry: provider.loadStats,
+      child: SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,6 +104,7 @@ class ContainerStatsView extends StatelessWidget {
             label: Text(l10n.commonRefresh),
           ),
         ],
+      ),
       ),
     );
   }

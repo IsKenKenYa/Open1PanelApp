@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
@@ -58,8 +58,7 @@ void showExtractDialog(
                   'extract_dialog', 'showExtractDialog: 解压失败',
                   error: e, stackTrace: stackTrace);
               if (context.mounted) {
-                DebugErrorDialog.show(context, l10n.filesExtractFailed, e,
-                    stackTrace: stackTrace);
+                SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesExtractFailed, error: e, stackTrace: stackTrace);
               }
             }
           },

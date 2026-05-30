@@ -12,7 +12,7 @@ import '../../data/models/firewall_models.dart';
 import 'firewall_rule_form_page.dart';
 import 'providers/firewall_rule_list_provider.dart';
 import 'widgets/firewall_rule_list_controls_widget.dart';
-import 'widgets/firewall_tab_error.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 String _resolveFirewallError(String error, AppLocalizations l10n) {
   switch (error) {
@@ -64,10 +64,9 @@ class _FirewallRulesTabState extends State<FirewallRulesTab> {
     }
 
     if (provider.error != null && provider.items.isEmpty) {
-      return FirewallTabError(
-        error: _resolveFirewallError(provider.error!, context.l10n),
+      return ModuleErrorStateWidget(
+        message: _resolveFirewallError(provider.error!, context.l10n),
         onRetry: () => provider.load(),
-        l10n: context.l10n,
       );
     }
 

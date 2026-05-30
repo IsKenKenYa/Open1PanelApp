@@ -6,6 +6,8 @@ import 'package:onepanel_client/features/ai/widgets/ai_domain_tab_widget.dart';
 import 'package:onepanel_client/features/ai/widgets/ai_gpu_tab_widget.dart';
 import 'package:onepanel_client/features/ai/widgets/ai_mcp_tab_widget.dart';
 import 'package:onepanel_client/features/ai/widgets/ai_ollama_tab_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
+
 import 'package:provider/provider.dart';
 
 import 'ai_provider.dart';
@@ -52,18 +54,12 @@ class _AIPageState extends State<AIPage> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
-          body: Column(
+          body: PartialErrorToastListener(
+            errorMessage: provider.errorMessage,
+            hasCachedData: true,
+            onRetry: provider.clearError,
+            child: Column(
             children: [
-              if (provider.errorMessage != null)
-                MaterialBanner(
-                  content: Text(provider.errorMessage!),
-                  actions: [
-                    TextButton(
-                      onPressed: provider.clearError,
-                      child: Text(l10n.commonClose),
-                    ),
-                  ],
-                ),
               if (provider.isLoading)
                 const LinearProgressIndicator(minHeight: 2),
               Expanded(
@@ -79,6 +75,7 @@ class _AIPageState extends State<AIPage> with SingleTickerProviderStateMixin {
                 ),
               ),
             ],
+          ),
           ),
         );
       },

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/providers/recycle_bin_provider.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:provider/provider.dart';
 
 class RecycleBinPage extends StatelessWidget {
@@ -114,20 +114,9 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
     }
 
     if (provider.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: colorScheme.error),
-            const SizedBox(height: 16),
-            Text(provider.error!, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: provider.loadFiles,
-              child: Text(l10n.commonRetry),
-            ),
-          ],
-        ),
+      return ModuleErrorStateWidget(
+        message: provider.error,
+        onRetry: provider.loadFiles,
       );
     }
 
@@ -344,12 +333,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
         SnackBarUtils.showSuccess(context, l10n.recycleBinRestoreSuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
-        DebugErrorDialog.show(
-          context,
-          l10n.recycleBinRestoreFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.recycleBinRestoreFailed, error: e, stackTrace: stackTrace);
       }
     }
   }
@@ -390,12 +374,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
         SnackBarUtils.showSuccess(context, l10n.recycleBinDeletePermanentlySuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
-        DebugErrorDialog.show(
-          context,
-          l10n.recycleBinDeletePermanentlyFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.recycleBinDeletePermanentlyFailed, error: e, stackTrace: stackTrace);
       }
     }
   }
@@ -431,12 +410,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
         SnackBarUtils.showSuccess(context, l10n.recycleBinRestoreSuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
-        DebugErrorDialog.show(
-          context,
-          l10n.recycleBinRestoreFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.recycleBinRestoreFailed, error: e, stackTrace: stackTrace);
       }
     }
   }
@@ -477,12 +451,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
         SnackBarUtils.showSuccess(context, l10n.recycleBinDeletePermanentlySuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
-        DebugErrorDialog.show(
-          context,
-          l10n.recycleBinDeletePermanentlyFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.recycleBinDeletePermanentlyFailed, error: e, stackTrace: stackTrace);
       }
     }
   }
@@ -520,12 +489,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
         SnackBarUtils.showSuccess(context, l10n.recycleBinClearSuccess);
       } catch (e, stackTrace) {
         if (!context.mounted) return;
-        DebugErrorDialog.show(
-          context,
-          l10n.recycleBinClearFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.recycleBinClearFailed, error: e, stackTrace: stackTrace);
       }
     }
   }

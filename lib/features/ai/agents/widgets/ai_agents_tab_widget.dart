@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/ai/agents/agents_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import 'ai_agent_accounts_widget.dart';
 import 'ai_agents_list_widget.dart';
@@ -51,18 +52,12 @@ class _AIAgentsTabWidgetState extends State<AIAgentsTabWidget>
 
     return Consumer<AgentsProvider>(
       builder: (context, provider, _) {
-        return Column(
+        return PartialErrorToastListener(
+          errorMessage: provider.error,
+          hasCachedData: true,
+          onRetry: provider.clearError,
+          child: Column(
           children: <Widget>[
-            if (provider.error != null)
-              MaterialBanner(
-                content: Text(provider.error!),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: provider.clearError,
-                    child: Text(l10n.commonClose),
-                  ),
-                ],
-              ),
             if (provider.isLoading)
               const LinearProgressIndicator(minHeight: 2),
             TabBar(
@@ -82,6 +77,7 @@ class _AIAgentsTabWidgetState extends State<AIAgentsTabWidget>
               ),
             ),
           ],
+        ),
         );
       },
     );

@@ -7,6 +7,8 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
 import 'package:onepanel_client/features/databases/widgets/database_page_feedback_widget.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import 'databases_provider.dart';
 
@@ -40,36 +42,41 @@ class DatabaseRemotePage extends StatelessWidget {
             body: provider.state.isLoading && provider.state.items.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : provider.state.error != null && provider.state.items.isEmpty
-                    ? DatabasePageErrorWidget(
-                        error: provider.state.error!,
-                        onRetry: provider.refresh,
+                    ? ModuleErrorStateWidget(
+                        message: provider.state.error,
+                        onRetry: () => provider.refresh(),
                       )
                     : provider.state.items.isEmpty
                         ? DatabasePageEmptyWidget(
                             message: context.l10n.commonEmpty,
                           )
-                        : ListView.separated(
-                            padding: AppDesignTokens.pagePadding,
-                            itemCount: provider.state.items.length,
-                            separatorBuilder: (_, __) => const SizedBox(
-                                height: AppDesignTokens.spacingSm),
-                            itemBuilder: (context, index) {
-                              final item = provider.state.items[index];
-                              return AppCard(
-                                title: item.name,
-                                subtitle: Text(item.engine),
-                                child: Text(
-                                  item.address == null
-                                      ? '-'
-                                      : '${item.address}:${item.port ?? '-'}',
-                                ),
-                                onTap: () => Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.databaseDetail,
-                                  arguments: item,
-                                ),
-                              );
-                            },
+                        : PartialErrorToastListener(
+                            errorMessage: provider.state.error,
+                            hasCachedData: provider.state.items.isNotEmpty,
+                            onRetry: () => provider.refresh(),
+                            child: ListView.separated(
+                              padding: AppDesignTokens.pagePadding,
+                              itemCount: provider.state.items.length,
+                              separatorBuilder: (_, __) => const SizedBox(
+                                  height: AppDesignTokens.spacingSm),
+                              itemBuilder: (context, index) {
+                                final item = provider.state.items[index];
+                                return AppCard(
+                                  title: item.name,
+                                  subtitle: Text(item.engine),
+                                  child: Text(
+                                    item.address == null
+                                        ? '-'
+                                        : '${item.address}:${item.port ?? '-'}',
+                                  ),
+                                  onTap: () => Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.databaseDetail,
+                                    arguments: item,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
           );
         },

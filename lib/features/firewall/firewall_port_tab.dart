@@ -11,7 +11,7 @@ import 'package:onepanel_client/shared/widgets/app_card.dart';
 import 'firewall_rule_form_page.dart';
 import 'providers/firewall_rule_list_provider.dart';
 import 'widgets/firewall_rule_list_controls_widget.dart';
-import 'widgets/firewall_tab_error.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 class FirewallPortTab extends StatefulWidget {
   const FirewallPortTab({super.key});
@@ -55,10 +55,9 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
     }
 
     if (provider.error != null && provider.items.isEmpty) {
-      return FirewallTabError(
-        error: provider.error!,
+      return ModuleErrorStateWidget(
+        message: provider.error,
         onRetry: () => provider.load(),
-        l10n: l10n,
       );
     }
 

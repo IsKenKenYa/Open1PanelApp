@@ -6,20 +6,9 @@ extension _FilesViewContent on _FilesViewState {
     FilesProvider provider,
     ThemeData theme,
   ) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
-          const SizedBox(height: 16),
-          Text(provider.data.error!, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => provider.loadFiles(),
-            child: Text(context.l10n.commonRetry),
-          ),
-        ],
-      ),
+    return ModuleErrorStateWidget(
+      message: provider.data.error,
+      onRetry: () => provider.loadFiles(),
     );
   }
 

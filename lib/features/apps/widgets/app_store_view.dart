@@ -8,6 +8,8 @@ import 'package:onepanel_client/shared/widgets/app_card.dart';
 
 import 'package:onepanel_client/features/apps/widgets/app_icon.dart';
 import 'app_install_dialog.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import '../../../core/utils/snackbar_utils.dart';
 class AppStoreView extends StatefulWidget {
@@ -83,7 +85,7 @@ class _AppStoreViewState extends State<AppStoreView> {
       }
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, '${context.l10n.appStoreSyncFailed}: $e');
+        SnackBarUtils.showError(context, '${context.l10n.appStoreSyncFailed}: $e');
       }
     }
   }
@@ -158,20 +160,9 @@ class _AppStoreViewState extends State<AppStoreView> {
               }
 
               if (provider.error != null && provider.apps.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(l10n.commonLoadFailedTitle),
-                      const SizedBox(height: 8),
-                      Text(provider.error!),
-                      const SizedBox(height: 16),
-                      FilledButton(
-                        onPressed: () => _loadApps(refresh: true),
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
-                  ),
+                return ModuleErrorStateWidget(
+                  message: provider.error,
+                  onRetry: () => _loadApps(refresh: true),
                 );
               }
 
@@ -179,7 +170,11 @@ class _AppStoreViewState extends State<AppStoreView> {
                 return Center(child: Text(l10n.commonEmpty));
               }
 
-              return NotificationListener<ScrollNotification>(
+              return PartialErrorToastListener(
+                errorMessage: provider.error,
+                hasCachedData: provider.apps.isNotEmpty,
+                onRetry: () => _loadApps(refresh: true),
+                child: NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
                   if (scrollInfo.metrics.pixels >=
                           scrollInfo.metrics.maxScrollExtent - 200 &&
@@ -218,6 +213,7 @@ class _AppStoreViewState extends State<AppStoreView> {
                     },
                   ),
                 ),
+              ),
               );
             },
           ),

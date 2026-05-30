@@ -12,6 +12,8 @@ import 'package:onepanel_client/features/databases/services/database_backup_serv
 import 'package:onepanel_client/features/databases/widgets/database_backup_record_card_widget.dart';
 import 'package:onepanel_client/features/databases/widgets/database_page_feedback_widget.dart';
 import 'package:onepanel_client/features/databases/widgets/database_summary_card_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 class DatabaseBackupPage extends StatelessWidget {
   const DatabaseBackupPage({
@@ -54,11 +56,15 @@ class _DatabaseBackupPageView extends StatelessWidget {
           : provider.state.isLoading && provider.state.items.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : provider.state.error != null && provider.state.items.isEmpty
-                  ? DatabasePageErrorWidget(
-                      error: provider.state.error!,
-                      onRetry: provider.refresh,
+                  ? ModuleErrorStateWidget(
+                      message: provider.state.error,
+                      onRetry: () => provider.refresh(),
                     )
-                  : RefreshIndicator(
+                  : PartialErrorToastListener(
+                      errorMessage: provider.state.error,
+                      hasCachedData: provider.state.items.isNotEmpty,
+                      onRetry: () => provider.refresh(),
+                      child: RefreshIndicator(
                       onRefresh: provider.refresh,
                       child: ListView(
                         padding: AppDesignTokens.pagePadding,
@@ -78,13 +84,6 @@ class _DatabaseBackupPageView extends StatelessWidget {
                               label: Text(l10n.databaseBackupCreateAction),
                             ),
                           ),
-                          if (provider.state.error != null) ...[
-                            const SizedBox(height: AppDesignTokens.spacingMd),
-                            DatabasePageErrorWidget(
-                              error: provider.state.error!,
-                              onRetry: provider.refresh,
-                            ),
-                          ],
                           if (provider.state.items.isEmpty) ...[
                             const SizedBox(height: AppDesignTokens.spacingXl),
                             DatabasePageEmptyWidget(
@@ -111,6 +110,7 @@ class _DatabaseBackupPageView extends StatelessWidget {
                           ],
                         ],
                       ),
+                    ),
                     ),
     );
   }

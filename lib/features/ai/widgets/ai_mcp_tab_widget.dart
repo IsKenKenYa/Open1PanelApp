@@ -5,6 +5,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/mcp_models.dart';
 import 'package:onepanel_client/features/ai/mcp_server_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 class AIMcpTabWidget extends StatefulWidget {
   const AIMcpTabWidget({super.key});
@@ -39,7 +40,11 @@ class _AIMcpTabWidgetState extends State<AIMcpTabWidget> {
     final l10n = context.l10n;
     return Consumer<McpServerProvider>(
       builder: (context, provider, _) {
-        return RefreshIndicator(
+        return PartialErrorToastListener(
+          errorMessage: provider.error,
+          hasCachedData: provider.servers.isNotEmpty || provider.binding.domain != null,
+          onRetry: provider.load,
+          child: RefreshIndicator(
           onRefresh: provider.load,
           child: ListView(
             padding: const EdgeInsets.all(16),
@@ -92,13 +97,6 @@ class _AIMcpTabWidgetState extends State<AIMcpTabWidget> {
                   ),
                 ],
               ),
-              if (provider.error != null) ...<Widget>[
-                const SizedBox(height: 12),
-                Text(
-                  provider.error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ],
               const SizedBox(height: 12),
               Card(
                 child: ListTile(
@@ -168,6 +166,7 @@ class _AIMcpTabWidgetState extends State<AIMcpTabWidget> {
                 ),
             ],
           ),
+        ),
         );
       },
     );

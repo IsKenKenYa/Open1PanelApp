@@ -61,7 +61,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
 
       appLogger.eWithPackage('api.config', '加载API配置失败', error: e);
 
-      SnackBarUtils.showSuccess(context, '加载配置失败: $e');
+      SnackBarUtils.showError(context, '加载配置失败: $e');
     }
   }
 
@@ -141,7 +141,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       appLogger.eWithPackage('api.config', '删除API配置失败: ${config.name}',
           error: e);
 
-      SnackBarUtils.showSuccess(context, '删除配置失败: $e');
+      SnackBarUtils.showError(context, '删除配置失败: $e');
     }
   }
 
@@ -171,7 +171,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
       appLogger.eWithPackage('api.config', '切换API配置失败: ${config.name}',
           error: e);
 
-      SnackBarUtils.showSuccess(context, '切换配置失败: $e');
+      SnackBarUtils.showError(context, '切换配置失败: $e');
     }
   }
 

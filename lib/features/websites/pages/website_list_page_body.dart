@@ -13,6 +13,7 @@ import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 
 import '../providers/websites_provider.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 import '../widgets/website_async_state_view.dart';
 import '../widgets/website_list_controls_widget.dart';
 import '../widgets/website_list_helpers.dart';
@@ -143,7 +144,13 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
             );
           }
 
-          return RefreshIndicator(
+          return PartialErrorToastListener(
+            errorMessage: data.error != null
+                ? l10n.websitesLoadFailedMessage(data.error!)
+                : null,
+            hasCachedData: data.websites.isNotEmpty,
+            onRetry: provider.loadWebsites,
+            child: RefreshIndicator(
             onRefresh: provider.refresh,
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
@@ -296,6 +303,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                 return content;
               },
             ),
+          ),
           );
         },
       ),

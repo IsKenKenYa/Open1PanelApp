@@ -5,6 +5,8 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
 
 import 'providers/firewall_status_provider.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 class FirewallStatusTab extends StatefulWidget {
   const FirewallStatusTab({super.key});
@@ -39,13 +41,17 @@ class _FirewallStatusTabState extends State<FirewallStatusTab> {
     }
 
     if (provider.error != null && status == null) {
-      return _ErrorBody(
-        error: provider.error!,
+      return ModuleErrorStateWidget(
+        message: provider.error,
         onRetry: () => provider.load(),
       );
     }
 
-    return RefreshIndicator(
+    return PartialErrorToastListener(
+      errorMessage: provider.error,
+      hasCachedData: status != null,
+      onRetry: () => provider.load(),
+      child: RefreshIndicator(
       onRefresh: () => provider.load(),
       child: ListView(
         padding: AppDesignTokens.pagePadding,
@@ -87,14 +93,8 @@ class _FirewallStatusTabState extends State<FirewallStatusTab> {
               ],
             ),
           ),
-          if (provider.error != null) ...[
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            _ErrorBody(
-              error: provider.error!,
-              onRetry: () => provider.load(),
-            ),
-          ],
         ],
+      ),
       ),
     );
   }
@@ -207,34 +207,5 @@ class _LoadingBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(child: CircularProgressIndicator());
-  }
-}
-
-class _ErrorBody extends StatelessWidget {
-  const _ErrorBody({
-    required this.error,
-    required this.onRetry,
-  });
-
-  final String error;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Padding(
-      padding: AppDesignTokens.pagePadding,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(error, textAlign: TextAlign.center),
-          const SizedBox(height: AppDesignTokens.spacingMd),
-          OutlinedButton(
-            onPressed: onRetry,
-            child: Text(l10n.commonRefresh),
-          ),
-        ],
-      ),
-    );
   }
 }

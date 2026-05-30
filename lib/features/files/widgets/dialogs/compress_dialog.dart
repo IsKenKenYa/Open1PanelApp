@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
 
@@ -66,8 +66,7 @@ void showCompressDialog(
                     'compress_dialog', 'showCompressDialog: 压缩失败',
                     error: e, stackTrace: stackTrace);
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, l10n.filesCompressFailed, e,
-                      stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesCompressFailed, error: e, stackTrace: stackTrace);
                 }
               }
             },

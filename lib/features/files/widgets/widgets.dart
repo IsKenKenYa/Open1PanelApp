@@ -3,7 +3,6 @@ export 'path_breadcrumb.dart';
 export 'selection_bar.dart';
 export 'server_selector.dart';
 export 'empty_state.dart';
-export 'error_state.dart';
 
 export 'dialogs/permission_dialog.dart';
 export 'dialogs/create_directory_dialog.dart';

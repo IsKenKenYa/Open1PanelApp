@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import '../providers/website_routing_rules_provider.dart';
 import '../website_config_page.dart';
@@ -80,16 +81,13 @@ class _WebsiteRoutingRulesBody extends StatelessWidget {
                   )
                 : null,
           ),
-          body: ListView(
+          body: PartialErrorToastListener(
+            errorMessage: provider.error,
+            hasCachedData: true,
+            onRetry: provider.loadAll,
+            child: ListView(
             padding: const EdgeInsets.all(16),
             children: <Widget>[
-              if (provider.error != null) ...<Widget>[
-                Text(
-                  provider.error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-                const SizedBox(height: 12),
-              ],
               WebsiteSectionCard(
                 title: l10n.websitesTabProxy,
                 subtitle: l10n.websitesProxyHint,
@@ -166,6 +164,7 @@ class _WebsiteRoutingRulesBody extends StatelessWidget {
                 onTap: () => _openAdvanced(context),
               ),
             ],
+          ),
           ),
         );
       },

@@ -62,12 +62,7 @@ extension _FilesViewAsyncActions on _FilesViewState {
       if (errorMsg.contains('cancelled')) {
         SnackBarUtils.showInfo(context, l10n.filesDownloadCancelled);
       } else {
-        DebugErrorDialog.show(
-          context,
-          l10n.filesDownloadFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesDownloadFailed, error: e, stackTrace: stackTrace);
       }
     });
   }
@@ -100,7 +95,7 @@ extension _FilesViewAsyncActions on _FilesViewState {
       if (errorMsg.contains('已收藏') || errorMsg.contains('already')) {
         SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       } else {
-        DebugErrorDialog.show(context, l10n.filesFavoritesLoadFailed, e);
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesFavoritesLoadFailed, error: e);
       }
     } catch (e, stackTrace) {
       appLogger.eWithPackage(
@@ -114,12 +109,7 @@ extension _FilesViewAsyncActions on _FilesViewState {
       if (errorMsg.contains('已收藏') || errorMsg.contains('already')) {
         SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       } else {
-        DebugErrorDialog.show(
-          context,
-          l10n.filesFavoritesLoadFailed,
-          e,
-          stackTrace: stackTrace,
-        );
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesFavoritesLoadFailed, error: e, stackTrace: stackTrace);
       }
     }
   }

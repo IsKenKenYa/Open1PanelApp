@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 import 'package:onepanel_client/data/models/container_models.dart'
     hide ContainerStats;
 import '../containers_provider.dart';
@@ -23,34 +25,30 @@ class OverviewTab extends StatelessWidget {
         }
 
         if (provider.overviewState.error != null && status == null) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(provider.overviewState.error!),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: provider.loadStatus,
-                  child: Text(l10n.commonRetry),
-                ),
-              ],
-            ),
+          return ModuleErrorStateWidget(
+            message: provider.overviewState.error,
+            onRetry: provider.loadStatus,
           );
         }
 
-        return RefreshIndicator(
-          onRefresh: () => provider.refresh(),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildStatsCard(context, l10n, stats, colorScheme),
-                const SizedBox(height: 16),
-                if (status != null)
-                  _buildDetailStatsCard(context, l10n, status, colorScheme),
-              ],
+        return PartialErrorToastListener(
+          errorMessage: provider.overviewState.error,
+          hasCachedData: status != null,
+          onRetry: provider.loadStatus,
+          child: RefreshIndicator(
+            onRefresh: () => provider.refresh(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildStatsCard(context, l10n, stats, colorScheme),
+                  const SizedBox(height: 16),
+                  if (status != null)
+                    _buildDetailStatsCard(context, l10n, status, colorScheme),
+                ],
+              ),
             ),
           ),
         );

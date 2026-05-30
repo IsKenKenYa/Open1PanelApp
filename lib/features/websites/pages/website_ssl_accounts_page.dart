@@ -7,6 +7,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 import '../providers/website_ssl_accounts_provider.dart';
 import '../widgets/website_async_state_view.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 part 'website_ssl_accounts_actions_part.dart';
 
@@ -54,12 +55,14 @@ class _WebsiteSslAccountsBody extends StatelessWidget {
             isLoading: provider.isLoading,
             error: provider.error,
             onRetry: () => provider.load(),
-            child: DefaultTabController(
+            child: PartialErrorToastListener(
+              errorMessage: provider.operationError,
+              hasCachedData: provider.error == null && !provider.isLoading,
+              onRetry: () => provider.load(),
+              child: DefaultTabController(
               length: 3,
               child: Column(
                 children: [
-                  if (provider.operationError != null)
-                    _OperationErrorBanner(message: provider.operationError!),
                   TabBar(
                     tabs: [
                       Tab(text: l10n.websitesSslAccountsCaTab),
@@ -126,29 +129,10 @@ class _WebsiteSslAccountsBody extends StatelessWidget {
                 ],
               ),
             ),
+            ),
           );
         },
       ),
-    );
-  }
-}
-
-class _OperationErrorBanner extends StatelessWidget {
-  const _OperationErrorBanner({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialBanner(
-      content: Text(message),
-      leading: const Icon(Icons.warning_amber_outlined),
-      actions: [
-        TextButton(
-          onPressed: () => ScaffoldMessenger.of(context).clearMaterialBanners(),
-          child: Text(context.l10n.commonClose),
-        ),
-      ],
     );
   }
 }

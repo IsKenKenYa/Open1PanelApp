@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 import 'package:onepanel_client/features/containers/dialogs/repo_create_dialog.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
 import '../containers_provider.dart';
@@ -20,18 +23,9 @@ class ReposTab extends StatelessWidget {
         }
 
         if (provider.reposState.error != null && repos.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(provider.reposState.error!),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: provider.loadRepos,
-                  child: Text(l10n.commonRetry),
-                ),
-              ],
-            ),
+          return ModuleErrorStateWidget(
+            message: provider.reposState.error,
+            onRetry: provider.loadRepos,
           );
         }
 
@@ -39,7 +33,11 @@ class ReposTab extends StatelessWidget {
           return Center(child: Text(l10n.commonEmpty));
         }
 
-        return RefreshIndicator(
+        return PartialErrorToastListener(
+          errorMessage: provider.reposState.error,
+          hasCachedData: repos.isNotEmpty,
+          onRetry: provider.loadRepos,
+          child: RefreshIndicator(
           onRefresh: provider.loadRepos,
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -103,6 +101,7 @@ class ReposTab extends StatelessWidget {
               );
             },
           ),
+        ),
         );
       },
     );

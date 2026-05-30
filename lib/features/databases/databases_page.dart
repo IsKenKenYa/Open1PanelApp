@@ -10,6 +10,8 @@ import 'package:onepanel_client/features/shell/controllers/current_server_contro
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import 'databases_provider.dart';
 
@@ -111,13 +113,17 @@ class _DatabaseScopeTabView extends StatelessWidget {
     }
 
     if (provider.state.error != null && provider.state.items.isEmpty) {
-      return _DatabaseErrorState(
-        error: provider.state.error!,
-        onRetry: provider.refresh,
+      return ModuleErrorStateWidget(
+        message: provider.state.error,
+        onRetry: () => provider.refresh(),
       );
     }
 
-    return Column(
+    return PartialErrorToastListener(
+      errorMessage: provider.state.error,
+      hasCachedData: provider.state.items.isNotEmpty,
+      onRetry: () => provider.refresh(),
+      child: Column(
       children: [
         Padding(
           padding: AppDesignTokens.pagePadding,
@@ -347,6 +353,7 @@ class _DatabaseScopeTabView extends StatelessWidget {
           ),
         ),
       ],
+      ),
     );
   }
 
@@ -604,34 +611,3 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-class _DatabaseErrorState extends StatelessWidget {
-  const _DatabaseErrorState({
-    required this.error,
-    required this.onRetry,
-  });
-
-  final String error;
-  final Future<void> Function() onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 56),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            Text(error, textAlign: TextAlign.center),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            FilledButton(
-              onPressed: () => onRetry(),
-              child: Text(context.l10n.commonRetry),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

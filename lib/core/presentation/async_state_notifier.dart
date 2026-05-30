@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../utils/error_message_utils.dart';
+
 enum AsyncViewStatus {
   initial,
   loading,
@@ -69,12 +71,9 @@ mixin AsyncStateNotifier on ChangeNotifier {
   }
 
   String? _normalizeErrorMessage(Object error) {
-    final message = error.toString().trim();
+    final message = ErrorMessageUtils.normalize(error);
     if (message.isEmpty) {
       return null;
-    }
-    if (message.startsWith('Exception: ')) {
-      return message.substring('Exception: '.length).trim();
     }
     return message;
   }

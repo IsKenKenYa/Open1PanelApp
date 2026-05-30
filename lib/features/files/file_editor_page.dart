@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/features/files/files_service.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 class FileEditorPage extends StatefulWidget {
   final String filePath;
@@ -148,8 +148,7 @@ class _FileEditorPageState extends State<FileEditorPage> {
         setState(() {
           _isSaving = false;
         });
-        DebugErrorDialog.show(context, context.l10n.commonSaveFailed, e,
-            stackTrace: stackTrace);
+        SnackBarUtils.showErrorWithDebugDetails(context, context.l10n.commonSaveFailed, error: e, stackTrace: stackTrace);
       }
     }
   }
@@ -275,24 +274,9 @@ class _FileEditorPageState extends State<FileEditorPage> {
     }
 
     if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
-            const SizedBox(height: 16),
-            Text(l10n.filesPreviewError, style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Text(_error!,
-                style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: _loadContent,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.commonRetry),
-            ),
-          ],
-        ),
+      return ModuleErrorStateWidget(
+        message: _error,
+        onRetry: _loadContent,
       );
     }
 

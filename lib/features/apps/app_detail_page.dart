@@ -7,6 +7,8 @@ import 'app_service.dart';
 import 'providers/app_store_provider.dart';
 import 'widgets/app_install_dialog.dart';
 import 'widgets/app_icon.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 class AppDetailPage extends StatefulWidget {
   final AppItem app;
@@ -197,72 +199,38 @@ class _AppDetailPageState extends State<AppDetailPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Show warning banner if getAppDetail failed but we have README
+    // Show warning toast if getAppDetail failed but we have README
     final hasReadme = _readme != null && _readme!.isNotEmpty;
-    final showWarning = _error != null && hasReadme;
     final showError = _error != null && !hasReadme;
 
-    return SingleChildScrollView(
+    if (showError) {
+      return ModuleErrorStateWidget(
+        message: _error,
+        onRetry: () {
+          setState(() {
+            _isLoading = true;
+            _error = null;
+          });
+          _loadDetail();
+        },
+      );
+    }
+
+    return PartialErrorToastListener(
+      errorMessage: _error,
+      hasCachedData: hasReadme,
+      onRetry: () {
+        setState(() {
+          _isLoading = true;
+          _error = null;
+        });
+        _loadDetail();
+      },
+      child: SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (showError)
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.errorContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.error_outline,
-                      color: theme.colorScheme.onErrorContainer),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _error!,
-                      style:
-                          TextStyle(color: theme.colorScheme.onErrorContainer),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {
-                      setState(() {
-                        _isLoading = true;
-                        _error = null;
-                      });
-                      _loadDetail();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          if (showWarning)
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.tertiaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline,
-                      color: theme.colorScheme.onTertiaryContainer),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _error!,
-                      style: TextStyle(
-                          color: theme.colorScheme.onTertiaryContainer),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           _buildHeader(context, theme),
           const SizedBox(height: 24),
           Text(
@@ -284,6 +252,7 @@ class _AppDetailPageState extends State<AppDetailPage> {
             ),
         ],
       ),
+    ),
     );
   }
 

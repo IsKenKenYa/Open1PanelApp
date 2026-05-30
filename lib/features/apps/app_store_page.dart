@@ -61,7 +61,7 @@ class AppStorePage extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        SnackBarUtils.showSuccess(context, '${l10n.appStoreSyncLocalFailed}: $e');
+        SnackBarUtils.showError(context, '${l10n.appStoreSyncLocalFailed}: $e');
       }
     }
   }
@@ -75,7 +75,7 @@ class AppStorePage extends StatelessWidget {
       ignoredApps = await provider.loadIgnoredUpdates();
     } catch (e) {
       if (context.mounted) {
-        SnackBarUtils.showSuccess(context, '${l10n.appIgnoredUpdatesLoadFailed}: $e');
+        SnackBarUtils.showError(context, '${l10n.appIgnoredUpdatesLoadFailed}: $e');
       }
       return;
     }

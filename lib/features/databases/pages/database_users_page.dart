@@ -10,6 +10,8 @@ import 'package:onepanel_client/features/databases/services/database_user_servic
 import 'package:onepanel_client/features/databases/widgets/database_page_feedback_widget.dart';
 import 'package:onepanel_client/features/databases/widgets/database_summary_card_widget.dart';
 import 'package:onepanel_client/features/databases/widgets/database_user_cards_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 class DatabaseUsersPage extends StatelessWidget {
   const DatabaseUsersPage({
@@ -75,11 +77,15 @@ class _DatabaseUsersPageViewState extends State<_DatabaseUsersPageView> {
           : state.isLoading && userContext == null
               ? const Center(child: CircularProgressIndicator())
               : state.error != null && userContext == null
-                  ? DatabasePageErrorWidget(
-                      error: state.error!,
+                  ? ModuleErrorStateWidget(
+                      message: state.error,
                       onRetry: provider.load,
                     )
-                  : ListView(
+                  : PartialErrorToastListener(
+                      errorMessage: state.error,
+                      hasCachedData: userContext != null,
+                      onRetry: provider.load,
+                      child: ListView(
                       padding: AppDesignTokens.pagePadding,
                       children: [
                         DatabaseSummaryCardWidget(item: widget.item),
@@ -87,13 +93,6 @@ class _DatabaseUsersPageViewState extends State<_DatabaseUsersPageView> {
                         DatabaseUserCurrentCardWidget(
                           currentUsername: currentUsername,
                         ),
-                        if (state.error != null) ...[
-                          const SizedBox(height: AppDesignTokens.spacingMd),
-                          DatabasePageErrorWidget(
-                            error: state.error!,
-                            onRetry: provider.load,
-                          ),
-                        ],
                         const SizedBox(height: AppDesignTokens.spacingMd),
                         DatabaseBindUserCardWidget(
                           item: widget.item,
@@ -122,6 +121,7 @@ class _DatabaseUsersPageViewState extends State<_DatabaseUsersPageView> {
                           ),
                         ],
                       ],
+                    ),
                     ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
 
 void showBatchCopyDialog(
@@ -43,8 +43,7 @@ void showBatchCopyDialog(
               await provider.copySelected(controller.text);
             } catch (e, stackTrace) {
               if (context.mounted) {
-                DebugErrorDialog.show(context, l10n.filesCopyFailed, e,
-                    stackTrace: stackTrace);
+                SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesCopyFailed, error: e, stackTrace: stackTrace);
               }
             }
           },

@@ -8,6 +8,8 @@ import '../../data/models/monitoring_runtime_models.dart';
 import '../../data/repositories/monitor_repository.dart';
 import 'monitoring_provider.dart';
 import 'widgets/monitor_chart.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 part 'monitoring_page_widgets.dart';
 
@@ -75,9 +77,8 @@ class _MonitoringPageState extends State<MonitoringPage> {
         data.memoryTimeSeries != null;
 
     if (data.error != null && !hasData) {
-      return _ErrorView(
-        title: l10n.commonLoadFailedTitle,
-        error: data.error!,
+      return ModuleErrorStateWidget(
+        message: data.error,
         onRetry: onRefresh,
       );
     }
@@ -86,7 +87,11 @@ class _MonitoringPageState extends State<MonitoringPage> {
       return const _LoadingView();
     }
 
-    return RefreshIndicator(
+    return PartialErrorToastListener(
+      errorMessage: data.error,
+      hasCachedData: hasData,
+      onRetry: onRefresh,
+      child: RefreshIndicator(
       onRefresh: onRefresh,
       child: ListView(
         children: [
@@ -144,6 +149,7 @@ class _MonitoringPageState extends State<MonitoringPage> {
             _buildGPUCard(context, data.gpuInfo),
           ],
         ],
+      ),
       ),
     );
   }

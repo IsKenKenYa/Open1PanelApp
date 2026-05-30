@@ -19,6 +19,7 @@ import 'package:onepanel_client/features/files/files_provider.dart';
 import 'package:onepanel_client/features/files/providers/file_preview_provider.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/widgets/dialogs/file_properties_dialog.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 class FilePreviewPage extends StatefulWidget {
   final String filePath;
@@ -333,24 +334,9 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     }
 
     if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
-            const SizedBox(height: 16),
-            Text(l10n.filesPreviewError, style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Text(_error!,
-                style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: _loadContent,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.commonRetry),
-            ),
-          ],
-        ),
+      return ModuleErrorStateWidget(
+        message: _error,
+        onRetry: _loadContent,
       );
     }
 

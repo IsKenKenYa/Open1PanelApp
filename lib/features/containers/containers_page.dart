@@ -14,7 +14,7 @@ import 'package:onepanel_client/features/containers/tabs/containers_tab.dart';
 import 'package:onepanel_client/features/containers/tabs/repos_tab.dart';
 import 'package:onepanel_client/features/containers/tabs/templates_tab.dart';
 import 'package:onepanel_client/features/containers/widgets/container_inline_summary_card.dart';
-import 'package:onepanel_client/features/containers/widgets/containers_error_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:onepanel_client/features/containers/widgets/containers_loading_widget.dart';
 import 'package:onepanel_client/features/orchestration/compose_page.dart';
 import 'package:onepanel_client/features/orchestration/image_page.dart';

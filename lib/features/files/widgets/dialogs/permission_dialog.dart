@@ -156,8 +156,7 @@ class _PermissionDialogState extends State<_PermissionDialog> {
       appLogger.eWithPackage('permission_dialog', '_savePermission: 保存失败',
           error: e, stackTrace: stackTrace);
       if (mounted) {
-        DebugErrorDialog.show(context, widget.l10n.filesPermissionFailed, e,
-            stackTrace: stackTrace);
+        SnackBarUtils.showErrorWithDebugDetails(context, widget.l10n.filesPermissionFailed, error: e, stackTrace: stackTrace);
       }
     }
   }

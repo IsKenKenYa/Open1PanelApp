@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_design_tokens.dart';
 import 'debug_error_dialog.dart';
+import 'error_message_utils.dart';
 
 class SnackBarUtils {
   const SnackBarUtils._();
@@ -19,7 +20,7 @@ class SnackBarUtils {
   static void showError(BuildContext context, String message,
       {SnackBarAction? action}) {
     _show(context,
-        message: message,
+        message: ErrorMessageUtils.truncateForToast(message),
         icon: Icons.error_outline,
         backgroundColor: Theme.of(context).colorScheme.error,
         action: action,
@@ -29,7 +30,7 @@ class SnackBarUtils {
   static void showWarning(BuildContext context, String message,
       {SnackBarAction? action}) {
     _show(context,
-        message: message,
+        message: ErrorMessageUtils.truncateForToast(message),
         icon: Icons.warning_amber_outlined,
         backgroundColor: AppDesignTokens.warning,
         action: action);
@@ -38,10 +39,48 @@ class SnackBarUtils {
   static void showInfo(BuildContext context, String message,
       {SnackBarAction? action}) {
     _show(context,
-        message: message,
+        message: ErrorMessageUtils.truncateForToast(message),
         icon: Icons.info_outline,
         backgroundColor: Theme.of(context).colorScheme.inverseSurface,
         action: action);
+  }
+
+  static void showErrorWithRetry(
+    BuildContext context,
+    String message,
+    VoidCallback onRetry, {
+    Object? details,
+    StackTrace? stackTrace,
+    String? retryLabel,
+  }) {
+    final displayMessage = ErrorMessageUtils.truncateForToast(message);
+    final label = retryLabel ?? '重试';
+
+    if (details != null && kDebugMode) {
+      _show(context,
+          message: displayMessage,
+          icon: Icons.error_outline,
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(seconds: 5),
+          trailing: TextButton(
+            onPressed: () => DebugErrorDialog.show(
+              context,
+              displayMessage,
+              details,
+              stackTrace: stackTrace,
+            ),
+            child: const Text('详情', style: TextStyle(color: Colors.white)),
+          ),
+          action: SnackBarAction(label: label, onPressed: onRetry));
+      return;
+    }
+
+    _show(context,
+        message: displayMessage,
+        icon: Icons.error_outline,
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 5),
+        action: SnackBarAction(label: label, onPressed: onRetry));
   }
 
   static void showErrorWithDebugDetails(
@@ -50,19 +89,20 @@ class SnackBarUtils {
     dynamic error,
     StackTrace? stackTrace,
   }) {
+    final displayMessage = ErrorMessageUtils.truncateForToast(message);
     if (!kDebugMode) {
-      showError(context, message);
+      showError(context, displayMessage);
       return;
     }
     _show(context,
-        message: message,
+        message: displayMessage,
         icon: Icons.error_outline,
         backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
           label: '详情',
           onPressed: () =>
-              DebugErrorDialog.show(context, message, error,
+              DebugErrorDialog.show(context, displayMessage, error,
                   stackTrace: stackTrace),
         ));
   }
@@ -73,6 +113,7 @@ class SnackBarUtils {
     required IconData icon,
     required Color backgroundColor,
     SnackBarAction? action,
+    Widget? trailing,
     Duration? duration,
   }) {
     ScaffoldMessenger.of(context)
@@ -83,6 +124,7 @@ class SnackBarUtils {
             Icon(icon, color: Colors.white, size: 18),
             const SizedBox(width: 12),
             Expanded(child: Text(message)),
+            if (trailing != null) trailing,
           ],
         ),
         backgroundColor: backgroundColor,

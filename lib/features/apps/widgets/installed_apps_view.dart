@@ -8,6 +8,8 @@ import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import '../../../data/models/app_models.dart';
 import '../providers/installed_apps_provider.dart';
 import 'installed_app_card.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import '../../../core/utils/snackbar_utils.dart';
 class InstalledAppsView extends StatefulWidget {
@@ -73,7 +75,7 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
                   }
                 } catch (e) {
                   if (mounted) {
-                    SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
+                    SnackBarUtils.showError(context, l10n.appOperateFailed(e.toString()),
                     );
                   }
                 }
@@ -98,7 +100,7 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
       }
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
+        SnackBarUtils.showError(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }
@@ -113,22 +115,9 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
         }
 
         if (provider.error != null && provider.installedApps.isEmpty) {
-          final colorScheme = Theme.of(context).colorScheme;
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline, size: 48, color: colorScheme.error),
-                const SizedBox(height: 16),
-                Text(
-                    '${context.l10n.commonLoadFailedTitle}: ${provider.error}'),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _handleRefresh,
-                  child: Text(context.l10n.commonRetry),
-                ),
-              ],
-            ),
+          return ModuleErrorStateWidget(
+            message: provider.error,
+            onRetry: _handleRefresh,
           );
         }
 
@@ -136,7 +125,11 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
           return _buildEmptyState();
         }
 
-        return RefreshIndicator(
+        return PartialErrorToastListener(
+          errorMessage: provider.error,
+          hasCachedData: provider.installedApps.isNotEmpty,
+          onRetry: _handleRefresh,
+          child: RefreshIndicator(
           onRefresh: _handleRefresh,
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
@@ -153,6 +146,7 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
               );
             },
           ),
+        ),
         );
       },
     );

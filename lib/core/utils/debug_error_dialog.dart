@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../theme/app_design_tokens.dart';
+import 'snackbar_utils.dart';
 
 class DebugErrorDialog {
   static void show(BuildContext context, String title, dynamic error,
@@ -71,54 +71,10 @@ class DebugErrorDialog {
     );
   }
 
+  @Deprecated('Use SnackBarUtils.showErrorWithDebugDetails instead')
   static void showErrorSnackBar(BuildContext context, String message,
       {dynamic error}) {
-    if (!kDebugMode) {
-      ScaffoldMessenger.of(context)
-        ..clearSnackBars()
-        ..showSnackBar(SnackBar(
-          content: Row(children: [
-            const Icon(Icons.error_outline, color: Colors.white, size: 18),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ]),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDesignTokens.radiusSm),
-          ),
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          showCloseIcon: true,
-          duration: const Duration(seconds: 5),
-        ));
-      return;
-    }
-
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(SnackBar(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(message, style: const TextStyle(fontWeight: FontWeight.bold)),
-            if (error != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                error.toString(),
-                style: const TextStyle(fontSize: 12),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ],
-        ),
-        action: SnackBarAction(
-          label: '详情',
-          onPressed: () => show(context, message, error),
-        ),
-        duration: const Duration(seconds: 5),
-      ));
+    SnackBarUtils.showErrorWithDebugDetails(context, message, error: error);
   }
 }
 
@@ -127,12 +83,16 @@ extension DebugErrorCatch<T> on Future<T> {
     try {
       return await this;
     } catch (e, stackTrace) {
+      final message = title != null ? '$title: $e' : '操作失败: $e';
       if (kDebugMode) {
-        DebugErrorDialog.show(context, title ?? '操作失败', e,
-            stackTrace: stackTrace);
+        SnackBarUtils.showErrorWithDebugDetails(
+          context,
+          message,
+          error: e,
+          stackTrace: stackTrace,
+        );
       } else {
-        DebugErrorDialog.showErrorSnackBar(
-            context, title != null ? '$title: $e' : '操作失败: $e');
+        SnackBarUtils.showError(context, message);
       }
       return null;
     }

@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
-
-import '../../core/utils/snackbar_utils.dart';
 const String _snapshotPagePackage = 'features.settings.snapshot_page';
 
 class SnapshotPage extends StatefulWidget {
@@ -37,7 +35,11 @@ class _SnapshotPageState extends State<SnapshotPage> {
         setState(() {
           _loadError = '加载快照列表失败: $e';
         });
-        DebugErrorDialog.showErrorSnackBar(context, '加载快照列表失败', error: e);
+        SnackBarUtils.showErrorWithDebugDetails(
+          context,
+          '加载快照列表失败',
+          error: e,
+        );
       }
     }
 
@@ -54,7 +56,11 @@ class _SnapshotPageState extends State<SnapshotPage> {
       }
     } catch (e) {
       if (mounted) {
-        DebugErrorDialog.showErrorSnackBar(context, '加载备份账户失败', error: e);
+        SnackBarUtils.showErrorWithDebugDetails(
+          context,
+          '加载备份账户失败',
+          error: e,
+        );
       }
     }
   }
@@ -282,8 +288,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                           }
                         } catch (e, stackTrace) {
                           if (context.mounted) {
-                            DebugErrorDialog.show(context, '创建快照失败', e,
-                                stackTrace: stackTrace);
+                            SnackBarUtils.showErrorWithDebugDetails(context, '创建快照失败', error: e, stackTrace: stackTrace);
                           }
                         }
                       },
@@ -328,8 +333,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, '导入快照失败', e,
-                      stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, '导入快照失败', error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -385,8 +389,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, '恢复快照失败', e,
-                      stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, '恢复快照失败', error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -421,8 +424,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, '回滚快照失败', e,
-                      stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, '回滚快照失败', error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -466,8 +468,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, '更新描述失败', e,
-                      stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, '更新描述失败', error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -503,8 +504,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  DebugErrorDialog.show(context, '删除快照失败', e,
-                      stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, '删除快照失败', error: e, stackTrace: stackTrace);
                 }
               }
             },

@@ -3,9 +3,9 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_service.dart';
-import 'package:onepanel_client/core/utils/debug_error_dialog.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -94,8 +94,7 @@ class _FavoritesViewState extends State<FavoritesView> {
       appLogger.eWithPackage('favorites_page', '_removeFavorite: 失败',
           error: e, stackTrace: stackTrace);
       if (mounted) {
-        DebugErrorDialog.show(context, l10n.filesFavoritesLoadFailed, e,
-            stackTrace: stackTrace);
+        SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesFavoritesLoadFailed, error: e, stackTrace: stackTrace);
       }
     }
   }
@@ -127,20 +126,9 @@ class _FavoritesViewState extends State<FavoritesView> {
     }
 
     if (_error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
-            const SizedBox(height: 16),
-            Text(_error!, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _loadFavorites,
-              child: Text(l10n.commonRetry),
-            ),
-          ],
-        ),
+      return ModuleErrorStateWidget(
+        message: _error,
+        onRetry: _loadFavorites,
       );
     }
 

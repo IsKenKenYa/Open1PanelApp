@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
-import 'package:onepanel_client/features/databases/widgets/database_detail_error_widget.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import 'databases_provider.dart';
 import 'databases_service.dart';
@@ -68,8 +69,8 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
     if (provider.error != null && detail == null) {
       return Scaffold(
         appBar: AppBar(title: Text(item.name)),
-        body: DatabaseDetailErrorWidget(
-          error: provider.error!,
+        body: ModuleErrorStateWidget(
+          message: provider.error,
           onRetry: provider.load,
         ),
       );
@@ -84,7 +85,11 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
 
     return Scaffold(
       appBar: AppBar(title: Text(item.name)),
-      body: RefreshIndicator(
+      body: PartialErrorToastListener(
+        errorMessage: provider.error,
+        hasCachedData: detail != null,
+        onRetry: provider.load,
+        child: RefreshIndicator(
         onRefresh: provider.load,
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -149,6 +154,7 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
             );
           },
         ),
+      ),
       ),
     );
   }

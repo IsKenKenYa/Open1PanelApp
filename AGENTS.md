@@ -113,6 +113,13 @@
 - 桌面模块切换必须留在统一壳内，普通切换不得再次 `push` 完整壳或首页。
 - 桌面 `Scaffold` / `AppBar` / `NavigationRail` / 壳内容区默认必须使用 `surface` 或 `surfaceContainer*`，禁止整页透明背景。
 
+## 用户反馈规范（MDUI3 轨道，强制）
+- **L1 瞬态反馈**（操作成功/失败、保存、删除等）：统一使用 `lib/core/utils/snackbar_utils.dart` 的 `SnackBarUtils`；禁止页面内直接 `ScaffoldMessenger.showSnackBar`（文件下载进度条等特例除外）。
+- **L2 首屏阻塞失败**（空数据 + 加载错误）：统一使用 `ModuleErrorStateWidget` 或 `AsyncStatePageBodyWidget`；禁止各模块自建重复错误页组件。
+- **L3 有缓存数据刷新失败**（列表/详情已有数据，刷新/API 附带 error）：使用 `lib/shared/widgets/operations/partial_error_toast_listener.dart` 的 `PartialErrorToastListener` 触发 Toast + 可选重试；禁止 inline `MaterialBanner`、`errorContainer` + `ListTile` 报错条。
+- **错误文案**：Provider 层记录原始错误；展示层经 `ErrorMessageUtils` 截断（Toast 默认 120 字符）；完整错误写 `appLogger.eWithPackage`；Debug 可选「详情」→ `DebugErrorDialog`。
+- **禁止**：Provider / Widget `build()` 内直接弹出 SnackBar；表单字段级校验仍用 inline 字段提示（非 Toast）。
+
 ## 文件规模与拆分规则（严格）
 
 ### 文件大小限制

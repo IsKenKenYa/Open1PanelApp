@@ -54,8 +54,8 @@ extension _ContainersPageSections on _ContainersPageViewState {
             final data = provider.data;
             if (provider.containersState.error != null &&
                 data.containers.isEmpty) {
-              return ContainersErrorView(
-                error: provider.containersState.error!,
+              return ModuleErrorStateWidget(
+                message: provider.containersState.error!,
                 onRetry: provider.loadContainers,
               );
             }

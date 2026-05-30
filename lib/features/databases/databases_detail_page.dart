@@ -6,10 +6,11 @@ import 'package:onepanel_client/data/models/database_models.dart';
 import 'databases_provider.dart';
 import 'databases_service.dart';
 import 'widgets/database_detail_actions_widget.dart';
-import 'widgets/database_detail_error_widget.dart';
 import 'widgets/database_detail_management_widget.dart';
 import 'widgets/database_detail_sections_widget.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 class DatabaseDetailPage extends StatelessWidget {
   const DatabaseDetailPage({
@@ -47,11 +48,15 @@ class _DatabaseDetailPageView extends StatelessWidget {
       body: provider.isLoading && detail == null
           ? const Center(child: CircularProgressIndicator())
           : provider.error != null && detail == null
-              ? DatabaseDetailErrorWidget(
-                  error: provider.error!,
+              ? ModuleErrorStateWidget(
+                  message: provider.error,
                   onRetry: provider.load,
                 )
-              : RefreshIndicator(
+              : PartialErrorToastListener(
+                  errorMessage: provider.error,
+                  hasCachedData: detail != null,
+                  onRetry: provider.load,
+                  child: RefreshIndicator(
                   onRefresh: provider.load,
                   child: LayoutBuilder(
                     builder: (context, constraints) {
@@ -81,13 +86,6 @@ class _DatabaseDetailPageView extends StatelessWidget {
                             content,
                             management,
                             actions,
-                            if (provider.error != null) ...[
-                              const SizedBox(height: 16),
-                              DatabaseDetailErrorWidget(
-                                error: provider.error!,
-                                onRetry: provider.load,
-                              ),
-                            ],
                           ],
                         );
                       }
@@ -113,13 +111,6 @@ class _DatabaseDetailPageView extends StatelessWidget {
                                 children: [
                                   management,
                                   actions,
-                                  if (provider.error != null) ...[
-                                    const SizedBox(height: 16),
-                                    DatabaseDetailErrorWidget(
-                                      error: provider.error!,
-                                      onRetry: provider.load,
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),
@@ -128,6 +119,7 @@ class _DatabaseDetailPageView extends StatelessWidget {
                       );
                     },
                   ),
+                ),
                 ),
     );
   }

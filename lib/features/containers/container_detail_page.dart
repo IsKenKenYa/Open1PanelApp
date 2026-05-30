@@ -7,6 +7,7 @@ import 'package:onepanel_client/data/models/container_models.dart'
 import 'package:onepanel_client/features/containers/providers/container_detail_provider.dart';
 import 'package:onepanel_client/features/containers/widgets/container_logs_view.dart';
 import 'package:onepanel_client/features/containers/widgets/container_stats_view.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:provider/provider.dart';
 
 class ContainerDetailPage extends StatelessWidget {
@@ -99,19 +100,9 @@ class _InfoTab extends StatelessWidget {
     }
 
     if (provider.inspectError != null && provider.inspectData == null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(l10n.containerOperateFailed(provider.inspectError!)),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: provider.loadInspect,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.commonRetry),
-            ),
-          ],
-        ),
+      return ModuleErrorStateWidget(
+        message: l10n.containerOperateFailed(provider.inspectError!),
+        onRetry: provider.loadInspect,
       );
     }
 

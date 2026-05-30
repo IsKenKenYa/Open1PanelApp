@@ -13,6 +13,8 @@ import 'package:onepanel_client/features/apps/providers/installed_apps_provider.
 import 'package:onepanel_client/features/apps/widgets/app_icon.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import '../../core/utils/snackbar_utils.dart';
 class InstalledAppDetailPage extends StatelessWidget {
@@ -96,7 +98,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       await detailProvider.refresh();
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appUpdateFailed(e.toString()),
+        SnackBarUtils.showError(context, l10n.appUpdateFailed(e.toString()),
         );
       }
     }
@@ -144,7 +146,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       await detailProvider.refresh();
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appIgnoreUpdateFailed(e.toString()),
+        SnackBarUtils.showError(context, l10n.appIgnoreUpdateFailed(e.toString()),
         );
       }
     }
@@ -194,7 +196,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       );
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, '${l10n.appConnInfoFailed}: $e');
+        SnackBarUtils.showError(context, '${l10n.appConnInfoFailed}: $e');
       }
     }
   }
@@ -207,12 +209,12 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     try {
       final ok = await launchUrl(url, mode: LaunchMode.externalApplication);
       if (!ok && mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(l10n.commonUnknownError),
+        SnackBarUtils.showError(context, l10n.appOperateFailed(l10n.commonUnknownError),
         );
       }
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
+        SnackBarUtils.showError(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }
@@ -233,7 +235,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       if (!mounted) return;
       Navigator.pop(context);
       if (container == null) {
-        SnackBarUtils.showSuccess(context, l10n.notFoundDesc);
+        SnackBarUtils.showError(context, l10n.notFoundDesc);
         return;
       }
 
@@ -245,7 +247,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
     } catch (e) {
       if (!mounted) return;
       Navigator.pop(context);
-      SnackBarUtils.showSuccess(context, '${l10n.commonLoadFailedTitle}: $e');
+      SnackBarUtils.showError(context, '${l10n.commonLoadFailedTitle}: $e');
     }
   }
 
@@ -264,7 +266,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       await detailProvider.syncInstallInfo();
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
+        SnackBarUtils.showError(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }
@@ -319,7 +321,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
       SnackBarUtils.showSuccess(context, l10n.appOperateSuccess);
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
+        SnackBarUtils.showError(context, l10n.appOperateFailed(e.toString()),
         );
       }
     }
@@ -353,7 +355,11 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
                 ),
               ],
             ),
-            body: TabBarView(
+            body: PartialErrorToastListener(
+              errorMessage: provider.error,
+              hasCachedData: appInfo != null || config != null,
+              onRetry: _refresh,
+              child: TabBarView(
               children: [
                 _InfoTab(
                   appInfo: appInfo,
@@ -366,6 +372,7 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
                   updateVersions: provider.updateVersions,
                   onShowConnInfo: _showConnectionInfo,
                   onUpgrade: _handleUpgrade,
+                  onRetry: _refresh,
                 ),
                 _ConfigTab(
                   appInfo: appInfo,
@@ -374,8 +381,10 @@ class _InstalledAppDetailViewState extends State<_InstalledAppDetailView> {
                   error: provider.error,
                   configError: provider.configError,
                   onEdit: (cfg, info) => _handleEditConfig(cfg, info),
+                  onRetry: _refresh,
                 ),
               ],
+            ),
             ),
             bottomNavigationBar: _BottomBar(
               appInfo: appInfo,
@@ -405,6 +414,7 @@ class _InfoTab extends StatelessWidget {
   final List<AppVersion> updateVersions;
   final VoidCallback onShowConnInfo;
   final VoidCallback onUpgrade;
+  final VoidCallback onRetry;
 
   const _InfoTab({
     required this.appInfo,
@@ -417,6 +427,7 @@ class _InfoTab extends StatelessWidget {
     required this.updateVersions,
     required this.onShowConnInfo,
     required this.onUpgrade,
+    required this.onRetry,
   });
 
   @override
@@ -427,7 +438,10 @@ class _InfoTab extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (error != null && appInfo == null) {
-      return Center(child: Text('${l10n.commonLoadFailedTitle}: $error'));
+      return ModuleErrorStateWidget(
+        message: error,
+        onRetry: onRetry,
+      );
     }
     if (appInfo == null) {
       return Center(child: Text(l10n.commonEmpty));
@@ -437,63 +451,63 @@ class _InfoTab extends StatelessWidget {
     final statusText =
         isRunning ? l10n.appStatusRunning : l10n.appStatusStopped;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return PartialErrorToastListener(
+      errorMessage: storeDetailError,
+      hasCachedData: true,
+      child: PartialErrorToastListener(
+        errorMessage: servicesError,
+        hasCachedData: true,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppIcon(
-                  appKey: appInfo!.appKey,
-                  appId: appInfo!.appId,
-                  iconUrl: appInfo!.icon,
-                  size: 64),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(appInfo!.appName ?? appInfo!.name ?? '-',
-                        style: Theme.of(context).textTheme.headlineSmall),
-                    const SizedBox(height: 8),
-                    Text(statusText),
-                  ],
-                ),
+              Row(
+                children: [
+                  AppIcon(
+                      appKey: appInfo!.appKey,
+                      appId: appInfo!.appId,
+                      iconUrl: appInfo!.icon,
+                      size: 64),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(appInfo!.appName ?? appInfo!.name ?? '-',
+                            style: Theme.of(context).textTheme.headlineSmall),
+                        const SizedBox(height: 8),
+                        Text(statusText),
+                      ],
+                    ),
+                  ),
+                  if (updateVersions.isNotEmpty)
+                    FilledButton.icon(
+                      onPressed: onUpgrade,
+                      icon: const Icon(Icons.upgrade, size: 16),
+                      label: Text(l10n.appUpdate),
+                    ),
+                ],
               ),
-              if (updateVersions.isNotEmpty)
-                FilledButton.icon(
-                  onPressed: onUpgrade,
-                  icon: const Icon(Icons.upgrade, size: 16),
-                  label: Text(l10n.appUpdate),
-                ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onShowConnInfo,
+                icon: const Icon(Icons.link),
+                label: Text(l10n.appConnInfo),
+              ),
+              if (storeDetail?.readMe != null &&
+                  storeDetail!.readMe!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                MarkdownBody(data: storeDetail!.readMe!),
+              ],
+              if (services.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                ...services.map((s) =>
+                    ListTile(title: Text(s.label), subtitle: Text(s.value))),
+              ],
             ],
           ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: onShowConnInfo,
-            icon: const Icon(Icons.link),
-            label: Text(l10n.appConnInfo),
-          ),
-          if (storeDetailError != null) ...[
-            const SizedBox(height: 16),
-            Text('${l10n.commonLoadFailedTitle}: $storeDetailError'),
-          ],
-          if (storeDetail?.readMe != null &&
-              storeDetail!.readMe!.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            MarkdownBody(data: storeDetail!.readMe!),
-          ],
-          if (servicesError != null) ...[
-            const SizedBox(height: 16),
-            Text('${l10n.commonLoadFailedTitle}: $servicesError'),
-          ],
-          if (services.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            ...services.map(
-                (s) => ListTile(title: Text(s.label), subtitle: Text(s.value))),
-          ],
-        ],
+        ),
       ),
     );
   }
@@ -506,6 +520,7 @@ class _ConfigTab extends StatelessWidget {
   final String? error;
   final String? configError;
   final Future<void> Function(AppConfig config, AppInstallInfo appInfo) onEdit;
+  final VoidCallback onRetry;
 
   const _ConfigTab({
     required this.appInfo,
@@ -514,6 +529,7 @@ class _ConfigTab extends StatelessWidget {
     required this.error,
     required this.configError,
     required this.onEdit,
+    required this.onRetry,
   });
 
   @override
@@ -524,16 +540,26 @@ class _ConfigTab extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (error != null && appConfig == null) {
-      return Center(child: Text('${l10n.commonLoadFailedTitle}: $error'));
+      return ModuleErrorStateWidget(
+        message: error,
+        onRetry: onRetry,
+      );
     }
     if (configError != null && appConfig == null) {
-      return Center(child: Text('${l10n.commonLoadFailedTitle}: $configError'));
+      return ModuleErrorStateWidget(
+        message: configError,
+        onRetry: onRetry,
+      );
     }
     if (appInfo == null || appConfig == null) {
       return Center(child: Text(l10n.commonEmpty));
     }
 
-    return SingleChildScrollView(
+    return PartialErrorToastListener(
+      errorMessage: configError,
+      hasCachedData: appConfig != null,
+      onRetry: onRetry,
+      child: SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,6 +585,7 @@ class _ConfigTab extends StatelessWidget {
           Text('${l10n.env}: ${appInfo!.env?.length ?? 0}'),
         ],
       ),
+    ),
     );
   }
 }
