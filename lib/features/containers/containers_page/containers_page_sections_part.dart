@@ -121,7 +121,10 @@ extension _ContainersPageSections on _ContainersPageViewState {
           },
         );
       case 'compose':
-        return const ComposePage();
+        return const KeyedSubtree(
+          key: ValueKey('containers_section_compose'),
+          child: ComposePage(),
+        );
       case 'images':
         return const ImagePage();
       case 'networks':

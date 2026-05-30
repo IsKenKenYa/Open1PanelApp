@@ -228,7 +228,7 @@ class ServerDetailPage extends StatelessWidget {
       if (!context.mounted) {
         return;
       }
-      SnackBarUtils.showSuccess(context, l10n.serverDeleteFailed(error.toString(),
+      SnackBarUtils.showError(context, l10n.serverDeleteFailed(error.toString(),
         ),
       );
     }

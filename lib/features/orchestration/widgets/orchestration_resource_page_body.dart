@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/data/models/docker_models.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 typedef OrchestrationResourceLoader = Future<void> Function();
+
+/// Resolves a stable list key for compose/docker list items.
+String orchestrationListItemKey(Object item) {
+  if (item is ComposeProject) {
+    final id = item.id.trim();
+    if (id.isNotEmpty) {
+      return 'compose:$id';
+    }
+    final path = item.path?.trim();
+    if (path != null && path.isNotEmpty) {
+      return 'compose:$path';
+    }
+    final name = item.name.trim();
+    if (name.isNotEmpty) {
+      return 'compose:$name';
+    }
+  }
+  return 'orchestration:${item.hashCode}';
+}
 
 class OrchestrationResourcePageBody<T> extends StatelessWidget {
   const OrchestrationResourcePageBody({
@@ -14,6 +34,7 @@ class OrchestrationResourcePageBody<T> extends StatelessWidget {
     required this.onRefresh,
     required this.itemBuilder,
     this.emptyMessage,
+    this.itemKey,
   });
 
   final List<T> items;
@@ -22,6 +43,7 @@ class OrchestrationResourcePageBody<T> extends StatelessWidget {
   final OrchestrationResourceLoader onRefresh;
   final Widget Function(T item) itemBuilder;
   final String? emptyMessage;
+  final String Function(T item)? itemKey;
 
   @override
   Widget build(BuildContext context) {
@@ -42,24 +64,50 @@ class OrchestrationResourcePageBody<T> extends StatelessWidget {
       return Center(child: Text(emptyMessage ?? l10n.commonEmpty));
     }
 
-    return PartialErrorToastListener(
-      errorMessage: error,
-      hasCachedData: items.isNotEmpty,
-      onRetry: () => onRefresh(),
-      child: RefreshIndicator(
-        onRefresh: onRefresh,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (isLoading)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: LinearProgressIndicator(minHeight: 2),
-              ),
-            ...items.map(itemBuilder),
-          ],
+    final resolveKey = itemKey ?? (T item) => orchestrationListItemKey(item as Object);
+    final displayItems = _dedupeByKey(items, resolveKey);
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        RefreshIndicator(
+          onRefresh: onRefresh,
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: displayItems.length + (isLoading ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (isLoading && index == 0) {
+                return const Padding(
+                  padding: EdgeInsets.only(bottom: 12),
+                  child: LinearProgressIndicator(minHeight: 2),
+                );
+              }
+              final itemIndex = isLoading ? index - 1 : index;
+              final item = displayItems[itemIndex];
+              return KeyedSubtree(
+                key: ValueKey(resolveKey(item)),
+                child: itemBuilder(item),
+              );
+            },
+          ),
         ),
-      ),
+        PartialErrorToastListener(
+          errorMessage: error,
+          hasCachedData: displayItems.isNotEmpty,
+          onRetry: () => onRefresh(),
+        ),
+      ],
     );
   }
+}
+
+List<T> _dedupeByKey<T>(List<T> items, String Function(T item) resolveKey) {
+  final seen = <String>{};
+  final unique = <T>[];
+  for (final item in items) {
+    if (seen.add(resolveKey(item))) {
+      unique.add(item);
+    }
+  }
+  return unique;
 }

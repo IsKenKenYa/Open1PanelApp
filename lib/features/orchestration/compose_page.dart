@@ -12,11 +12,23 @@ class ComposePage extends StatefulWidget {
 }
 
 class _ComposePageState extends State<ComposePage> {
+  bool _requestedInitialLoad = false;
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_requestedInitialLoad) {
+      return;
+    }
+    _requestedInitialLoad = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ComposeProvider>().loadComposes();
+      if (!mounted) {
+        return;
+      }
+      final provider = context.read<ComposeProvider>();
+      if (!provider.isLoading && provider.composes.isEmpty) {
+        provider.loadComposes();
+      }
     });
   }
 
@@ -29,6 +41,7 @@ class _ComposePageState extends State<ComposePage> {
           error: provider.error,
           isLoading: provider.isLoading,
           onRefresh: provider.loadComposes,
+          itemKey: (compose) => orchestrationListItemKey(compose),
           itemBuilder: (compose) => ComposeCard(compose: compose),
         );
       },

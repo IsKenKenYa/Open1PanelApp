@@ -63,4 +63,30 @@ void main() {
       findsNothing,
     );
   });
+
+  testWidgets('OrchestrationResourcePageBody dedupes items with same stable key',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Scaffold(
+          body: OrchestrationResourcePageBody<String>(
+            items: const ['pgadmin4', 'pgadmin4', 'pgadmin4'],
+            error: null,
+            isLoading: false,
+            onRefresh: () async {},
+            itemKey: (item) => 'compose:$item',
+            itemBuilder: (item) => ListTile(title: Text(item)),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ListTile), findsOneWidget);
+    expect(find.text('pgadmin4'), findsOneWidget);
+  });
 }

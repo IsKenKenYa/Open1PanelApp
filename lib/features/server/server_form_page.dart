@@ -119,7 +119,7 @@ class _ServerFormPageState extends State<ServerFormPage> {
         return;
       }
 
-      SnackBarUtils.showSuccess(context, l10n.serverFormSaveFailed(e.toString()),
+      SnackBarUtils.showError(context, l10n.serverFormSaveFailed(e.toString()),
       );
     } finally {
       if (mounted) {

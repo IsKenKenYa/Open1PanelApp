@@ -85,6 +85,47 @@ void main() {
     await tester.tap(find.text('rebuild'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
+    // Rebuild with the same error must not enqueue another snackbar.
+    expect(find.byType(SnackBar), findsOneWidget);
+  });
+
+  testWidgets('PartialErrorToastListener does not throw when error updates',
+      (tester) async {
+    String? errorMessage = 'initial error';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('zh'),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) {
+              return PartialErrorToastListener(
+                errorMessage: errorMessage,
+                hasCachedData: true,
+                onRetry: () {},
+                child: ElevatedButton(
+                  onPressed: () => setState(() {
+                    errorMessage = 'updated error';
+                  }),
+                  child: const Text('update error'),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(find.text('update error'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(tester.takeException(), isNull);
     expect(find.byType(SnackBar), findsOneWidget);
   });
 }

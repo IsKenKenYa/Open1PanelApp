@@ -161,13 +161,13 @@ class InstalledAppCard extends StatelessWidget {
       try {
         if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
           if (context.mounted) {
-            SnackBarUtils.showSuccess(context, l10n.appOperateFailed(l10n.commonUnknownError),
+            SnackBarUtils.showError(context, l10n.appOperateFailed(l10n.commonUnknownError),
             );
           }
         }
       } catch (e) {
         if (context.mounted) {
-          SnackBarUtils.showSuccess(context, l10n.appOperateFailed(e.toString()),
+          SnackBarUtils.showError(context, l10n.appOperateFailed(e.toString()),
           );
         }
       }

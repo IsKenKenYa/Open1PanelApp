@@ -214,7 +214,7 @@ class _RuntimesCenterPageState extends State<RuntimesCenterPage> {
     final dependencies = await provider.checkDeleteDependency(item);
     if (!mounted) return;
     if (dependencies == null) {
-      SnackBarUtils.showSuccess(context, context.l10n.commonLoadFailedTitle);
+      SnackBarUtils.showError(context, context.l10n.commonLoadFailedTitle);
       return;
     }
 

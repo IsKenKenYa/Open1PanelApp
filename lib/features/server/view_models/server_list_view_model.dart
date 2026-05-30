@@ -220,7 +220,7 @@ class ServerListViewModel extends ChangeNotifier with SafeChangeNotifier {
       SnackBarUtils.showSuccess(context, successMessage);
     } catch (error) {
       if (!context.mounted) return;
-      SnackBarUtils.showSuccess(context, l10n.serverDeleteFailed(error.toString()),
+      SnackBarUtils.showError(context, l10n.serverDeleteFailed(error.toString()),
       );
     }
   }

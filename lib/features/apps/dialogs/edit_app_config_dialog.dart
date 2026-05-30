@@ -153,7 +153,7 @@ class _EditAppConfigDialogState extends State<EditAppConfigDialog> {
         setState(() {
           _isLoading = false;
         });
-        SnackBarUtils.showSuccess(context, '${l10n.commonSaveFailed}: $e');
+        SnackBarUtils.showError(context, '${l10n.commonSaveFailed}: $e');
       }
     }
   }

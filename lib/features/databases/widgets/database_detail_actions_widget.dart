@@ -13,7 +13,11 @@ class DatabaseDetailActionsWidget extends StatelessWidget {
 
   void _showSubmitResult(BuildContext context, bool success) {
     final l10n = context.l10n;
-    SnackBarUtils.showSuccess(context, success ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
+    if (success) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+    }
   }
 
   @override

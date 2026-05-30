@@ -452,12 +452,9 @@ class _InfoTab extends StatelessWidget {
         isRunning ? l10n.appStatusRunning : l10n.appStatusStopped;
 
     return PartialErrorToastListener(
-      errorMessage: storeDetailError,
+      errorMessage: storeDetailError ?? servicesError,
       hasCachedData: true,
-      child: PartialErrorToastListener(
-        errorMessage: servicesError,
-        hasCachedData: true,
-        child: SingleChildScrollView(
+      child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -508,7 +505,6 @@ class _InfoTab extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

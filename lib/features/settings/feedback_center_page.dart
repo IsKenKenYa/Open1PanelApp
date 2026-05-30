@@ -137,7 +137,7 @@ class _FeedbackCenterPageState extends State<FeedbackCenterPage> {
       mode: LaunchMode.externalApplication,
     );
     if (!ok && context.mounted) {
-      SnackBarUtils.showSuccess(context, context.l10n.settingsFeedbackOpenFailed);
+      SnackBarUtils.showError(context, context.l10n.settingsFeedbackOpenFailed);
     }
   }
 

@@ -110,7 +110,7 @@ class QuickActionsCard extends StatelessWidget {
                 SnackBarUtils.showSuccess(context, l10n.dashboardUpdateSuccess);
               } catch (e) {
                 if (!context.mounted) return;
-                SnackBarUtils.showSuccess(context, l10n.dashboardUpdateFailed(e.toString()),
+                SnackBarUtils.showError(context, l10n.dashboardUpdateFailed(e.toString()),
                 );
               }
             },

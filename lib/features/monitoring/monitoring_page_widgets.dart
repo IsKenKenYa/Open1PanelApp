@@ -477,7 +477,7 @@ class _MonitorSettingsDialogState extends State<_MonitorSettingsDialog> {
         SnackBarUtils.showSuccess(context, context.l10n.monitorSettingsSaved);
         Navigator.of(context).pop();
       } else {
-        SnackBarUtils.showSuccess(context, context.l10n.monitorSettingsFailed);
+        SnackBarUtils.showError(context, context.l10n.monitorSettingsFailed);
       }
     }
   }

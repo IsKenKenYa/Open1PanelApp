@@ -13,6 +13,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
   List<ComposeProject> _composes = [];
   bool _isLoading = false;
   String? _error;
+  int _loadRequestId = 0;
 
   List<ComposeProject> get composes => _composes;
   bool get isLoading => _isLoading;
@@ -29,17 +30,28 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> loadComposes({int page = 1, int pageSize = 10}) async {
+    final requestId = ++_loadRequestId;
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _composes = await _service.loadComposes(page: page, pageSize: pageSize);
+      final loaded =
+          await _service.loadComposes(page: page, pageSize: pageSize);
+      if (requestId != _loadRequestId) {
+        return;
+      }
+      _composes = loaded;
     } catch (e) {
+      if (requestId != _loadRequestId) {
+        return;
+      }
       _error = e.toString();
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (requestId == _loadRequestId) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 

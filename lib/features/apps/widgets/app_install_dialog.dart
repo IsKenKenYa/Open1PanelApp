@@ -127,7 +127,7 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
     } catch (e) {
       if (mounted && showError) {
         final l10n = AppLocalizations.of(context);
-        SnackBarUtils.showSuccess(context, l10n.appOperateFailed(_formatError(e)),
+        SnackBarUtils.showError(context, l10n.appOperateFailed(_formatError(e)),
         );
       }
     } finally {
@@ -167,7 +167,7 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
     if (!_formKey.currentState!.validate()) return;
     if (_currentDetailId == null) {
       final l10n = AppLocalizations.of(context);
-      SnackBarUtils.showSuccess(context, l10n.appOperateFailed(l10n.commonUnknownError),
+      SnackBarUtils.showError(context, l10n.appOperateFailed(l10n.commonUnknownError),
       );
       return;
     }

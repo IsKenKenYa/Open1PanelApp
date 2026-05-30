@@ -23,10 +23,11 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
     if (!context.mounted) {
       return;
     }
-    SnackBarUtils.showSuccess(context, success
-            ? l10n.commonSaveSuccess
-            : (provider.error ?? l10n.commonSaveFailed),
-    );
+    if (success) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, provider.error ?? l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _toggleEnable(
@@ -40,10 +41,11 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
     if (!context.mounted) {
       return;
     }
-    SnackBarUtils.showSuccess(context, success
-            ? l10n.commonSaveSuccess
-            : (provider.error ?? l10n.commonSaveFailed),
-    );
+    if (success) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, provider.error ?? l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _showEditDialog(
@@ -117,11 +119,11 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
                 if (!context.mounted) {
                   return;
                 }
-                SnackBarUtils.showSuccess(context, 
-                      success
-                          ? l10n.commonSaveSuccess
-                          : (provider.error ?? l10n.commonSaveFailed),
-                );
+                if (success) {
+                  SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                } else {
+                  SnackBarUtils.showError(context, provider.error ?? l10n.commonSaveFailed);
+                }
               },
               child: Text(l10n.commonSave),
             ),

@@ -226,7 +226,11 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
     if (!mounted) {
       return;
     }
-    SnackBarUtils.showSuccess(context, success ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
+    if (success) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _showRecordDialog({PHPExtensionRecord? record}) async {
@@ -289,7 +293,11 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
     if (!mounted) {
       return;
     }
-    SnackBarUtils.showSuccess(context, ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
+    if (ok) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+    }
   }
 
   Future<void> _deleteRecord(PHPExtensionRecord record) async {
@@ -311,6 +319,10 @@ class _PhpExtensionsPageState extends State<PhpExtensionsPage> {
     if (!mounted) {
       return;
     }
-    SnackBarUtils.showSuccess(context, ok ? l10n.commonSaveSuccess : l10n.commonSaveFailed);
+    if (ok) {
+      SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+    } else {
+      SnackBarUtils.showError(context, l10n.commonSaveFailed);
+    }
   }
 }
