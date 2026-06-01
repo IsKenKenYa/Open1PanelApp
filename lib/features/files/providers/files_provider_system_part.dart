@@ -91,14 +91,10 @@ extension FilesProviderSystemMixin on FilesProvider {
     if (file.isDir) {
       throw Exception('cannot_download_directory');
     }
-    if (!PlatformCapabilities.current().supportsBackgroundDownloader) {
-      throw UnsupportedError('当前平台暂不支持后台下载');
-    }
 
     final hasPermission = await _service.checkAndRequestStoragePermission();
     if (!hasPermission) {
       appLogger.wWithPackage('files_provider', 'downloadFile: 存储权限被拒绝');
-      // Even if denied, we try to proceed. checkAndRequestStoragePermission usually returns true now.
     }
 
     if (file.size >= FilesProvider._chunkDownloadThreshold) {
@@ -108,7 +104,53 @@ extension FilesProviderSystemMixin on FilesProvider {
       );
     }
 
+    final capabilities = PlatformCapabilities.current();
+    if (capabilities.isOhos) {
+      return _downloadWithOhosNative(file);
+    }
+    if (!capabilities.supportsBackgroundDownloader) {
+      throw UnsupportedError('当前平台暂不支持后台下载');
+    }
+
     return _downloadWithFlutterDownloader(file);
+  }
+
+  Future<String?> _downloadWithOhosNative(FileInfo file) async {
+    try {
+      final config = await ApiConfigManager.getCurrentConfig();
+      if (config == null) {
+        throw StateError('No server configured');
+      }
+
+      final directory = await getDownloadsDirectory() ??
+          await getApplicationDocumentsDirectory();
+      final downloadPath = directory.path;
+
+      final timestamp =
+          (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
+      final authToken = _generate1PanelAuthToken(config.apiKey, timestamp);
+
+      final ohosChannel = const OhosPlatformChannel();
+      final taskId = await ohosChannel.downloadFile(
+        url:
+            '${config.url}${ApiConstants.buildApiPath('/files/download')}?path=${Uri.encodeComponent(file.path)}',
+        savedDir: downloadPath,
+        fileName: file.name,
+        headers: <String, String>{
+          '1Panel-Token': authToken,
+          '1Panel-Timestamp': timestamp,
+        },
+      );
+      return taskId;
+    } catch (e, stackTrace) {
+      appLogger.eWithPackage(
+        'files_provider',
+        '_downloadWithOhosNative: 失败',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 
   Future<String?> _downloadWithFlutterDownloader(FileInfo file) async {

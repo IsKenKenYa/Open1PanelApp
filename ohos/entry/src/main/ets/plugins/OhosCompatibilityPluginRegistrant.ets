@@ -5,6 +5,7 @@ import OhosSecureStoragePlugin from './OhosSecureStoragePlugin';
 import OhosSharedPreferencesPlugin from './OhosSharedPreferencesPlugin';
 import OhosLocalAuthPlugin from './OhosLocalAuthPlugin';
 import OhosPlatformPlugin from './OhosPlatformPlugin';
+import OhosConnectivityPlugin from './OhosConnectivityPlugin';
 
 const TAG = 'OhosCompatibilityPluginRegistrant';
 
@@ -27,6 +28,9 @@ export class OhosCompatibilityPluginRegistrant {
     });
     OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'onepanel_ohos_platform', () => {
       flutterEngine.getPlugins()?.add(new OhosPlatformPlugin());
+    });
+    OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'connectivity_plus', () => {
+      flutterEngine.getPlugins()?.add(new OhosConnectivityPlugin());
     });
   }
 

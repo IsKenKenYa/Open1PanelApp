@@ -38,13 +38,22 @@ class PlatformFileService {
 
     if (_capabilities.supportsNativeFileSave) {
       try {
-        final nativePath = await _ohosChannel.saveBytes(
+        // Try native file picker first — lets user choose save location
+        final pickerPath = await _ohosChannel.pickAndSaveBytes(
           fileName: safeFileName,
           bytes: bytes,
           mimeType: mimeType,
         );
-        if (nativePath != null && nativePath.isNotEmpty) {
-          return nativePath;
+        if (pickerPath != null && pickerPath.isNotEmpty) {
+          return pickerPath;
+        }
+        // User cancelled picker — fall back to save-to-download
+        final downloadPath = await _ohosChannel.saveBytesToDownload(
+          fileName: safeFileName,
+          bytes: bytes,
+        );
+        if (downloadPath != null && downloadPath.isNotEmpty) {
+          return downloadPath;
         }
       } catch (error, stackTrace) {
         appLogger.wWithPackage(

@@ -1,3 +1,4 @@
+import { Log } from '@ohos/flutter_ohos';
 import common from '@ohos.app.ability.common';
 import preferences from '@ohos.data.preferences';
 
@@ -23,7 +24,10 @@ export default class OhosPreferenceStore {
 
   async getAll(): Promise<Object> {
     const store = await this.getPreferences();
-    return store.getAll();
+    const all = await store.getAll();
+    const keys = Object.keys(all as Record<string, string>);
+    Log.d('OhosPreferenceStore', `getAll: store=${this.storeName}, keyCount=${keys.length}`);
+    return all;
   }
 
   async has(key: string): Promise<boolean> {

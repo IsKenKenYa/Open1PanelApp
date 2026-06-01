@@ -1,9 +1,12 @@
+import { Log } from '@ohos/flutter_ohos';
 import common from '@ohos.app.ability.common';
 import cryptoFramework from '@ohos.security.cryptoFramework';
 import huks from '@ohos.security.huks';
 import util from '@ohos.util';
 
 import OhosPreferenceStore from './OhosPreferenceStore';
+
+const TAG = 'OhosHuksSecureStore';
 
 class SecureStoragePayload {
   v: number = 0;
@@ -43,15 +46,24 @@ export default class OhosHuksSecureStore {
     const all = (await this.store.getAll()) as Record<string, string | null>;
     const rawValue = all[key];
     if (rawValue == null || rawValue.length === 0) {
+      Log.w(TAG, `read: key=${key} not found in preferences store`);
       return null;
     }
 
     const payload = this.tryParsePayload(rawValue);
     if (payload == null) {
+      Log.d(TAG, `read: key=${key} returned raw (non-encrypted) value`);
       return rawValue;
     }
 
-    return this.decrypt(payload);
+    try {
+      const decrypted = await this.decrypt(payload);
+      Log.d(TAG, `read: key=${key} decrypted successfully`);
+      return decrypted;
+    } catch (error) {
+      Log.e(TAG, `read: key=${key} HUKS decryption failed, error=${error}`, error);
+      return null;
+    }
   }
 
   async readAll(): Promise<Record<string, string>> {
@@ -169,7 +181,6 @@ export default class OhosHuksSecureStore {
 
     return this.textDecoder.decodeWithStream(
       result.outData as Uint8Array,
-      { stream: false },
     );
   }
 

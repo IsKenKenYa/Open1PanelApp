@@ -82,10 +82,18 @@ class SecureApiKeyStore implements ApiKeyStore {
       if (value != null && value.isNotEmpty) {
         return value;
       }
+      appLogger.wWithPackage(
+        _apiConfigManagerPackage,
+        'secure storage read returned null for key: $key (backend=${storage.backend.name}), trying fallbacks',
+      );
       if (_shouldUsePrefsFallback) {
         final prefs = await SharedPreferences.getInstance();
         final fallbackValue = prefs.getString(_prefsFallbackKey(key));
         if (fallbackValue != null && fallbackValue.isNotEmpty) {
+          appLogger.dWithPackage(
+            _apiConfigManagerPackage,
+            'prefs fallback succeeded for key: $key',
+          );
           return fallbackValue;
         }
       }
@@ -141,7 +149,9 @@ class SecureApiKeyStore implements ApiKeyStore {
       final storage = await _ensureStorage();
       await storage.write(key: key, value: value);
       _memoryFallback.remove(key);
-      if (_shouldUsePrefsFallback) {
+      // On OHOS, also persist to SharedPreferences as a read-fallback
+      // because HUKS-backed reads may silently return null on some builds.
+      if (_shouldUsePrefsFallback || storage.backend == PlatformSecureStorageBackend.ohosMethodChannel) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(_prefsFallbackKey(key), value);
       }
@@ -181,6 +191,11 @@ class SecureApiKeyStore implements ApiKeyStore {
     try {
       final storage = await _ensureStorage();
       await storage.delete(key: key);
+      // Also remove from SharedPreferences backup on OHOS
+      if (storage.backend == PlatformSecureStorageBackend.ohosMethodChannel) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(_prefsFallbackKey(key));
+      }
       appLogger.dWithPackage(
         _apiConfigManagerPackage,
         'secure storage delete successful for key: $key',

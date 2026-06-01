@@ -14,12 +14,14 @@ enum PlatformSecureStorageBackend {
 class PlatformSecureStorage {
   PlatformSecureStorage._({
     required this.backend,
+    required bool isOhos,
     FlutterSecureStorage? secureStorage,
     SharedPreferences? prefs,
     MethodChannel? ohosChannel,
   })  : _secureStorage = secureStorage,
         _prefsFallback = prefs,
-        _ohosChannel = ohosChannel;
+        _ohosChannel = ohosChannel,
+        _isOhos = isOhos;
 
   static const String ohosChannelName = 'onepanel/secure_storage';
   static const String _prefsKeyPrefix = 'open1panel_secure_';
@@ -28,6 +30,8 @@ class PlatformSecureStorage {
   final FlutterSecureStorage? _secureStorage;
   final SharedPreferences? _prefsFallback;
   final MethodChannel? _ohosChannel;
+  final bool _isOhos;
+  static const String _tag = 'core.storage.platform_secure';
 
   static Future<PlatformSecureStorage> create({
     PlatformCapabilitiesSnapshot? capabilities,
@@ -46,6 +50,7 @@ class PlatformSecureStorage {
         if (healthy == true) {
           return PlatformSecureStorage._(
             backend: PlatformSecureStorageBackend.ohosMethodChannel,
+            isOhos: true,
             ohosChannel: ohosChannel,
           );
         }
@@ -60,7 +65,9 @@ class PlatformSecureStorage {
 
       return PlatformSecureStorage._(
         backend: PlatformSecureStorageBackend.sharedPreferencesFallback,
+        isOhos: true,
         prefs: sharedPreferences ?? await SharedPreferences.getInstance(),
+        ohosChannel: ohosChannel,
       );
     }
 
@@ -75,6 +82,7 @@ class PlatformSecureStorage {
     if (!probeSecureStorage) {
       return PlatformSecureStorage._(
         backend: PlatformSecureStorageBackend.flutterSecureStorage,
+        isOhos: false,
         secureStorage: candidate,
       );
     }
@@ -83,6 +91,7 @@ class PlatformSecureStorage {
       await candidate.read(key: '__platform_probe__');
       return PlatformSecureStorage._(
         backend: PlatformSecureStorageBackend.flutterSecureStorage,
+        isOhos: false,
         secureStorage: candidate,
       );
     } on UnsupportedError catch (error, stackTrace) {
@@ -110,6 +119,7 @@ class PlatformSecureStorage {
 
     return PlatformSecureStorage._(
       backend: PlatformSecureStorageBackend.sharedPreferencesFallback,
+      isOhos: false,
       prefs: sharedPreferences ?? await SharedPreferences.getInstance(),
     );
   }
@@ -119,12 +129,52 @@ class PlatformSecureStorage {
       case PlatformSecureStorageBackend.flutterSecureStorage:
         return _secureStorage!.read(key: key);
       case PlatformSecureStorageBackend.ohosMethodChannel:
-        return _ohosChannel!.invokeMethod<String?>(
-          'read',
-          <String, Object?>{'key': key},
-        );
+        return _readOhos(key);
       case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        if (_isOhos && _ohosChannel != null) {
+          final ohosValue = await _readOhosChannel(key);
+          if (ohosValue != null && ohosValue.isNotEmpty) return ohosValue;
+        }
         return _prefsFallback!.getString(_prefixedKey(key));
+    }
+  }
+
+  Future<String?> _readOhos(String key) async {
+    try {
+      final value = await _readOhosChannel(key);
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+      appLogger.wWithPackage(
+        _tag,
+        'OHOS secure read returned null for key: $key, attempting SharedPreferences fallback',
+      );
+      final fallback = await SharedPreferences.getInstance();
+      return fallback.getString(_prefixedKey(key));
+    } catch (error, stackTrace) {
+      appLogger.wWithPackage(
+        _tag,
+        'OHOS secure read failed for key: $key, attempting SharedPreferences fallback',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      try {
+        final fallback = await SharedPreferences.getInstance();
+        return fallback.getString(_prefixedKey(key));
+      } catch (_) {
+        return null;
+      }
+    }
+  }
+
+  Future<String?> _readOhosChannel(String key) async {
+    try {
+      return await _ohosChannel!.invokeMethod<String?>(
+        'read',
+        <String, Object?>{'key': key},
+      );
+    } catch (_) {
+      return null;
     }
   }
 
@@ -138,10 +188,7 @@ class PlatformSecureStorage {
         }
         return;
       case PlatformSecureStorageBackend.ohosMethodChannel:
-        await _ohosChannel!.invokeMethod<void>(
-          'write',
-          <String, Object?>{'key': key, 'value': value},
-        );
+        await _writeOhos(key, value);
         return;
       case PlatformSecureStorageBackend.sharedPreferencesFallback:
         if (value == null) {
@@ -149,7 +196,41 @@ class PlatformSecureStorage {
         } else {
           await _prefsFallback!.setString(_prefixedKey(key), value);
         }
+        if (_isOhos && _ohosChannel != null) {
+          try {
+            await _ohosChannel.invokeMethod<void>(
+              'write',
+              <String, Object?>{'key': key, 'value': value},
+            );
+          } catch (_) {}
+        }
         return;
+    }
+  }
+
+  Future<void> _writeOhos(String key, String? value) async {
+    // Always persist to SharedPreferences as backup because HUKS-backed
+    // reads may silently return null on some OHOS builds.
+    try {
+      final fallback = await SharedPreferences.getInstance();
+      if (value == null) {
+        await fallback.remove(_prefixedKey(key));
+      } else {
+        await fallback.setString(_prefixedKey(key), value);
+      }
+    } catch (_) {}
+    try {
+      await _ohosChannel!.invokeMethod<void>(
+        'write',
+        <String, Object?>{'key': key, 'value': value},
+      );
+    } catch (error, stackTrace) {
+      appLogger.wWithPackage(
+        _tag,
+        'OHOS secure write failed for key: $key (SharedPreferences backup exists)',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -159,10 +240,17 @@ class PlatformSecureStorage {
         await _secureStorage!.delete(key: key);
         return;
       case PlatformSecureStorageBackend.ohosMethodChannel:
-        await _ohosChannel!.invokeMethod<void>(
-          'delete',
-          <String, Object?>{'key': key},
-        );
+        // Clean up SharedPreferences backup as well
+        try {
+          final fallback = await SharedPreferences.getInstance();
+          await fallback.remove(_prefixedKey(key));
+        } catch (_) {}
+        try {
+          await _ohosChannel!.invokeMethod<void>(
+            'delete',
+            <String, Object?>{'key': key},
+          );
+        } catch (_) {}
         return;
       case PlatformSecureStorageBackend.sharedPreferencesFallback:
         await _prefsFallback!.remove(_prefixedKey(key));

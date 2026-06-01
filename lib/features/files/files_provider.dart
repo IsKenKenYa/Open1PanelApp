@@ -11,6 +11,7 @@ import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:onepanel_client/core/config/api_config.dart';
 import 'package:onepanel_client/core/config/api_constants.dart';
+import 'package:onepanel_client/core/platform/services/ohos_platform_channel.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/file_models.dart';

@@ -13,6 +13,8 @@ import bundleManager from '@ohos.bundle.bundleManager';
 import deviceInfo from '@ohos.deviceInfo';
 import fs from '@ohos.file.fs';
 import Want from '@ohos.app.ability.Want';
+import picker from '@ohos.file.picker';
+import OhosDownloadPlugin from './OhosDownloadPlugin';
 
 const TAG = 'OhosPlatformPlugin';
 const CHANNEL = 'onepanel/ohos_platform';
@@ -41,13 +43,22 @@ export default class OhosPlatformPlugin
     return 'OhosPlatformPlugin';
   }
 
+  private downloadPlugin: OhosDownloadPlugin | null = null;
+
   onAttachedToEngine(binding: FlutterPluginBinding): void {
     this.applicationContext = binding.getApplicationContext() as common.Context;
     this.channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL);
     this.channel.setMethodCallHandler(this);
+    // Register download plugin as a sub-plugin
+    this.downloadPlugin = new OhosDownloadPlugin();
+    this.downloadPlugin.onAttachedToEngine(binding);
   }
 
   onDetachedFromEngine(binding: FlutterPluginBinding): void {
+    if (this.downloadPlugin) {
+      this.downloadPlugin.onDetachedFromEngine(binding);
+      this.downloadPlugin = null;
+    }
     if (this.channel != null) {
       this.channel.setMethodCallHandler(null);
       this.channel = null;
@@ -73,9 +84,16 @@ export default class OhosPlatformPlugin
           return;
         case 'openPath':
         case 'openDirectory':
-          // Both methods share the same implementation because HarmonyOS
-          // 'ohos.want.action.viewData' handles files and directories identically.
           result.success(await this.openPath(call));
+          return;
+        case 'pickSaveDirectory':
+          result.success(await this.pickSaveDirectory());
+          return;
+        case 'pickAndSaveBytes':
+          result.success(await this.pickAndSaveBytes(call));
+          return;
+        case 'saveBytesToDownload':
+          result.success(await this.saveBytesToDownload(call));
           return;
         default:
           result.notImplemented();
@@ -136,21 +154,115 @@ export default class OhosPlatformPlugin
   }
 
   private async openPath(call: MethodCall): Promise<boolean> {
-    const context = this.requireContext();
+    const appContext = this.requireContext();
     const path = this.requireNonEmptyStringArgument(call, 'path');
     const want: Want = {
       action: 'ohos.want.action.viewData',
       uri: `file://${path}`,
     };
     try {
-      await FlutterManager.getInstance()
-        .getUIAbility(context)
-        .context.startAbility(want);
+      const uiAbility = FlutterManager.getInstance().getUIAbility(appContext);
+      if (uiAbility == null) {
+        Log.w(TAG, 'openPath: UIAbility not found');
+        return false;
+      }
+      const abilityContext = uiAbility.context as common.UIAbilityContext;
+      await abilityContext.startAbility(want);
       return true;
     } catch (error) {
       Log.w(TAG, `openPath failed: ${error}`);
       return false;
     }
+  }
+
+  private async pickSaveDirectory(): Promise<string | null> {
+    try {
+      const pickerContext = this.getUIAbilityContext();
+      const documentPicker = new picker.DocumentViewPicker(pickerContext);
+      const result = await documentPicker.select({
+        maxSelectNumber: 1,
+        fileSuffixFilters: ['.txt', '.log', '.pdf', '.zip'],
+      });
+      if (result && result.length > 0) {
+        return result[0];
+      }
+      return null;
+    } catch (error) {
+      Log.w(TAG, `pickSaveDirectory failed: ${error}`);
+      return null;
+    }
+  }
+
+  private async pickAndSaveBytes(call: MethodCall): Promise<string | null> {
+    try {
+      const pickerContext = this.getUIAbilityContext();
+      const fileName = this.sanitizeFileName(
+        this.requireNonEmptyStringArgument(call, 'fileName'),
+      );
+      const bytes = call.argument('bytes') as Uint8Array | null;
+      if (bytes == null) {
+        throw new Error('Missing required bytes argument: bytes');
+      }
+
+      // Step 1: Let user pick a save location
+      const documentPicker = new picker.DocumentViewPicker(pickerContext);
+      const saveResult = await documentPicker.save({ newFileNames: [fileName] });
+      if (!saveResult || saveResult.length === 0) {
+        return null;
+      }
+
+      const targetUri = saveResult[0];
+      // Step 2: Write bytes to the picked URI
+      const file = fs.openSync(targetUri, fs.OpenMode.READ_WRITE | fs.OpenMode.TRUNC);
+      try {
+        fs.writeSync(
+          file.fd,
+          bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
+        );
+        fs.fsyncSync(file.fd);
+      } finally {
+        fs.closeSync(file);
+      }
+
+      Log.i(TAG, `pickAndSaveBytes: saved to ${targetUri}`);
+      return targetUri;
+    } catch (error) {
+      Log.e(TAG, `pickAndSaveBytes failed: ${error}, falling back to private dir`);
+      // Fallback: save to private exports directory
+      return await this.saveBytes(call);
+    }
+  }
+
+  private async saveBytesToDownload(call: MethodCall): Promise<string> {
+    const context = this.requireContext();
+    const fileName = this.sanitizeFileName(
+      this.requireNonEmptyStringArgument(call, 'fileName'),
+    );
+    const bytes = call.argument('bytes') as Uint8Array | null;
+    if (bytes == null) {
+      throw new Error('Missing required bytes argument: bytes');
+    }
+
+    // Save to exports directory in app files
+    const exportDir = `${context.filesDir}/exports`;
+    await this.ensureDirectory(exportDir);
+    const filePath = await this.nextAvailablePath(exportDir, fileName);
+    const file = fs.openSync(
+      filePath,
+      fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE | fs.OpenMode.TRUNC,
+    );
+    try {
+      fs.writeSync(
+        file.fd,
+        bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
+      );
+      fs.fsyncSync(file.fd);
+    } finally {
+      fs.closeSync(file);
+    }
+
+    Log.i(TAG, `saveBytesToDownload: saved to ${filePath}`);
+    return filePath;
   }
 
   private async ensureDirectory(path: string): Promise<void> {
@@ -207,6 +319,15 @@ export default class OhosPlatformPlugin
       throw new Error('Application context is not ready');
     }
     return this.applicationContext;
+  }
+
+  private getUIAbilityContext(): common.UIAbilityContext {
+    const appContext = this.requireContext();
+    const uiAbility = FlutterManager.getInstance().getUIAbility(appContext);
+    if (uiAbility == null) {
+      throw new Error('UIAbility not found — picker requires ability context');
+    }
+    return uiAbility.context as common.UIAbilityContext;
   }
 
   private requireStringArgument(call: MethodCall, key: string): string {

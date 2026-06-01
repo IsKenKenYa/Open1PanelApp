@@ -72,7 +72,11 @@ export default class OhosSecureStoragePlugin
         }
         case 'read': {
           const key = this.requireNonEmptyStringArgument(call, 'key');
-          result.success(await this.store.read(key));
+          const value = await this.store.read(key);
+          if (value == null || value.length === 0) {
+            Log.w(TAG, `read: key=${key} returned null/empty`);
+          }
+          result.success(value);
           return;
         }
         case 'readAll':

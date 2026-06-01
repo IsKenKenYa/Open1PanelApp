@@ -48,7 +48,9 @@ export default class OhosPathProviderPlugin
         case 'getLibraryDirectory':
         case 'getStorageDirectory':
         case 'getDownloadsDirectory':
-          result.success(context.filesDir);
+          // OHOS has no direct public Download directory API.
+          // Actual downloads are managed by OhosDownloadPlugin.
+          result.success(context.cacheDir);
           return;
         case 'getApplicationCacheDirectory':
           result.success(context.cacheDir);

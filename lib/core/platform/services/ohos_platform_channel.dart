@@ -46,4 +46,74 @@ class OhosPlatformChannel {
     );
     return opened == true;
   }
+
+  Future<String?> pickSaveDirectory() {
+    return _channel.invokeMethod<String>('pickSaveDirectory');
+  }
+
+  Future<String?> pickAndSaveBytes({
+    required String fileName,
+    required Uint8List bytes,
+    String? mimeType,
+  }) {
+    return _channel.invokeMethod<String>(
+      'pickAndSaveBytes',
+      <String, Object?>{
+        'fileName': fileName,
+        'bytes': bytes,
+        'mimeType': mimeType,
+      },
+    );
+  }
+
+  Future<String?> saveBytesToDownload({
+    required String fileName,
+    required Uint8List bytes,
+  }) {
+    return _channel.invokeMethod<String>(
+      'saveBytesToDownload',
+      <String, Object?>{
+        'fileName': fileName,
+        'bytes': bytes,
+      },
+    );
+  }
+
+  static const MethodChannel _downloadChannel =
+      MethodChannel('onepanel/ohos_download');
+
+  Future<String?> downloadFile({
+    required String url,
+    required String savedDir,
+    String? fileName,
+    Map<String, String>? headers,
+  }) {
+    return _downloadChannel.invokeMethod<String>(
+      'enqueue',
+      <String, Object?>{
+        'url': url,
+        'savedDir': savedDir,
+        'fileName': fileName,
+        'headers': headers ?? <String, String>{},
+      },
+    );
+  }
+
+  Future<void> pauseDownload(String taskId) async {
+    await _downloadChannel.invokeMethod<void>('pause', <String, Object?>{
+      'taskId': taskId,
+    });
+  }
+
+  Future<void> resumeDownload(String taskId) async {
+    await _downloadChannel.invokeMethod<void>('resume', <String, Object?>{
+      'taskId': taskId,
+    });
+  }
+
+  Future<void> cancelDownload(String taskId) async {
+    await _downloadChannel.invokeMethod<void>('cancel', <String, Object?>{
+      'taskId': taskId,
+    });
+  }
 }
