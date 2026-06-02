@@ -27,9 +27,9 @@ class PlatformMediaService {
 
   bool get prefersNativePreview => _capabilities.supportsNativeMediaPreview;
 
+  // Stub: returns false until OHOS native preview plugin is integrated.
+  // Keeping this facade so feature pages can migrate incrementally.
   Future<bool> preview(PlatformMediaPreviewRequest request) async {
-    // Native OHOS preview is wired as an explicit facade so feature pages can
-    // migrate away from package-specific plugins without changing business flow.
     return false;
   }
 }

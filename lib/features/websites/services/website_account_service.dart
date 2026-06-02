@@ -6,6 +6,7 @@ class WebsiteAccountService {
 
   WebsiteV2Api? _api;
 
+  // API has no "get all" endpoint; 50 is a safe upper bound for these low-cardinality lists.
   static const int _defaultPage = 1;
   static const int _defaultPageSize = 50;
 
@@ -81,7 +82,9 @@ class WebsiteAccountService {
       'useProxy': useProxy,
       if (eabKid != null && eabKid.isNotEmpty) 'eabKid': eabKid,
       if (eabHmacKey != null && eabHmacKey.isNotEmpty) 'eabHmacKey': eabHmacKey,
+      // API expects 'caDirURL' (capital URL), not 'caDirUrl'.
       if (caDirUrl != null && caDirUrl.isNotEmpty) 'caDirURL': caDirUrl,
+      // API expects 'useEAB' (all-caps EAB), not 'useEab'.
       'useEAB': useEab,
     });
   }

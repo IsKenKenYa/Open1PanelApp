@@ -87,6 +87,10 @@ class NodeRuntimeService {
         .getNodePackageScripts(NodePackageRequest(codeDir: codeDir));
   }
 
+  /// Script execution is triggered by updating the runtime with the script
+  /// name and `rebuild: true`, then polling until the status leaves the
+  /// "running" set. This is because the server executes scripts as part of
+  /// the container rebuild process.
   Future<NodeScriptExecutionFeedback> runScript({
     required int runtimeId,
     required String scriptName,
@@ -159,7 +163,7 @@ class NodeRuntimeService {
       try {
         await _repository.syncRuntimeStatus();
       } catch (_) {
-        // Ignore sync transient errors and continue polling current runtime detail.
+        // Sync can fail transiently during rebuild; keep polling.
       }
 
       latest = await _repository.getRuntime(runtimeId);

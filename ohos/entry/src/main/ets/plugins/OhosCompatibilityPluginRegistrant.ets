@@ -39,6 +39,7 @@ export class OhosCompatibilityPluginRegistrant {
     pluginName: string,
     registerAction: () => void,
   ): void {
+    // Isolate each plugin: one failure must not prevent other plugins from loading.
     try {
       registerAction();
     } catch (error) {

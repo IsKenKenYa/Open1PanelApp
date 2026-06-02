@@ -115,6 +115,8 @@ class DatabaseBackupProvider extends ChangeNotifier with SafeChangeNotifier {
       notifyListeners();
       return false;
     } finally {
+      // Reset isSubmitting only if the action didn't already update state
+      // (e.g., on error the catch block sets a new state with the error).
       if (_state.isSubmitting) {
         _state = DatabaseBackupState(
           page: _state.page,

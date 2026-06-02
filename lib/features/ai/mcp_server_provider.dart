@@ -186,6 +186,8 @@ class McpServerProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
 
     try {
+      // If a binding already exists with a website, update it (PUT) rather
+      // than creating a duplicate — the server rejects duplicate domains.
       final hasExistingBinding = (_binding.domain ?? '').trim().isNotEmpty &&
           (_binding.websiteID ?? 0) > 0;
       if (hasExistingBinding && websiteId != null && websiteId > 0) {

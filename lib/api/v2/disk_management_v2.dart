@@ -4,6 +4,9 @@ import '../../core/config/api_constants.dart';
 import '../../core/network/dio_client.dart';
 import '../../data/models/disk_management_models.dart';
 
+/// 1Panel disk management API client.
+///
+/// Provides disk info queries, mount/unmount, and partition operations.
 class DiskManagementV2Api {
   DiskManagementV2Api(this._client);
 

@@ -101,7 +101,9 @@ class FirewallRule extends Equatable {
       family: json['family'] as String?,
       address: json['address'] as String?,
       destination: json['destination'] as String?,
+      // API uses 'address' for source IP in some firewall rule types
       srcIP: json['srcIP'] as String? ?? json['address'] as String?,
+      // API uses 'destination' for dest IP in some firewall rule types
       dstIP: json['dstIP'] as String? ?? json['destination'] as String?,
       port: json['port']?.toString(),
       srcPort: json['srcPort']?.toString(),

@@ -183,6 +183,7 @@ class ContainerRepo extends Equatable {
       downloadUrl: json['downloadUrl'] as String,
       username: json['username'] as String?,
       password: json['password'] as String?,
+      // Default to 'Success' because older API versions omit status for healthy repos
       status: json['status'] as String? ?? 'Success',
       createdAt: json['createdAt'] as String? ?? '',
       updatedAt: json['updatedAt'] as String? ?? '',

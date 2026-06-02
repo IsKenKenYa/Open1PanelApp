@@ -111,6 +111,8 @@ class TerminalRuntimeSession {
   }
 
   void _startHeartbeat() {
+    // 10-second heartbeat keeps the WebSocket alive through NAT/proxy timeouts
+    // and provides round-trip latency measurement for the UI.
     _heartbeatTimer?.cancel();
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 10), (_) {
       _transport?.heartbeat();

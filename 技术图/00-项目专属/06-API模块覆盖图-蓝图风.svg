@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#00d4ff"/></marker>
+  </defs>
+  <rect width="1100" height="700" fill="#0a1628" rx="8"/>
+  <line x1="0" y1="0" x2="0" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="40" y1="0" x2="40" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="80" y1="0" x2="80" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="120" y1="0" x2="120" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="160" y1="0" x2="160" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="200" y1="0" x2="200" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="240" y1="0" x2="240" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="280" y1="0" x2="280" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="320" y1="0" x2="320" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="360" y1="0" x2="360" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="400" y1="0" x2="400" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="440" y1="0" x2="440" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="480" y1="0" x2="480" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="520" y1="0" x2="520" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="560" y1="0" x2="560" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="600" y1="0" x2="600" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="640" y1="0" x2="640" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="680" y1="0" x2="680" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="720" y1="0" x2="720" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="760" y1="0" x2="760" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="800" y1="0" x2="800" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="840" y1="0" x2="840" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="880" y1="0" x2="880" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="920" y1="0" x2="920" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="960" y1="0" x2="960" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="1000" y1="0" x2="1000" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="1040" y1="0" x2="1040" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="1080" y1="0" x2="1080" y2="700" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="0" x2="1100" y2="0" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="40" x2="1100" y2="40" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="80" x2="1100" y2="80" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="120" x2="1100" y2="120" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="160" x2="1100" y2="160" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="200" x2="1100" y2="200" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="240" x2="1100" y2="240" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="280" x2="1100" y2="280" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="320" x2="1100" y2="320" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="360" x2="1100" y2="360" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="400" x2="1100" y2="400" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="440" x2="1100" y2="440" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="480" x2="1100" y2="480" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="520" x2="1100" y2="520" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="560" x2="1100" y2="560" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="600" x2="1100" y2="600" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="640" x2="1100" y2="640" stroke="#1e3a5f" stroke-width="0.3"/>
+  <line x1="0" y1="680" x2="1100" y2="680" stroke="#1e3a5f" stroke-width="0.3"/>
+  <text x="550" y="36" text-anchor="middle" font-family="Courier New" font-size="18" font-weight="bold" fill="#00d4ff">1Panel Client - 35 V2 API Modules Coverage</text>
+  <text x="550" y="54" text-anchor="middle" font-family="Courier New" font-size="11" fill="#94a3b8">Retrofit + Dio + MD5 Auth - 425+ endpoints - Type-safe with code generation</text>
+  <rect x="40" y="75" width="240" height="196" rx="6" fill="rgba(0,212,255,0.05)" stroke="#00d4ff" stroke-width="1"/>
+  <rect x="40" y="75" width="240" height="28" rx="6" fill="#00d4ff20"/>
+  <text x="160" y="93" text-anchor="middle" font-family="Courier New" font-size="11" fill="#00d4ff" font-weight="bold">SERVER</text>
+  <rect x="48" y="111" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00d4ff30" stroke-width="0.5"/>
+  <text x="56" y="125" font-family="Courier New" font-size="10" fill="#e2e8f0">host_v2.dart</text>
+  <rect x="48" y="137" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00d4ff30" stroke-width="0.5"/>
+  <text x="56" y="151" font-family="Courier New" font-size="10" fill="#e2e8f0">ssh_v2.dart</text>
+  <rect x="48" y="163" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00d4ff30" stroke-width="0.5"/>
+  <text x="56" y="177" font-family="Courier New" font-size="10" fill="#e2e8f0">terminal_v2.dart</text>
+  <rect x="48" y="189" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00d4ff30" stroke-width="0.5"/>
+  <text x="56" y="203" font-family="Courier New" font-size="10" fill="#e2e8f0">process_v2.dart</text>
+  <rect x="48" y="215" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00d4ff30" stroke-width="0.5"/>
+  <text x="56" y="229" font-family="Courier New" font-size="10" fill="#e2e8f0">setting_v2.dart</text>
+  <rect x="48" y="241" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00d4ff30" stroke-width="0.5"/>
+  <text x="56" y="255" font-family="Courier New" font-size="10" fill="#e2e8f0">update_v2.dart</text>
+  <rect x="300" y="75" width="240" height="170" rx="6" fill="rgba(0,255,136,0.05)" stroke="#00ff88" stroke-width="1"/>
+  <rect x="300" y="75" width="240" height="28" rx="6" fill="#00ff8820"/>
+  <text x="420" y="93" text-anchor="middle" font-family="Courier New" font-size="11" fill="#00ff88" font-weight="bold">WEB NETWORK</text>
+  <rect x="308" y="111" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00ff8830" stroke-width="0.5"/>
+  <text x="316" y="125" font-family="Courier New" font-size="10" fill="#e2e8f0">website_v2.dart</text>
+  <rect x="308" y="137" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00ff8830" stroke-width="0.5"/>
+  <text x="316" y="151" font-family="Courier New" font-size="10" fill="#e2e8f0">website_group_v2.dart</text>
+  <rect x="308" y="163" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00ff8830" stroke-width="0.5"/>
+  <text x="316" y="177" font-family="Courier New" font-size="10" fill="#e2e8f0">openresty_v2.dart</text>
+  <rect x="308" y="189" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00ff8830" stroke-width="0.5"/>
+  <text x="316" y="203" font-family="Courier New" font-size="10" fill="#e2e8f0">ssl_v2.dart</text>
+  <rect x="308" y="215" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#00ff8830" stroke-width="0.5"/>
+  <text x="316" y="229" font-family="Courier New" font-size="10" fill="#e2e8f0">firewall_v2.dart</text>
+  <rect x="560" y="75" width="240" height="144" rx="6" fill="rgba(255,149,0,0.05)" stroke="#ff9500" stroke-width="1"/>
+  <rect x="560" y="75" width="240" height="28" rx="6" fill="#ff950020"/>
+  <text x="680" y="93" text-anchor="middle" font-family="Courier New" font-size="11" fill="#ff9500" font-weight="bold">DATA</text>
+  <rect x="568" y="111" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff950030" stroke-width="0.5"/>
+  <text x="576" y="125" font-family="Courier New" font-size="10" fill="#e2e8f0">database_v2.dart</text>
+  <rect x="568" y="137" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff950030" stroke-width="0.5"/>
+  <text x="576" y="151" font-family="Courier New" font-size="10" fill="#e2e8f0">file_v2.dart</text>
+  <rect x="568" y="163" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff950030" stroke-width="0.5"/>
+  <text x="576" y="177" font-family="Courier New" font-size="10" fill="#e2e8f0">backup_account_v2.dart</text>
+  <rect x="568" y="189" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff950030" stroke-width="0.5"/>
+  <text x="576" y="203" font-family="Courier New" font-size="10" fill="#e2e8f0">snapshot_v2.dart</text>
+  <rect x="820" y="75" width="240" height="170" rx="6" fill="rgba(168,85,247,0.05)" stroke="#a855f7" stroke-width="1"/>
+  <rect x="820" y="75" width="240" height="28" rx="6" fill="#a855f720"/>
+  <text x="940" y="93" text-anchor="middle" font-family="Courier New" font-size="11" fill="#a855f7" font-weight="bold">CONTAINERS</text>
+  <rect x="828" y="111" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#a855f730" stroke-width="0.5"/>
+  <text x="836" y="125" font-family="Courier New" font-size="10" fill="#e2e8f0">container_v2.dart</text>
+  <rect x="828" y="137" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#a855f730" stroke-width="0.5"/>
+  <text x="836" y="151" font-family="Courier New" font-size="10" fill="#e2e8f0">compose_v2.dart</text>
+  <rect x="828" y="163" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#a855f730" stroke-width="0.5"/>
+  <text x="836" y="177" font-family="Courier New" font-size="10" fill="#e2e8f0">docker_v2.dart</text>
+  <rect x="828" y="189" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#a855f730" stroke-width="0.5"/>
+  <text x="836" y="203" font-family="Courier New" font-size="10" fill="#e2e8f0">runtime_v2.dart</text>
+  <rect x="828" y="215" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#a855f730" stroke-width="0.5"/>
+  <text x="836" y="229" font-family="Courier New" font-size="10" fill="#e2e8f0">app_v2.dart</text>
+  <rect x="40" y="375" width="240" height="144" rx="6" fill="rgba(255,68,68,0.05)" stroke="#ff4444" stroke-width="1"/>
+  <rect x="40" y="375" width="240" height="28" rx="6" fill="#ff444420"/>
+  <text x="160" y="393" text-anchor="middle" font-family="Courier New" font-size="11" fill="#ff4444" font-weight="bold">AUTOMATION</text>
+  <rect x="48" y="411" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff444430" stroke-width="0.5"/>
+  <text x="56" y="425" font-family="Courier New" font-size="10" fill="#e2e8f0">cronjob_v2.dart</text>
+  <rect x="48" y="437" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff444430" stroke-width="0.5"/>
+  <text x="56" y="451" font-family="Courier New" font-size="10" fill="#e2e8f0">command_v2.dart</text>
+  <rect x="48" y="463" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff444430" stroke-width="0.5"/>
+  <text x="56" y="477" font-family="Courier New" font-size="10" fill="#e2e8f0">script_library_v2.dart</text>
+  <rect x="48" y="489" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#ff444430" stroke-width="0.5"/>
+  <text x="56" y="503" font-family="Courier New" font-size="10" fill="#e2e8f0">task_log_v2.dart</text>
+  <rect x="300" y="375" width="240" height="118" rx="6" fill="rgba(251,191,36,0.05)" stroke="#fbbf24" stroke-width="1"/>
+  <rect x="300" y="375" width="240" height="28" rx="6" fill="#fbbf2420"/>
+  <text x="420" y="393" text-anchor="middle" font-family="Courier New" font-size="11" fill="#fbbf24" font-weight="bold">MONITORING</text>
+  <rect x="308" y="411" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#fbbf2430" stroke-width="0.5"/>
+  <text x="316" y="425" font-family="Courier New" font-size="10" fill="#e2e8f0">dashboard_v2.dart</text>
+  <rect x="308" y="437" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#fbbf2430" stroke-width="0.5"/>
+  <text x="316" y="451" font-family="Courier New" font-size="10" fill="#e2e8f0">monitor_v2.dart</text>
+  <rect x="308" y="463" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#fbbf2430" stroke-width="0.5"/>
+  <text x="316" y="477" font-family="Courier New" font-size="10" fill="#e2e8f0">logs_v2.dart</text>
+  <rect x="560" y="375" width="240" height="144" rx="6" fill="rgba(52,211,153,0.05)" stroke="#34d399" stroke-width="1"/>
+  <rect x="560" y="375" width="240" height="28" rx="6" fill="#34d39920"/>
+  <text x="680" y="393" text-anchor="middle" font-family="Courier New" font-size="11" fill="#34d399" font-weight="bold">AI TOOLS</text>
+  <rect x="568" y="411" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#34d39930" stroke-width="0.5"/>
+  <text x="576" y="425" font-family="Courier New" font-size="10" fill="#e2e8f0">ai_v2.dart</text>
+  <rect x="568" y="437" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#34d39930" stroke-width="0.5"/>
+  <text x="576" y="451" font-family="Courier New" font-size="10" fill="#e2e8f0">toolbox_v2.dart</text>
+  <rect x="568" y="463" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#34d39930" stroke-width="0.5"/>
+  <text x="576" y="477" font-family="Courier New" font-size="10" fill="#e2e8f0">host_tool_v2.dart</text>
+  <rect x="568" y="489" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#34d39930" stroke-width="0.5"/>
+  <text x="576" y="503" font-family="Courier New" font-size="10" fill="#e2e8f0">disk_management_v2.dart</text>
+  <rect x="820" y="375" width="240" height="118" rx="6" fill="rgba(96,165,250,0.05)" stroke="#60a5fa" stroke-width="1"/>
+  <rect x="820" y="375" width="240" height="28" rx="6" fill="#60a5fa20"/>
+  <text x="940" y="393" text-anchor="middle" font-family="Courier New" font-size="11" fill="#60a5fa" font-weight="bold">SYSTEM</text>
+  <rect x="828" y="411" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#60a5fa30" stroke-width="0.5"/>
+  <text x="836" y="425" font-family="Courier New" font-size="10" fill="#e2e8f0">auth_v2.dart</text>
+  <rect x="828" y="437" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#60a5fa30" stroke-width="0.5"/>
+  <text x="836" y="451" font-family="Courier New" font-size="10" fill="#e2e8f0">user_v2.dart</text>
+  <rect x="828" y="463" width="224" height="20" rx="3" fill="rgba(255,255,255,0.03)" stroke="#60a5fa30" stroke-width="0.5"/>
+  <text x="836" y="477" font-family="Courier New" font-size="10" fill="#e2e8f0">system_group_v2.dart</text>
+  <rect x="350" y="620" width="400" height="50" rx="6" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="1"/>
+  <text x="550" y="640" text-anchor="middle" font-family="Courier New" font-size="12" fill="#00d4ff" font-weight="bold">Auth Flow: MD5(1panel + apiKey + unixTimestamp)</text>
+  <text x="550" y="658" text-anchor="middle" font-family="Courier New" font-size="10" fill="#94a3b8">Dio interceptor attaches auth headers to every request</text>
+</svg>

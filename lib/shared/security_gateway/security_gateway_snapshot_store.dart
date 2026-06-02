@@ -15,7 +15,9 @@ class SecurityGatewaySnapshotStore {
   final Map<String, ConfigRollbackSnapshot<Object>> _snapshots =
       <String, ConfigRollbackSnapshot<Object>>{};
   bool _initialized = false;
+  // _initializing guards against concurrent initialize() calls
   Future<void>? _initializing;
+  // Chain futures to serialize concurrent writes and prevent data corruption
   Future<void> _writeQueue = Future<void>.value();
 
   Future<void> ensureInitialized() async {
@@ -106,6 +108,7 @@ class SecurityGatewaySnapshotStore {
         }
         _snapshots[snapshot.scope] = snapshot;
       }
+    // Silently clear on parse failure — corrupted storage should not crash the app
     } catch (_) {
       _snapshots.clear();
     }

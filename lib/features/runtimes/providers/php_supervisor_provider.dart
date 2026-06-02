@@ -64,6 +64,9 @@ class PhpSupervisorProvider extends ChangeNotifier with SafeChangeNotifier, Asyn
     }
   }
 
+  /// Supervisor manages multiple worker processes per entry. The aggregate
+  /// state is STARTING if any worker is starting, RUNNING only if all workers
+  /// are running, WARNING if some (but not all) are running, STOPPED otherwise.
   String processState(SupervisorProcessInfo item) {
     if (item.status.isEmpty) {
       return 'STOPPED';

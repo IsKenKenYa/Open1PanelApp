@@ -40,6 +40,8 @@ class AuthRepository {
     );
     final data = response.data;
     if (data == null) return null;
+    // EntranceCode arrives as a response header (not body) — the server rotates it
+    // on each successful auth to prevent replay attacks.
     final entranceCode = response.headers.value('EntranceCode') ??
         response.headers.value('entrancecode');
     return LoginResponse.fromJson(data).copyWith(entranceCode: entranceCode);

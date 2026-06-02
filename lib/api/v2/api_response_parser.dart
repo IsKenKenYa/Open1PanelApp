@@ -2,6 +2,10 @@ import 'package:dio/dio.dart';
 
 import '../../data/models/common_models.dart';
 
+/// Centralized parser for 1Panel API responses.
+///
+/// 1Panel wraps all responses in `{code, message, data}`. These helpers
+/// unwrap the envelope and normalize the `data` field into the requested type.
 class ApiResponseParser {
   const ApiResponseParser._();
 
@@ -12,6 +16,8 @@ class ApiResponseParser {
     return payload;
   }
 
+  /// Returns `data` as a map. [fallbackToRootMap] handles endpoints that
+  /// return the payload directly without the `{data}` wrapper.
   static Map<String, dynamic> asMap(
     dynamic payload, {
     bool fallbackToRootMap = false,
@@ -82,14 +88,15 @@ class ApiResponseParser {
     return null;
   }
 
+  /// Parses a response into [T]. When `data` is null/missing (API returns
+  /// `{code:200, message:"ok", data:null}`), passes an empty map to [fromJson]
+  /// so callers can still construct a default value.
   static T extractData<T>(
     Response<Map<String, dynamic>> response,
     T Function(Map<String, dynamic>) fromJson,
   ) {
     final payload = asMap(response.data);
     if (payload.isEmpty) {
-      // 避免当返回 { "code": 200, "message": "successful", "data": null } 且 T 允许为空结构时抛出异常
-      // 我们可以传空的 map 给 fromJson
       try {
         return fromJson(const <String, dynamic>{});
       } catch (e) {

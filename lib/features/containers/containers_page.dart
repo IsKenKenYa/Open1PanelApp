@@ -143,6 +143,9 @@ class _ContainersPageViewState extends State<_ContainersPageView> {
     final networkProvider = context.read<NetworkProvider>();
     final volumeProvider = context.read<VolumeProvider>();
 
+    // Only the currently visible section reloads its data on server change;
+    // other sections reset their state and will load lazily when the user
+    // navigates to them, avoiding unnecessary API calls.
     await Future.wait([
       containersProvider.onServerChanged(),
       composeProvider.onServerChanged(reload: _selectedSection == 'compose'),
@@ -166,6 +169,8 @@ class _ContainersPageViewState extends State<_ContainersPageView> {
       animation: _subnavController,
       builder: (context, _) {
         final subnavItems = _buildSubnavItems(l10n);
+        // Reset to default section if the current selection is no longer valid
+        // (e.g., after a server change that hides certain subnav items).
         if (!subnavItems.any((item) => item.id == _selectedSection)) {
           _selectedSection = 'containers';
         }

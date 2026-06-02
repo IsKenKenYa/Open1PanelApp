@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 800">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#00d4ff"/></marker>
+    <marker id="arrow-g" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#00ff88"/></marker>
+    <marker id="arrow-r" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#ff4444"/></marker>
+    <filter id="glow"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#00d4ff" flood-opacity="0.3"/></filter>
+  </defs>
+
+  <rect width="1100" height="800" fill="#0f0f1a" rx="8"/>
+  <text x="550" y="36" text-anchor="middle" font-family="Courier New" font-size="18" font-weight="bold" fill="#00d4ff">1Panel Client — Platform Abstraction Architecture</text>
+  <text x="550" y="54" text-anchor="middle" font-family="Courier New" font-size="11" fill="#64748b">Facade Pattern: Dart Business Core → Platform Services → Native Bridge</text>
+
+  <rect x="40" y="75" width="1020" height="120" rx="8" fill="rgba(0,212,255,0.05)" stroke="#1e3a5f" stroke-width="1"/>
+  <text x="60" y="95" font-family="Courier New" font-size="12" font-weight="bold" fill="#00d4ff">DART BUSINESS CORE (shared across all platforms)</text>
+  <rect x="60" y="110" width="170" height="60" rx="6" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1" filter="url(#glow)"/>
+  <text x="145" y="135" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0" font-weight="bold">TransferManagerProvider</text>
+  <text x="145" y="152" text-anchor="middle" font-family="Courier New" font-size="8" fill="#64748b">lib/features/files/providers/</text>
+  <rect x="250" y="110" width="170" height="60" rx="6" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1" filter="url(#glow)"/>
+  <text x="335" y="135" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0" font-weight="bold">PlatformFileService</text>
+  <text x="335" y="152" text-anchor="middle" font-family="Courier New" font-size="8" fill="#64748b">lib/core/platform/services/</text>
+  <rect x="440" y="110" width="170" height="60" rx="6" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1" filter="url(#glow)"/>
+  <text x="525" y="135" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0" font-weight="bold">PlatformDownloadService</text>
+  <text x="525" y="152" text-anchor="middle" font-family="Courier New" font-size="8" fill="#64748b">lib/core/platform/services/</text>
+  <rect x="630" y="110" width="170" height="60" rx="6" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1" filter="url(#glow)"/>
+  <text x="715" y="135" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0" font-weight="bold">PlatformDiagnosticsService</text>
+  <text x="715" y="152" text-anchor="middle" font-family="Courier New" font-size="8" fill="#64748b">lib/core/platform/services/</text>
+  <rect x="820" y="110" width="170" height="60" rx="6" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1" filter="url(#glow)"/>
+  <text x="905" y="135" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0" font-weight="bold">PlatformMediaService</text>
+  <text x="905" y="152" text-anchor="middle" font-family="Courier New" font-size="8" fill="#64748b">lib/core/platform/services/</text>
+
+  <rect x="350" y="220" width="400" height="50" rx="6" fill="rgba(255,149,0,0.1)" stroke="#ff9500" stroke-width="1.5"/>
+  <text x="550" y="243" text-anchor="middle" font-family="Courier New" font-size="13" fill="#ff9500" font-weight="bold">PlatformCapabilities.current()</text>
+  <text x="550" y="260" text-anchor="middle" font-family="Courier New" font-size="10" fill="#94a3b8">Feature flags: supportsNativeDownloader · supportsBackgroundDownloader · isOhos · isWeb</text>
+
+  <line x1="145" y1="170" x2="145" y2="220" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="335" y1="170" x2="335" y2="220" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="525" y1="170" x2="525" y2="220" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="715" y1="170" x2="715" y2="220" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="905" y1="170" x2="905" y2="220" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="550" y="295" text-anchor="middle" font-family="Courier New" font-size="11" fill="#64748b">▼ routes based on PlatformCapabilities flags ▼</text>
+
+  <rect x="40" y="320" width="320" height="200" rx="8" fill="rgba(0,255,136,0.05)" stroke="#00ff88" stroke-width="1"/>
+  <text x="200" y="340" text-anchor="middle" font-family="Courier New" font-size="12" font-weight="bold" fill="#00ff88">ANDROID PATH</text>
+  <text x="200" y="356" text-anchor="middle" font-family="Courier New" font-size="10" fill="#94a3b8">supportsBackgroundDownloader = true</text>
+  <rect x="60" y="370" width="280" height="36" rx="4" fill="rgba(0,255,136,0.08)" stroke="#00ff88" stroke-width="0.5"/>
+  <text x="70" y="385" font-family="Courier New" font-size="11" fill="#e2e8f0">TransferManager</text>
+  <text x="70" y="399" font-family="Courier New" font-size="9" fill="#64748b">Singleton · ChangeNotifier</text>
+  <rect x="60" y="420" width="280" height="36" rx="4" fill="rgba(0,255,136,0.08)" stroke="#00ff88" stroke-width="0.5"/>
+  <text x="70" y="435" font-family="Courier New" font-size="11" fill="#e2e8f0">flutter_downloader</text>
+  <text x="70" y="449" font-family="Courier New" font-size="9" fill="#64748b">SQLite task persistence</text>
+  <rect x="60" y="470" width="280" height="36" rx="4" fill="rgba(0,255,136,0.08)" stroke="#00ff88" stroke-width="0.5"/>
+  <text x="70" y="485" font-family="Courier New" font-size="11" fill="#e2e8f0">MethodChannel</text>
+  <text x="70" y="499" font-family="Courier New" font-size="9" fill="#64748b">Native Android bridge</text>
+
+  <rect x="390" y="320" width="320" height="200" rx="8" fill="rgba(168,85,247,0.05)" stroke="#a855f7" stroke-width="1"/>
+  <text x="550" y="340" text-anchor="middle" font-family="Courier New" font-size="12" font-weight="bold" fill="#a855f7">HARMONYOS (OHOS) PATH</text>
+  <text x="550" y="356" text-anchor="middle" font-family="Courier New" font-size="10" fill="#94a3b8">supportsNativeDownloader = true</text>
+  <rect x="410" y="370" width="280" height="36" rx="4" fill="rgba(168,85,247,0.08)" stroke="#a855f7" stroke-width="0.5"/>
+  <text x="420" y="385" font-family="Courier New" font-size="11" fill="#e2e8f0">OhosDownloadService</text>
+  <text x="420" y="399" font-family="Courier New" font-size="9" fill="#64748b">implements PlatformDownloadService</text>
+  <rect x="410" y="420" width="280" height="36" rx="4" fill="rgba(168,85,247,0.08)" stroke="#a855f7" stroke-width="0.5"/>
+  <text x="420" y="435" font-family="Courier New" font-size="11" fill="#e2e8f0">OhosPlatformChannel</text>
+  <text x="420" y="449" font-family="Courier New" font-size="9" fill="#64748b">MethodChannel + EventChannel</text>
+  <rect x="410" y="470" width="280" height="36" rx="4" fill="rgba(168,85,247,0.08)" stroke="#a855f7" stroke-width="0.5"/>
+  <text x="420" y="485" font-family="Courier New" font-size="11" fill="#e2e8f0">ArkTS Native Bridge</text>
+  <text x="420" y="499" font-family="Courier New" font-size="9" fill="#64748b">HarmonyOS system APIs</text>
+
+  <rect x="740" y="320" width="320" height="200" rx="8" fill="rgba(96,165,250,0.05)" stroke="#60a5fa" stroke-width="1"/>
+  <text x="900" y="340" text-anchor="middle" font-family="Courier New" font-size="12" font-weight="bold" fill="#60a5fa">DESKTOP PATH</text>
+  <text x="900" y="356" text-anchor="middle" font-family="Courier New" font-size="10" fill="#94a3b8">supportsBackgroundDownloader = false</text>
+  <rect x="760" y="370" width="280" height="36" rx="4" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="0.5"/>
+  <text x="770" y="385" font-family="Courier New" font-size="11" fill="#e2e8f0">FilePicker</text>
+  <text x="770" y="399" font-family="Courier New" font-size="9" fill="#64748b">system file dialog</text>
+  <rect x="760" y="420" width="280" height="36" rx="4" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="0.5"/>
+  <text x="770" y="435" font-family="Courier New" font-size="11" fill="#e2e8f0">path_provider</text>
+  <text x="770" y="449" font-family="Courier New" font-size="9" fill="#64748b">app documents dir</text>
+  <rect x="760" y="470" width="280" height="36" rx="4" fill="rgba(96,165,250,0.08)" stroke="#60a5fa" stroke-width="0.5"/>
+  <text x="770" y="485" font-family="Courier New" font-size="11" fill="#e2e8f0">Process.run()</text>
+  <text x="770" y="499" font-family="Courier New" font-size="9" fill="#64748b">native file open</text>
+
+  <line x1="400" y1="270" x2="200" y2="320" stroke="#00ff88" stroke-width="1.5" marker-end="url(#arrow-g)"/>
+  <line x1="550" y1="270" x2="550" y2="320" stroke="#a855f7" stroke-width="1.5"/>
+  <line x1="700" y1="270" x2="900" y2="320" stroke="#60a5fa" stroke-width="1.5"/>
+
+  <rect x="40" y="550" width="1020" height="100" rx="8" fill="rgba(255,68,68,0.05)" stroke="#ff4444" stroke-width="1"/>
+  <text x="60" y="570" font-family="Courier New" font-size="12" font-weight="bold" fill="#ff4444">NATIVE PLATFORM LAYER (MethodChannel / EventChannel)</text>
+  <rect x="60" y="585" width="180" height="40" rx="4" fill="rgba(255,68,68,0.08)" stroke="#ff4444" stroke-width="0.5"/>
+  <text x="150" y="610" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0">Android (Kotlin/Java)</text>
+  <rect x="260" y="585" width="180" height="40" rx="4" fill="rgba(255,68,68,0.08)" stroke="#ff4444" stroke-width="0.5"/>
+  <text x="350" y="610" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0">HarmonyOS (ArkTS)</text>
+  <rect x="460" y="585" width="180" height="40" rx="4" fill="rgba(255,68,68,0.08)" stroke="#ff4444" stroke-width="0.5"/>
+  <text x="550" y="610" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0">macOS (Swift)</text>
+  <rect x="660" y="585" width="180" height="40" rx="4" fill="rgba(255,68,68,0.08)" stroke="#ff4444" stroke-width="0.5"/>
+  <text x="750" y="610" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0">Windows (C#)</text>
+  <rect x="860" y="585" width="180" height="40" rx="4" fill="rgba(255,68,68,0.08)" stroke="#ff4444" stroke-width="0.5"/>
+  <text x="950" y="610" text-anchor="middle" font-family="Courier New" font-size="11" fill="#e2e8f0">Linux (C/C++)</text>
+
+  <rect x="100" y="680" width="900" height="50" rx="6" fill="rgba(255,149,0,0.08)" stroke="#ff9500" stroke-width="1"/>
+  <text x="550" y="700" text-anchor="middle" font-family="Courier New" font-size="12" fill="#ff9500" font-weight="bold">CONSTRAINT: Native layer only provides platform capabilities — NO business logic duplication</text>
+  <text x="550" y="718" text-anchor="middle" font-family="Courier New" font-size="10" fill="#94a3b8">All platforms share the same Dart State/Service/Repository/API layer. Platform differences are hidden behind Facades.</text>
+
+  <rect x="850" y="75" width="200" height="80" rx="6" fill="rgba(255,255,255,0.05)" stroke="#1e3a5f"/>
+  <text x="860" y="92" font-family="Courier New" font-size="10" font-weight="bold" fill="#e2e8f0">Legend</text>
+  <line x1="860" y1="102" x2="890" y2="102" stroke="#00d4ff" stroke-width="1.5"/> <text x="895" y="106" font-family="Courier New" font-size="9" fill="#94a3b8">Facade interface</text>
+  <line x1="860" y1="116" x2="890" y2="116" stroke="#ff9500" stroke-width="1.5"/> <text x="895" y="120" font-family="Courier New" font-size="9" fill="#94a3b8">Capability routing</text>
+  <line x1="860" y1="130" x2="890" y2="130" stroke="#ff4444" stroke-width="1.5"/> <text x="895" y="134" font-family="Courier New" font-size="9" fill="#94a3b8">Native bridge</text>
+
+</svg>

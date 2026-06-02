@@ -18,6 +18,7 @@ class WebsiteStats {
 }
 
 class WebsitesData {
+  // Sentinel object to distinguish "not provided" from explicit null in copyWith.
   static const _unset = Object();
 
   final List<WebsiteInfo> websites;

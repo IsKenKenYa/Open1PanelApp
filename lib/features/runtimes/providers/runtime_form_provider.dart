@@ -27,6 +27,7 @@ class RuntimeFormProvider extends ChangeNotifier with SafeChangeNotifier, AsyncS
     if (_draft.port <= 0) return false;
     if (_draft.codeDir.trim().isEmpty) return false;
     if (_draft.containerName.trim().isEmpty) return false;
+    // PHP and appstore runtimes cannot be created via the client; only editing existing ones is allowed.
     if (_draft.resource == 'appstore' && !_draft.isEditing) return false;
     if (_draft.isPhp && !_draft.isEditing) return false;
     if (_draft.image.trim().isEmpty) return false;
@@ -151,6 +152,7 @@ class RuntimeFormProvider extends ChangeNotifier with SafeChangeNotifier, AsyncS
 
   String? _validate() {
     if (_draft.name.trim().isEmpty) return 'runtime.form.nameRequired';
+    // PHP and appstore runtimes require server-side creation; client can only edit.
     if (_draft.resource == 'appstore' && !_draft.isEditing) {
       return 'runtime.form.week8AppStoreCreate';
     }

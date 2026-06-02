@@ -76,6 +76,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
     });
   }
 
+  // Implements Shift+click range selection for desktop multi-select.
   void _handleSelectRange(int currentIndex, List<WebsiteInfo> websites) {
     if (_lastSelectedIndex == null) {
       final id = websites[currentIndex].id;
@@ -234,6 +235,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                   selected: selected,
                   onTap: () {
                     if (isDesktop) {
+                      // Desktop: Ctrl+click toggles individual items, Shift+click selects ranges.
                       if (id == null) return;
                       final isShiftPressed = KeyboardUtils.isShiftPressed();
                       final isControlPressed = KeyboardUtils.isModifierPressed();

@@ -103,6 +103,7 @@ class WebsiteLifecycleState {
     );
   }
 
+  // Sentinel object to distinguish "not provided" from explicit null in copyWith.
   static const _unset = Object();
 }
 
@@ -275,6 +276,7 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
                 ssl: false,
               ),
             ],
+      // Unique task ID for server-side deduplication of rapid retries.
       taskId: DateTime.now().millisecondsSinceEpoch.toString(),
       ipv6: _state.ipv6,
     );
@@ -315,6 +317,7 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
     return null;
   }
 
+  // Default to 'runtime' for unknown types to handle future server-side additions gracefully.
   String _resolveType(String? value) {
     switch (value) {
       case 'proxy':

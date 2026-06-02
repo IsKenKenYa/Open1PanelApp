@@ -159,6 +159,7 @@ class BackupClientInfo extends Equatable {
     );
   }
 
+  // OAuth field names use snake_case per the OAuth2 spec, not camelCase
   Map<String, dynamic> toJson() {
     return {
       'client_id': clientId,
@@ -225,6 +226,7 @@ class RecordSearchByCronjob extends Equatable {
 
   factory RecordSearchByCronjob.fromJson(Map<String, dynamic> json) {
     return RecordSearchByCronjob(
+      // API inconsistently uses 'cronjobID' vs 'cronjobId' across endpoints
       cronjobID: json['cronjobID'] as int? ?? json['cronjobId'] as int? ?? 0,
       page: json['page'] as int? ?? 1,
       pageSize: json['pageSize'] as int? ?? 20,
@@ -639,6 +641,7 @@ class BackupAccountSearch extends Equatable {
     return BackupAccountSearch(
       page: json['page'] as int,
       pageSize: json['pageSize'] as int,
+      // API uses 'search' in some backup endpoints, 'info' in others
       info: json['info'] as String? ?? json['search'] as String?,
       type: json['type'] as String?,
     );

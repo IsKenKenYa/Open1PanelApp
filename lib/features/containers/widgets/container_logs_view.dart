@@ -28,6 +28,8 @@ class _ContainerLogsViewState extends State<ContainerLogsView> {
     final l10n = context.l10n;
     final provider = context.watch<ContainerDetailProvider>();
 
+    // Only push logs to the controller when content actually changes;
+    // provider may notify without new data (e.g., loading state toggles).
     if (provider.logs != _lastLogs) {
       _lastLogs = provider.logs;
       _controller.setLogs(provider.logs);

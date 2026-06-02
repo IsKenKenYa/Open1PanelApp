@@ -45,6 +45,7 @@ class SecureAuthSessionStore implements AuthSessionStore {
   Future<void> saveSession(AuthSession session) async {
     final storage = await _ensureStorage();
     await storage.write(key: tokenKey, value: session.token);
+    // Delete stale username if the new session doesn't carry one (e.g. MFA flow).
     if (session.username == null || session.username!.isEmpty) {
       await storage.delete(key: usernameKey);
       return;

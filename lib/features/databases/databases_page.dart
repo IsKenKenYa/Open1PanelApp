@@ -66,6 +66,8 @@ class _DatabasesPageState extends State<DatabasesPage>
         controller: _tabController,
         children: [
           for (final scope in _scopes)
+            // Composite key forces tab content to rebuild when the active server
+            // changes, ensuring stale data from the previous server is not shown.
             KeyedSubtree(
               key: ValueKey('${scope.value}:${serverId ?? 'none'}'),
               child: _DatabaseScopeTab(scope: scope),
@@ -86,6 +88,8 @@ class _DatabaseScopeTab extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) {
         final provider = DatabasesProvider(scope: scope);
+        // MySQL and PostgreSQL require target selection before loading data;
+        // Redis and remote load directly without target concept.
         if (scope == DatabaseScope.mysql || scope == DatabaseScope.postgresql) {
           provider.loadTargets().then((_) => provider.load());
         } else {
@@ -165,6 +169,8 @@ class _DatabaseScopeTabView extends StatelessWidget {
                   SizedBox(
                     width: isWideToolbar ? 300 : double.infinity,
                     child: DropdownButtonFormField<String>(
+                      // Composite key forces dropdown rebuild when filter or target
+                      // list changes; without it, Flutter may keep stale selection state.
                       key: ValueKey(
                         '${scope.value}:${provider.state.sourceFilter.name}:${provider.state.selectedTarget?.lookupName ?? 'none'}:${provider.state.visibleTargets.length}',
                       ),
@@ -255,6 +261,8 @@ class _DatabaseScopeTabView extends StatelessWidget {
                     icon: const Icon(Icons.refresh),
                     label: Text(l10n.commonRefresh),
                   ),
+                  // Redis doesn't support creation through the form (it's managed
+                  // as a single instance per server), so disable the button.
                   FilledButton.icon(
                     onPressed: scope == DatabaseScope.redis
                         ? null

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 
 class PlatformUtils {
-  // Constants for screen breakpoints
+  // Material Design 3 canonical breakpoints: 600 compact/medium, 1024 medium/expanded
   static const double mobileWidthBreakpoint = 600.0;
   static const double tabletWidthBreakpoint = 1024.0;
 

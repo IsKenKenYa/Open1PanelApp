@@ -107,6 +107,8 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     if (!_usePagedTextPreview || _isLoadingMore || !_hasMoreLines) return;
     final position = _textScrollController.position;
     if (!position.hasPixels || !position.hasContentDimensions) return;
+    // Trigger prefetch 240px before reaching the bottom — enough buffer
+    // to hide the network round-trip latency on most connections.
     if (position.pixels >= position.maxScrollExtent - 240) {
       _loadMorePreviewLines();
     }
@@ -791,6 +793,8 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     );
   }
 
+  // pushReplacement instead of push: prevents back-stack accumulation when
+  // toggling between preview and editor for the same file.
   void _openEditor(BuildContext context) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(

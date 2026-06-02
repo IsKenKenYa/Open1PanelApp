@@ -157,6 +157,9 @@ class BackupAccountService {
     BackupAccountDraft draft,
     Uri uri,
   ) {
+    // Extract the authorization code from the OAuth redirect URI.
+    // The code is one-time-use and will be exchanged for a refresh token
+    // when the user tests the connection.
     final code = uri.queryParameters['code'];
     if (code == null || code.isEmpty) {
       return draft;
@@ -275,16 +278,21 @@ class BackupAccountService {
   ) {
     final sanitized = Map<String, dynamic>.from(vars);
     sanitized.removeWhere((key, value) => value == null || value == '');
+    // Ensure OAuth redirect URI is always present for cloud providers.
     if (type == 'OneDrive' || type == 'GoogleDrive') {
       sanitized['redirect_uri'] =
           sanitized['redirect_uri'] ?? 'onepanel://backup/oauth';
     }
+    // Aliyun token is transient (used only during OAuth exchange) and must
+    // not be persisted — the server derives its own session from the code.
     if (type == 'ALIYUN') {
       sanitized.remove('token');
     }
     return sanitized;
   }
 
+  // When rememberAuth is true, the server stores credentials base64-encoded
+  // (not encrypted) — decode them so the edit form shows the original value.
   String _decodeCredential(String? value, bool rememberAuth) {
     if (!rememberAuth || value == null || value.isEmpty) {
       return value ?? '';

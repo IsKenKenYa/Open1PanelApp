@@ -44,6 +44,8 @@ class DatabaseUserService {
     );
   }
 
+  /// MySQL and PostgreSQL have fundamentally different user/permission models,
+  /// so binding dispatches to separate repository methods per engine.
   Future<void> bindUser(
     DatabaseListItem item, {
     required String username,

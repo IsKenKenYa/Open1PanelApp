@@ -119,6 +119,8 @@ class FileBrowserService {
           ? normalizedSourcePath.substring(separatorIndex + 1)
           : normalizedSourcePath;
 
+      // When copying to the same directory, auto-rename to avoid overwriting
+      // the source file (e.g. "file.txt" -> "file (1).txt").
       var nextName = newName;
       if (sourceDir == targetPath && nextName == null) {
         nextName = _generateCopyName(sourceName);

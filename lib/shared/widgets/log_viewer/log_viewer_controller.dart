@@ -48,6 +48,7 @@ class LogSettings {
         theme = theme ?? LogTheme.defaultTheme;
 
   // Backward compatibility for isWrap
+  // Backward compatibility for isWrap
   bool get isWrap => viewMode == LogViewMode.wrap;
 
   LogSettings copyWith({
@@ -84,6 +85,8 @@ class LogSettings {
 
   factory LogSettings.fromJson(Map<String, dynamic> json) {
     // Handle migration from isWrap
+    // Default to scrollLine; guard the index because persisted values may
+    // come from a newer app version with additional enum entries.
     LogViewMode mode = LogViewMode.scrollLine;
     if (json.containsKey('viewMode')) {
       final idx = json['viewMode'] as int?;
@@ -124,6 +127,8 @@ class LogSettings {
   }
 }
 
+// Mixes SafeChangeNotifier to suppress notifyListeners after disposal,
+// which can happen when async parsing completes after the widget is gone.
 class LogViewerController extends ChangeNotifier with SafeChangeNotifier {
   static const _storageKey = 'log_viewer_settings';
 

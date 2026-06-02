@@ -38,6 +38,8 @@ export default class OhosPreferenceStore {
   async put(key: string, value: preferences.ValueType): Promise<void> {
     const store = await this.getPreferences();
     await store.put(key, value);
+    // Explicit flush — OHOS preferences may not persist to disk until flushed,
+    // and a crash before the next auto-flush would lose the write.
     await store.flush();
   }
 

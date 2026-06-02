@@ -150,7 +150,8 @@ class MonitorLocalDataSource {
         continue;
       }
 
-      // 90天前数据删除
+      // Tiered retention: delete >90d, downsample 30-90d to hourly averages,
+      // downsample 7-30d to 5-minute averages. Keeps local storage bounded.
       if (date.isBefore(day90)) {
         keysToDelete.add(key);
         continue;
@@ -236,7 +237,8 @@ class MonitorLocalDataSource {
   Future<void> uploadColdData() async {
     if (!_isInitialized) await init();
 
-    // 检查网络（仅Wi-Fi）
+    // Only upload cold data on Wi-Fi and >30% battery to avoid
+    // burning mobile data or draining a low battery.
     final connectivityResult = await _connectivity.checkConnectivity();
     if (!connectivityResult.contains(ConnectivityResult.wifi)) {
       appLogger.dWithPackage(
@@ -246,7 +248,6 @@ class MonitorLocalDataSource {
       return;
     }
 
-    // 检查电量 (>30%)
     final batteryLevel = await _battery.batteryLevel;
     if (batteryLevel <= 30) {
       appLogger.dWithPackage(
@@ -296,13 +297,14 @@ class MonitorLocalDataSource {
           'Failed to upload $key',
           error: e,
         );
-        // 加入重试队列
+        // Move failed upload to a retry queue so it's picked up next cycle.
         await _queueStorage.put(key, {
           'key': key,
           'data': rawList,
           'time': DateTime.now().millisecondsSinceEpoch
         });
-        // 本地仍删除，避免重复占用（已移入队列）
+        // Delete from primary storage to avoid double-counting; the queued
+        // copy will be retried on the next upload cycle.
         await _storage.delete(key);
       }
     }

@@ -47,9 +47,8 @@ void main() async {
   final prefs = AppPreferencesService();
   var uiRenderMode = await prefs.loadUIRenderMode();
 
-  // Windows native mode must be hosted by a native WinUI3 process.
-  // If the Flutter runner process is still active without native handoff,
-  // force fallback to MD3 to avoid rendering an empty headless shell.
+  // Windows native mode requires a WinUI3 host process; if it's absent or the
+  // bootstrap launcher explicitly requests MD3, fall back to Flutter rendering.
   final windowsNativeHostActive = !kIsWeb &&
       Platform.isWindows &&
       Platform.environment['ONEPANEL_NATIVE_HOST_ACTIVE'] == '1';
@@ -67,8 +66,9 @@ void main() async {
   final useFlutterUI = UIRenderPolicy.shouldUseFlutterUI(uiRenderMode);
   final nativeModeFallback = UIRenderPolicy.isNativeModeFallback(uiRenderMode);
 
+  // window_manager must be initialized before any window API calls;
+  // only needed when Flutter renders its own UI (not in native/headless mode).
   if (useFlutterUI && isDesktopHost) {
-    // Desktop using Flutter UI needs window bootstrap.
     await windowManager.ensureInitialized();
   }
 
@@ -126,8 +126,8 @@ void main() async {
   await Hive.initFlutter();
 
   if (useFlutterUI) {
+    // FlutterDownloader only supports Android; iOS uses native download managers
     if (isAndroid) {
-      // Initialize FlutterDownloader only on supported Android hosts.
       await FlutterDownloader.initialize(
         debug: true,
         ignoreSsl: true,
@@ -208,6 +208,9 @@ class _AppBootstrapState extends State<AppBootstrap>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Load sequentially: each controller may depend on the previous one
+    // (e.g. ThemeController needs AppSettingsController for locale context).
+    // mounted checks after every await guard against disposal during async gaps.
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       await context.read<AppSettingsController>().load();

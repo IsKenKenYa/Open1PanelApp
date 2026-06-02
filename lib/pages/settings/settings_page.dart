@@ -38,6 +38,8 @@ class _SettingsPageMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // When embedded in a shell, canPop is false and we show the drawer button;
+    // when pushed standalone (e.g. from onboarding), show a back arrow.
     final canPop = Navigator.of(context).canPop();
 
     return Scaffold(
@@ -141,6 +143,8 @@ class _SettingsBody extends StatelessWidget {
                       _languageLabel(context, settings.locale),
                     ),
                     trailing: const Icon(Icons.chevron_right),
+                    // openRouteRespectingShell handles navigation both inside
+                    // the shell (module switch) and standalone (push).
                     onTap: () => openRouteRespectingShell(
                       context,
                       AppRoutes.settingsLanguage,

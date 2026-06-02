@@ -72,6 +72,8 @@ class AuthV2Api {
     return null;
   }
 
+  // Some endpoints return an HTML error page instead of JSON when the
+  // resource does not exist (e.g. captcha on older servers).
   bool _looksLikeHtmlPage(String value) {
     final normalized = value.trimLeft().toLowerCase();
     return normalized.startsWith('<!doctype html') ||
@@ -90,6 +92,8 @@ class AuthV2Api {
         const <String, dynamic>{};
   }
 
+  // EntranceCode is a 1Panel security feature: a secret URL suffix that
+  // must be sent as a header to access the login endpoint.
   Options? _withEntranceCode(String? entranceCode) {
     final normalized = entranceCode?.trim();
     if (normalized == null || normalized.isEmpty) {

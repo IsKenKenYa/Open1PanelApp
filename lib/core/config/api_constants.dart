@@ -29,10 +29,10 @@ class ApiConstants {
     return '$apiPrefix$endpoint';
   }
 
-  // 认证相关常量
+  // 认证相关常量 -- 1Panel uses md5(authPrefix + apiKey + timestamp)
   static const String authHeaderToken = '1Panel-Token';
   static const String authHeaderTimestamp = '1Panel-Timestamp';
-  static const String authPrefix = '1panel'; // MD5计算前缀
+  static const String authPrefix = '1panel';
 }
 
 /// 1Panel API路径常量

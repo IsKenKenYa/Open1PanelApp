@@ -179,6 +179,9 @@ Future<void> openRouteRespectingShell(
     final shellArguments = <String, dynamic>{
       'module': target.module.storageId,
     };
+    // embedRouteInShell: true means the route is a sub-page of a module
+    // (e.g. container detail inside containers module) — push it into the
+    // shell's content area rather than as a full-screen route.
     if (target.embedRouteInShell) {
       shellArguments['route'] = route;
       if (arguments != null) {
@@ -192,5 +195,6 @@ Future<void> openRouteRespectingShell(
     );
   }
 
+  // Mobile uses traditional push navigation; the shell is not involved.
   return Navigator.of(context).pushNamed(route, arguments: arguments);
 }

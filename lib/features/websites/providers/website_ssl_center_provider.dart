@@ -201,6 +201,7 @@ class WebsiteSslCenterProvider extends ChangeNotifier with SafeChangeNotifier {
         final right = daysUntilExpiration(b.expireDate) ?? 999999;
         return left.compareTo(right);
       });
+    // null daysUntilExpiration means no expiry date; sort those last (not first).
     certificates = filtered;
   }
 

@@ -18,6 +18,7 @@ class ProcessInfo extends Equatable {
   factory ProcessInfo.fromJson(Map<String, dynamic> json) {
     return ProcessInfo(
       pid: json['pid'] as int? ?? 0,
+      // API field names differ between top-process and monitor endpoints
       name: json['name'] as String? ?? json['cmd'] as String? ?? '',
       cpuPercent: (json['percent'] as num? ??
                   json['cpuPercent'] as num? ??

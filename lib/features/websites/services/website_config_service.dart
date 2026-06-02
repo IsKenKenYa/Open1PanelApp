@@ -124,6 +124,7 @@ class WebsiteConfigService {
     await _repository.updateProxyStatus(request);
   }
 
+  // Request must include 'websiteID' (capital ID) key, not 'websiteId'.
   Future<void> updateRedirectFile(Map<String, dynamic> request) async {
     await _repository.updateRedirectFile(request);
   }

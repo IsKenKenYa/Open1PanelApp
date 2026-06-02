@@ -20,7 +20,7 @@ class SecureStoragePayload {
   }
 }
 
-const STORE_VERSION = 1;
+const STORE_VERSION = 1; // Bump to trigger migration when payload format changes.
 const MASTER_KEY_ALIAS = 'onepanel_secure_storage_master_key';
 
 export default class OhosHuksSecureStore {
@@ -50,6 +50,8 @@ export default class OhosHuksSecureStore {
       return null;
     }
 
+    // Backward compat: if value isn't valid encrypted JSON, return it as-is.
+    // This handles data written before HUKS encryption was enabled.
     const payload = this.tryParsePayload(rawValue);
     if (payload == null) {
       Log.d(TAG, `read: key=${key} returned raw (non-encrypted) value`);
@@ -75,6 +77,7 @@ export default class OhosHuksSecureStore {
         continue;
       }
 
+      // Same backward-compat logic as read(): non-JSON values pass through as plaintext.
       const payload = this.tryParsePayload(rawValue);
       if (payload == null) {
         decrypted[key] = rawValue;
@@ -98,9 +101,11 @@ export default class OhosHuksSecureStore {
 
   async deleteAll(): Promise<void> {
     await this.store.clear();
+    // Master key lives in HUKS hardware keystore, not in preferences — must be deleted separately.
     await this.deleteMasterKey();
   }
 
+  // Lazy init: master key is only generated on first write or ping, not at construction time.
   private async ensureMasterKey(): Promise<void> {
     const emptyOptions: huks.HuksOptions = { properties: [] };
     const exists = await huks.isKeyItemExist(MASTER_KEY_ALIAS, emptyOptions);
@@ -138,6 +143,8 @@ export default class OhosHuksSecureStore {
   }
 
   private async encrypt(value: string): Promise<SecureStoragePayload> {
+    // Fresh random IV per encryption — CBC mode requires unique IVs to prevent
+    // identical plaintexts from producing identical ciphertexts.
     const iv = cryptoFramework.createRandom().generateRandomSync(16).data;
     const properties = this.buildCryptoProperties(
       huks.HuksKeyPurpose.HUKS_KEY_PURPOSE_ENCRYPT,
@@ -216,6 +223,7 @@ export default class OhosHuksSecureStore {
     ];
   }
 
+  // Returns null for non-JSON or non-matching version — signals caller to treat value as plaintext.
   private tryParsePayload(value: string): SecureStoragePayload | null {
     try {
       const parsed = JSON.parse(value) as SecureStoragePayload;
@@ -239,7 +247,7 @@ export default class OhosHuksSecureStore {
         properties: [],
       });
     } catch (_) {
-      // The key may already be absent after a partial cleanup.
+      // Swallowed: key may already be absent after a partial cleanup or app reinstall.
     }
   }
 }

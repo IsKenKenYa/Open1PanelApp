@@ -152,6 +152,8 @@ class TerminalWorkbenchProvider extends ChangeNotifier with SafeChangeNotifier, 
       final settings = _terminalSettings ?? await _service.loadTerminalSettings();
       _terminalSettings = settings;
 
+      // Use microseconds for the session key to avoid collisions when
+      // multiple sessions are opened in rapid succession (e.g. from a script).
       final descriptor = TerminalSessionDescriptor(
         sessionKey: DateTime.now().microsecondsSinceEpoch.toString(),
         intent: intent,
@@ -253,6 +255,8 @@ class TerminalWorkbenchProvider extends ChangeNotifier with SafeChangeNotifier, 
     }
 
     final current = _sessions[index];
+    // Create a fresh session with the same descriptor to get a clean transport,
+    // then dispose the old one — avoids reusing a half-open WebSocket.
     final replacement = TerminalRuntimeSession(
       descriptor: current.descriptor,
       settings: _terminalSettings,
@@ -293,6 +297,8 @@ class TerminalWorkbenchProvider extends ChangeNotifier with SafeChangeNotifier, 
   }
 
   Future<void> _maybeAutoStartDefaultLocalSession() async {
+    // Only auto-start once per provider lifetime to avoid opening duplicate
+    // sessions if the user navigates back to the terminal page.
     if (_didAutoStartDefaultLocal) {
       return;
     }
@@ -319,6 +325,8 @@ class TerminalWorkbenchProvider extends ChangeNotifier with SafeChangeNotifier, 
   }
 
   void _startActiveSshSessionPolling() {
+    // 3-second poll keeps the SSH session list current because the server-side
+    // session state can change externally (e.g. another client disconnects).
     _activeSshSessionsPollTimer?.cancel();
     _activeSshSessionsPollTimer =
         Timer.periodic(const Duration(seconds: 3), (_) {

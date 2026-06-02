@@ -49,7 +49,8 @@ export default class OhosPlatformPlugin
     this.applicationContext = binding.getApplicationContext() as common.Context;
     this.channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL);
     this.channel.setMethodCallHandler(this);
-    // Register download plugin as a sub-plugin
+    // Download plugin registers its own channels, so it's wired as a sub-plugin here
+    // rather than in the registrant — avoids double-registration.
     this.downloadPlugin = new OhosDownloadPlugin();
     this.downloadPlugin.onAttachedToEngine(binding);
   }
@@ -156,6 +157,7 @@ export default class OhosPlatformPlugin
   private async openPath(call: MethodCall): Promise<boolean> {
     const appContext = this.requireContext();
     const path = this.requireNonEmptyStringArgument(call, 'path');
+    // Standard OHOS intent to open a file with the system's default viewer for its MIME type.
     const want: Want = {
       action: 'ohos.want.action.viewData',
       uri: `file://${path}`,
@@ -178,6 +180,7 @@ export default class OhosPlatformPlugin
   private async pickSaveDirectory(): Promise<string | null> {
     try {
       const pickerContext = this.getUIAbilityContext();
+      // DocumentViewPicker.select returns content URIs, not filesystem paths.
       const documentPicker = new picker.DocumentViewPicker(pickerContext);
       const result = await documentPicker.select({
         maxSelectNumber: 1,
@@ -228,7 +231,8 @@ export default class OhosPlatformPlugin
       return targetUri;
     } catch (error) {
       Log.e(TAG, `pickAndSaveBytes failed: ${error}, falling back to private dir`);
-      // Fallback: save to private exports directory
+      // Fallback: DocumentViewPicker may fail on headless/background contexts or permission denial.
+      // Private app directory is the only safe location on OHOS scoped storage without user consent.
       return await this.saveBytes(call);
     }
   }
@@ -321,6 +325,8 @@ export default class OhosPlatformPlugin
     return this.applicationContext;
   }
 
+  // OHOS picker APIs (DocumentViewPicker, etc.) require UIAbility context, not application context.
+  // Application context lacks the UI token needed to launch system picker dialogs.
   private getUIAbilityContext(): common.UIAbilityContext {
     const appContext = this.requireContext();
     const uiAbility = FlutterManager.getInstance().getUIAbility(appContext);

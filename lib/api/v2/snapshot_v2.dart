@@ -4,6 +4,9 @@ import '../../core/config/api_constants.dart';
 import '../../data/models/snapshot_models.dart';
 import '../../data/models/common_models.dart';
 
+/// 1Panel system snapshot API client.
+///
+/// Manages snapshot CRUD, import/export, recover, rollback, and description updates.
 class SnapshotV2Api {
   final DioClient _client;
 
@@ -88,6 +91,9 @@ class SnapshotV2Api {
     );
   }
 }
+
+// Lightweight request models co-located here because they are only used
+// by SnapshotV2Api and have no shared dependencies.
 
 class SnapshotDescriptionUpdate {
   final int id;

@@ -32,6 +32,9 @@ class FilesProvider extends ChangeNotifier with SafeChangeNotifier {
   FilesData _data = const FilesData();
   final Map<String, String> _serverPathMemory = <String, String>{};
 
+  // Files >= 50 MB trigger a log hint recommending chunked download,
+  // but the actual chunked strategy is not yet implemented — this is a
+  // threshold for future use / observability only.
   static const int _chunkDownloadThreshold = 50 * 1024 * 1024;
 
   FilesData get data => _data;

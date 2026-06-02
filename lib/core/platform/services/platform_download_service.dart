@@ -32,8 +32,12 @@ abstract class PlatformDownloadService {
 
   Future<void> cancel(String taskId);
 
+  Future<void> delete(String taskId);
+
   Future<List<PlatformDownloadTask>> listTasks();
 
+  /// 1Panel download URLs embed time-limited auth tokens that can expire
+  /// before large transfers complete; this re-enqueues with refreshed headers.
   Future<String?> retryWithFreshAuth({
     required PlatformDownloadTask task,
     required Map<String, String> headers,
@@ -45,6 +49,9 @@ class UnsupportedPlatformDownloadService implements PlatformDownloadService {
 
   @override
   Future<void> cancel(String taskId) async {}
+
+  @override
+  Future<void> delete(String taskId) async {}
 
   @override
   Future<String?> enqueue({

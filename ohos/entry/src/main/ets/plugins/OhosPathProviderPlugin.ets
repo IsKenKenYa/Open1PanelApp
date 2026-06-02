@@ -48,8 +48,9 @@ export default class OhosPathProviderPlugin
         case 'getLibraryDirectory':
         case 'getStorageDirectory':
         case 'getDownloadsDirectory':
-          // OHOS has no direct public Download directory API.
-          // Actual downloads are managed by OhosDownloadPlugin.
+          // OHOS has no public Download directory accessible without SAF/picker.
+          // All these map to cacheDir as the safest sandboxed alternative.
+          // Actual file exports go through OhosPlatformPlugin's DocumentViewPicker flow.
           result.success(context.cacheDir);
           return;
         case 'getApplicationCacheDirectory':

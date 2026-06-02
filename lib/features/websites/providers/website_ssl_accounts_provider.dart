@@ -185,6 +185,7 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
         time: time,
         unit: unit,
       ),
+      // Certificate issuance is async on the server; reloading now would show stale state.
       reload: false,
     );
   }
@@ -193,6 +194,7 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
     return _runMutation(
       key: 'ca:renew:$sslId',
       action: () => _service!.renewCertificateByAuthority(sslId),
+      // Certificate renewal is async on the server; reloading now would show stale state.
       reload: false,
     );
   }
@@ -214,6 +216,7 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
     }
   }
 
+  // API responses may return id as int, num, or String depending on serialization path.
   int? resolveAccountId(Map<String, dynamic> item) {
     final raw = item['id'];
     if (raw is int) {
@@ -228,6 +231,8 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
     return null;
   }
 
+  // 1Panel API returns inconsistent key casing across endpoints (sslID vs sslId vs SSLId);
+  // probe all known variants to find the SSL ID regardless of which endpoint produced the map.
   int? resolveCertificateSslId(Map<String, dynamic> item) {
     final keys = <String>[
       'sslID',

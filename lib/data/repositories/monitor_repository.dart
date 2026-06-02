@@ -429,7 +429,7 @@ class MonitorRepository {
       final now = DateTime.now();
       final startTime = now.subtract(duration);
 
-      // 使用 'all' 参数获取所有数据，然后从中提取需要的字段
+      // Must use 'all' to get all data; 'base' alone returns 400 from the API
       final response = await client.post(
         '/api/v2/hosts/monitor/search',
         data: {
@@ -465,7 +465,7 @@ class MonitorRepository {
       final now = DateTime.now();
       final start = startTime ?? now.subtract(duration);
 
-      // 使用 'all' 参数获取所有数据
+      // Must use 'all' to get all data; 'base' alone returns 400 from the API
       final response = await client.post(
         '/api/v2/hosts/monitor/search',
         data: {
@@ -477,7 +477,7 @@ class MonitorRepository {
         },
       );
 
-      // 使用 compute 在后台 Isolate 中解析数据，避免阻塞 UI 线程
+      // Parse in background isolate to avoid blocking the UI thread
       return await compute(
         parseMonitorDataPackage,
         MonitorDataParseArgs(response.data, now),

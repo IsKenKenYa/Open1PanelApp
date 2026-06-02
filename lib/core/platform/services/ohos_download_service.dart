@@ -35,6 +35,7 @@ class OhosDownloadService implements PlatformDownloadService {
 
   StreamController<OhosDownloadProgress>? _progressController;
   StreamSubscription? _eventSubscription;
+  // Caches last-seen progress per task so late subscribers can replay state.
   final Map<String, OhosDownloadProgress> _latestProgress = {};
 
   Stream<OhosDownloadProgress> get onProgress {
@@ -126,6 +127,16 @@ class OhosDownloadService implements PlatformDownloadService {
   }
 
   @override
+  Future<void> delete(String taskId) async {
+    try {
+      await methodChannel.invokeMethod<void>('delete', <String, Object?>{
+        'taskId': taskId,
+      });
+      _latestProgress.remove(taskId);
+    } catch (_) {}
+  }
+
+  @override
   Future<List<PlatformDownloadTask>> listTasks() async {
     try {
       final raw = await methodChannel.invokeListMethod<Map>('listTasks');
@@ -157,7 +168,9 @@ class OhosDownloadService implements PlatformDownloadService {
     );
   }
 
-  /// After download completes, let user pick save location via native picker.
+  /// Two-step save: native downloader writes to a cache dir, then this method
+  /// copies the file through the native picker so the user chooses the final
+  /// location (required by OHOS scoped-storage policy).
   Future<String?> saveDownloadedFile(String taskId) async {
     try {
       final cachedPath = await methodChannel.invokeMethod<String>(

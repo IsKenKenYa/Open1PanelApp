@@ -12,7 +12,8 @@ class SettingV2Api {
 
   SettingV2Api(this._client);
 
-  /// 从API响应中提取data字段（原始类型），过滤HTML错误页面
+  /// Extracts `data` field, filtering HTML error pages that some endpoints
+  /// return instead of JSON when the resource does not exist.
   dynamic _extractDataRaw(dynamic responseData) {
     if (responseData is String) {
       final normalized = responseData.trimLeft().toLowerCase();
@@ -25,6 +26,7 @@ class SettingV2Api {
     return ApiResponseParser.unwrap(responseData);
   }
 
+  // Some endpoints moved from /settings/* to /core/settings/* in newer versions.
   bool _shouldFallbackToLegacySettingsPath(Object error) {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;

@@ -30,7 +30,9 @@
       "Bash(codegraph callers *)",
       "Bash(codegraph context *)",
       "Bash(codegraph sync *)",
-      "Bash(flutter run *)"
+      "Bash(flutter run *)",
+      "Bash(rsvg-convert --version)",
+      "graphify query *)"
     ],
     "deny": [],
     "ask": []

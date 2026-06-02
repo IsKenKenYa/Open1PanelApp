@@ -87,12 +87,16 @@ class _PermissionDialogState extends State<_PermissionDialog> {
     }
   }
 
+  // Parses a Unix permission string (e.g. "755" or "-rwxr-xr-x").
+  // Strips leading characters to get the last 3 octal digits, then
+  // extracts owner/group/other bits via bit masking.
   void _parseMode(String mode) {
     String cleanMode = mode;
     if (cleanMode.length > 3) {
       cleanMode = cleanMode.substring(cleanMode.length - 3);
     }
 
+    // 493 = octal 0755 (rwxr-xr-x) — safe default if parsing fails
     int modeValue = int.tryParse(cleanMode, radix: 8) ?? 493;
 
     final ownerBits = (modeValue >> 6) & 7;

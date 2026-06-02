@@ -15,6 +15,8 @@ class BackupOauthCallbackService {
   Stream<Uri> get callbacks => _controller.stream;
 
   Future<void> start() async {
+    // Capture the deep link that launched the app (if any) — this handles
+    // the case where the OAuth redirect opens the app from a cold start.
     if (_initialUri == null) {
       final dynamic initial = await (_appLinks as dynamic).getInitialLink();
       if (initial is Uri) {
@@ -26,6 +28,7 @@ class BackupOauthCallbackService {
     _subscription ??= _appLinks.uriLinkStream.listen(_controller.add);
   }
 
+  // Consume-once pattern: the initial URI is only relevant once per app launch.
   Uri? consumeInitialUri() {
     final uri = _initialUri;
     _initialUri = null;

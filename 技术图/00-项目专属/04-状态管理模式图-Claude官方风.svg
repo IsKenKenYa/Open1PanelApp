@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/></marker>
+    <marker id="arrow-dash" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/></marker>
+  </defs>
+  <rect width="1000" height="650" fill="#f8f6f3" rx="8"/>
+  <text x="500" y="36" text-anchor="middle" font-family="system-ui" font-size="20" font-weight="bold" fill="#2d1b0e">1Panel Client - Provider State Management Pattern</text>
+  <text x="500" y="56" text-anchor="middle" font-family="system-ui" font-size="12" fill="#8b7355">ChangeNotifier + SafeChangeNotifier / Provider package / Per-module state isolation</text>
+
+  <rect x="40" y="80" width="920" height="110" rx="8" fill="#ffffff" stroke="#d4c5a9" stroke-width="1"/>
+  <text x="60" y="100" font-family="system-ui" font-size="12" font-weight="bold" fill="#2d1b0e">WIDGET LAYER</text>
+  <rect x="60" y="115" width="250" height="30" rx="4" fill="#e8dcc8"/>
+  <text x="68" y="133" font-family="system-ui" font-size="11" fill="#2d1b0e" font-weight="bold">context.watch&lt;Provider&gt;()</text>
+  <text x="320" y="133" font-family="system-ui" font-size="10" fill="#8b7355"> Rebuilds on notifyListeners()</text>
+  <rect x="330" y="115" width="250" height="30" rx="4" fill="#e8dcc8"/>
+  <text x="338" y="133" font-family="system-ui" font-size="11" fill="#2d1b0e" font-weight="bold">context.read&lt;Provider&gt;()</text>
+  <text x="590" y="133" font-family="system-ui" font-size="10" fill="#8b7355"> One-time read, no rebuild</text>
+  <rect x="600" y="115" width="250" height="30" rx="4" fill="#e8dcc8"/>
+  <text x="608" y="133" font-family="system-ui" font-size="11" fill="#2d1b0e" font-weight="bold">Consumer&lt;Provider&gt;</text>
+  <text x="860" y="133" font-family="system-ui" font-size="10" fill="#8b7355"> Scoped rebuild widget</text>
+  <rect x="600" y="155" width="250" height="30" rx="4" fill="#e8dcc8"/>
+  <text x="608" y="173" font-family="system-ui" font-size="11" fill="#2d1b0e" font-weight="bold">Selector&lt;Provider, T&gt;</text>
+  <text x="860" y="173" font-family="system-ui" font-size="10" fill="#8b7355"> Selective field rebuild</text>
+
+  <rect x="40" y="210" width="920" height="130" rx="8" fill="#2563eb08" stroke="#2563eb40" stroke-width="1.5"/>
+  <text x="60" y="230" font-family="system-ui" font-size="12" font-weight="bold" fill="#2563eb">PROVIDER LAYER (ChangeNotifier)</text>
+  <rect x="60" y="245" width="250" height="28" rx="4" fill="#2563eb15" stroke="#2563eb30" stroke-width="0.5"/>
+  <text x="68" y="263" font-family="system-ui" font-size="11" fill="#1e293b">FeatureProvider  (extends ChangeNotifier)</text>
+  <rect x="60" y="280" width="250" height="28" rx="4" fill="#2563eb15" stroke="#2563eb30" stroke-width="0.5"/>
+  <text x="68" y="298" font-family="system-ui" font-size="11" fill="#1e293b">_isLoading  (bool state)</text>
+  <rect x="330" y="280" width="250" height="28" rx="4" fill="#2563eb15" stroke="#2563eb30" stroke-width="0.5"/>
+  <text x="338" y="298" font-family="system-ui" font-size="11" fill="#1e293b">_data  (List/Model state)</text>
+  <rect x="600" y="280" width="250" height="28" rx="4" fill="#2563eb15" stroke="#2563eb30" stroke-width="0.5"/>
+  <text x="608" y="298" font-family="system-ui" font-size="11" fill="#1e293b">_error  (String? state)</text>
+  <text x="60" y="325" font-family="system-ui" font-size="10" fill="#64748b">Pattern: Provider(create: (_) =&gt; FeatureProvider()) at module root</text>
+
+  <rect x="40" y="360" width="440" height="100" rx="8" fill="#05966908" stroke="#05966940" stroke-width="1.5"/>
+  <text x="60" y="380" font-family="system-ui" font-size="12" font-weight="bold" fill="#059669">SERVICE LAYER</text>
+  <rect x="60" y="395" width="180" height="24" rx="4" fill="#05966915"/>
+  <text x="68" y="411" font-family="system-ui" font-size="11" fill="#1e293b">Business logic &amp; transforms</text>
+  <rect x="260" y="395" width="180" height="24" rx="4" fill="#05966915"/>
+  <text x="268" y="411" font-family="system-ui" font-size="11" fill="#1e293b">TransferManager, Logger</text>
+  <rect x="60" y="425" width="380" height="24" rx="4" fill="#05966915"/>
+  <text x="68" y="441" font-family="system-ui" font-size="10" fill="#1e293b">appLogger.eWithPackage(feature.provider, error)</text>
+  <rect x="520" y="360" width="440" height="100" rx="8" fill="#ea580c08" stroke="#ea580c40" stroke-width="1.5"/>
+  <text x="540" y="380" font-family="system-ui" font-size="12" font-weight="bold" fill="#ea580c">REPOSITORY LAYER</text>
+  <rect x="540" y="395" width="180" height="24" rx="4" fill="#ea580c15"/>
+  <text x="548" y="411" font-family="system-ui" font-size="11" fill="#1e293b">Single source of truth</text>
+  <rect x="740" y="395" width="180" height="24" rx="4" fill="#ea580c15"/>
+  <text x="748" y="411" font-family="system-ui" font-size="11" fill="#1e293b">API + local cache merge</text>
+  <rect x="540" y="425" width="380" height="24" rx="4" fill="#ea580c15"/>
+  <text x="548" y="441" font-family="system-ui" font-size="10" fill="#1e293b">lib/data/repositories/ + lib/data/models/</text>
+
+  <rect x="40" y="480" width="920" height="70" rx="8" fill="#7c3aed08" stroke="#7c3aed40" stroke-width="1.5"/>
+  <text x="60" y="500" font-family="system-ui" font-size="12" font-weight="bold" fill="#7c3aed">API LAYER</text>
+  <rect x="60" y="510" width="200" height="28" rx="4" fill="#7c3aed15"/>
+  <text x="160" y="529" text-anchor="middle" font-family="system-ui" font-size="11" fill="#1e293b">Retrofit (35 V2 modules)</text>
+  <rect x="280" y="510" width="200" height="28" rx="4" fill="#7c3aed15"/>
+  <text x="380" y="529" text-anchor="middle" font-family="system-ui" font-size="11" fill="#1e293b">Dio + Interceptors</text>
+  <rect x="500" y="510" width="200" height="28" rx="4" fill="#7c3aed15"/>
+  <text x="600" y="529" text-anchor="middle" font-family="system-ui" font-size="11" fill="#1e293b">MD5 Auth: md5(1panel+key+t)</text>
+  <rect x="720" y="510" width="200" height="28" rx="4" fill="#7c3aed15"/>
+  <text x="820" y="529" text-anchor="middle" font-family="system-ui" font-size="11" fill="#1e293b">Secure Storage (keys)</text>
+
+  <line x1="165" y1="190" x2="165" y2="210" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="165" y1="340" x2="165" y2="360" stroke="#059669" stroke-width="2"/>
+  <line x1="740" y1="340" x2="740" y2="360" stroke="#ea580c" stroke-width="2"/>
+  <line x1="300" y1="460" x2="300" y2="480" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-dash)"/>
+  <line x1="740" y1="460" x2="740" y2="480" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-dash)"/>
+  <rect x="40" y="570" width="920" height="60" rx="6" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="60" y="590" font-family="system-ui" font-size="11" font-weight="bold" fill="#dc2626">ANTI-PATTERNS (forbidden by AGENTS.md)</text>
+  <text x="60" y="608" font-family="system-ui" font-size="10" fill="#7f1d1d">UI direct API call / Business logic in build() / print()/debugPrint() / Nested Provider wrapping chains</text>
+
+</svg>

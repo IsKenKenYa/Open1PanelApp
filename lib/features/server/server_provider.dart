@@ -96,14 +96,14 @@ class ServerProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> delete(String id) async {
-    // Stop metrics refresh before deleting to avoid accessing deleted server
+    // Stop metrics refresh before deleting to avoid a race where the timer
+    // fires mid-delete and tries to fetch metrics for the now-removed server.
     stopMetricsAutoRefresh();
-    
+
     try {
       await _repository.removeConfig(id);
       await load();
     } finally {
-      // Restart metrics refresh if there are still servers
       if (_servers.isNotEmpty) {
         startMetricsAutoRefresh();
       }

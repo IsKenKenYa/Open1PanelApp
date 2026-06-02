@@ -41,6 +41,7 @@ class RuntimeFormBasicSectionWidget extends StatelessWidget {
                 ),
               )
               .toList(growable: false),
+          // Type cannot be changed after creation -- the server binds the runtime to its type.
           onChanged: draft.isEditing
               ? null
               : (value) {

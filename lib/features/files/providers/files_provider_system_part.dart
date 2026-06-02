@@ -104,6 +104,9 @@ extension FilesProviderSystemMixin on FilesProvider {
       );
     }
 
+    // Platform routing: OHOS lacks flutter_downloader support, so we use its
+    // native download service via platform channels. Android/iOS use flutter_downloader
+    // for background download with notification support.
     final capabilities = PlatformCapabilities.current();
     if (capabilities.isOhos) {
       return _downloadWithOhosNative(file);
@@ -160,7 +163,10 @@ extension FilesProviderSystemMixin on FilesProvider {
         throw StateError('No server configured');
       }
 
-      String downloadPath;
+      // path_provider doesn't expose the public Downloads directory on Android,
+    // so we hardcode the well-known path. Fall back to app-private storage
+    // if the public directory doesn't exist (e.g. scoped storage restrictions).
+    String downloadPath;
       final capabilities = PlatformCapabilities.current();
       if (capabilities.supportsAndroidIntent) {
         final dir = Directory('/storage/emulated/0/Download');

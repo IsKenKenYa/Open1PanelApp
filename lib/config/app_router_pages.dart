@@ -29,6 +29,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _bootstrap() async {
+    // Allow splash screen to render before heavy async work starts
     await Future.delayed(const Duration(milliseconds: 300));
 
     final canContinue = await _handleTestingChannelGate();

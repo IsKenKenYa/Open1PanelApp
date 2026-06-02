@@ -41,6 +41,8 @@ class BackupAccountFormProvider extends ChangeNotifier with SafeChangeNotifier, 
   bool get supportsOAuth => _service.supportsOAuth(_draft.type);
   bool get supportsRefreshToken => _service.supportsRefreshToken(_draft.type);
   List<String> get providerTypes => _service.creatableProviderTypes();
+  // Require connection verification before save to prevent creating
+  // accounts with invalid credentials that would fail at backup time.
   bool get canSave =>
       !_isSaving &&
       !_isTesting &&
@@ -55,6 +57,8 @@ class BackupAccountFormProvider extends ChangeNotifier with SafeChangeNotifier, 
       _callbackSubscription ??=
           _callbackService.callbacks.listen(_handleOAuthCallback);
       _draft = await _service.initializeDraft(args);
+      // LOCAL type is read-only (auto-created by the server) — default new
+      // accounts to SFTP so the user sees an editable form.
       if (!isEditing && _draft.type == 'LOCAL') {
         _draft = _draft.copyWith(
           type: 'SFTP',
@@ -183,6 +187,8 @@ class BackupAccountFormProvider extends ChangeNotifier with SafeChangeNotifier, 
       final result = await _service.testConnection(_draft);
       _isConnectionVerified = result.isOk;
       _testMessage = result.msg;
+      // The server returns a base64-encoded refresh token after a successful
+      // OAuth connection test — decode and stash it for future token refreshes.
       if (result.isOk &&
           result.token != null &&
           result.token!.isNotEmpty &&

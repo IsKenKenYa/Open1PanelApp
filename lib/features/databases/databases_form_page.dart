@@ -396,6 +396,8 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
       description: _descriptionController.text.trim().isEmpty
           ? null
           : _descriptionController.text.trim(),
+      // MySQL defaults to utf8mb4 (full Unicode support); PostgreSQL uses UTF8.
+      // These are the most common defaults for new databases.
       format: _scope == DatabaseScope.mysql
           ? 'utf8mb4'
           : _scope == DatabaseScope.postgresql
@@ -408,6 +410,7 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
     );
   }
 
+  // Fall back to MySQL if the requested scope isn't creatable (e.g., Redis).
   DatabaseScope _resolveInitialScope(DatabaseScope scope) {
     if (_creatableScopes.contains(scope)) {
       return scope;
@@ -422,6 +425,8 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
     return null;
   }
 
+  // Composite key prevents duplicate dropdown entries when multiple targets
+  // share the same lookupName but differ in source, engine, or label.
   String _databaseItemKey(DatabaseListItem item) {
     return '${item.id}:${item.source}:${item.lookupName}:${item.instanceLabel ?? item.name}:${item.engine}';
   }

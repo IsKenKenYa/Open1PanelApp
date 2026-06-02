@@ -92,6 +92,9 @@ class ContainersPageContainerMaintenanceDialogs {
     BuildContext context,
     String containerId,
   ) {
+    // Capture parent context before showing the dialog; the dialog's own context
+    // becomes invalid after Navigator.pop(), but we need the parent to read the
+    // provider and show the result snackbar.
     final parentContext = context;
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;

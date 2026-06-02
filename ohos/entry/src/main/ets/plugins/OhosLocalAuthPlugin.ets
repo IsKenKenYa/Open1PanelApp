@@ -36,7 +36,8 @@ export default class OhosLocalAuthPlugin
     try {
       switch (call.method) {
         case 'authenticate':
-          // Graceful fallback: keep startup/auth flow non-blocking on HMOS.
+          // Stub: local_auth has no OHOS implementation. Returning false keeps the
+          // Dart auth flow non-blocking instead of throwing MissingPluginException.
           result.success(false);
           return;
         case 'getAvailableBiometrics':

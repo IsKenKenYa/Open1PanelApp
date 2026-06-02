@@ -191,6 +191,7 @@ PHPContainerConfig _buildContainerSaveRequest(
       )
       .toList(growable: false);
 
+  // Ensure the container config always carries a valid ID for the save request.
   return provider._containerConfig.copyWith(
     id: provider._containerConfig.id == 0
         ? runtimeId

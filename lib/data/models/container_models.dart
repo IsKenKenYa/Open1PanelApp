@@ -571,7 +571,7 @@ class PageContainer extends Equatable {
       ];
 }
 
-/// 容器信息模型 (对应 Docker Container)
+/// Alias for backward compatibility with older code paths
 typedef Container = ContainerInfo;
 
 /// 容器信息模型
@@ -610,6 +610,7 @@ class ContainerInfo extends Equatable {
 
   factory ContainerInfo.fromJson(Map<String, dynamic> json) {
     return ContainerInfo(
+      // API uses different field names across endpoints (id vs containerID, etc.)
       id: (json['id'] ?? json['containerID']) as String? ?? '',
       name: json['name'] as String? ?? '',
       image: (json['image'] ?? json['imageName']) as String? ?? '',
@@ -620,6 +621,7 @@ class ContainerInfo extends Equatable {
           : null,
       createTime: json['createTime'] as String?,
       ipAddress: json['ipAddress'] as String?,
+      // API returns network as List in some endpoints, String in others
       network: (json['network'] is List)
           ? (json['network'] as List).join(', ')
           : json['network'] as String?,
@@ -761,6 +763,7 @@ class ContainerUpgrade extends Equatable {
   });
 
   factory ContainerUpgrade.fromJson(Map<String, dynamic> json) {
+    // API returns 'names' as List for batch ops, 'name' as String for single container
     final rawNames = json['names'];
     final parsedNames = rawNames is List
         ? rawNames.map((item) => item.toString()).toList()

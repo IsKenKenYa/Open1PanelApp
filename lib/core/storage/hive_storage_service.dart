@@ -47,9 +47,11 @@ class HiveStorageService implements StorageService {
           encryptionKey = base64Url.decode(keyStr);
         }
       } catch (e, s) {
+        // Degrade to unencrypted Hive rather than crash -- the app remains
+        // usable and data is not lost, just less protected at rest.
         appLogger.wWithPackage(
           'core.storage.hive_storage',
-          'OHOS degraded to non-encrypted Hive',
+          'Secure storage unavailable, degraded to non-encrypted Hive',
           error: e,
           stackTrace: s,
         );
@@ -72,7 +74,8 @@ class HiveStorageService implements StorageService {
         'Error opening box $boxName',
         error: e,
       );
-      // 如果打开失败（可能是密钥不匹配或数据损坏），尝试删除并重新打开
+      // Encryption key rotation or data corruption makes the box unreadable;
+      // wipe and recreate so the app remains usable.
       await Hive.deleteBoxFromDisk(boxName);
       if (isEncrypted && encryptionKey != null) {
         _box = await Hive.openBox(

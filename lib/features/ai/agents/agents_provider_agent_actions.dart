@@ -19,6 +19,8 @@ extension AgentsProviderAgentActions on AgentsProvider {
         name: name,
         appVersion: appVersion,
         webUIPort: webUIPort,
+        // openclaw agents require a restrictive CORS origin to prevent
+        // the embedded web UI from being loaded by third-party sites.
         allowedOrigins: agentType == 'openclaw'
             ? <String>['http://127.0.0.1:$webUIPort']
             : null,
@@ -132,6 +134,8 @@ extension AgentsProviderAgentActions on AgentsProvider {
       final dingtalk = results[9] as AgentDingTalkConfig;
       final qqbot = results[10] as AgentQQBotConfig;
 
+      // Normalize heterogeneous channel configs into a uniform snapshot map
+      // so the UI can iterate without caring about per-channel field differences.
       _channels = <String, AgentChannelSnapshot>{
         'feishu': AgentChannelSnapshot(
           key: 'feishu',

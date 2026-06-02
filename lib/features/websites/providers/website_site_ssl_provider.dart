@@ -149,6 +149,7 @@ class WebsiteSiteSslProvider extends ChangeNotifier with SafeChangeNotifier {
         websiteId: websiteId,
         request: draft.draftValue,
       );
+      // Server may not immediately reflect the new binding; fall back to local cache.
       boundCertificate = await _service!.getBoundCertificate(websiteId) ??
           _findCertificateById(draft.draftValue.websiteSSLId);
       selectedCertificate = boundCertificate;
@@ -182,6 +183,7 @@ class WebsiteSiteSslProvider extends ChangeNotifier with SafeChangeNotifier {
         websiteId: websiteId,
         request: request,
       );
+      // Server may not immediately reflect the binding after rollback; fall back to local cache.
       boundCertificate = await _service!.getBoundCertificate(websiteId) ??
           _findCertificateById(request.websiteSSLId);
       selectedCertificate = boundCertificate;
@@ -245,6 +247,7 @@ class WebsiteSiteSslProvider extends ChangeNotifier with SafeChangeNotifier {
       );
     }
 
+    // Rough matching avoids false positives with wildcard certs and subdomains.
     if (!domainsRoughlyMatch(
       expectedDomain: expectedDomain,
       certificateDomain: certificate?.primaryDomain,

@@ -4,6 +4,9 @@ import '../../core/config/api_constants.dart';
 import '../../core/network/dio_client.dart';
 import '../../data/models/host_tool_models.dart';
 
+/// 1Panel host tool management API client.
+///
+/// Controls host-level tools (e.g. Supervisor) including init, operate, and process management.
 class HostToolV2Api {
   HostToolV2Api(this._client);
 
@@ -57,6 +60,8 @@ class HostToolV2Api {
     );
   }
 
+  // Server returns a List when multiple processes exist, but a single Map
+  // when only one process is configured.
   Future<Response<List<HostToolProcessConfig>>> getSupervisorProcesses() async {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/hosts/tool/supervisor/process'),

@@ -49,6 +49,9 @@ class ServerConnectionService {
         }
       }
 
+      // 1Panel API auth: md5('1panel' + apiKey + unixTimestamp).
+      // The timestamp is sent alongside so the server can verify the hash
+      // and reject requests older than a small time window.
       final timestamp =
           (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
       final authString = '1panel$apiKey$timestamp';

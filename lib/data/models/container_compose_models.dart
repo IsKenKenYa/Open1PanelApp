@@ -39,8 +39,10 @@ class ContainerCompose extends Equatable {
       path: json['path']?.toString(),
       version: json['version']?.toString(),
       status: json['status']?.toString(),
+      // API uses 'createTime' in compose-list but 'createdAt' in detail responses
       createTime: json['createTime']?.toString() ??
           json['createdAt']?.toString(),
+      // API uses 'updateTime' in compose-list but 'updatedAt' in detail responses
       updateTime: json['updateTime']?.toString() ??
           json['updatedAt']?.toString(),
       networks: parseStringList(json['networks']),

@@ -475,7 +475,7 @@ class AppInstalledIgnoreUpgradeRequest {
           Map<String, dynamic> json) =>
       _$AppInstalledIgnoreUpgradeRequestFromJson(json);
   Map<String, dynamic> toJson() => {
-        'appID': appInstallId,
+        'appID': appInstallId, // API expects 'appID', not 'appInstallId'
         'reason': reason,
         'scope': scope,
       };
@@ -794,10 +794,12 @@ class AppInstallInfo {
       id: json['id'] as int?,
       name: json['name'] as String?,
       appName: json['appName'] as String?,
+      // API uses 'key' in list responses but 'appKey' in detail responses
       appKey: json['appKey'] as String? ?? json['key'] as String?,
       version: json['version'] as String?,
       status: json['status'] as String?,
       container: json['container'] as String?,
+      // API uses 'type' in list responses but 'appType' in detail responses
       appType: json['appType'] as String? ?? json['type'] as String?,
       env: json['env'] is Map ? json['env'] as Map<String, dynamic>? : null,
       icon: json['icon'] as String?,

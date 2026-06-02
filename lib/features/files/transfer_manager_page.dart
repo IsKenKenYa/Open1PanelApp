@@ -60,14 +60,14 @@ class _TransferManagerPageState extends State<TransferManagerPage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.refresh),
-                  onPressed: provider.isBackgroundDownloadSupported
+                  onPressed: provider.isDownloadSupported
                       ? provider.loadTasks
                       : null,
                   tooltip: l10n.commonRefresh,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete_sweep_outlined),
-                  onPressed: provider.isBackgroundDownloadSupported
+                  onPressed: provider.isDownloadSupported
                       ? () => _showClearDialog(context, provider)
                       : null,
                   tooltip: l10n.transferClearCompleted,
@@ -76,7 +76,7 @@ class _TransferManagerPageState extends State<TransferManagerPage> {
             ),
             body: provider.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : !provider.isBackgroundDownloadSupported
+                : !provider.isDownloadSupported
                     ? _EmptyState(
                         text: provider.unsupportedReason ==
                                 'transferBackgroundDownloadUnsupported'
@@ -416,7 +416,7 @@ class _DownloadTaskTile extends StatelessWidget {
     BuildContext context,
     DownloadTaskStatus displayStatus,
   ) {
-    final manager = TransferManager();
+    final provider = context.read<TransferManagerProvider>();
     final l10n = context.l10n;
     final buttons = <Widget>[];
 
@@ -427,7 +427,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.pause),
             label: Text(l10n.transferPause),
             onPressed: () async {
-              await manager.pauseDownloadTask(task.taskId);
+              await provider.pauseTask(task.taskId);
               onRefresh();
             },
           ),
@@ -436,7 +436,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.close),
             label: Text(l10n.transferCancel),
             onPressed: () async {
-              await manager.cancelDownloadTask(task.taskId);
+              await provider.cancelTask(task.taskId);
               onRefresh();
             },
           ),
@@ -448,7 +448,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.play_arrow),
             label: Text(l10n.transferResume),
             onPressed: () async {
-              await manager.resumeDownloadTask(task.taskId);
+              await provider.resumeTask(task.taskId);
               onRefresh();
             },
           ),
@@ -457,7 +457,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.close),
             label: Text(l10n.transferCancel),
             onPressed: () async {
-              await manager.cancelDownloadTask(task.taskId);
+              await provider.cancelTask(task.taskId);
               onRefresh();
             },
           ),
@@ -469,7 +469,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.refresh),
             label: Text(l10n.commonRetry),
             onPressed: () async {
-              final result = await manager.retryDownloadTaskWithNewAuth(task);
+              final result = await provider.retryTaskWithNewAuth(task);
               if (!context.mounted) return;
               switch (result) {
                 case RetryDownloadTaskWithNewAuthResult.recreated:
@@ -492,7 +492,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.delete),
             label: Text(l10n.commonDelete),
             onPressed: () async {
-              await manager.deleteDownloadTask(task.taskId);
+              await provider.deleteTask(task.taskId);
               onRefresh();
             },
           ),
@@ -520,7 +520,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.delete),
             label: Text(l10n.commonDelete),
             onPressed: () async {
-              await manager.deleteDownloadTask(task.taskId);
+              await provider.deleteTask(task.taskId);
               onRefresh();
             },
           ),
@@ -532,7 +532,7 @@ class _DownloadTaskTile extends StatelessWidget {
             icon: const Icon(Icons.close),
             label: Text(l10n.transferCancel),
             onPressed: () async {
-              await manager.cancelDownloadTask(task.taskId);
+              await provider.cancelTask(task.taskId);
               onRefresh();
             },
           ),
@@ -543,6 +543,9 @@ class _DownloadTaskTile extends StatelessWidget {
     return buttons;
   }
 
+  // flutter_downloader marks tasks "failed" with progress=100 when the download
+  // completed but post-processing (checksum, file move) failed. The file is
+  // usable, so we display it as complete to avoid confusing the user.
   DownloadTaskStatus _getDisplayStatus(DownloadTask task) {
     if (task.status == DownloadTaskStatus.failed && task.progress == 100) {
       return DownloadTaskStatus.complete;

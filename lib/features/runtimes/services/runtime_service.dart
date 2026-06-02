@@ -104,6 +104,7 @@ class RuntimeService {
           defaultExecScript(info.type ?? 'php'),
       packageManager: params['PACKAGE_MANAGER']?.toString() ??
           (info.type == 'node' ? 'npm' : ''),
+      // Editing always triggers a rebuild so the container picks up changes.
       rebuild: true,
       exposedPorts: info.exposedPorts ?? const <RuntimeExposedPort>[],
       environments: info.environments ?? const <RuntimeEnvironment>[],
@@ -207,6 +208,10 @@ class RuntimeService {
     };
   }
 
+  // Each operation has its own set of disallowed statuses. 'local' resource
+  // runtimes are container-managed externally and cannot be started/stopped
+  // from the client. 'config' requires 'Running' because the advanced config
+  // endpoints live inside the running container.
   bool _isDisabled(RuntimeInfo row, String type) {
     switch (type) {
       case 'stop':

@@ -153,6 +153,8 @@ class _FileEditorPageState extends State<FileEditorPage> {
     }
   }
 
+  // Shows a save/discard/cancel dialog when there are unsaved changes.
+  // Returns true only if the user explicitly chose to leave (discard or save+leave).
   Future<bool> _onWillPop() async {
     if (!_hasChanges) return true;
 

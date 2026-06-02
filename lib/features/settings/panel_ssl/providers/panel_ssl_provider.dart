@@ -196,6 +196,7 @@ class PanelSslProvider extends ChangeNotifier with SafeChangeNotifier {
         cert: cert,
         key: key,
       );
+      // Silent refresh avoids a second loading spinner after a successful upload.
       await loadSslInfo(silent: true);
       _appendHistory(
         PanelSslHistoryEntry(
@@ -236,6 +237,8 @@ class PanelSslProvider extends ChangeNotifier with SafeChangeNotifier {
     }
   }
 
+  // Server API uses inconsistent field names across versions (e.g. 'domain'
+  // vs 'bindDomain'), so we try multiple keys and return the first match.
   String _readValue(List<String> keys) {
     for (final key in keys) {
       final value = _sslInfo[key];

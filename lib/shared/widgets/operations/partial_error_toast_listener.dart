@@ -29,6 +29,7 @@ class PartialErrorToastListener extends StatefulWidget {
 
 class _PartialErrorToastListenerState extends State<PartialErrorToastListener> {
   String? _lastShownError;
+  // Incremented on each schedule call; stale callbacks check this to bail out
   int _toastScheduleGeneration = 0;
 
   @override
@@ -70,6 +71,7 @@ class _PartialErrorToastListenerState extends State<PartialErrorToastListener> {
     if (!widget.hasCachedData || error == null || error.isEmpty) {
       return;
     }
+    // Deduplicate: only show each distinct error once until it clears
     if (_lastShownError == error) {
       return;
     }

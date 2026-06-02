@@ -74,6 +74,8 @@ class DatabasesProvider extends ChangeNotifier with SafeChangeNotifier {
       if (isDisposed) return;
       DatabaseListItem? selectedTarget = _state.selectedTarget;
       var targets = _state.targets;
+      // Remote and Redis scopes don't support target selection (no multi-instance
+      // concept), so skip the targets API call for those scopes.
       if (scope != DatabaseScope.remote &&
           scope != DatabaseScope.redis &&
           targets.isEmpty) {
@@ -318,6 +320,9 @@ class DatabaseDetailProvider extends ChangeNotifier {
     });
   }
 
+  /// Runs a mutation action with submitting state management.
+  /// The caller's action is expected to call load() on success to refresh data,
+  /// which will trigger its own notifyListeners() cycle.
   Future<bool> _runSubmit(Future<void> Function() action) async {
     _isSubmitting = true;
     _error = null;
@@ -424,6 +429,9 @@ class DatabaseFormProvider extends ChangeNotifier with SafeChangeNotifier {
     }
   }
 
+  /// Parses Go backend validation errors of the form
+  /// `Key: 'Foo.Bar' Error:Field validation for 'Bar' failed on the 'required' tag`
+  /// into human-readable messages.
   List<String> _friendlyErrorMessages(String raw) {
     final fieldMappings = <String, String>{
       'Name': 'Name',

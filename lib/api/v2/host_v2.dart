@@ -8,16 +8,22 @@ import '../../data/models/host_models.dart';
 import '../../data/models/host_tree_models.dart';
 import 'api_response_parser.dart';
 
+/// 1Panel host management API client.
+///
+/// Supports CRUD, connection testing, and tree queries with automatic legacy endpoint fallback.
 class HostV2Api {
   HostV2Api(this._client);
 
   final DioClient _client;
 
+  // 1Panel 2.x moved host endpoints from /hosts/* to /core/hosts/*.
+  // Older servers return 404/405 for the new paths, so we fall back.
   bool _shouldFallbackToLegacy(DioException error) {
     final statusCode = error.response?.statusCode;
     return statusCode == 404 || statusCode == 405;
   }
 
+  /// Tries [primaryPath] first; on 404/405 retries with [legacyPath].
   Future<Response<T>> _postWithLegacyFallback<T>({
     required String primaryPath,
     required String legacyPath,
@@ -39,6 +45,7 @@ class HostV2Api {
     }
   }
 
+  // Legacy path puts the ID in the request body, not the URL path.
   Future<Response<Map<String, dynamic>>> _postHostByIdWithFallback(
     int id,
   ) async {

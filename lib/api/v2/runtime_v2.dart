@@ -5,11 +5,15 @@ import '../../core/network/dio_client.dart';
 import '../../data/models/common_models.dart';
 import '../../data/models/runtime_models.dart';
 
+/// 1Panel runtime environment API client.
+///
+/// Manages PHP/Node/Supervisor runtimes, extensions, configs, FPM status, and Node modules.
 class RuntimeV2Api {
   RuntimeV2Api(this._client);
 
   final DioClient _client;
 
+  // Server may return either `{data: {…}}` or `{…}` directly; normalize both.
   Map<String, dynamic> _extractMapPayload(dynamic raw) {
     if (raw is Map<String, dynamic>) {
       final nested = raw['data'];
@@ -212,6 +216,7 @@ class RuntimeV2Api {
     );
   }
 
+  // API may return the file content as a JSON object or a plain string.
   Future<Response<PHPConfigFileContent>> loadPhpConfigFile(
     PHPConfigFileRequest request,
   ) async {
@@ -240,6 +245,7 @@ class RuntimeV2Api {
     );
   }
 
+  // API returns either `{params: {...}}` or a flat map depending on version.
   Future<Response<PHPFpmConfig>> loadPhpFpmConfig(int id) async {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/runtimes/php/fpm/config/$id'),
@@ -401,6 +407,7 @@ class RuntimeV2Api {
     );
   }
 
+  // API returns a List of entries on newer versions, or a flat Map on older ones.
   Future<Response<List<FpmStatusItem>>> getPhpStatus(int id) async {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/runtimes/php/fpm/status/$id'),

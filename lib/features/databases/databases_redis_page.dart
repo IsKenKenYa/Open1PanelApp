@@ -78,6 +78,10 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
 
     final config = detail?.redisConfig ?? const <String, dynamic>{};
     final persistence = detail?.redisPersistence ?? const <String, dynamic>{};
+    // Overwrite controllers on every build because the detail data comes from
+    // the provider and may have been refreshed. This is acceptable here since
+    // the user is viewing config (not actively editing) -- edits go through
+    // dedicated submit actions that reload afterward.
     _timeoutController.text = config['timeout']?.toString() ?? '';
     _maxClientsController.text = config['maxclients']?.toString() ?? '';
     _appendOnlyController.text = persistence['appendonly']?.toString() ?? '';
@@ -178,6 +182,8 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
     DatabaseDetailProvider provider,
     DatabaseListItem item,
   ) async {
+    // The API requires both 'type' and 'dbType' fields for Redis persistence
+    // updates -- this is a server-side requirement, not a client convention.
     final ok = await provider.updateRedisPersistence({
       'type': item.engine,
       'dbType': item.engine,

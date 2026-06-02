@@ -36,9 +36,11 @@ class PlatformFileService {
   }) async {
     final safeFileName = _sanitizeFileName(fileName);
 
+    // Three-tier fallback: native picker (user choice) -> app documents dir
+    // (always writable) -> exception. The middle tier handles cancelled pickers
+    // and permission failures without losing the saved bytes.
     if (_capabilities.supportsNativeFileSave) {
       try {
-        // Try native file picker first — lets user choose save location
         final pickerPath = await _ohosChannel.pickAndSaveBytes(
           fileName: safeFileName,
           bytes: bytes,
@@ -47,23 +49,16 @@ class PlatformFileService {
         if (pickerPath != null && pickerPath.isNotEmpty) {
           return pickerPath;
         }
-        // User cancelled picker — fall back to save-to-download
-        final downloadPath = await _ohosChannel.saveBytesToDownload(
-          fileName: safeFileName,
-          bytes: bytes,
-        );
-        if (downloadPath != null && downloadPath.isNotEmpty) {
-          return downloadPath;
-        }
       } catch (error, stackTrace) {
         appLogger.wWithPackage(
           'core.platform.file_service',
-          'OHOS native save failed, falling back to app documents directory',
+          'OHOS native picker save failed, falling back to app documents directory',
           error: error,
           stackTrace: stackTrace,
         );
       }
 
+      // Picker cancelled or failed — save to app documents directory
       return _saveToFallbackDirectory(
         fileName: safeFileName,
         bytes: bytes,
@@ -120,6 +115,8 @@ class PlatformFileService {
       return;
     }
     if (Platform.isAndroid || Platform.isIOS) {
+      // No reliable cross-app file opener on mobile; open the parent
+      // directory so the user can tap the file in their file manager.
       appLogger.wWithPackage(
         'core.platform.file_service',
         '当前平台不支持直接打开文件，将打开文件所在目录',
@@ -150,6 +147,8 @@ class PlatformFileService {
   Future<String?> getDownloadDirectoryPath() async {
     try {
       if (_capabilities.supportsAndroidIntent) {
+        // Use explicit path instead of getDownloadsDirectory() —
+        // the latter is unreliable on some Android OEM ROMs.
         final dir = Directory('/storage/emulated/0/Download');
         if (await dir.exists()) {
           return dir.path;
@@ -232,6 +231,8 @@ class PlatformFileService {
         await getApplicationDocumentsDirectory();
   }
 
+  /// Appends numeric suffixes (`_1`, `_2`, ...) to avoid overwriting existing
+  /// files when the user exports the same name multiple times in a session.
   Future<String> _getUniqueFilePath(String directory, String fileName) async {
     final filePath = '$directory/$fileName';
 

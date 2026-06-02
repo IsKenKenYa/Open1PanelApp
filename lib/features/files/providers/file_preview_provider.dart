@@ -244,6 +244,9 @@ class FilePreviewProvider extends ChangeNotifier with SafeChangeNotifier {
       return;
     }
 
+    // Paged preview loads only a window of lines at a time, avoiding OOM for
+    // large files. Forced when navigating to a specific line (e.g. log viewer),
+    // or auto-enabled for text files >= 1 MB.
     final forcePaged = initialLine != null;
     _usePagedTextPreview = forcePaged ||
         (_fileType == PreviewFileType.text &&
@@ -368,6 +371,9 @@ class FilePreviewProvider extends ChangeNotifier with SafeChangeNotifier {
         throw Exception('保存临时文件失败');
       }
 
+      // Video/audio players must be initialized on the widget side (they need
+      // a BuildContext for platform views). Set flag and wait for the page
+      // to call completeMediaInitialization() after setting up controllers.
       if (_fileType == PreviewFileType.video ||
           _fileType == PreviewFileType.audio) {
         _awaitingMediaInitialization = true;

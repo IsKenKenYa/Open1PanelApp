@@ -174,6 +174,8 @@ class AuthProvider extends ChangeNotifier with SafeChangeNotifier {
       );
 
       if (response?.mfaStatus == true) {
+        // Must stash credentials so the MFA step can re-submit them with the TOTP code.
+        // The server requires username+password+code in a single MFA call.
         _username = username;
         _pendingPassword = password;
         _entranceCode = response?.entranceCode ?? _entranceCode;
@@ -222,6 +224,8 @@ class AuthProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
 
     try {
+      // Guard against stale state: if the user navigated away and back,
+      // _pendingPassword may have been cleared by resetMfaState().
       if (_username == null || _pendingPassword == null) {
         _errorMessage = 'MFA context is missing. Please login again.';
         _isLoading = false;
@@ -360,6 +364,7 @@ class AuthProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   void resetMfaState() {
+    // Clears stashed password to prevent credential leakage if user cancels MFA.
     _pendingPassword = null;
     _status = AuthStatus.unauthenticated;
     notifyListeners();

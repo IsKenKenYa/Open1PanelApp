@@ -169,6 +169,7 @@ class MonitorSetting {
     this.defaultIO,
   });
 
+  // API returns PascalCase keys on some 1Panel versions and camelCase on others.
   factory MonitorSetting.fromJson(Map<String, dynamic> json) {
     final intervalRaw = json['monitorInterval'] ?? json['MonitorInterval'];
     final retentionRaw = json['monitorStoreDays'] ?? json['MonitorStoreDays'];

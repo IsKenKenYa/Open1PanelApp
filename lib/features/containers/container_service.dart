@@ -22,6 +22,8 @@ class ContainerService extends BaseComponent {
             );
 
   final ContainerRepository _repository;
+  // Compose API uses a separate client because it lives in a different API module
+  // than container operations (ComposeV2Api vs ContainerV2Api).
   ComposeV2Api? _composeApi;
 
   Future<ContainerV2Api> _ensureApi() async {
@@ -40,6 +42,7 @@ class ContainerService extends BaseComponent {
   Future<List<ContainerInfo>> listContainers() {
     return runGuarded(() async {
       final api = await _ensureApi();
+      // pageSize 100 is a pragmatic limit; the server API doesn't support unbounded queries.
       final response = await api.searchContainers(PageContainer(
         page: 1,
         pageSize: 100,
@@ -330,7 +333,7 @@ class ContainerService extends BaseComponent {
       if (data == null) return '';
 
       if (data is String) {
-        // Handle SSE format: "data: log content"
+        // Server streams logs via SSE; strip the "data: " prefix from each frame.
         if (data.contains('data:')) {
           final lines = data.split('\n');
           final logs = <String>[];

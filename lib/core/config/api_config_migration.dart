@@ -72,7 +72,7 @@ class ApiConfigMigration {
         error: e,
         stackTrace: stackTrace,
       );
-      // Don't mark as complete so it can retry next time
+      // Intentionally not marking as complete -- next app launch will retry.
     }
   }
 }

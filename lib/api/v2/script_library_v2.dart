@@ -5,6 +5,9 @@ import '../../core/network/dio_client.dart';
 import '../../data/models/common_models.dart';
 import '../../data/models/script_library_models.dart';
 
+/// 1Panel script library API client.
+///
+/// Provides search, sync, and delete operations for the centralized script library.
 class ScriptLibraryV2Api {
   ScriptLibraryV2Api(this._client);
 

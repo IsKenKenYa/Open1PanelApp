@@ -2,6 +2,8 @@ part of 'dashboard_provider.dart';
 
 extension DashboardProviderLoading on DashboardProvider {
   Future<void> loadData({bool silent = false}) async {
+    // Silent refresh keeps the existing data visible while fetching updates
+    // in the background — avoids a full-screen loading spinner on every poll.
     if (!silent) {
       _status = DashboardStatus.loading;
       _emitChange();
@@ -33,7 +35,8 @@ extension DashboardProviderLoading on DashboardProvider {
         _errorMessage = e.toString();
       }
       
-      // 如果是静默刷新失败，保持 loaded 状态以允许继续轮询
+      // Silent refresh failure: keep the loaded state so auto-refresh continues
+      // polling — a transient network hiccup shouldn't blank out the dashboard.
       if (!silent) {
         _status = DashboardStatus.error;
       }

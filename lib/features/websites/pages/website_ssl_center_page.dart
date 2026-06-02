@@ -289,6 +289,7 @@ class _WebsiteSslCenterBody extends StatelessWidget {
       ),
     );
 
+    // Dispose after dialog closes; the controllers are no longer referenced.
     acmeController.dispose();
     domainController.dispose();
     providerController.dispose();
@@ -387,6 +388,7 @@ class _WebsiteSslCenterBody extends StatelessWidget {
       ),
     );
 
+    // Dispose after dialog closes; the controllers are no longer referenced.
     certController.dispose();
     keyController.dispose();
     certPathController.dispose();
@@ -625,6 +627,7 @@ class _WebsiteSslCenterBody extends StatelessWidget {
       ),
     );
 
+    // Dispose after dialog closes; the controllers are no longer referenced.
     primaryController.dispose();
     providerController.dispose();
     descriptionController.dispose();
@@ -668,6 +671,7 @@ class _WebsiteSslCenterBody extends StatelessWidget {
     );
   }
 
+  // Provider returns hardcoded English group labels; map them to l10n here.
   String _localizedGroupTitle(BuildContext context, String rawTitle) {
     final l10n = context.l10n;
     switch (rawTitle) {

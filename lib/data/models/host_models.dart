@@ -209,8 +209,10 @@ class HostInfo extends Equatable {
     return HostInfo(
       id: json['id'] as int,
       name: json['name'] as String,
+      // API uses 'addr' in SSH contexts but 'address' in host-management contexts
       addr: json['addr'] as String? ?? json['address'] as String?,
       port: json['port'] as int?,
+      // API uses 'user' in SSH contexts but 'username' in host-management contexts
       user: json['user'] as String? ?? json['username'] as String?,
       groupID: json['groupID'] as int? ??
           int.tryParse(json['groupID']?.toString() ?? ''),

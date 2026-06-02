@@ -18,6 +18,7 @@ const TAG = 'OhosDownloadPlugin';
 const METHOD_CHANNEL = 'onepanel/ohos_download';
 const EVENT_CHANNEL = 'onepanel/ohos_download_progress';
 
+// Hand-rolled UUID v4 — ArkTS stdlib has no built-in UUID generator.
 function generateTaskId(): string {
   const hex = '0123456789abcdef';
   let result = '';
@@ -25,9 +26,9 @@ function generateTaskId(): string {
     if (i === 8 || i === 13 || i === 18 || i === 23) {
       result += '-';
     } else if (i === 14) {
-      result += '4';
+      result += '4'; // UUID v4 version nibble (RFC 4122)
     } else if (i === 19) {
-      result += hex.charAt(8 + Math.floor(Math.random() * 4));
+      result += hex.charAt(8 + Math.floor(Math.random() * 4)); // RFC 4122 variant bits (10xx)
     } else {
       result += hex.charAt(Math.floor(Math.random() * 16));
     }
@@ -134,6 +135,12 @@ export default class OhosDownloadPlugin
           result.success(true);
           return;
         }
+        case 'delete': {
+          const taskId = call.argument('taskId') as string;
+          this.deleteTask(taskId);
+          result.success(true);
+          return;
+        }
         case 'getProgress': {
           const taskId = call.argument('taskId') as string;
           const entry = this.downloads.get(taskId);
@@ -229,6 +236,7 @@ export default class OhosDownloadPlugin
     entry.httpRequest = httpRequest;
 
     try {
+      // OHOS http API buffers the full response before returning — no streaming support.
       const response = await httpRequest.request(entry.url, {
         method: http.RequestMethod.GET,
         header: entry.headers,
@@ -247,16 +255,22 @@ export default class OhosDownloadPlugin
       const contentLength = headerObj['content-length'];
       entry.totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
 
+      // TRUNC is intentional: resume re-downloads the whole file (no Range support on OHOS).
       const file = fs.openSync(
         entry.filePath,
         fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE | fs.OpenMode.TRUNC,
       );
 
       try {
+        // Chunk-based write loop is not for streaming — the buffer is already fully in memory.
+        // Chunking exists solely to allow pause/cancel checks between writes and to avoid
+        // blocking the event loop on a single giant writeSync call.
         const buffer = response.result as ArrayBuffer;
         const uint8 = new Uint8Array(buffer);
         const chunkSize = 64 * 1024;
         for (let offset = 0; offset < uint8.length; offset += chunkSize) {
+          // Fake pause: poll-wait until status changes back to 'running' or 'cancelled'.
+          // OHOS http API has no native pause/resume for downloads.
           while (entry.status === 'paused') {
             await new Promise<void>((resolve: () => void) => setTimeout(resolve, 500));
           }
@@ -299,6 +313,8 @@ export default class OhosDownloadPlugin
     }
   }
 
+  // Resume re-downloads from scratch: OHOS http API has no Range header support,
+  // so there is no way to resume a partial download. The file is truncated and re-fetched.
   private async resumeDownload(taskId: string): Promise<void> {
     const entry = this.downloads.get(taskId);
     if (entry && entry.status === 'paused') {
@@ -320,6 +336,10 @@ export default class OhosDownloadPlugin
       this.sendProgress(entry);
       this.downloads.delete(taskId);
     }
+  }
+
+  private deleteTask(taskId: string): void {
+    this.downloads.delete(taskId);
   }
 
   private async saveDownloadedFile(taskId: string): Promise<string | null> {

@@ -99,10 +99,12 @@ class AuthService {
 
   Future<void> logout() async {
     appLogger.dWithPackage('features.auth.auth_service', 'logout');
+    // Clear local session FIRST so even if the server call fails,
+    // the user is still logged out client-side.
     try {
-      await _repository.logout();
-    } finally {
       await _sessionStore.clearSession();
+    } finally {
+      await _repository.logout();
     }
   }
 

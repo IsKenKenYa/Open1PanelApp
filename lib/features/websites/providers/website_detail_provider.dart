@@ -19,13 +19,14 @@ class WebsiteDetailProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> loadDetail() async {
     if (isDisposed) return;
-    
+
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
       website = await _service.getWebsiteDetail(websiteId);
+      // Guard against notifying a disposed listener after the async gap.
       if (isDisposed) return;
     } catch (e) {
       if (!isDisposed) {

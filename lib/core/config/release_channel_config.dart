@@ -26,6 +26,7 @@ class AppReleaseChannelConfig {
 
   static bool get shouldShowWatermark => isPreviewFamily;
 
+  // Preview/alpha users are developers/testers who need maximum log visibility.
   static bool get forceDebugLogLevel =>
       current == AppReleaseChannel.preview ||
       current == AppReleaseChannel.alpha;
@@ -116,6 +117,7 @@ class AppReleaseChannelConfig {
       return AppReleaseChannel.beta;
     }
 
+    // 'dev' maps to alpha (not preview) -- preview is reserved for canary/early access.
     if (normalized == 'dev' || normalized.startsWith('dev/')) {
       return AppReleaseChannel.alpha;
     }

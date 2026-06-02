@@ -7,6 +7,7 @@ import 'snackbar_utils.dart';
 class DebugErrorDialog {
   static void show(BuildContext context, String title, dynamic error,
       {StackTrace? stackTrace}) {
+    // Safety guard: never show raw errors to end users even if called from release code paths
     if (!kDebugMode) return;
 
     final errorMessage = error.toString();
@@ -84,6 +85,7 @@ extension DebugErrorCatch<T> on Future<T> {
       return await this;
     } catch (e, stackTrace) {
       final message = title != null ? '$title: $e' : '操作失败: $e';
+      // Debug: surface stack trace via "详情" action; Release: user-friendly message only
       if (kDebugMode) {
         SnackBarUtils.showErrorWithDebugDetails(
           context,

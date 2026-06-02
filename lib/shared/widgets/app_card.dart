@@ -76,6 +76,8 @@ class AppCard extends StatelessWidget {
                         ),
                         if (subtitle != null) ...[
                           const SizedBox(height: 4),
+                          // Wrap in DefaultTextStyle so callers can pass any
+                          // Widget (e.g. Text, Row) and still get uniform styling.
                           DefaultTextStyle(
                             style: Theme.of(context)
                                     .textTheme

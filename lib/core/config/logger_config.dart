@@ -50,7 +50,7 @@ class LoggerConfig {
   static const int maxLogFiles = 5;
   static const int logRetentionDays = 30;
 
-  /// 日志过滤配置
+  /// Noisy platform-specific tags that clutter logs without adding value.
   static const List<String> excludedLogTags = [
     'MESA',
     'exportSyncFdForQSRILocked',

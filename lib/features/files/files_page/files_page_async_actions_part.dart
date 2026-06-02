@@ -76,6 +76,8 @@ extension _FilesViewAsyncActions on _FilesViewState {
     appLogger.dWithPackage('files_page', '_toggleFavorite: path=${file.path}');
     final isFavorite = provider.data.isFavorite(file.path);
 
+    // Already favorited — show info and return early. The server returns an
+    // error for duplicate favorites, so we avoid the round-trip.
     if (isFavorite) {
       if (context.mounted) {
         SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
@@ -92,6 +94,8 @@ extension _FilesViewAsyncActions on _FilesViewState {
       appLogger.eWithPackage('files_page', '_toggleFavorite: 失败', error: e);
       if (!context.mounted) return;
       final errorMsg = e.response?.data?.toString() ?? e.message ?? '';
+      // Server returns "已收藏" / "already" for duplicate favorites — treat as
+      // success rather than showing an error to the user.
       if (errorMsg.contains('已收藏') || errorMsg.contains('already')) {
         SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       } else {
@@ -106,6 +110,7 @@ extension _FilesViewAsyncActions on _FilesViewState {
       );
       if (!context.mounted) return;
       final errorMsg = e.toString();
+      // Same duplicate-favorite handling for non-Dio exceptions.
       if (errorMsg.contains('已收藏') || errorMsg.contains('already')) {
         SnackBarUtils.showInfo(context, l10n.filesFavoritesAdded);
       } else {

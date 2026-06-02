@@ -4,6 +4,9 @@ import '../../core/config/api_constants.dart';
 import '../../data/models/openresty_models.dart';
 import 'api_response_parser.dart';
 
+/// 1Panel OpenResty (Nginx) management API client.
+///
+/// Manages OpenResty config, HTTPS defaults, modules, scope params, and build operations.
 class OpenRestyV2Api {
   final DioClient _client;
 

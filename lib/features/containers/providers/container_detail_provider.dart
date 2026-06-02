@@ -49,8 +49,10 @@ class ContainerDetailProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> loadInspect() async {
+    // Guard against notifyListeners() after widget tree disposal; the provider
+    // outlives the page if the user navigates away during a network call.
     if (isDisposed) return;
-    
+
     _inspectLoading = true;
     _inspectError = null;
     notifyListeners();

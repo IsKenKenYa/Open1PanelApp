@@ -51,6 +51,8 @@ class PinnedModulesController extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
   }
 
+  // Ensure exactly 2 pinned modules: prefer stored prefs, then fill with
+  // sensible defaults (files > containers > apps) so the bottom nav is never empty.
   List<ClientModule> _normalizePins(List<ClientModule>? candidate) {
     final next = <ClientModule>[];
     for (final module in candidate ?? const <ClientModule>[]) {

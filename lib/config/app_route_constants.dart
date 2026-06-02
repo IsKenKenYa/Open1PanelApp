@@ -1,5 +1,6 @@
 /// 路由常量定义，独立于路由构建逻辑，供全项目引用。
 class AppRoutes {
+  // Must be '/' because it's used as MaterialApp.initialRoute
   static const String splash = '/';
   static const String onboarding = '/onboarding';
   static const String home = '/home';

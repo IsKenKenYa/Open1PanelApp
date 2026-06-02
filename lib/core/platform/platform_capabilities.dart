@@ -24,6 +24,8 @@ class PlatformCapabilitiesSnapshot {
     if (targetPlatform.name == 'ohos') {
       return true;
     }
+    // flutter_ohos may report TargetPlatform.android on some HarmonyOS builds;
+    // fall back to OS string detection to cover those variants.
     return targetPlatform == TargetPlatform.android &&
         (_normalizedOperatingSystem.contains('ohos') ||
             _normalizedOperatingSystem.contains('harmony'));

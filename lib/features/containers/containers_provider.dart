@@ -263,9 +263,11 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
       // 计算统计（简化处理，实际应该根据是否被使用来判断）
       _data = _data.copyWith(
         images: images,
+        // All images marked as "used" because the API doesn't expose which
+        // images are referenced by containers.
         imageStats: ImageStats(
           total: images.length,
-          used: images.length, // 简化处理
+          used: images.length,
           unused: 0,
         ),
         lastUpdated: DateTime.now(),
@@ -305,6 +307,7 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
       ContainerStatus? status;
       var daemonJson = '';
 
+      // Each section is loaded independently so a failure in one doesn't block others.
       try {
         containers = await _service!.listContainers();
         _containersState = _containersState.copyWith(
@@ -370,7 +373,8 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
         );
       }
 
-      // 加载 Compose 项目列表
+      // Compose and stats are optional enrichments; their failure must not prevent
+      // the primary container/image/repo/template data from displaying.
       int composeTotal = 0, composeRunning = 0;
       try {
         final composePage = await _service!.listComposesPage();
@@ -378,11 +382,8 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
         composeRunning = composePage.items
             .where((c) => c.status?.toLowerCase() == 'running')
             .length;
-      } catch (_) {
-        // compose 加载失败不影响主流程
-      }
+      } catch (_) {}
 
-      // 加载容器实时资源统计
       double totalCpu = 0.0, totalMemPct = 0.0;
       int totalMemBytes = 0;
       try {
@@ -392,9 +393,7 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
           totalMemPct += s.memoryPercent;
           totalMemBytes += s.memoryUsage;
         }
-      } catch (_) {
-        // stats 加载失败不影响主流程
-      }
+      } catch (_) {}
 
       try {
         daemonJson = await _service!.getDaemonJson();
@@ -444,6 +443,8 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
           totalMemoryPercent: totalMemPct,
           totalMemoryUsageBytes: totalMemBytes,
         ),
+        // Image used/unused counts are a simplification; the API doesn't expose
+        // which images are referenced by containers, so all are marked "used".
         imageStats: ImageStats(
           total: images.length,
           used: images.length,
@@ -659,6 +660,7 @@ class ContainersProvider extends ChangeNotifier with SafeChangeNotifier {
     try {
       await _ensureService();
       await _service!.commitContainer(request);
+      // Committing creates a new image, not a container, so refresh images.
       await loadImages();
       return true;
     } catch (e) {

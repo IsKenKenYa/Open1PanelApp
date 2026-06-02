@@ -190,6 +190,7 @@ class BackupRepository {
     await api.uploadForRecover(request);
   }
 
+  // API requires base64-encoded credentials for backup account operations
   BackupOperate _encodeOperate(BackupOperate request) {
     return BackupOperate(
       id: request.id,

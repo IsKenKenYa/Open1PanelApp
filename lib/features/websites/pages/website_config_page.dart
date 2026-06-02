@@ -72,6 +72,8 @@ class _WebsiteConfigBodyState extends State<_WebsiteConfigBody> {
         }
 
         final configContent = provider.nginxConfigFile?.content ?? '';
+        // Only overwrite the controller if user hasn't made local edits,
+        // to avoid losing unsaved changes during widget rebuilds.
         if (_configController.text.isEmpty ||
             _configController.text == configContent) {
           _configController.text = configContent;

@@ -3,11 +3,15 @@ import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
 import '../../data/models/terminal_models.dart';
 
+/// 1Panel terminal session API client.
+///
+/// Manages terminal sessions, commands, I/O, file operations, themes, fonts, and config.
 class TerminalV2Api {
   final DioClient _client;
 
   TerminalV2Api(this._client);
 
+  // Terminal endpoints return the object directly (no `{data}` envelope).
   Future<Response<TerminalSessionInfo>> createTerminalSession(
       TerminalSessionCreate request) async {
     final response = await _client.post(

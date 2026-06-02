@@ -8,9 +8,8 @@ List<RiskNotice> localizeWebsiteSiteSslRiskNotices(
 ) {
   final l10n = context.l10n;
   return notices.map((notice) {
-    // NOTE: switch keys are canonical English titles from the provider.
-    // If the provider changes these strings, the default branch will
-    // return the original (unlocalized) notice. Update both sides together.
+    // Switch keys are canonical English titles from WebsiteSiteSslProvider._buildRisks.
+    // If the provider changes these strings, the default branch returns unlocalized text.
     switch (notice.title) {
       case 'HTTPS enabled without certificate':
         return RiskNotice(

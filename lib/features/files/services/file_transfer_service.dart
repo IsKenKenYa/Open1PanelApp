@@ -125,9 +125,10 @@ class FileTransferService {
       final result = await Permission.storage.request();
       if (result.isGranted) return true;
 
-      // 从 Android 10 (API 29) 开始，向公共 Downloads 目录写入新文件不需要存储权限。
-      // 在 Android 13+ 上，Permission.storage 会直接返回 denied。
-      // 因此，即使被拒绝，我们也返回 true 放行，让下载操作依赖系统的 Scoped Storage 机制。
+      // From Android 10 (API 29), writing new files to the public Downloads
+      // directory does not require storage permission — Scoped Storage handles it.
+      // On Android 13+, Permission.storage returns denied unconditionally, so we
+      // always return true and let the OS enforce access control.
       return true;
     } catch (_) {
       return true;
@@ -155,9 +156,12 @@ class FileTransferService {
           await getApplicationDocumentsDirectory();
     }
 
+    // Sanitize characters that are illegal on most filesystems (Windows + Linux).
     final safeFileName = fileName.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
     final filePath = '${downloadDir.path}/$safeFileName';
 
+    // Auto-increment filename to avoid overwriting existing downloads
+    // (e.g. "file.txt" -> "file (1).txt" -> "file (2).txt").
     var counter = 1;
     var finalPath = filePath;
     while (await File(finalPath).exists()) {

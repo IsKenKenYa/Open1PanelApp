@@ -45,6 +45,7 @@ String databaseBackupDetailName(DatabaseListItem item) {
     case DatabaseScope.postgresql:
       return item.name;
     case DatabaseScope.redis:
+      // Redis has no database-level naming concept (it's key-value), so return empty.
       return '';
     case DatabaseScope.remote:
       throw UnsupportedError('Remote databases do not support backups.');

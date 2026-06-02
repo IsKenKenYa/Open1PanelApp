@@ -33,6 +33,8 @@ Widget buildShellModulePage(
         return NoServerSelectedState(moduleName: context.l10n.navFiles);
       }
       final filesPage = const FilesPage();
+      // Key by serverId so Flutter rebuilds the entire subtree when switching servers,
+      // avoiding stale state from the previous server's providers.
       return useStableModuleKey
           ? filesPage
           : KeyedSubtree(

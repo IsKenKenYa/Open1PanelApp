@@ -56,6 +56,8 @@ class _TerminalPageState extends State<TerminalPage> {
 
   Future<void> _initialize() async {
     await _provider.initialize(_initialIntent);
+    // On mobile, auto-open the detail page for an explicitly requested session
+    // (e.g. from a deep link) so the user lands directly on the terminal.
     if (!mounted ||
         _didOpenExplicitMobileDetail ||
         !_initialIntent.isExplicitSession ||
@@ -70,6 +72,8 @@ class _TerminalPageState extends State<TerminalPage> {
     await _openSessionDetail(session);
   }
 
+  // Desktop and tablets >=900px get a sidebar+viewport layout;
+  // phones get a list-only view where tapping opens a detail page.
   bool _isWideLayout(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     return PlatformUtils.isDesktop(context) || width >= 900;

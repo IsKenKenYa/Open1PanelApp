@@ -168,6 +168,8 @@ class PhpConfigProvider extends ChangeNotifier with SafeChangeNotifier, AsyncSta
     phpConfigProviderRemoveVolume(this, index);
   }
 
+  /// Loads all six PHP config layers in parallel: basic config, FPM status,
+  /// FPM config, container config, and raw php.ini / fpm.conf file contents.
   Future<void> load() async {
     final runtimeId = _runtimeId;
     if (runtimeId == null) {
@@ -196,7 +198,10 @@ class PhpConfigProvider extends ChangeNotifier with SafeChangeNotifier, AsyncSta
       _fpmFileContent = fpmFile.content;
       _uploadMaxSize = _config.uploadMaxSize ?? '';
       _maxExecutionTime = _config.maxExecutionTime ?? '';
+      // Server stores as List, but UI displays as comma-separated string.
       _disableFunctions = _config.disableFunctions.join(',');
+      // Container config may lack an ID if never previously configured; fall
+      // back to the runtime ID so save requests carry a valid identifier.
       _containerConfig = _containerConfig.copyWith(
         id: _containerConfig.id == 0 ? runtimeId : _containerConfig.id,
       );
@@ -234,6 +239,7 @@ class PhpConfigProvider extends ChangeNotifier with SafeChangeNotifier, AsyncSta
           id: runtimeId,
           scope: 'php',
           params: _config.params,
+          // Round-trip: comma-separated string back to list for the API.
           disableFunctions: _disableFunctions
               .split(',')
               .map((item) => item.trim())

@@ -39,6 +39,8 @@ class _ConfigTabState extends State<ConfigTab> {
       builder: (context, provider, _) {
         final config = provider.data.daemonJson;
 
+        // Sync controller text only once from provider data; subsequent
+        // rebuilds must preserve user edits in the text field.
         if (!_isLoaded && config.isNotEmpty) {
           _controller.text = config;
           _isLoaded = true;

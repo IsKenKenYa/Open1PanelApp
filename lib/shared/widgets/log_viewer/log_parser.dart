@@ -72,6 +72,8 @@ class LogParser {
     r'^(\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)\s*(?:\[?(\w+)\]?)?\s*(.*)$',
   );
 
+  // Offload to a background isolate via compute() — log files can be large
+  // and parsing on the UI thread would cause jank.
   static Future<List<LogLine>> parse(String rawLogs) async {
     if (rawLogs.isEmpty) return [];
     return compute(_parseInBackground, rawLogs);
@@ -111,7 +113,8 @@ class LogParser {
       }
     }
 
-    // Fallback level detection
+    // Fallback: detect level by scanning full line text when the structured
+    // regex above didn't capture a level token (e.g. non-standard log formats).
     if (level == LogLevel.unknown) {
       final upperLine = line.toUpperCase();
       if (upperLine.contains('ERROR') ||

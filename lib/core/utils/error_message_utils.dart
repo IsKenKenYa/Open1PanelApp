@@ -36,6 +36,7 @@ class ErrorMessageUtils {
     return truncateForToast(normalized, maxLength: maxLength);
   }
 
+  /// 120 chars fits a single-line SnackBar on most phones without wrapping.
   static String truncateForToast(
     String message, {
     int maxLength = 120,
@@ -44,6 +45,7 @@ class ErrorMessageUtils {
     if (trimmed.length <= maxLength) {
       return trimmed;
     }
+    // Use ellipsis character (…) rather than "..." to save 2 chars and match typographic norms
     return '${trimmed.substring(0, maxLength - 1)}…';
   }
 }

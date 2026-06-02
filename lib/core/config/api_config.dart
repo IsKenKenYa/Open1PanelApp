@@ -21,6 +21,8 @@ class SecureApiKeyStore implements ApiKeyStore {
   PlatformSecureStorage? _storage;
   final Map<String, String> _memoryFallback = <String, String>{};
 
+  // OHOS: HUKS can silently return null even after a successful write,
+  // so we keep a parallel SharedPreferences copy as a safety net.
   bool get _shouldUsePrefsFallback =>
       !kIsWeb &&
       (io.Platform.isMacOS ||
@@ -103,6 +105,7 @@ class SecureApiKeyStore implements ApiKeyStore {
       }
       return _memoryFallback[key];
     } on TimeoutException catch (e, stackTrace) {
+      // Hung backend, not corrupt data -- the key may still exist, try fallbacks.
       appLogger.wWithPackage(
         _apiConfigManagerPackage,
         'secure storage read timeout for key: $key',
@@ -338,6 +341,8 @@ class ApiConfigManager {
         continue;
       }
 
+      // Old versions stored apiKey inline in the JSON; migrate to secure
+      // storage on first read and persist the cleaned format.
       final legacyApiKey = map['apiKey']?.toString();
       String? apiKey;
       if (legacyApiKey != null && legacyApiKey.isNotEmpty) {
@@ -443,6 +448,7 @@ class ApiConfigManager {
     if (configs.isEmpty) {
       return null;
     }
+    // orElse: stored ID may reference a deleted config; fall back to first available.
     return configs.firstWhere((c) => c.id == currentConfigId,
         orElse: () => configs.first);
   }

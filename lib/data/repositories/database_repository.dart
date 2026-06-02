@@ -212,6 +212,7 @@ class DatabaseRepository {
         'address': input.address,
         'port': input.port,
         'username': input.username,
+        // API requires base64-encoded password for remote databases
         'password': input.password == null
             ? null
             : base64Encode(utf8.encode(input.password!)),
@@ -232,6 +233,7 @@ class DatabaseRepository {
       'database': input.targetDatabase,
       'format': input.format,
       'username': input.username,
+      // API requires base64-encoded password for local database creation
       'password': input.password == null
           ? null
           : base64Encode(utf8.encode(input.password!)),

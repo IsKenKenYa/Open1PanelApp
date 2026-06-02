@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/></marker>
+    <marker id="arrow-hollow" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto"><polygon points="0 0, 12 4, 0 8" fill="none" stroke="#2563eb" stroke-width="1"/></marker>
+  </defs>
+  <rect width="1000" height="700" fill="#ffffff" rx="8"/>
+  <text x="500" y="36" text-anchor="middle" font-family="Helvetica" font-size="18" font-weight="bold" fill="#1e293b">1Panel Client - Transfer/Download System Class Diagram</text>
+  <text x="500" y="54" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#64748b">PlatformDownloadService interface + two implementations + TransferManager orchestrator</text>
+
+  <rect x="350" y="75" width="300" height="140" rx="4" fill="#f0f9ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="350" y="75" width="300" height="28" rx="4" fill="#2563eb"/>
+  <text x="500" y="94" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">&lt;&lt;interface&gt;&gt; PlatformDownloadService</text>
+  <text x="360" y="118" font-family="Courier New" font-size="10" fill="#1e293b">+ enqueue(url, savedDir, fileName, headers): String?</text>
+  <text x="360" y="133" font-family="Courier New" font-size="10" fill="#1e293b">+ pause(taskId): void</text>
+  <text x="360" y="148" font-family="Courier New" font-size="10" fill="#1e293b">+ resume(taskId): void</text>
+  <text x="360" y="163" font-family="Courier New" font-size="10" fill="#1e293b">+ cancel(taskId): void</text>
+  <text x="360" y="178" font-family="Courier New" font-size="10" fill="#1e293b">+ listTasks(): List&lt;PlatformDownloadTask&gt;</text>
+  <text x="360" y="193" font-family="Courier New" font-size="10" fill="#1e293b">+ retryWithFreshAuth(task, headers): String?</text>
+  <text x="500" y="210" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#64748b">lib/core/platform/services/platform_download_service.dart</text>
+
+  <rect x="40" y="280" width="280" height="120" rx="4" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
+  <rect x="40" y="280" width="280" height="28" rx="4" fill="#059669"/>
+  <text x="180" y="299" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">OhosDownloadService</text>
+  <text x="50" y="323" font-family="Courier New" font-size="10" fill="#1e293b">- methodChannel: MethodChannel</text>
+  <text x="50" y="338" font-family="Courier New" font-size="10" fill="#1e293b">- eventChannel: EventChannel</text>
+  <text x="50" y="353" font-family="Courier New" font-size="10" fill="#1e293b">- platformFileService: PlatformFileService</text>
+  <text x="50" y="368" font-family="Courier New" font-size="10" fill="#1e293b">+ onProgress: Stream&lt;OhosDownloadProgress&gt;</text>
+  <text x="50" y="383" font-family="Courier New" font-size="10" fill="#1e293b">+ saveDownloadedFile(taskId): String?</text>
+  <text x="180" y="397" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#64748b">ohos_download_service.dart</text>
+
+  <rect x="680" y="280" width="280" height="120" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="680" y="280" width="280" height="28" rx="4" fill="#dc2626"/>
+  <text x="820" y="299" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">UnsupportedPlatformDownloadService</text>
+  <text x="690" y="323" font-family="Courier New" font-size="10" fill="#1e293b">+ enqueue(): null (no-op)</text>
+  <text x="690" y="338" font-family="Courier New" font-size="10" fill="#1e293b">+ listTasks(): [] (empty)</text>
+  <text x="690" y="353" font-family="Courier New" font-size="10" fill="#1e293b">+ pause/resume/cancel(): void</text>
+  <text x="820" y="397" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#64748b">Fallback for unsupported platforms</text>
+
+  <line x1="400" y1="215" x2="180" y2="280" stroke="#059669" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <line x1="600" y1="215" x2="820" y2="280" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="270" y="245" font-family="Helvetica" font-size="9" fill="#059669">implements</text>
+  <text x="700" y="245" font-family="Helvetica" font-size="9" fill="#dc2626">implements</text>
+
+  <rect x="300" y="440" width="400" height="160" rx="4" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+  <rect x="300" y="440" width="400" height="28" rx="4" fill="#ea580c"/>
+  <text x="500" y="459" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">TransferManagerProvider</text>
+  <text x="310" y="483" font-family="Courier New" font-size="10" fill="#1e293b">- _transferManager: TransferManager</text>
+  <text x="310" y="498" font-family="Courier New" font-size="10" fill="#1e293b">- _ohosDownloadService: OhosDownloadService?</text>
+  <text x="310" y="513" font-family="Courier New" font-size="10" fill="#1e293b">- _capabilities: PlatformCapabilitiesSnapshot</text>
+  <text x="310" y="528" font-family="Courier New" font-size="10" fill="#1e293b">+ initialize() / loadTasks() / pauseTask() / cancelTask()</text>
+  <text x="310" y="543" font-family="Courier New" font-size="10" fill="#1e293b">+ resumeTask() / deleteTask() / retryTaskWithNewAuth()</text>
+  <text x="310" y="558" font-family="Courier New" font-size="10" fill="#1e293b">+ clearCompletedDownloads()</text>
+  <text x="500" y="595" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#64748b">transfer_manager_provider.dart</text>
+
+  <rect x="40" y="500" width="220" height="80" rx="4" fill="#faf5ff" stroke="#7c3aed" stroke-width="1"/>
+  <rect x="40" y="500" width="220" height="24" rx="4" fill="#7c3aed"/>
+  <text x="150" y="516" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">PlatformCapabilitiesSnapshot</text>
+  <text x="50" y="540" font-family="Courier New" font-size="10" fill="#1e293b">+ supportsNativeDownloader</text>
+  <text x="50" y="555" font-family="Courier New" font-size="10" fill="#1e293b">+ supportsBackgroundDownloader</text>
+  <text x="50" y="570" font-family="Courier New" font-size="10" fill="#1e293b">+ isOhos / isWeb</text>
+
+  <rect x="740" y="500" width="220" height="80" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="1"/>
+  <rect x="740" y="500" width="220" height="24" rx="4" fill="#64748b"/>
+  <text x="850" y="516" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">DownloadTask</text>
+  <text x="750" y="540" font-family="Courier New" font-size="10" fill="#1e293b">+ taskId / status / progress</text>
+  <text x="750" y="555" font-family="Courier New" font-size="10" fill="#1e293b">+ url / filename / savedDir</text>
+  <text x="750" y="570" font-family="Courier New" font-size="10" fill="#1e293b">+ timeCreated / allowCellular</text>
+
+  <line x1="340" y1="540" x2="300" y2="520" stroke="#7c3aed" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="700" y1="520" x2="740" y2="540" stroke="#64748b" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="310" y="528" font-family="Helvetica" font-size="9" fill="#7c3aed">reads</text>
+  <text x="725" y="528" font-family="Helvetica" font-size="9" fill="#64748b">0..*</text>
+  <line x1="500" y1="440" x2="500" y2="400" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="505" y="425" font-family="Helvetica" font-size="9" fill="#ea580c">routes via capabilities</text>
+  <rect x="40" y="640" width="920" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="60" y="660" font-family="Helvetica" font-size="10" font-weight="bold" fill="#475569">Routing:</text>
+  <text x="120" y="660" font-family="Helvetica" font-size="10" fill="#059669">OHOS supportsNativeDownloader=true  OhosDownloadService</text>
+  <text x="460" y="660" font-family="Helvetica" font-size="10" fill="#2563eb">Android supportsBackgroundDownloader=true  flutter_downloader</text>
+  <text x="820" y="660" font-family="Helvetica" font-size="10" fill="#dc2626">Other  Unsupported (no-op)</text>
+
+</svg>

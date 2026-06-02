@@ -155,6 +155,7 @@ import 'package:onepanel_client/features/orchestration/orchestration_page.dart';
 import 'package:onepanel_client/data/models/host_models.dart';
 
 class AppRouter {
+  // Prevents re-registration when generateRoute is called multiple times
   static bool _routeRegistryInitialized = false;
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -1029,6 +1030,9 @@ class AppRouter {
     };
   }
 
+  // Desktop platforms use a shell host that manages module switching; mobile
+  // renders each route independently. The override map lets us swap the builder
+  // per-platform without changing the route table structure.
   static RouteEntry _shellAwareModuleEntry({
     required String routeName,
     required UiRouteBuilder defaultBuilder,
@@ -1042,6 +1046,8 @@ class AppRouter {
       final arguments = <String, dynamic>{
         'module': shellTarget.module.storageId,
       };
+      // When embedRouteInShell is true, pass the original route + args so the
+      // shell host can render the detail page inside the module panel.
       if (shellTarget.embedRouteInShell) {
         arguments['route'] = routeName;
         if (settings.arguments != null) {

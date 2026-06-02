@@ -19,7 +19,7 @@ class LoginRequest extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'name': username,
+      'name': username, // API expects 'name', not 'username'
       'password': password,
       'language': language,
       if (captcha != null) 'captcha': captcha,
@@ -53,6 +53,7 @@ class LoginResponse extends Equatable {
     this.entranceCode,
   });
 
+  // API inconsistently returns bool, "enable"/"enabled", "true"/"1" across versions
   static bool? _parseMfaStatus(dynamic value) {
     if (value == null) return null;
     if (value is bool) return value;
@@ -154,6 +155,7 @@ class CaptchaData extends Equatable {
 
   factory CaptchaData.fromJson(Map<String, dynamic> json) {
     return CaptchaData(
+      // API field names vary across panel versions (captchaId vs id, etc.)
       captchaId: json['captchaId'] as String? ?? json['id'] as String?,
       imagePath: json['imagePath'] as String? ?? json['path'] as String?,
       base64: json['image'] as String? ?? json['base64'] as String?,
@@ -181,6 +183,7 @@ class LoginSettings extends Equatable {
 
   factory LoginSettings.fromJson(Map<String, dynamic> json) {
     return LoginSettings(
+      // Field names vary across panel versions (captcha vs needCaptcha, etc.)
       captcha: json['captcha'] as bool? ?? json['needCaptcha'] as bool?,
       mfa: json['mfa'] as bool?,
       demo: json['demo'] as String? ?? json['isDemo']?.toString(),
@@ -204,6 +207,7 @@ class SafetyStatus extends Equatable {
 
   factory SafetyStatus.fromJson(Map<String, dynamic> json) {
     return SafetyStatus(
+      // API returns lowercase 'issafety' in some versions
       isSafety: json['issafety'] as bool? ?? json['isSafety'] as bool?,
       message: json['message'] as String?,
     );
@@ -224,6 +228,7 @@ class DemoModeStatus extends Equatable {
 
   factory DemoModeStatus.fromJson(Map<String, dynamic> json) {
     return DemoModeStatus(
+      // API returns 'demo' (no prefix) in some versions
       isDemo: json['demo'] as bool? ?? json['isDemo'] as bool?,
       message: json['message'] as String?,
     );

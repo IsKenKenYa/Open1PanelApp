@@ -245,6 +245,9 @@ class CronjobFormService {
     );
   }
 
+  // Try to reverse-parse a cron expression into a UI-friendly schedule builder.
+  // Returns null for complex expressions that can't be represented in the builder
+  // (e.g. "0 9 * * 1-5") — the UI falls back to raw spec editing in that case.
   CronjobScheduleBuilder? _parseBuilder(String spec) {
     final daily = RegExp(r'^(\d{1,2}) (\d{1,2}) \* \* \*$');
     final weekly = RegExp(r'^(\d{1,2}) (\d{1,2}) \* \* (\d)$');
@@ -315,6 +318,8 @@ class CronjobFormService {
     return items;
   }
 
+  // Convert stored seconds back to the largest whole unit for the UI dropdown.
+  // e.g. 7200s -> value=2, unit='h'; 300s -> value=5, unit='m'.
   int _timeoutValue(int timeout) {
     if (timeout % 3600 == 0) return timeout ~/ 3600;
     if (timeout % 60 == 0) return timeout ~/ 60;

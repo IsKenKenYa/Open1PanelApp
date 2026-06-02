@@ -71,6 +71,8 @@ class FilesData {
       currentPath: currentPath ?? this.currentPath,
       pathHistory: pathHistory ?? this.pathHistory,
       isLoading: isLoading ?? this.isLoading,
+      // Intentionally uses `error` (not `error ?? this.error`) so passing null
+      // explicitly clears the error state.
       error: error,
       selectedFiles: selectedFiles ?? this.selectedFiles,
       sortBy: sortBy ?? this.sortBy,

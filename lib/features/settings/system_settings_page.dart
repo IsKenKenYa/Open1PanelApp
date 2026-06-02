@@ -428,6 +428,7 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     );
   }
 
+  // Server API uses inconsistent field names across versions for the store URL.
   String? _extractAppStoreUrl(dynamic config) {
     if (config is! Map) {
       return null;

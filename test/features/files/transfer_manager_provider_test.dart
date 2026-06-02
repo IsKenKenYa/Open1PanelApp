@@ -4,6 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/features/files/providers/transfer_manager_provider.dart';
 
+PlatformCapabilitiesSnapshot _ohosCapabilities() =>
+    PlatformCapabilities.resolveForTest(
+      isWeb: false,
+      targetPlatform: TargetPlatform.android,
+      operatingSystem: 'ohos',
+    );
+
 void main() {
   test('TransferManagerProvider loads tasks and filters active/completed',
       () async {
@@ -58,26 +65,39 @@ void main() {
     expect(clearCompletedCalls, 1);
   });
 
-  test('TransferManagerProvider exposes unsupported state on OHOS', () async {
-    var loadCalls = 0;
+  test('TransferManagerProvider isDownloadSupported is true on OHOS', () async {
     final provider = TransferManagerProvider(
-      loadTasksOverride: () async {
-        loadCalls += 1;
-        return const <DownloadTask>[];
-      },
-      capabilities: PlatformCapabilities.resolveForTest(
-        isWeb: false,
-        targetPlatform: TargetPlatform.android,
-        operatingSystem: 'ohos',
-      ),
+      capabilities: _ohosCapabilities(),
     );
 
-    await provider.initialize();
+    expect(provider.isDownloadSupported, isTrue);
+    expect(provider.unsupportedReason, isNull);
+  });
 
-    expect(provider.isLoading, isFalse);
-    expect(provider.isBackgroundDownloadSupported, isFalse);
-    expect(provider.unsupportedReason, isNotNull);
-    expect(provider.downloadTasks, isEmpty);
-    expect(loadCalls, 0);
+  test('mapOhosStatus maps all statuses correctly', () {
+    expect(
+      TransferManagerProvider.mapOhosStatusForTest('running'),
+      DownloadTaskStatus.running,
+    );
+    expect(
+      TransferManagerProvider.mapOhosStatusForTest('paused'),
+      DownloadTaskStatus.paused,
+    );
+    expect(
+      TransferManagerProvider.mapOhosStatusForTest('completed'),
+      DownloadTaskStatus.complete,
+    );
+    expect(
+      TransferManagerProvider.mapOhosStatusForTest('failed'),
+      DownloadTaskStatus.failed,
+    );
+    expect(
+      TransferManagerProvider.mapOhosStatusForTest('cancelled'),
+      DownloadTaskStatus.canceled,
+    );
+    expect(
+      TransferManagerProvider.mapOhosStatusForTest('unknown'),
+      DownloadTaskStatus.undefined,
+    );
   });
 }

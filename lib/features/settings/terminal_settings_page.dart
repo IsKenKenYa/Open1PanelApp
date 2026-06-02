@@ -896,6 +896,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
     }
   }
 
+  // Server stores RGB hex (6 chars), but Color() needs ARGB (8 chars).
   Color _parseColor(String? raw, Color fallback) {
     if (raw == null || raw.trim().isEmpty) {
       return fallback;
@@ -909,6 +910,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
     return Color(value);
   }
 
+  // Strip alpha prefix -- server expects RGB hex, not ARGB.
   String _toHex(Color color) {
     return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
   }

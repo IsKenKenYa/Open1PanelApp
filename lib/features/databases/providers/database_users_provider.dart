@@ -55,6 +55,8 @@ class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
         permission: permission,
         superUser: superUser,
       );
+      // Optimistically update the context with the new username instead of
+      // re-fetching from the server, to avoid an extra round-trip.
       final nextContext =
           (_state.context ?? await _service.loadContext(item)).copyWith(
         currentUsername: username,
@@ -69,6 +71,7 @@ class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
     required bool superUser,
   }) async {
     final currentUsername = _state.context?.currentUsername;
+    // Can't update privileges without a bound user; this is a no-op guard.
     if (currentUsername == null || currentUsername.isEmpty) {
       return false;
     }

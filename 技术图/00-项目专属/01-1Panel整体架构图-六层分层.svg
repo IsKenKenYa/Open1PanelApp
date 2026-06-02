@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 750">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ea580c"/>
+    </marker>
+    <filter id="shadow"><feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.15"/></filter>
+  </defs>
+
+  <rect width="1000" height="750" fill="#ffffff" rx="8"/>
+  <text x="500" y="36" text-anchor="middle" font-family="Helvetica" font-size="20" font-weight="bold" fill="#1e293b">1Panel Client — Flutter Architecture Overview</text>
+  <text x="500" y="56" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#64748b">33 Feature Modules · 35 API Modules · 71 Data Models · Multi-Platform (Android/iOS/macOS/Windows/Linux/OHOS)</text>
+
+  <rect x="40" y="80" width="920" height="100" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="60" y="100" font-family="Helvetica" font-size="11" font-weight="bold" fill="#1d4ed8">PRESENTATION LAYER</text>
+  <rect x="60" y="110" width="130" height="50" rx="6" fill="#2563eb" filter="url(#shadow)"/>
+  <text x="125" y="132" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Pages</text>
+  <text x="125" y="148" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#bfdbfe">lib/pages/</text>
+  <rect x="210" y="110" width="130" height="50" rx="6" fill="#2563eb" filter="url(#shadow)"/>
+  <text x="275" y="132" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Widgets</text>
+  <text x="275" y="148" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#bfdbfe">lib/shared/widgets/</text>
+  <rect x="360" y="110" width="130" height="50" rx="6" fill="#2563eb" filter="url(#shadow)"/>
+  <text x="425" y="132" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Feature UIs</text>
+  <text x="425" y="148" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#bfdbfe">lib/features/*/</text>
+  <rect x="510" y="110" width="130" height="50" rx="6" fill="#2563eb" filter="url(#shadow)"/>
+  <text x="575" y="132" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Shell</text>
+  <text x="575" y="148" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#bfdbfe">Adaptive Shell</text>
+  <rect x="660" y="110" width="130" height="50" rx="6" fill="#2563eb" filter="url(#shadow)"/>
+  <text x="725" y="132" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Navigation</text>
+  <text x="725" y="148" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#bfdbfe">Server-aware Nav</text>
+  <rect x="810" y="110" width="130" height="50" rx="6" fill="#2563eb" filter="url(#shadow)"/>
+  <text x="875" y="132" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Theme</text>
+  <text x="875" y="148" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#bfdbfe">MDUI3 + Platform</text>
+
+  <rect x="40" y="200" width="920" height="80" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="60" y="220" font-family="Helvetica" font-size="11" font-weight="bold" fill="#15803d">STATE LAYER (Provider + ChangeNotifier)</text>
+  <rect x="60" y="230" width="180" height="36" rx="6" fill="#059669" filter="url(#shadow)"/>
+  <text x="150" y="253" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff">Providers (33 modules)</text>
+  <rect x="260" y="230" width="180" height="36" rx="6" fill="#059669" filter="url(#shadow)"/>
+  <text x="350" y="253" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff">SafeChangeNotifier</text>
+  <rect x="460" y="230" width="180" height="36" rx="6" fill="#059669" filter="url(#shadow)"/>
+  <text x="550" y="253" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff">State Controllers</text>
+
+  <rect x="40" y="300" width="920" height="90" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="60" y="320" font-family="Helvetica" font-size="11" font-weight="bold" fill="#c2410c">SERVICE / REPOSITORY LAYER</text>
+  <rect x="60" y="330" width="140" height="44" rx="6" fill="#ea580c" filter="url(#shadow)"/>
+  <text x="130" y="350" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">Services</text>
+  <text x="130" y="364" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ffedd5">Transfer, Logger, Cache</text>
+  <rect x="220" y="330" width="140" height="44" rx="6" fill="#ea580c" filter="url(#shadow)"/>
+  <text x="290" y="350" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">Repositories</text>
+  <text x="290" y="364" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ffedd5">Data single source</text>
+  <rect x="380" y="330" width="140" height="44" rx="6" fill="#ea580c" filter="url(#shadow)"/>
+  <text x="450" y="350" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">Models</text>
+  <text x="450" y="364" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ffedd5">71 models + JSON</text>
+  <rect x="540" y="330" width="140" height="44" rx="6" fill="#ea580c" filter="url(#shadow)"/>
+  <text x="610" y="350" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">i18n</text>
+  <text x="610" y="364" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ffedd5">EN + ZH l10n</text>
+
+  <rect x="40" y="410" width="920" height="90" rx="8" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="60" y="430" font-family="Helvetica" font-size="11" font-weight="bold" fill="#7c3aed">API / INFRASTRUCTURE LAYER</text>
+  <rect x="60" y="440" width="140" height="44" rx="6" fill="#7c3aed" filter="url(#shadow)"/>
+  <text x="130" y="460" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">Retrofit API</text>
+  <text x="130" y="474" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ede9fe">35 V2 modules</text>
+  <rect x="220" y="440" width="140" height="44" rx="6" fill="#7c3aed" filter="url(#shadow)"/>
+  <text x="290" y="460" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">Dio Network</text>
+  <text x="290" y="474" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ede9fe">Interceptors + Auth</text>
+  <rect x="380" y="440" width="140" height="44" rx="6" fill="#7c3aed" filter="url(#shadow)"/>
+  <text x="450" y="460" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">Secure Storage</text>
+  <text x="450" y="474" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ede9fe">API Keys + Config</text>
+  <rect x="540" y="440" width="140" height="44" rx="6" fill="#7c3aed" filter="url(#shadow)"/>
+  <text x="610" y="460" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">flutter_downloader</text>
+  <text x="610" y="474" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#ede9fe">Background DL</text>
+
+  <rect x="40" y="520" width="920" height="90" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="60" y="540" font-family="Helvetica" font-size="11" font-weight="bold" fill="#dc2626">PLATFORM ABSTRACTION LAYER</text>
+  <rect x="60" y="550" width="150" height="44" rx="6" fill="#dc2626" filter="url(#shadow)"/>
+  <text x="135" y="570" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">PlatformCapabilities</text>
+  <text x="135" y="584" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#fecaca">Feature Detection</text>
+  <rect x="230" y="550" width="150" height="44" rx="6" fill="#dc2626" filter="url(#shadow)"/>
+  <text x="305" y="570" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">PlatformFileService</text>
+  <text x="305" y="584" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#fecaca">File Ops Facade</text>
+  <rect x="400" y="550" width="150" height="44" rx="6" fill="#dc2626" filter="url(#shadow)"/>
+  <text x="475" y="570" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">PlatformDownload</text>
+  <text x="475" y="584" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#fecaca">Download Service</text>
+  <rect x="570" y="550" width="150" height="44" rx="6" fill="#dc2626" filter="url(#shadow)"/>
+  <text x="645" y="570" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">OhosPlatformChannel</text>
+  <text x="645" y="584" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#fecaca">OHOS Bridge</text>
+  <rect x="740" y="550" width="150" height="44" rx="6" fill="#dc2626" filter="url(#shadow)"/>
+  <text x="815" y="570" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#ffffff" font-weight="bold">PlatformMedia</text>
+  <text x="815" y="584" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#fecaca">Media Service</text>
+
+  <rect x="40" y="630" width="920" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="60" y="650" font-family="Helvetica" font-size="11" font-weight="bold" fill="#475569">NATIVE PLATFORMS</text>
+  <rect x="60" y="660" width="130" height="36" rx="6" fill="#34d399" filter="url(#shadow)"/>
+  <text x="125" y="683" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Android</text>
+  <rect x="210" y="660" width="130" height="36" rx="6" fill="#60a5fa" filter="url(#shadow)"/>
+  <text x="275" y="683" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">iOS/iPadOS</text>
+  <rect x="360" y="660" width="130" height="36" rx="6" fill="#a78bfa" filter="url(#shadow)"/>
+  <text x="425" y="683" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">macOS</text>
+  <rect x="510" y="660" width="130" height="36" rx="6" fill="#f472b6" filter="url(#shadow)"/>
+  <text x="575" y="683" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Windows</text>
+  <rect x="660" y="660" width="130" height="36" rx="6" fill="#fbbf24" filter="url(#shadow)"/>
+  <text x="725" y="683" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">Linux</text>
+  <rect x="810" y="660" width="130" height="36" rx="6" fill="#f97316" filter="url(#shadow)"/>
+  <text x="875" y="683" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#ffffff" font-weight="bold">HarmonyOS</text>
+
+  <line x1="200" y1="180" x2="200" y2="200" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="400" y1="180" x2="400" y2="200" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="600" y1="180" x2="600" y2="200" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="800" y1="180" x2="800" y2="200" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="200" y1="280" x2="200" y2="300" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <line x1="400" y1="280" x2="400" y2="300" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <line x1="600" y1="280" x2="600" y2="300" stroke="#059669" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <line x1="200" y1="390" x2="200" y2="410" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="400" y1="390" x2="400" y2="410" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="600" y1="390" x2="600" y2="410" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="200" y1="500" x2="200" y2="520" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="400" y1="500" x2="400" y2="520" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="600" y1="500" x2="600" y2="520" stroke="#7c3aed" stroke-width="2"/>
+  <text x="960" y="370" text-anchor="end" font-family="Helvetica" font-size="10" fill="#94a3b8" transform="rotate(-90,960,370)">DEPENDENCY DIRECTION</text>
+
+  <rect x="750" y="85" width="200" height="70" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="760" y="102" font-family="Helvetica" font-size="10" font-weight="bold" fill="#1e293b">Layer Colors</text>
+  <rect x="760" y="110" width="10" height="10" fill="#2563eb"/> <text x="775" y="119" font-family="Helvetica" font-size="9" fill="#475569">Presentation</text>
+  <rect x="760" y="124" width="10" height="10" fill="#059669"/> <text x="775" y="133" font-family="Helvetica" font-size="9" fill="#475569">State</text>
+  <rect x="850" y="110" width="10" height="10" fill="#ea580c"/> <text x="865" y="119" font-family="Helvetica" font-size="9" fill="#475569">Service/Repo</text>
+  <rect x="850" y="124" width="10" height="10" fill="#7c3aed"/> <text x="865" y="133" font-family="Helvetica" font-size="9" fill="#475569">API/Infra</text>
+
+</svg>

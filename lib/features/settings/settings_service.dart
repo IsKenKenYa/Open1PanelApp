@@ -202,6 +202,8 @@ class SettingsService {
     await apiClient.updateTerminalSettings(request);
   }
 
+  // Server API returns menu data in three different formats (List, Map with
+  // nested key, or single String) across versions, so all shapes are handled.
   Future<List<String>> getDefaultMenus() async {
     final apiClient = await _getApi();
     final response = await apiClient.getDefaultMenu();

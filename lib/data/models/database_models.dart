@@ -567,6 +567,7 @@ class DatabaseListItem extends Equatable {
       name: json['name'] as String? ?? '',
       engine: json['type'] as String? ?? 'mysql',
       source: json['from'] as String? ?? 'local',
+      // 'mysqlName' is the MySQL instance name, distinct from 'name' which is the database name
       targetDatabase: json['mysqlName'] as String?,
       instanceLabel: json['mysqlName'] as String?,
       database: json['database'] as String?,
@@ -587,6 +588,7 @@ class DatabaseListItem extends Equatable {
       name: json['name'] as String? ?? '',
       engine: json['type'] as String? ?? 'postgresql',
       source: json['from'] as String? ?? 'local',
+      // 'postgresqlName' is the PostgreSQL instance name, distinct from 'name' which is the database name
       targetDatabase: json['postgresqlName'] as String?,
       instanceLabel: json['postgresqlName'] as String?,
       database: json['database'] as String?,

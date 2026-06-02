@@ -30,6 +30,8 @@ class CurrentServerController extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> selectServer(String id) async {
     await ApiConfigManager.setCurrentConfig(id);
+    // Clear all HTTP clients so the next API call uses the new server's
+    // base URL and API key — otherwise stale connections would be reused.
     ApiClientManager.instance.clearAllClients();
     await load();
   }

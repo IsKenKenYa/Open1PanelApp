@@ -11,7 +11,9 @@ class FilesRepository {
   String? _currentServerId;
   String? _currentApiKey;
 
+  /// Returns cached API instance, or rebuilds it when the active server changes.
   Future<FileV2Api> getApi() async {
+    // No server-tracking fields means injection-based usage; trust the cached instance
     if (_api != null && _currentServerId == null && _currentApiKey == null) {
       return _api!;
     }

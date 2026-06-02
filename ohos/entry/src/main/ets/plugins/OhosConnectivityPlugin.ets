@@ -20,7 +20,7 @@ class ConnectivityStreamHandler implements StreamHandler {
 
   onListen(args: Object, events: EventSink): void {
     this.sink = events;
-    // Emit initial connectivity state
+    // Emit a plausible default so the Dart stream doesn't stay empty forever.
     this.sendEvent(['wifi']);
   }
 
@@ -36,8 +36,10 @@ class ConnectivityStreamHandler implements StreamHandler {
 }
 
 /**
- * Graceful fallback plugin for connectivity_plus on OHOS.
- * Returns reasonable defaults since OHOS has its own network management.
+ * Stub plugin for connectivity_plus on OHOS.
+ * connectivity_plus has no OHOS support, so this returns safe defaults to prevent
+ * MissingPluginException in the Dart layer. Actual network state should be obtained
+ * through OHOS native APIs if needed in the future.
  */
 export default class OhosConnectivityPlugin
   implements FlutterPlugin, MethodCallHandler
@@ -70,7 +72,8 @@ export default class OhosConnectivityPlugin
       switch (call.method) {
         case 'check':
         case 'checkConnectivity':
-          // Return ['wifi'] as default — OHOS emulator typically has WiFi.
+          // Hardcoded 'wifi': Dart app assumes connectivity is available and handles
+          // actual request failures at the HTTP layer. Returning 'none' would block UI flows.
           result.success(['wifi']);
           return;
         case 'getWifiName':

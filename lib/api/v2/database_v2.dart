@@ -26,7 +26,7 @@ class DatabaseV2Api {
     );
   }
 
-  /// 兼容新旧端点：优先使用 /databases/db/search，失败后回退。
+  /// 1Panel 2.x moved the search endpoint; try new path first, fall back to legacy.
   Future<Response<PageResult<DatabaseInfo>>> searchDatabases(
     DatabaseSearch request,
   ) async {

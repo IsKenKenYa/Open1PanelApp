@@ -205,6 +205,8 @@ class PhpExtensionsProvider extends ChangeNotifier with SafeChangeNotifier, Asyn
     }
   }
 
+  // Extension records are supplementary; a failure here should not block the
+  // main supported-extensions list from displaying.
   Future<void> _loadExtensionRecords() async {
     try {
       _extensionRecords = await _service.loadExtensionRecords(

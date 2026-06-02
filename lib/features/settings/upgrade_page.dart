@@ -28,6 +28,8 @@ class _UpgradePageState extends State<UpgradePage> {
     _releasesFuture = provider.getUpgradeReleases();
   }
 
+  // Component-by-component comparison because string ordering fails for semver
+  // (e.g. "1.9.0" > "1.10.0" lexicographically but is actually older).
   bool _isDowngrade(String currentVersion, String targetVersion) {
     final current = _parseVersion(currentVersion);
     final target = _parseVersion(targetVersion);

@@ -78,6 +78,8 @@ class AppLockController extends ChangeNotifier with SafeChangeNotifier {
       return false;
     }
 
+    // Require a successful biometric/PIN auth before enabling the lock
+    // to prevent an unauthorized user from locking the owner out.
     final unlocked = await authenticateForUnlock(reason: reason);
     if (!unlocked) {
       return false;
@@ -187,6 +189,8 @@ class AppLockController extends ChangeNotifier with SafeChangeNotifier {
       return;
     }
 
+    // Record when the app goes to background so we can decide on resume
+    // whether enough time has elapsed to require re-authentication.
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive ||
         state == AppLifecycleState.hidden) {

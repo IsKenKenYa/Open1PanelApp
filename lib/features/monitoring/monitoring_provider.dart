@@ -289,7 +289,8 @@ class MonitoringProvider extends ChangeNotifier with SafeChangeNotifier {
     });
   }
 
-  /// 生命周期变化处理
+  /// Lifecycle-aware refresh: throttle to 5-minute intervals when backgrounded
+  /// to conserve battery, and restore the user-configured interval on resume.
   void onAppLifecycleChanged(AppLifecycleState state) {
     if (!_autoRefreshEnabled) return;
 
@@ -299,7 +300,6 @@ class MonitoringProvider extends ChangeNotifier with SafeChangeNotifier {
         'App paused, switching to background refresh (5 min)',
       );
       _stopTimer();
-      // 后台模式：5分钟刷新一次
       _refreshTimer = Timer.periodic(const Duration(minutes: 5), (_) {
         unawaited(refreshByPolicy(silent: true));
       });
@@ -467,8 +467,8 @@ class MonitoringProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> _loadPreviousData(DateTime now) async {
-    // 上一周期：24小时前（同比）
-    // 如果当前查看的是过去的时间段，则同比时间段也相应前移
+    // "Previous period" = same time window shifted 24 hours back (day-over-day comparison).
+    // If viewing a historical range, the comparison range shifts accordingly.
     final currentStart = _customStartTime ?? now.subtract(_timeRange);
     final start = currentStart.subtract(const Duration(days: 1));
     final end = (_customEndTime ?? now).subtract(const Duration(days: 1));
@@ -498,18 +498,17 @@ class MonitoringProvider extends ChangeNotifier with SafeChangeNotifier {
       final now = DateTime.now();
       DateTime fetchStartTime;
 
-      // 决定拉取起始时间
+      // Incremental fetch: only request data newer than the last fetch to
+      // reduce bandwidth on mobile. Falls back to full fetch on first load
+      // or when the user changes the time range.
       if (_lastFetchTime != null && _customStartTime == null) {
-        // 增量拉取：从上次拉取时间开始
         fetchStartTime = _lastFetchTime!;
       } else {
-        // 全量拉取：从时间范围开始
         fetchStartTime = _customStartTime ?? now.subtract(_timeRange);
         if (_lastFetchTime == null) {
           _clearRawData();
-          // 尝试从本地加载当前数据
+          // Seed from local storage so the chart isn't empty while fetching.
           await _loadFromStorage(now);
-          // 尝试从本地加载上一周期数据
           await _loadPreviousData(now);
         }
       }

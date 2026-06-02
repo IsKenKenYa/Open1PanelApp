@@ -79,6 +79,8 @@ class OhosPlatformChannel {
     );
   }
 
+  // Duplicates OhosDownloadService's channel so diagnostics and legacy callers
+  // can access downloads without depending on the full service.
   static const MethodChannel _downloadChannel =
       MethodChannel('onepanel/ohos_download');
 

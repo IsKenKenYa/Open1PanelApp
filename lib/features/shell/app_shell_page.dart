@@ -245,6 +245,8 @@ class _AppShellPageState extends State<AppShellPage> {
 
   Future<void> _handleModuleSelection(
       ClientModule module, bool hasServer) async {
+    // If no server is selected and the module needs one, prompt the user
+    // to pick a server first rather than showing an empty/broken page.
     if (!hasServer && module.requiresServer) {
       await ServerSwitcherAction.showServerPicker(context);
       return;

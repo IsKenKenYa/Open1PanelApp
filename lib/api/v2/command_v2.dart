@@ -183,6 +183,8 @@ class CommandV2Api {
     );
   }
 
+  // API returns a List when multiple commands exist, but a single Map
+  // when only one command matches the filter.
   List<CommandInfo> _parseCommandInfoList(dynamic rawData) {
     if (rawData is List) {
       return rawData

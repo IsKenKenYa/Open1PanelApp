@@ -49,6 +49,7 @@ class DashboardProvider extends ChangeNotifier with SafeChangeNotifier {
 
   void setRefreshInterval(Duration interval) {
     _refreshInterval = interval;
+    // Restart the timer with the new interval so the change takes effect immediately.
     if (_autoRefreshEnabled) {
       _stopAutoRefresh();
       _startAutoRefresh();

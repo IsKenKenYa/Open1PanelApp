@@ -167,6 +167,9 @@ class TerminalLaunchIntent extends Equatable {
       'rows': '$rows',
     };
 
+    // Query params are server-protocol-specific: 'operateNode' tells the
+    // 1Panel backend which SSH target to open, 'source=container' switches
+    // to docker exec mode.
     switch (kind) {
       case TerminalTargetKind.localHost:
         query['operateNode'] = 'local';

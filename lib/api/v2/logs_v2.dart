@@ -6,6 +6,9 @@ import '../../data/models/common_models.dart';
 import '../../data/models/container_models.dart';
 import '../../data/models/logs_models.dart';
 
+/// 1Panel log query API client.
+///
+/// Covers login/operation logs, system log files, container/compose logs, and cronjob record logs.
 class LogsV2Api {
   LogsV2Api(this._client);
 

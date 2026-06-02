@@ -150,6 +150,8 @@ class AIProvider with ChangeNotifier, SafeChangeNotifier {
     _setError(null);
 
     try {
+      // Sync first fetches the server-side model list (drop list for dropdowns),
+      // then refreshes the paginated search results so the UI shows the latest state.
       _ollamaModelDropList = await _repository.syncOllamaModels();
       await searchOllamaModels();
       notifyListeners();
@@ -214,6 +216,8 @@ class AIProvider with ChangeNotifier, SafeChangeNotifier {
         sslID: sslId,
         websiteID: websiteId,
       );
+      // Re-fetch the binding info so the UI reflects the server-side state
+      // (the server may normalize the domain or assign a website ID).
       await getBindDomain(appInstallId: appInstallId);
       notifyListeners();
       return true;

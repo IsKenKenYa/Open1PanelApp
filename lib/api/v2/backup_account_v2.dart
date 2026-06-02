@@ -7,6 +7,10 @@ import '../../data/models/backup_request_models.dart';
 import '../../data/models/common_models.dart'
     hide CommonBackup, CommonRecover, RecordSearch;
 
+/// 1Panel backup account and record management API client.
+///
+/// Supports multi-node backup via [operateNode] query parameter, which routes
+/// requests to the specified backup node (defaults to 'local').
 class BackupAccountV2Api {
   BackupAccountV2Api(this._client);
 

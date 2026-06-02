@@ -8,6 +8,9 @@ import '../../data/models/cronjob_form_response_models.dart';
 import '../../data/models/cronjob_list_models.dart';
 import '../../data/models/cronjob_record_models.dart';
 
+/// 1Panel cron job management API client.
+///
+/// Covers CRUD, scheduling control, record inspection, and script option endpoints.
 class CronjobV2Api {
   CronjobV2Api(this._client);
 

@@ -39,6 +39,8 @@ class ContainersPageImageDialogs {
     if (result != null && result.isNotEmpty && context.mounted) {
       final provider = context.read<DockerImageProvider>();
 
+      // Image references can contain colons in the tag portion (e.g.,
+      // registry.io/image:v1.2.3), so split only on the first ':'.
       String image = result;
       String? tag;
       if (result.contains(':')) {

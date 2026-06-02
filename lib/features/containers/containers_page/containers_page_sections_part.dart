@@ -223,6 +223,8 @@ extension _ContainersPageSections on _ContainersPageViewState {
         'type': 'container',
         'containerId': containerId ?? container.name,
         'containerName': container.name,
+        // Use /bin/sh instead of /bin/bash because many containers (especially
+        // Alpine-based) don't have bash installed.
         'command': '/bin/sh',
         'user': 'root',
       },

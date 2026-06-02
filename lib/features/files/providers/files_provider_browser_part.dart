@@ -282,6 +282,9 @@ extension FilesProviderBrowserMixin on FilesProvider {
     }
   }
 
+  // Resolves file extension with dot-prefix normalization.
+  // The server may return "txt" or ".txt" — both are normalized to ".txt".
+  // Falls back to extracting from the filename if the model doesn't provide it.
   String _resolveFileExtension(FileInfo file) {
     final modelExtension = file.extension;
     if (modelExtension != null && modelExtension.trim().isNotEmpty) {

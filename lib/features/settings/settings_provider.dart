@@ -150,6 +150,9 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
   }
 
+  /// The server API returns this value as inconsistent types (bool, num,
+  /// String, Map, List) across different versions, so every branch must be
+  /// handled defensively.
   bool _isSystemSettingsAvailable(dynamic status) {
     if (status == null) {
       return true;
@@ -847,6 +850,8 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     }
   }
 
+  // recover/rollback may restart the server, so we don't call loadSnapshots()
+  // afterwards -- an immediate refresh would be unreliable.
   Future<bool> recoverSnapshot(int id) async {
     try {
       await _service.recoverSnapshot(api.SnapshotRecover(id: id));
@@ -923,6 +928,8 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
 
     try {
+      // Core settings loaded in parallel; non-critical loads below use
+      // individual try-catch so a single failure doesn't block the others.
       final results = await Future.wait([
         _service.getSystemSettings(),
         _service.getTerminalSettings(),

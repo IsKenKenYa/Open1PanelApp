@@ -116,6 +116,7 @@ class SnackBarUtils {
     Widget? trailing,
     Duration? duration,
   }) {
+    // Clear before showing to prevent multiple toasts stacking
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(SnackBar(
@@ -128,13 +129,16 @@ class SnackBarUtils {
           ],
         ),
         backgroundColor: backgroundColor,
+        // Floating keeps the toast above bottom nav / FAB; margin-bottom 16 matches FAB spacing
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesignTokens.radiusSm),
         ),
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        // Explicit close button so users can dismiss long-duration error toasts immediately
         showCloseIcon: true,
         action: action,
+        // Default 4s for info/success; callers override to 5s for errors (more read time)
         duration: duration ?? const Duration(seconds: 4),
       ));
   }

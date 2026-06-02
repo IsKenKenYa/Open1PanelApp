@@ -30,6 +30,8 @@ export default class OhosSecureStoragePlugin
       binding.getApplicationContext() as common.Context,
       STORE_NAME,
     );
+    // Dual channels: CHANNEL matches flutter_secure_storage's expected name so the Dart
+    // plugin resolves without modification; CUSTOM_CHANNEL is for onepanel-specific extensions.
     this.channels = [
       new MethodChannel(binding.getBinaryMessenger(), CHANNEL),
       new MethodChannel(binding.getBinaryMessenger(), CUSTOM_CHANNEL),

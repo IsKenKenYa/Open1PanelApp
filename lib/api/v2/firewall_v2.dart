@@ -5,11 +5,15 @@ import '../../core/network/dio_client.dart';
 import '../../data/models/common_models.dart';
 import '../../data/models/firewall_models.dart';
 
+/// 1Panel host firewall API client.
+///
+/// Manages firewall base info, port/IP rules, filter chains, and forward rules.
 class FirewallV2Api {
   FirewallV2Api(this._client);
 
   final DioClient _client;
 
+  // Server may return either `{data: {…}}` or `{…}` directly; normalize both.
   Map<String, dynamic> _extractMapPayload(dynamic raw) {
     if (raw is Map<String, dynamic>) {
       final nested = raw['data'];

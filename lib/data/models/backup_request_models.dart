@@ -13,6 +13,7 @@ class BackupAccountSearchRequest extends Equatable {
   final String? keyword;
   final String? type;
 
+  // API accepts both 'info' and 'name' as search fields; send both for compatibility
   Map<String, dynamic> toJson() => <String, dynamic>{
         'page': page,
         'pageSize': pageSize,

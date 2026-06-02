@@ -87,6 +87,8 @@ class PlatformSecureStorage {
       );
     }
 
+    // Probe: some platforms throw UnsupportedError/MissingPluginException
+    // for FlutterSecureStorage; catch early and degrade to SharedPreferences.
     try {
       await candidate.read(key: '__platform_probe__');
       return PlatformSecureStorage._(
@@ -131,6 +133,8 @@ class PlatformSecureStorage {
       case PlatformSecureStorageBackend.ohosMethodChannel:
         return _readOhos(key);
       case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        // On OHOS with prefs fallback, try the channel first -- it may have
+        // come online after this instance was created.
         if (_isOhos && _ohosChannel != null) {
           final ohosValue = await _readOhosChannel(key);
           if (ohosValue != null && ohosValue.isNotEmpty) return ohosValue;
@@ -191,6 +195,7 @@ class PlatformSecureStorage {
         await _writeOhos(key, value);
         return;
       case PlatformSecureStorageBackend.sharedPreferencesFallback:
+        // Write to prefs first (durable), then best-effort OHOS channel.
         if (value == null) {
           await _prefsFallback!.remove(_prefixedKey(key));
         } else {
@@ -240,7 +245,8 @@ class PlatformSecureStorage {
         await _secureStorage!.delete(key: key);
         return;
       case PlatformSecureStorageBackend.ohosMethodChannel:
-        // Clean up SharedPreferences backup as well
+        // Must clean up prefs backup too, otherwise _readOhos would resurrect
+        // the old value from the backup after HUKS deletion.
         try {
           final fallback = await SharedPreferences.getInstance();
           await fallback.remove(_prefixedKey(key));

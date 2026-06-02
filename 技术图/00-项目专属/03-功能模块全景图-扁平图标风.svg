@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/></marker>
+    <filter id="shadow"><feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.12"/></filter>
+  </defs>
+  <rect width="1200" height="900" fill="#ffffff" rx="8"/>
+  <text x="600" y="36" text-anchor="middle" font-family="Helvetica" font-size="20" font-weight="bold" fill="#1e293b">1Panel Client - 33 Feature Modules Map</text>
+  <text x="600" y="56" text-anchor="middle" font-family="Helvetica" font-size="12" fill="#64748b">Organized by domain - Each module follows Presentation - State - Service/Repository - API</text>
+
+  <rect x="40" y="75" width="270" height="200" rx="8" fill="#2563eb08" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="40" y="75" width="270" height="30" rx="8" fill="#2563eb"/>
+  <rect x="40" y="90" width="270" height="15" fill="#2563eb"/>
+  <text x="175" y="95" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">Server Management</text>
+  <rect x="50" y="115" width="250" height="22" rx="4" fill="#2563eb15" stroke="#2563eb40" stroke-width="0.5"/>
+  <text x="60" y="130" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/server/</text>
+  <rect x="50" y="143" width="250" height="22" rx="4" fill="#2563eb15" stroke="#2563eb40" stroke-width="0.5"/>
+  <text x="60" y="158" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/ssh/</text>
+  <rect x="50" y="171" width="250" height="22" rx="4" fill="#2563eb15" stroke="#2563eb40" stroke-width="0.5"/>
+  <text x="60" y="186" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/terminal/</text>
+  <rect x="50" y="199" width="250" height="22" rx="4" fill="#2563eb15" stroke="#2563eb40" stroke-width="0.5"/>
+  <text x="60" y="214" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/shell/</text>
+  <rect x="50" y="227" width="250" height="22" rx="4" fill="#2563eb15" stroke="#2563eb40" stroke-width="0.5"/>
+  <text x="60" y="242" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/processes/</text>
+  <rect x="330" y="75" width="270" height="172" rx="8" fill="#7c3aed08" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="330" y="75" width="270" height="30" rx="8" fill="#7c3aed"/>
+  <rect x="330" y="90" width="270" height="15" fill="#7c3aed"/>
+  <text x="465" y="95" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">Web &amp; Networking</text>
+  <rect x="340" y="115" width="250" height="22" rx="4" fill="#7c3aed15" stroke="#7c3aed40" stroke-width="0.5"/>
+  <text x="350" y="130" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/websites/</text>
+  <rect x="340" y="143" width="250" height="22" rx="4" fill="#7c3aed15" stroke="#7c3aed40" stroke-width="0.5"/>
+  <text x="350" y="158" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/openresty/</text>
+  <rect x="340" y="171" width="250" height="22" rx="4" fill="#7c3aed15" stroke="#7c3aed40" stroke-width="0.5"/>
+  <text x="350" y="186" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/firewall/</text>
+  <rect x="340" y="199" width="250" height="22" rx="4" fill="#7c3aed15" stroke="#7c3aed40" stroke-width="0.5"/>
+  <text x="350" y="214" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/security_gateway/</text>
+  <rect x="620" y="75" width="270" height="144" rx="8" fill="#05966908" stroke="#059669" stroke-width="1.5"/>
+  <rect x="620" y="75" width="270" height="30" rx="8" fill="#059669"/>
+  <rect x="620" y="90" width="270" height="15" fill="#059669"/>
+  <text x="755" y="95" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">Data &amp; Storage</text>
+  <rect x="630" y="115" width="250" height="22" rx="4" fill="#05966915" stroke="#05966940" stroke-width="0.5"/>
+  <text x="640" y="130" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/databases/</text>
+  <rect x="630" y="143" width="250" height="22" rx="4" fill="#05966915" stroke="#05966940" stroke-width="0.5"/>
+  <text x="640" y="158" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/files/</text>
+  <rect x="630" y="171" width="250" height="22" rx="4" fill="#05966915" stroke="#05966940" stroke-width="0.5"/>
+  <text x="640" y="186" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/backups/</text>
+  <rect x="910" y="75" width="270" height="172" rx="8" fill="#ea580c08" stroke="#ea580c" stroke-width="1.5"/>
+  <rect x="910" y="75" width="270" height="30" rx="8" fill="#ea580c"/>
+  <rect x="910" y="90" width="270" height="15" fill="#ea580c"/>
+  <text x="1045" y="95" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">Containers</text>
+  <rect x="920" y="115" width="250" height="22" rx="4" fill="#ea580c15" stroke="#ea580c40" stroke-width="0.5"/>
+  <text x="930" y="130" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/containers/</text>
+  <rect x="920" y="143" width="250" height="22" rx="4" fill="#ea580c15" stroke="#ea580c40" stroke-width="0.5"/>
+  <text x="930" y="158" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/apps/</text>
+  <rect x="920" y="171" width="250" height="22" rx="4" fill="#ea580c15" stroke="#ea580c40" stroke-width="0.5"/>
+  <text x="930" y="186" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/runtimes/</text>
+  <rect x="920" y="199" width="250" height="22" rx="4" fill="#ea580c15" stroke="#ea580c40" stroke-width="0.5"/>
+  <text x="930" y="214" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/orchestration/</text>
+  <rect x="40" y="335" width="270" height="200" rx="8" fill="#dc262608" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="40" y="335" width="270" height="30" rx="8" fill="#dc2626"/>
+  <rect x="40" y="350" width="270" height="15" fill="#dc2626"/>
+  <text x="175" y="355" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">AI &amp; Automation</text>
+  <rect x="50" y="375" width="250" height="22" rx="4" fill="#dc262615" stroke="#dc262640" stroke-width="0.5"/>
+  <text x="60" y="390" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/ai/</text>
+  <rect x="50" y="403" width="250" height="22" rx="4" fill="#dc262615" stroke="#dc262640" stroke-width="0.5"/>
+  <text x="60" y="418" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/commands/</text>
+  <rect x="50" y="431" width="250" height="22" rx="4" fill="#dc262615" stroke="#dc262640" stroke-width="0.5"/>
+  <text x="60" y="446" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/cronjobs/</text>
+  <rect x="50" y="459" width="250" height="22" rx="4" fill="#dc262615" stroke="#dc262640" stroke-width="0.5"/>
+  <text x="60" y="474" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/script_library/</text>
+  <rect x="50" y="487" width="250" height="22" rx="4" fill="#dc262615" stroke="#dc262640" stroke-width="0.5"/>
+  <text x="60" y="502" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/operations_center/</text>
+  <rect x="330" y="335" width="270" height="172" rx="8" fill="#0891b208" stroke="#0891b2" stroke-width="1.5"/>
+  <rect x="330" y="335" width="270" height="30" rx="8" fill="#0891b2"/>
+  <rect x="330" y="350" width="270" height="15" fill="#0891b2"/>
+  <text x="465" y="355" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">Monitoring &amp; Logs</text>
+  <rect x="340" y="375" width="250" height="22" rx="4" fill="#0891b215" stroke="#0891b240" stroke-width="0.5"/>
+  <text x="350" y="390" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/dashboard/</text>
+  <rect x="340" y="403" width="250" height="22" rx="4" fill="#0891b215" stroke="#0891b240" stroke-width="0.5"/>
+  <text x="350" y="418" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/monitoring/</text>
+  <rect x="340" y="431" width="250" height="22" rx="4" fill="#0891b215" stroke="#0891b240" stroke-width="0.5"/>
+  <text x="350" y="446" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/logs/</text>
+  <rect x="340" y="459" width="250" height="22" rx="4" fill="#0891b215" stroke="#0891b240" stroke-width="0.5"/>
+  <text x="350" y="474" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/security/</text>
+  <rect x="620" y="335" width="270" height="200" rx="8" fill="#64748b08" stroke="#64748b" stroke-width="1.5"/>
+  <rect x="620" y="335" width="270" height="30" rx="8" fill="#64748b"/>
+  <rect x="620" y="350" width="270" height="15" fill="#64748b"/>
+  <text x="755" y="355" text-anchor="middle" font-family="Helvetica" font-size="13" fill="#ffffff" font-weight="bold">Settings &amp; Config</text>
+  <rect x="630" y="375" width="250" height="22" rx="4" fill="#64748b15" stroke="#64748b40" stroke-width="0.5"/>
+  <text x="640" y="390" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/settings/</text>
+  <rect x="630" y="403" width="250" height="22" rx="4" fill="#64748b15" stroke="#64748b40" stroke-width="0.5"/>
+  <text x="640" y="418" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/onboarding/</text>
+  <rect x="630" y="431" width="250" height="22" rx="4" fill="#64748b15" stroke="#64748b40" stroke-width="0.5"/>
+  <text x="640" y="446" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/groups/</text>
+  <rect x="630" y="459" width="250" height="22" rx="4" fill="#64748b15" stroke="#64748b40" stroke-width="0.5"/>
+  <text x="640" y="474" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/host_assets/</text>
+  <rect x="630" y="487" width="250" height="22" rx="4" fill="#64748b15" stroke="#64748b40" stroke-width="0.5"/>
+  <text x="640" y="502" font-family="Helvetica" font-size="11" fill="#1e293b">lib/features/toolbox/</text>
+  <rect x="40" y="790" width="1120" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="60" y="810" font-family="Helvetica" font-size="12" font-weight="bold" fill="#475569">Cross-Cutting (shared across all modules)</text>
+  <rect x="60" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="125" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/core/services/</text>
+  <rect x="200" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="265" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/core/network/</text>
+  <rect x="340" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="405" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/core/platform/</text>
+  <rect x="480" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="545" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/core/storage/</text>
+  <rect x="620" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="685" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/core/theme/</text>
+  <rect x="760" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="825" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/core/i18n/</text>
+  <rect x="900" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="965" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/data/models/</text>
+  <rect x="1040" y="825" width="130" height="28" rx="4" fill="#e2e8f0"/>
+  <text x="1105" y="844" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#1e293b">lib/api/v2/</text>
+</svg>

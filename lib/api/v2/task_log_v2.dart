@@ -4,6 +4,9 @@ import '../../core/config/api_constants.dart';
 import '../../data/models/task_log_models.dart';
 import '../../data/models/common_models.dart';
 
+/// 1Panel task log API client.
+///
+/// Queries executing task count and paginated task log search.
 class TaskLogV2Api {
   final DioClient _client;
 

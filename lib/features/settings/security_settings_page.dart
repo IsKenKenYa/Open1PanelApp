@@ -316,6 +316,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     );
   }
 
+  // Server API uses both 'Enable'/'Disable' and 'true'/'false' across different settings.
   bool _isEnabled(String? value) {
     if (value == null) return false;
     return value.toLowerCase() == 'enable' || value.toLowerCase() == 'true';
@@ -631,6 +632,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               Navigator.pop(context);
               bool success;
               if (enable) {
+                // Secret and interval are server-determined; client passes empty/defaults.
                 success = await provider.bindMfaWithCode(
                   codeController.text,
                   '',

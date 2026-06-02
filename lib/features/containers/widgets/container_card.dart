@@ -288,6 +288,8 @@ class ContainerCard extends StatelessWidget {
   }
 
   List<String> _formatPorts() {
+    // Prefer structured portBindings over the raw ports string.
+    // Limit to 4 entries to prevent card overflow on narrow screens.
     if (container.portBindings != null && container.portBindings!.isNotEmpty) {
       return container.portBindings!
           .take(4)

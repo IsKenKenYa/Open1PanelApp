@@ -6,6 +6,8 @@ class TerminalFrameCodec {
   const TerminalFrameCodec._();
 
   static String encodeInput(String data) {
+    // base64-encode user input to safely carry control characters (e.g. Ctrl+C = 0x03)
+    // through the JSON frame without corrupting the payload.
     return jsonEncode(<String, dynamic>{
       'type': 'cmd',
       'data': base64.encode(utf8.encode(data)),

@@ -959,6 +959,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     );
   }
 
+  // Defer disposal to avoid accessing controllers after the dialog unmounts its widgets.
   void _disposeControllersDeferred(List<TextEditingController> controllers) {
     Future<void>.delayed(const Duration(milliseconds: 300), () {
       for (final controller in controllers) {

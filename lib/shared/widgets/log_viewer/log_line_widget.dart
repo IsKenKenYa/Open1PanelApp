@@ -30,7 +30,8 @@ class LogLineWidget extends StatelessWidget {
 
     final spans = <InlineSpan>[];
 
-    // Line Number
+    // Line number as a TextSpan (not a separate widget) so the entire log line
+    // stays in a single RichText, enabling proper horizontal scroll behavior.
     spans.add(TextSpan(
       text: '$index  ',
       style: defaultStyle.copyWith(color: Colors.grey[600]),
@@ -131,12 +132,9 @@ class LogLineWidget extends StatelessWidget {
     // 2. Sort ranges
     ranges.sort((a, b) => a.start.compareTo(b.start));
 
-    // 3. Flatten ranges (Handling overlaps is complex, let's simplify: highest priority wins)
-    // We will build a list of non-overlapping spans.
+    // 3. Flatten overlapping ranges by splitting at every boundary point and
+    // assigning the highest-priority style to each segment.
     final spans = <InlineSpan>[];
-
-    // A simple way to handle overlaps is to use a "mask" array, but for text it's better to iterate.
-    // Let's use a "stack" approach or just split by boundaries.
 
     // Collect all boundaries
     final boundaries = <int>{0, text.length};

@@ -50,6 +50,8 @@ class _LogViewerState extends State<LogViewer> {
   void _onControllerChanged() {
     if (widget.controller.logs != _prevLogs) {
       _prevLogs = widget.controller.logs;
+      // Defer scroll-to-bottom to after the frame builds so the ListView
+      // has the new itemCount and maxScrollExtent is accurate.
       if (_isAutoScrolling) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
@@ -63,6 +65,8 @@ class _LogViewerState extends State<LogViewer> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
 
+    // 50px threshold: considers "at bottom" even if not pixel-perfect,
+    // preventing auto-scroll from flickering during momentum scrolling.
     if (maxScroll - currentScroll > 50) {
       if (_isAutoScrolling) {
         setState(() => _isAutoScrolling = false);
@@ -165,6 +169,8 @@ class _LogViewerState extends State<LogViewer> {
                               },
                             );
 
+                            // scrollPage mode: let the parent handle horizontal
+                            // scrolling so all lines scroll in sync.
                             if (controller.settings.viewMode ==
                                 LogViewMode.scrollPage) {
                               return Scrollbar(

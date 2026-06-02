@@ -84,6 +84,8 @@ class FileSearchResponse extends Equatable {
     required this.total,
   });
 
+  // API response format varies: sometimes {data: {items: [...]}}, sometimes
+  // {data: [...]}, sometimes {items: [...]} -- handle all three shapes
   factory FileSearchResponse.fromJson(Map<String, dynamic> json) {
     final dataField = json['data'];
     if (dataField is Map<String, dynamic>) {
@@ -185,12 +187,15 @@ class FileInfo extends Equatable {
   factory FileInfo.fromJson(Map<String, dynamic> json) {
     return FileInfo(
       name: json['name'] as String? ?? '',
+      // API uses 'sourcePath' in transfer/backup contexts
       path: json['path'] as String? ?? json['sourcePath'] as String? ?? '',
       type: json['type'] as String? ?? 'file',
       size: json['size'] as int? ?? 0,
+      // API uses 'mode' (chmod-style) in file-list, 'permission' in other contexts
       permission: json['mode'] as String? ?? json['permission'] as String?,
       user: json['user'] as String?,
       group: json['group'] as String?,
+      // API uses 'modTime' (Go-style) in file-list, 'modifiedAt' in other contexts
       modifiedAt: json['modTime'] != null
           ? DateTime.tryParse(json['modTime'] as String)
           : (json['modifiedAt'] != null
@@ -202,7 +207,9 @@ class FileInfo extends Equatable {
       mimeType: json['mimeType'] as String?,
       isDir: json['isDir'] as bool? ?? false,
       isSymlink: json['isSymlink'] as bool? ?? false,
+      // API uses 'linkPath' in file-list, 'linkTarget' in detail responses
       linkTarget: json['linkPath'] as String? ?? json['linkTarget'] as String?,
+      // API uses 'items' in file-list, 'children' in tree responses
       children: (json['items'] as List?)
               ?.map((item) => FileInfo.fromJson(item as Map<String, dynamic>))
               .toList() ??

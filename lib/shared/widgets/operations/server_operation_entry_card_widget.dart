@@ -31,6 +31,8 @@ class ServerOperationEntryCardWidget extends StatelessWidget {
       trailing: Chip(label: Text(badgeLabel)),
       child: Row(
         children: <Widget>[
+          // Invisible spacer text: keeps consistent card height without a
+          // hard-coded SizedBox that might drift from the content area.
           Text(
             MaterialLocalizations.of(context).viewLicensesButtonLabel,
             style: theme.textTheme.bodySmall?.copyWith(

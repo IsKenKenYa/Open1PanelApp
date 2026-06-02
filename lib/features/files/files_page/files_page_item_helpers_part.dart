@@ -99,6 +99,8 @@ extension _FilesViewItemHelpers on _FilesViewState {
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
+  // Returns "YYYY-MM-DD HH:mm" — intentionally omits seconds to keep
+  // the subtitle compact in file list items.
   String? _formatModifiedAt(DateTime? time) {
     if (time == null) return null;
     final year = time.year.toString().padLeft(4, '0');

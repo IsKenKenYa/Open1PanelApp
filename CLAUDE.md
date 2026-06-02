@@ -14,7 +14,8 @@
 - 核心基础设施：日志（自动 IP 掩码）、i18n（EN/ZH）、导航、Material Design 3
 - 容器管理、数据库管理、文件管理、网站管理、Dashboard 实时监控
 - Shell 架构：自适应壳 + 模块切换 + 服务器感知导航
-- HarmonyOS 平台适配（Flutter-OH bridge）
+- HarmonyOS 平台适配（Flutter-OH bridge + HUKS 安全存储 + 原生下载器）
+- 统一消息提示系统（SnackBarUtils，替代散落的 272 处内联调用）
 - 33 个功能模块完整覆盖
 
 ## 开发命令

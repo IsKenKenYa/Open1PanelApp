@@ -172,7 +172,8 @@ extension FilesProviderLifecycleMixin on FilesProvider {
       currentPath: restoredPath,
       pathHistory: <String>[restoredPath],
     );
-    // Don't emit change here, let initialize() handle it
+    // Don't emit change here — initialize() will emit after fetching files,
+    // preventing a flash of empty state between server switches.
     unawaited(initialize());
   }
 

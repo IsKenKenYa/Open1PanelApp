@@ -91,6 +91,8 @@ class SshSessionsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncS
   }
 
   void _startPolling() {
+    // 3-second poll keeps the session list current because SSH sessions
+    // can be terminated externally (e.g. server-side timeout).
     _pollTimer?.cancel();
     _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
       _service.connectSessions(_query);

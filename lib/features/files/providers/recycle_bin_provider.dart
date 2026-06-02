@@ -124,7 +124,11 @@ class RecycleBinProvider extends ChangeNotifier with SafeChangeNotifier {
       isDir: file.isDir,
       size: file.size,
       deleteTime: file.modifiedAt,
+      // rName is the server-side recycle bin identifier; fall back to gid,
+      // then to the filename extracted from the path.
       rName: file.rName ?? file.gid ?? file.path.split('/').last,
+      // `from` is the original parent directory; default to root if the
+      // server doesn't provide it.
       from: file.from ?? '/',
     );
   }

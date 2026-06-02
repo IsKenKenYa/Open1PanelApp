@@ -108,8 +108,7 @@ class PageResult<T> extends Equatable {
     if (itemsJson is List) {
       itemsList = itemsJson.map((item) => fromJsonT(item)).toList();
     } else if (itemsJson is Map) {
-      // Handle case where items is a Map (e.g. empty map or associative array)
-      // For now, treat as empty list to avoid crash, as we expect a List
+      // API returns empty map `{}` instead of empty array `[]` when no items exist
       itemsList = [];
     }
 
