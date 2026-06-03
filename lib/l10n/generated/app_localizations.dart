@@ -5504,6 +5504,48 @@ abstract class AppLocalizations {
   /// **'Export local application debug logs'**
   String get systemSettingsAppLogsExportSubtitle;
 
+  /// No description provided for @systemSettingsAppLogsPreviewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Preview'**
+  String get systemSettingsAppLogsPreviewButton;
+
+  /// No description provided for @systemSettingsAppLogsPreviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View the latest 200 log lines, preview human / AI Agent formats'**
+  String get systemSettingsAppLogsPreviewSubtitle;
+
+  /// No description provided for @systemSettingsAppLogsPreviewTabHuman.
+  ///
+  /// In en, this message translates to:
+  /// **'Human-readable'**
+  String get systemSettingsAppLogsPreviewTabHuman;
+
+  /// No description provided for @systemSettingsAppLogsPreviewTabAi.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Agent format'**
+  String get systemSettingsAppLogsPreviewTabAi;
+
+  /// No description provided for @systemSettingsAppLogsPreviewSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this format'**
+  String get systemSettingsAppLogsPreviewSave;
+
+  /// No description provided for @systemSettingsAppLogsPreviewEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No logs available'**
+  String get systemSettingsAppLogsPreviewEmpty;
+
+  /// No description provided for @systemSettingsAppLogsPreviewLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading logs...'**
+  String get systemSettingsAppLogsPreviewLoading;
+
   /// No description provided for @systemSettingsAppLogsLevelTitle.
   ///
   /// In en, this message translates to:

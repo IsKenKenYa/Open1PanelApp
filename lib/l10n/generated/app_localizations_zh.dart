@@ -2829,6 +2829,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get systemSettingsAppLogsExportSubtitle => '导出本地应用调试日志';
 
   @override
+  String get systemSettingsAppLogsPreviewButton => '导出预览';
+
+  @override
+  String get systemSettingsAppLogsPreviewSubtitle =>
+      '查看最近 200 行日志，预览人读/AI Agent 格式';
+
+  @override
+  String get systemSettingsAppLogsPreviewTabHuman => '人读格式';
+
+  @override
+  String get systemSettingsAppLogsPreviewTabAi => 'AI Agent 格式';
+
+  @override
+  String get systemSettingsAppLogsPreviewSave => '保存此格式';
+
+  @override
+  String get systemSettingsAppLogsPreviewEmpty => '暂无日志';
+
+  @override
+  String get systemSettingsAppLogsPreviewLoading => '正在加载日志...';
+
+  @override
   String get systemSettingsAppLogsLevelTitle => '应用日志级别';
 
   @override

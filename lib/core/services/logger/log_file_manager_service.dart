@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../../config/logger_config.dart';
+import 'log_format.dart';
 import 'log_level.dart';
 
 class LogFileManagerService {
@@ -102,20 +103,54 @@ class LogFileManagerService {
     return entries.map((entry) => entry.file).toList();
   }
 
-  Future<String> readAllLogs({AppLogLevel? minLevel}) async {
+  /// 读取所有日志文件并按指定格式返回。
+  ///
+  /// - `LogFormat.aiAgent`（默认）：直接返回文件原文（单行结构化，节省 token）
+  /// - `LogFormat.humanReadable`：解析 AI Agent 格式后转为 emoji 风格
+  Future<String> readAllLogs({
+    AppLogLevel? minLevel,
+    LogFormat format = LogFormat.aiAgent,
+  }) async {
     final files = await listLogFiles();
     final buffer = StringBuffer();
     for (final file in files.reversed) {
       if (!await file.exists()) continue;
       buffer.writeln('===== ${file.uri.pathSegments.last} =====');
       final content = await file.readAsString();
-      if (minLevel == null) {
-        buffer.writeln(content);
+      final filtered = minLevel == null
+          ? content
+          : _filterLogsByLevel(content, minLevel);
+      if (format == LogFormat.aiAgent) {
+        buffer.writeln(filtered);
       } else {
-        buffer.writeln(_filterLogsByLevel(content, minLevel));
+        buffer.writeln(reformatAiAgentToHumanReadable(filtered));
       }
     }
     return buffer.toString();
+  }
+
+  /// 仅读取当前日志文件的**最后 N 行**，用于预览。
+  ///
+  /// 不读取全部文件，避免大文件（如 43MB）卡 UI。
+  Future<String> tailCurrentLog(int maxLines) async {
+    final file = await getCurrentLogFile();
+    if (!await file.exists()) return '';
+    final length = await file.length();
+    if (length == 0) return '';
+    // 简单实现：从文件末尾向前读取最多 256KB，找出最近 N 行
+    const chunkSize = 256 * 1024;
+    final readSize = length < chunkSize ? length : chunkSize;
+    final raf = await file.open();
+    try {
+      await raf.setPosition(length - readSize);
+      final bytes = await raf.read(readSize);
+      final text = String.fromCharCodes(bytes);
+      final lines = text.split('\n');
+      if (lines.length <= maxLines) return text;
+      return lines.sublist(lines.length - maxLines).join('\n');
+    } finally {
+      await raf.close();
+    }
   }
 
   String _filterLogsByLevel(String raw, AppLogLevel minLevel) {

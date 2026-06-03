@@ -2934,6 +2934,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'Export local application debug logs';
 
   @override
+  String get systemSettingsAppLogsPreviewButton => 'Export Preview';
+
+  @override
+  String get systemSettingsAppLogsPreviewSubtitle =>
+      'View the latest 200 log lines, preview human / AI Agent formats';
+
+  @override
+  String get systemSettingsAppLogsPreviewTabHuman => 'Human-readable';
+
+  @override
+  String get systemSettingsAppLogsPreviewTabAi => 'AI Agent format';
+
+  @override
+  String get systemSettingsAppLogsPreviewSave => 'Save this format';
+
+  @override
+  String get systemSettingsAppLogsPreviewEmpty => 'No logs available';
+
+  @override
+  String get systemSettingsAppLogsPreviewLoading => 'Loading logs...';
+
+  @override
   String get systemSettingsAppLogsLevelTitle => 'App log level';
 
   @override

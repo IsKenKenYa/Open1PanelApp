@@ -3,15 +3,20 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import '../../config/logger_config.dart';
 import '../../config/release_channel_config.dart';
-import 'log_level.dart';
+import 'app_log_printer.dart';
+import 'log_category.dart';
 import 'log_file_manager_service.dart';
+import 'log_format.dart';
+import 'log_level.dart';
 import 'log_preferences_service.dart';
 
 class _AppLogOutput extends LogOutput {
   final ConsoleOutput _consoleOutput = ConsoleOutput();
   final LogFileManagerService _fileManager = LogFileManagerService();
 
-  static final _ipv4Regex = RegExp(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b');
+  static final _ipv4Regex = RegExp(
+    r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b',
+  );
 
   bool _isPrivateIp(String ip) {
     if (ip == '0.0.0.0' || ip == '255.255.255.255') return true;
@@ -31,7 +36,7 @@ class _AppLogOutput extends LogOutput {
     if (p1 == 127) return true;
     // 169.254.0.0/16 (Link-local)
     if (p1 == 169 && p2 == 254) return true;
-    
+
     return false;
   }
 
@@ -47,13 +52,10 @@ class _AppLogOutput extends LogOutput {
 
   @override
   void output(OutputEvent event) {
-    final maskedLines = event.lines.map((e) => _maskSensitiveInfo(e)).toList();
-    
+    final maskedLines = event.lines.map(_maskSensitiveInfo).toList();
+
     // LogEvent instead of level directly, according to the logger package signature
-    final maskedEvent = OutputEvent(
-      event.origin,
-      maskedLines,
-    );
+    final maskedEvent = OutputEvent(event.origin, maskedLines);
 
     if (LoggerConfig.enableConsoleOutput) {
       _consoleOutput.output(maskedEvent);
@@ -65,9 +67,7 @@ class _AppLogOutput extends LogOutput {
               .appendLine(line)
               .catchError((Object error, StackTrace stackTrace) {
             if (LoggerConfig.enableConsoleOutput) {
-              _consoleOutput.output(
-                maskedEvent,
-              );
+              _consoleOutput.output(maskedEvent);
             }
           }),
         );
@@ -90,13 +90,10 @@ class AppLogger {
   void init() {
     final filter = kReleaseMode ? ProductionFilter() : DevelopmentFilter();
     _logger = Logger(
-      printer: PrettyPrinter(
-        methodCount: LoggerConfig.maxMethodCount,
-        errorMethodCount: LoggerConfig.maxErrorMethodCount,
-        lineLength: LoggerConfig.lineLength,
+      printer: AppLogPrinter(
+        format: LogFormat.defaultRuntime,
+        maxStackFrames: LoggerConfig.maxStackFrames,
         colors: LoggerConfig.enableColors,
-        printEmojis: LoggerConfig.enableEmojis,
-        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
       filter: _AppLoggerFilter(filter),
       output: _AppLogOutput(),
@@ -148,76 +145,133 @@ class AppLogger {
     }
   }
 
+  /// 将 `category` 与 `packageName` 拼成内部前缀。
+  ///
+  /// - 未传 `category` → 走 `LoggerConfig.defaultCategoryForPackage` 推断
+  /// - 显式 `category` → 使用其 `shortTag`，便于在文件/控制台识别
+  String _prefix(String packageName, LogCategory? category) {
+    final effective = category ?? LoggerConfig.defaultCategoryForPackage(packageName);
+    return '[${effective.shortTag}:$packageName]';
+  }
+
   void t(dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
-    _logger.t('【Open1PanelMobile】$message',
-        error: error, stackTrace: stackTrace);
+    _logger.t(message, error: error, stackTrace: stackTrace);
   }
 
   void d(dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
-    _logger.d('【Open1PanelMobile】$message',
-        error: error, stackTrace: stackTrace);
+    _logger.d(message, error: error, stackTrace: stackTrace);
   }
 
   void i(dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
-    _logger.i('【Open1PanelMobile】$message',
-        error: error, stackTrace: stackTrace);
+    _logger.i(message, error: error, stackTrace: stackTrace);
   }
 
   void w(dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
-    _logger.w('【Open1PanelMobile】$message',
-        error: error, stackTrace: stackTrace);
+    _logger.w(message, error: error, stackTrace: stackTrace);
   }
 
   void e(dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
-    _logger.e('【Open1PanelMobile】$message',
-        error: error, stackTrace: stackTrace);
+    _logger.e(message, error: error, stackTrace: stackTrace);
   }
 
   void f(dynamic message, {dynamic error, StackTrace? stackTrace}) {
     _ensureInitialized();
-    _logger.f('【Open1PanelMobile】$message',
-        error: error, stackTrace: stackTrace);
+    _logger.f(message, error: error, stackTrace: stackTrace);
   }
 
-  void tWithPackage(String packageName, dynamic message,
-      {dynamic error, StackTrace? stackTrace}) {
+  void tWithPackage(
+    String packageName,
+    dynamic message, {
+    dynamic error,
+    StackTrace? stackTrace,
+    LogCategory? category,
+  }) {
     _ensureInitialized();
-    _logger.t('[$packageName] $message', error: error, stackTrace: stackTrace);
+    _logger.t(
+      '${_prefix(packageName, category)} $message',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
-  void dWithPackage(String packageName, dynamic message,
-      {dynamic error, StackTrace? stackTrace}) {
+  void dWithPackage(
+    String packageName,
+    dynamic message, {
+    dynamic error,
+    StackTrace? stackTrace,
+    LogCategory? category,
+  }) {
     _ensureInitialized();
-    _logger.d('[$packageName] $message', error: error, stackTrace: stackTrace);
+    _logger.d(
+      '${_prefix(packageName, category)} $message',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
-  void iWithPackage(String packageName, dynamic message,
-      {dynamic error, StackTrace? stackTrace}) {
+  void iWithPackage(
+    String packageName,
+    dynamic message, {
+    dynamic error,
+    StackTrace? stackTrace,
+    LogCategory? category,
+  }) {
     _ensureInitialized();
-    _logger.i('[$packageName] $message', error: error, stackTrace: stackTrace);
+    _logger.i(
+      '${_prefix(packageName, category)} $message',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
-  void wWithPackage(String packageName, dynamic message,
-      {dynamic error, StackTrace? stackTrace}) {
+  void wWithPackage(
+    String packageName,
+    dynamic message, {
+    dynamic error,
+    StackTrace? stackTrace,
+    LogCategory? category,
+  }) {
     _ensureInitialized();
-    _logger.w('[$packageName] $message', error: error, stackTrace: stackTrace);
+    _logger.w(
+      '${_prefix(packageName, category)} $message',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
-  void eWithPackage(String packageName, dynamic message,
-      {dynamic error, StackTrace? stackTrace}) {
+  void eWithPackage(
+    String packageName,
+    dynamic message, {
+    dynamic error,
+    StackTrace? stackTrace,
+    LogCategory? category,
+  }) {
     _ensureInitialized();
-    _logger.e('[$packageName] $message', error: error, stackTrace: stackTrace);
+    _logger.e(
+      '${_prefix(packageName, category)} $message',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
-  void fWithPackage(String packageName, dynamic message,
-      {dynamic error, StackTrace? stackTrace}) {
+  void fWithPackage(
+    String packageName,
+    dynamic message, {
+    dynamic error,
+    StackTrace? stackTrace,
+    LogCategory? category,
+  }) {
     _ensureInitialized();
-    _logger.f('[$packageName] $message', error: error, stackTrace: stackTrace);
+    _logger.f(
+      '${_prefix(packageName, category)} $message',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 }
 

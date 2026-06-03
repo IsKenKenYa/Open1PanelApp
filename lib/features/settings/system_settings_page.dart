@@ -23,6 +23,7 @@ import 'package:onepanel_client/core/services/logger/log_level.dart';
 import 'package:onepanel_client/core/services/logger/log_export_service.dart';
 import 'package:onepanel_client/core/services/logger/log_file_manager_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
+import 'package:onepanel_client/core/services/logger/widgets/log_preview_dialog.dart';
 import 'package:onepanel_client/data/models/ssh_settings_models.dart';
 
 class SystemSettingsPage extends StatefulWidget {
@@ -199,6 +200,13 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                 title: l10n.systemSettingsDashboardMemo,
                 subtitle: _formatMemoSummary(provider.data.dashboardMemo, l10n),
                 onTap: () => _showDashboardMemoDialog(context, provider, l10n),
+              ),
+              _buildSettingTile(
+                context,
+                icon: Icons.preview_outlined,
+                title: l10n.systemSettingsAppLogsPreviewButton,
+                subtitle: l10n.systemSettingsAppLogsPreviewSubtitle,
+                onTap: () => _previewAppLogs(context),
               ),
               _buildSettingTile(
                 context,
@@ -810,6 +818,13 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
       SnackBarUtils.showError(
           context, '${l10n.commonSaveFailed}: ${result.errorMessage ?? ''}');
     }
+  }
+
+  Future<void> _previewAppLogs(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => const LogPreviewDialog(),
+    );
   }
 
   String _buildSaveSuccessMessage(BuildContext context, dynamic result) {
