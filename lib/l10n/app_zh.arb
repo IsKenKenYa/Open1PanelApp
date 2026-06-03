@@ -1227,6 +1227,21 @@
   "systemSettingsRefresh": "刷新",
   "systemSettingsLoadFailed": "加载设置失败",
   "systemSettingsPanelSection": "面板设置",
+  "systemSettingsFileExportSection": "文件导出与下载",
+  "systemSettingsFileExportUsePicker": "使用文件选择器",
+  "systemSettingsFileExportUsePickerDesc": "关闭时直接保存到应用的下载目录",
+  "fileSaveSuccessPicker": "已保存到 {displayName} 的下载",
+  "@fileSaveSuccessPicker": {
+    "placeholders": {
+      "displayName": {
+        "type": "String"
+      }
+    }
+  },
+  "fileSaveSuccessDownloads": "已保存到下载目录",
+  "fileSaveCancelled": "已取消保存",
+  "fileSavePrivateFallback": "文件选择器不可用，已保存到应用私有目录",
+  "filePickerUnavailable": "文件选择器不可用",
   "systemSettingsPanelConfig": "面板配置",
   "systemSettingsPanelConfigDesc": "面板名称、端口、绑定地址等",
   "systemSettingsTerminal": "终端设置",

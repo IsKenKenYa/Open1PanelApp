@@ -2773,6 +2773,32 @@ class AppLocalizationsZh extends AppLocalizations {
   String get systemSettingsPanelSection => '面板设置';
 
   @override
+  String get systemSettingsFileExportSection => '文件导出与下载';
+
+  @override
+  String get systemSettingsFileExportUsePicker => '使用文件选择器';
+
+  @override
+  String get systemSettingsFileExportUsePickerDesc => '关闭时直接保存到应用的下载目录';
+
+  @override
+  String fileSaveSuccessPicker(String displayName) {
+    return '已保存到 $displayName 的下载';
+  }
+
+  @override
+  String get fileSaveSuccessDownloads => '已保存到下载目录';
+
+  @override
+  String get fileSaveCancelled => '已取消保存';
+
+  @override
+  String get fileSavePrivateFallback => '文件选择器不可用，已保存到应用私有目录';
+
+  @override
+  String get filePickerUnavailable => '文件选择器不可用';
+
+  @override
   String get systemSettingsPanelConfig => '面板配置';
 
   @override

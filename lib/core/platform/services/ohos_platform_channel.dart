@@ -1,5 +1,59 @@
 import 'package:flutter/services.dart';
 
+/// Structured outcome returned by OHOS save operations. Distinguishes
+/// the three save targets so the UI can show appropriate success toasts.
+enum SaveLocationKind {
+  /// File saved into the public Downloads directory.
+  publicDownloadDir,
+
+  /// File saved into a user-picked location (content:// URI returned).
+  pickerUri,
+
+  /// File fell back to the app's private directory. Should only happen
+  /// when the picker is unavailable; the UI is expected to surface a
+  /// warning in this case.
+  privateFallback,
+
+  /// Saved location is unknown / not classified.
+  other,
+}
+
+class OhosSaveOutcome {
+  final String uri;
+  final String displayName;
+  final SaveLocationKind kind;
+  final String? category;
+
+  const OhosSaveOutcome({
+    required this.uri,
+    required this.displayName,
+    required this.kind,
+    this.category,
+  });
+
+  factory OhosSaveOutcome.fromMap(Map<String, Object?> map) {
+    return OhosSaveOutcome(
+      uri: (map['uri'] as String?) ?? '',
+      displayName: (map['displayName'] as String?) ?? '',
+      kind: _parseKind(map['kind'] as String?),
+      category: map['category'] as String?,
+    );
+  }
+
+  static SaveLocationKind _parseKind(String? raw) {
+    switch (raw) {
+      case 'publicDownloadDir':
+        return SaveLocationKind.publicDownloadDir;
+      case 'pickerUri':
+        return SaveLocationKind.pickerUri;
+      case 'privateFallback':
+        return SaveLocationKind.privateFallback;
+      default:
+        return SaveLocationKind.other;
+    }
+  }
+}
+
 class OhosPlatformChannel {
   const OhosPlatformChannel({
     MethodChannel channel = const MethodChannel(channelName),
@@ -16,12 +70,12 @@ class OhosPlatformChannel {
     return raw ?? const <String, Object?>{};
   }
 
-  Future<String?> saveBytes({
+  Future<String> saveBytes({
     required String fileName,
     required Uint8List bytes,
     String? mimeType,
-  }) {
-    return _channel.invokeMethod<String>(
+  }) async {
+    final result = await _channel.invokeMethod<String>(
       'saveBytes',
       <String, Object?>{
         'fileName': fileName,
@@ -29,6 +83,69 @@ class OhosPlatformChannel {
         'mimeType': mimeType,
       },
     );
+    return result ?? '';
+  }
+
+  Future<OhosSaveOutcome?> pickAndSaveBytes({
+    required String fileName,
+    required Uint8List bytes,
+    String? mimeType,
+  }) async {
+    // Routes to the kind-aware native picker with default `document` kind.
+    return pickAndSaveBytesByKind(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mimeType,
+      mimeKind: 'document',
+    );
+  }
+
+  /// Route picker selection based on MIME classification. `mimeKind` is
+  /// one of `document`, `audio`, `image_video`. Returns `null` on user
+  /// cancel.
+  Future<OhosSaveOutcome?> pickAndSaveBytesByKind({
+    required String fileName,
+    required Uint8List bytes,
+    required String mimeKind,
+    String? mimeType,
+  }) async {
+    final raw = await _channel.invokeMapMethod<String, Object?>(
+      'pickAndSaveBytesByKind',
+      <String, Object?>{
+        'fileName': fileName,
+        'bytes': bytes,
+        'mimeType': mimeType,
+        'mimeKind': mimeKind,
+      },
+    );
+    if (raw == null) return null;
+    return OhosSaveOutcome.fromMap(raw);
+  }
+
+  Future<OhosSaveOutcome> saveBytesToPublicDownload({
+    required String fileName,
+    required Uint8List bytes,
+    required String category,
+  }) async {
+    final raw = await _channel.invokeMapMethod<String, Object?>(
+      'saveBytesToPublicDownload',
+      <String, Object?>{
+        'fileName': fileName,
+        'bytes': bytes,
+        'category': category,
+      },
+    );
+    if (raw == null) {
+      throw PlatformException(
+        code: 'ohos_platform_error',
+        message: 'saveBytesToPublicDownload returned null',
+      );
+    }
+    return OhosSaveOutcome.fromMap({
+      ...raw,
+      'kind': 'publicDownloadDir',
+      'category': category,
+    });
   }
 
   Future<bool> openPath(String path) async {
@@ -47,36 +164,32 @@ class OhosPlatformChannel {
     return opened == true;
   }
 
+  /// Open a content:// URI via the system file viewer. Used for files
+  /// saved through picker dialogs.
+  Future<bool> openUri(String contentUri) async {
+    final opened = await _channel.invokeMethod<bool>(
+      'openUri',
+      <String, Object?>{'uri': contentUri},
+    );
+    return opened == true;
+  }
+
   Future<String?> pickSaveDirectory() {
     return _channel.invokeMethod<String>('pickSaveDirectory');
   }
 
-  Future<String?> pickAndSaveBytes({
+  Future<String> saveBytesToDownload({
     required String fileName,
     required Uint8List bytes,
-    String? mimeType,
-  }) {
-    return _channel.invokeMethod<String>(
-      'pickAndSaveBytes',
-      <String, Object?>{
-        'fileName': fileName,
-        'bytes': bytes,
-        'mimeType': mimeType,
-      },
-    );
-  }
-
-  Future<String?> saveBytesToDownload({
-    required String fileName,
-    required Uint8List bytes,
-  }) {
-    return _channel.invokeMethod<String>(
+  }) async {
+    final result = await _channel.invokeMethod<String>(
       'saveBytesToDownload',
       <String, Object?>{
         'fileName': fileName,
         'bytes': bytes,
       },
     );
+    return result ?? '';
   }
 
   // Duplicates OhosDownloadService's channel so diagnostics and legacy callers
@@ -89,6 +202,7 @@ class OhosPlatformChannel {
     required String savedDir,
     String? fileName,
     Map<String, String>? headers,
+    bool usePicker = true,
   }) {
     return _downloadChannel.invokeMethod<String>(
       'enqueue',
@@ -97,6 +211,7 @@ class OhosPlatformChannel {
         'savedDir': savedDir,
         'fileName': fileName,
         'headers': headers ?? <String, String>{},
+        'usePicker': usePicker,
       },
     );
   }

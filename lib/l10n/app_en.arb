@@ -1279,6 +1279,21 @@
   "systemSettingsRefresh": "Refresh",
   "systemSettingsLoadFailed": "Failed to load settings",
   "systemSettingsPanelSection": "Panel Settings",
+  "systemSettingsFileExportSection": "File Export & Download",
+  "systemSettingsFileExportUsePicker": "Use file picker",
+  "systemSettingsFileExportUsePickerDesc": "When off, files save directly to the app's download directory",
+  "fileSaveSuccessPicker": "Saved to {displayName} Downloads",
+  "@fileSaveSuccessPicker": {
+    "placeholders": {
+      "displayName": {
+        "type": "String"
+      }
+    }
+  },
+  "fileSaveSuccessDownloads": "Saved to Downloads",
+  "fileSaveCancelled": "Save cancelled",
+  "fileSavePrivateFallback": "File picker unavailable, saved to app's private directory",
+  "filePickerUnavailable": "File picker unavailable",
   "systemSettingsPanelConfig": "Panel Config",
   "systemSettingsPanelConfigDesc": "Panel name, port, bind address, etc.",
   "systemSettingsTerminal": "Terminal Settings",

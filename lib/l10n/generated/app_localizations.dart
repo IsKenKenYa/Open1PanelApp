@@ -5396,6 +5396,54 @@ abstract class AppLocalizations {
   /// **'Panel Settings'**
   String get systemSettingsPanelSection;
 
+  /// No description provided for @systemSettingsFileExportSection.
+  ///
+  /// In en, this message translates to:
+  /// **'File Export & Download'**
+  String get systemSettingsFileExportSection;
+
+  /// No description provided for @systemSettingsFileExportUsePicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Use file picker'**
+  String get systemSettingsFileExportUsePicker;
+
+  /// No description provided for @systemSettingsFileExportUsePickerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When off, files save directly to the app\'s download directory'**
+  String get systemSettingsFileExportUsePickerDesc;
+
+  /// No description provided for @fileSaveSuccessPicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to {displayName} Downloads'**
+  String fileSaveSuccessPicker(String displayName);
+
+  /// No description provided for @fileSaveSuccessDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to Downloads'**
+  String get fileSaveSuccessDownloads;
+
+  /// No description provided for @fileSaveCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Save cancelled'**
+  String get fileSaveCancelled;
+
+  /// No description provided for @fileSavePrivateFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'File picker unavailable, saved to app\'s private directory'**
+  String get fileSavePrivateFallback;
+
+  /// No description provided for @filePickerUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'File picker unavailable'**
+  String get filePickerUnavailable;
+
   /// No description provided for @systemSettingsPanelConfig.
   ///
   /// In en, this message translates to:

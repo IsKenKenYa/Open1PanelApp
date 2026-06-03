@@ -2871,6 +2871,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get systemSettingsPanelSection => 'Panel Settings';
 
   @override
+  String get systemSettingsFileExportSection => 'File Export & Download';
+
+  @override
+  String get systemSettingsFileExportUsePicker => 'Use file picker';
+
+  @override
+  String get systemSettingsFileExportUsePickerDesc =>
+      'When off, files save directly to the app\'s download directory';
+
+  @override
+  String fileSaveSuccessPicker(String displayName) {
+    return 'Saved to $displayName Downloads';
+  }
+
+  @override
+  String get fileSaveSuccessDownloads => 'Saved to Downloads';
+
+  @override
+  String get fileSaveCancelled => 'Save cancelled';
+
+  @override
+  String get fileSavePrivateFallback =>
+      'File picker unavailable, saved to app\'s private directory';
+
+  @override
+  String get filePickerUnavailable => 'File picker unavailable';
+
+  @override
   String get systemSettingsPanelConfig => 'Panel Config';
 
   @override

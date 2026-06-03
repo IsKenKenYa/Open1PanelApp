@@ -13,28 +13,11 @@ import {
 import common from '@ohos.app.ability.common';
 import http from '@ohos.net.http';
 import fs from '@ohos.file.fs';
+import picker from '@ohos.file.picker';
 
 const TAG = 'OhosDownloadPlugin';
 const METHOD_CHANNEL = 'onepanel/ohos_download';
 const EVENT_CHANNEL = 'onepanel/ohos_download_progress';
-
-// Hand-rolled UUID v4 — ArkTS stdlib has no built-in UUID generator.
-function generateTaskId(): string {
-  const hex = '0123456789abcdef';
-  let result = '';
-  for (let i = 0; i < 36; i++) {
-    if (i === 8 || i === 13 || i === 18 || i === 23) {
-      result += '-';
-    } else if (i === 14) {
-      result += '4'; // UUID v4 version nibble (RFC 4122)
-    } else if (i === 19) {
-      result += hex.charAt(8 + Math.floor(Math.random() * 4)); // RFC 4122 variant bits (10xx)
-    } else {
-      result += hex.charAt(Math.floor(Math.random() * 16));
-    }
-  }
-  return result;
-}
 
 interface DownloadEntry {
   taskId: string;
@@ -67,6 +50,24 @@ class ProgressStreamHandler implements StreamHandler {
   }
 }
 
+// Hand-rolled UUID v4 — ArkTS stdlib has no built-in UUID generator.
+function generateTaskId(): string {
+  const hex = '0123456789abcdef';
+  let result = '';
+  for (let i = 0; i < 36; i++) {
+    if (i === 8 || i === 13 || i === 18 || i === 23) {
+      result += '-';
+    } else if (i === 14) {
+      result += '4'; // UUID v4 version nibble (RFC 4122)
+    } else if (i === 19) {
+      result += hex.charAt(8 + Math.floor(Math.random() * 4)); // RFC 4122 variant bits (10xx)
+    } else {
+      result += hex.charAt(Math.floor(Math.random() * 16));
+    }
+  }
+  return result;
+}
+
 export default class OhosDownloadPlugin
   implements FlutterPlugin, MethodCallHandler
 {
@@ -74,10 +75,21 @@ export default class OhosDownloadPlugin
   private eventChannel: EventChannel | null = null;
   private streamHandler: ProgressStreamHandler = new ProgressStreamHandler();
   private applicationContext: common.Context | null = null;
+  // Required by DocumentViewPicker when asking the user to pick a save
+  // location. Injected by OhosPlatformPlugin when it wires this plugin
+  // as a sub-plugin. When missing, the picker step is skipped and the
+  // download falls back to the public download directory.
+  private uiAbilityContext: common.UIAbilityContext | null = null;
   private downloads: Map<string, DownloadEntry> = new Map();
 
   getUniqueClassName(): string {
     return 'OhosDownloadPlugin';
+  }
+
+  constructor(uiAbilityContext?: common.UIAbilityContext) {
+    if (uiAbilityContext != null) {
+      this.uiAbilityContext = uiAbilityContext;
+    }
   }
 
   onAttachedToEngine(binding: FlutterPluginBinding): void {
@@ -95,6 +107,7 @@ export default class OhosDownloadPlugin
     }
     this.eventChannel = null;
     this.applicationContext = null;
+    this.uiAbilityContext = null;
     this.downloads.forEach((entry) => {
       if (entry.httpRequest) {
         entry.httpRequest.destroy();
@@ -148,14 +161,14 @@ export default class OhosDownloadPlugin
             const progress = entry.totalBytes > 0
               ? Math.floor((entry.bytesReceived / entry.totalBytes) * 100)
               : 0;
-            const map: Record<string, Object> = {
+            const progressMap: Record<string, Object> = {
               'taskId': entry.taskId,
               'bytesReceived': entry.bytesReceived,
               'totalBytes': entry.totalBytes,
               'status': entry.status,
               'progress': progress,
             };
-            result.success(map);
+            result.success(progressMap);
           } else {
             result.success(null);
           }
@@ -198,28 +211,43 @@ export default class OhosDownloadPlugin
   private async enqueue(call: MethodCall): Promise<string> {
     const context = this.requireContext();
     const url = this.requireNonEmptyStringArgument(call, 'url');
-    const savedDir = call.argument('savedDir') as string || `${context.cacheDir}/downloads`;
-    const fileName = call.argument('fileName') as string || this.extractFileName(url);
+    const usePicker = (call.argument('usePicker') as boolean | null) ?? true;
+    const explicitDir = call.argument('savedDir') as string | null;
+    const fileName = this.sanitizeFileName(
+      (call.argument('fileName') as string | null) || this.extractFileName(url),
+    );
     const rawHeaders = call.argument('headers') as Record<string, string> || {};
 
-    await this.ensureDirectory(savedDir);
+    // Step 1: decide where the file will be written. The picker route asks
+    // the user via DocumentViewPicker; the silent route writes into
+    // ${filesDir}/exports/downloads/ so the user can still find the file
+    // in the Files app under Open1Panel/exports/downloads.
+    let targetPath: string | null = null;
+    if (usePicker && this.uiAbilityContext != null) {
+      const outcome = await this.pickSaveLocation(fileName);
+      if (outcome != null) {
+        targetPath = outcome.uri;
+      }
+    }
+    if (targetPath == null) {
+      const fallbackDir = explicitDir ?? `${context.filesDir}/exports/downloads`;
+      await this.ensureDirectory(fallbackDir);
+      targetPath = await this.nextAvailablePath(fallbackDir, fileName);
+    }
 
-    const filePath = await this.nextAvailablePath(savedDir, fileName);
     const taskId = generateTaskId();
-
     const entry: DownloadEntry = {
       taskId,
       url,
-      savedDir,
+      savedDir: explicitDir ?? '',
       fileName,
       headers: rawHeaders,
       status: 'running',
       bytesReceived: 0,
       totalBytes: 0,
-      filePath,
+      filePath: targetPath,
       httpRequest: null,
     };
-
     this.downloads.set(taskId, entry);
 
     this.executeDownload(entry).catch((error: Error) => {
@@ -231,6 +259,10 @@ export default class OhosDownloadPlugin
     return taskId;
   }
 
+  // Download the body with @ohos.net.http and write bytes into either
+  // the picked content:// URI or the public download file path. The
+  // picker grant is sufficient to write to a content:// URI returned
+  // by DocumentViewPicker. fs.openSync accepts content URIs in OHOS.
   private async executeDownload(entry: DownloadEntry): Promise<void> {
     const httpRequest = http.createHttp();
     entry.httpRequest = httpRequest;
@@ -342,10 +374,48 @@ export default class OhosDownloadPlugin
     this.downloads.delete(taskId);
   }
 
-  private async saveDownloadedFile(taskId: string): Promise<string | null> {
+  private async saveDownloadedFile(taskId: string): Promise<Record<string, string> | null> {
     const entry = this.downloads.get(taskId);
     if (!entry || entry.status !== 'completed') return null;
-    return entry.filePath;
+    return {
+      'uri': entry.filePath,
+      'displayName': entry.fileName,
+    };
+  }
+
+  // Ask the user where to save via DocumentViewPicker. Returns null on
+  // cancel so the caller can fall back to the public download directory.
+  private async pickSaveLocation(fileName: string): Promise<Record<string, string> | null> {
+    if (this.uiAbilityContext == null) {
+      return null;
+    }
+    try {
+      const documentPicker = new picker.DocumentViewPicker(this.uiAbilityContext);
+      const saveResult: string[] = await documentPicker.save({ newFileNames: [fileName] });
+      if (!saveResult || saveResult.length === 0) {
+        return null;
+      }
+      return {
+        'uri': saveResult[0],
+        'displayName': this.extractDisplayName(saveResult[0], fileName),
+      };
+    } catch (error) {
+      Log.w(TAG, `pickSaveLocation failed: ${error}`);
+      return null;
+    }
+  }
+
+  private extractDisplayName(uri: string, fallback: string): string {
+    try {
+      const lastSlash = uri.lastIndexOf('/');
+      if (lastSlash < 0 || lastSlash === uri.length - 1) {
+        return fallback;
+      }
+      const raw = decodeURIComponent(uri.substring(lastSlash + 1));
+      return raw.length > 0 ? raw : fallback;
+    } catch (_) {
+      return fallback;
+    }
   }
 
   private sendProgress(entry: DownloadEntry): void {
@@ -372,6 +442,10 @@ export default class OhosDownloadPlugin
     } catch (_) {
       return 'download';
     }
+  }
+
+  private sanitizeFileName(fileName: string): string {
+    return fileName.replace(/[<>:"/\\|?*]/g, '_');
   }
 
   private async ensureDirectory(path: string): Promise<void> {

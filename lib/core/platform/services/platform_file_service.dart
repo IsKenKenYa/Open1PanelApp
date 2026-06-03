@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/platform/services/ohos_platform_channel.dart';
+import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 
 typedef DirectoryResolver = Future<Directory> Function();
@@ -16,77 +17,132 @@ class PlatformFileService {
     PlatformCapabilitiesSnapshot? capabilities,
     OhosPlatformChannel? ohosChannel,
     DirectoryResolver? fallbackDirectoryResolver,
+    AppPreferencesService? preferencesService,
   })  : _capabilities = capabilities ?? PlatformCapabilities.current(),
         _ohosChannel = ohosChannel ?? const OhosPlatformChannel(),
-        _fallbackDirectoryResolver = fallbackDirectoryResolver;
+        _fallbackDirectoryResolver = fallbackDirectoryResolver,
+        _preferencesService = preferencesService ?? AppPreferencesService();
 
   final PlatformCapabilitiesSnapshot _capabilities;
   final OhosPlatformChannel _ohosChannel;
   final DirectoryResolver? _fallbackDirectoryResolver;
+  final AppPreferencesService _preferencesService;
 
   Future<String?> pickFile({bool withData = false}) async {
     final result = await FilePicker.platform.pickFiles(withData: withData);
     return result?.files.single.path;
   }
 
+  /// Save bytes using a structured save pipeline. Replaces the previous
+  /// silent-fallback flow that always returned a string path.
+  Future<SaveOutcome> saveBytesStructured({
+    required String fileName,
+    required Uint8List bytes,
+    String? mimeType,
+    String? category,
+  }) async {
+    final safeFileName = _sanitizeFileName(fileName);
+    final usePicker = await _shouldUsePicker();
+    final mimeKind = _classifyMimeKind(mimeType);
+
+    if (_capabilities.supportsNativeFileSave) {
+      try {
+        if (usePicker) {
+          final outcome = await _ohosChannel.pickAndSaveBytesByKind(
+            fileName: safeFileName,
+            bytes: bytes,
+            mimeKind: mimeKind,
+            mimeType: mimeType,
+          );
+          if (outcome != null) {
+            return _outcomeFromOhos(outcome, safeFileName);
+          }
+          // User cancelled — return a cancelled result so the UI can
+          // surface a non-error message.
+          return SaveOutcome.cancelled();
+        }
+        // Picker disabled — write to public download directory.
+        final outcome = await _ohosChannel.saveBytesToPublicDownload(
+          fileName: safeFileName,
+          bytes: bytes,
+          category: category ?? _defaultCategoryForMime(mimeType),
+        );
+        return _outcomeFromOhos(outcome, safeFileName);
+      } catch (error, stackTrace) {
+        appLogger.wWithPackage(
+          'core.platform.file_service',
+          'OHOS native save failed, falling back to app documents directory',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        // Fall back to in-app private dir on the Dart side as a last
+        // resort; record the fallback in the outcome so the UI can warn.
+        final path = await _saveToFallbackDirectory(
+          fileName: safeFileName,
+          bytes: bytes,
+        );
+        return SaveOutcome(
+          uri: path,
+          displayName: safeFileName,
+          kind: SaveLocationKind.privateFallback,
+          category: category,
+          privateFallbackUsed: true,
+        );
+      }
+    }
+
+    // Non-OHOS platforms use file_picker.
+    if (usePicker) {
+      try {
+        final result = await FilePicker.platform.saveFile(
+          dialogTitle: '保存文件',
+          fileName: safeFileName,
+          bytes: bytes,
+        );
+        if (result != null && result.isNotEmpty) {
+          return SaveOutcome(
+            uri: result,
+            displayName: safeFileName,
+            kind: SaveLocationKind.pickerUri,
+            category: category,
+          );
+        }
+        return SaveOutcome.cancelled();
+      } catch (error, stackTrace) {
+        appLogger.wWithPackage(
+          'core.platform.file_service',
+          'FilePicker save failed, falling back to default directory',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+    }
+    final path = await _saveToFallbackDirectory(
+      fileName: safeFileName,
+      bytes: bytes,
+    );
+    return SaveOutcome(
+      uri: path,
+      displayName: safeFileName,
+      kind: SaveLocationKind.publicDownloadDir,
+      category: category,
+    );
+  }
+
+  /// Backwards-compatible wrapper that returns a filesystem path. Prefer
+  /// [saveBytesStructured] in new code so the UI can render the saved
+  /// location display name rather than the raw path.
   Future<String> saveBytes({
     required String fileName,
     required Uint8List bytes,
     String? mimeType,
   }) async {
-    final safeFileName = _sanitizeFileName(fileName);
-
-    // Three-tier fallback: native picker (user choice) -> app documents dir
-    // (always writable) -> exception. The middle tier handles cancelled pickers
-    // and permission failures without losing the saved bytes.
-    if (_capabilities.supportsNativeFileSave) {
-      try {
-        final pickerPath = await _ohosChannel.pickAndSaveBytes(
-          fileName: safeFileName,
-          bytes: bytes,
-          mimeType: mimeType,
-        );
-        if (pickerPath != null && pickerPath.isNotEmpty) {
-          return pickerPath;
-        }
-      } catch (error, stackTrace) {
-        appLogger.wWithPackage(
-          'core.platform.file_service',
-          'OHOS native picker save failed, falling back to app documents directory',
-          error: error,
-          stackTrace: stackTrace,
-        );
-      }
-
-      // Picker cancelled or failed — save to app documents directory
-      return _saveToFallbackDirectory(
-        fileName: safeFileName,
-        bytes: bytes,
-      );
-    }
-
-    try {
-      final result = await FilePicker.platform.saveFile(
-        dialogTitle: '保存文件',
-        fileName: safeFileName,
-        bytes: bytes,
-      );
-      if (result != null && result.isNotEmpty) {
-        return result;
-      }
-      throw const FileSystemException('用户取消保存');
-    } catch (error, stackTrace) {
-      appLogger.wWithPackage(
-        'core.platform.file_service',
-        'FilePicker save failed, falling back to default directory',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      return _saveToFallbackDirectory(
-        fileName: safeFileName,
-        bytes: bytes,
-      );
-    }
+    final outcome = await saveBytesStructured(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: mimeType,
+    );
+    return outcome.uri;
   }
 
   Future<void> openFile(String filePath) async {
@@ -126,6 +182,37 @@ class PlatformFileService {
     }
 
     throw UnsupportedError('当前平台不支持打开文件');
+  }
+
+  /// Open a saved outcome through the most appropriate mechanism. For
+  /// content:// URIs from picker, this calls [OhosPlatformChannel.openUri]
+  /// so OHOS launches the system file viewer with a temporary read
+  /// grant. For filesystem paths, falls through to [openFile].
+  Future<bool> openSaveOutcome(SaveOutcome outcome) async {
+    if (_capabilities.isOhos) {
+      if (outcome.kind == SaveLocationKind.pickerUri &&
+          (outcome.uri.startsWith('content://') ||
+              outcome.uri.startsWith('file://'))) {
+        try {
+          return await _ohosChannel.openUri(outcome.uri);
+        } catch (error, stackTrace) {
+          appLogger.wWithPackage(
+            'core.platform.file_service',
+            'openUri failed, falling back to file path opener',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }
+      }
+      final opened = await _tryOpenOhosPath(outcome.uri);
+      if (opened) return true;
+    }
+    try {
+      await openFile(outcome.uri);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<void> openDirectory(String path) async {
@@ -203,6 +290,45 @@ class PlatformFileService {
     } catch (_) {
       return false;
     }
+  }
+
+  // Reads the picker toggle from AppPreferencesService. Failures fall
+  // back to `true` so the picker is always offered by default.
+  Future<bool> _shouldUsePicker() async {
+    try {
+      return await _preferencesService.loadUseFilePickerForExport();
+    } catch (_) {
+      return true;
+    }
+  }
+
+  String _classifyMimeKind(String? mimeType) {
+    if (mimeType == null) return 'document';
+    if (mimeType.startsWith('audio/')) return 'audio';
+    if (mimeType.startsWith('image/') || mimeType.startsWith('video/')) {
+      return 'image_video';
+    }
+    return 'document';
+  }
+
+  String _defaultCategoryForMime(String? mimeType) {
+    if (mimeType == null) return 'files';
+    if (mimeType.startsWith('image/')) return 'images';
+    if (mimeType.startsWith('video/')) return 'videos';
+    if (mimeType.startsWith('audio/')) return 'audio';
+    if (mimeType.startsWith('text/')) return 'logs';
+    return 'files';
+  }
+
+  SaveOutcome _outcomeFromOhos(OhosSaveOutcome outcome, String fallbackName) {
+    return SaveOutcome(
+      uri: outcome.uri,
+      displayName: outcome.displayName.isNotEmpty
+          ? outcome.displayName
+          : fallbackName,
+      kind: outcome.kind,
+      category: outcome.category,
+    );
   }
 
   Future<String> _saveToFallbackDirectory({
@@ -310,4 +436,34 @@ class PlatformFileService {
     }
     throw UnsupportedError('当前平台不支持打开文件所在目录');
   }
+}
+
+/// Structured save result. Replaces the old `String?` return value from
+/// [PlatformFileService.saveBytes] in new code. The `kind` field tells
+/// the UI which success message to render.
+class SaveOutcome {
+  final String uri;
+  final String displayName;
+  final SaveLocationKind kind;
+  final String? category;
+  // True when the native picker failed and the service fell back to
+  // the app's private directory. The UI should surface a warning toast
+  // in this case.
+  final bool privateFallbackUsed;
+
+  const SaveOutcome({
+    required this.uri,
+    required this.displayName,
+    required this.kind,
+    this.category,
+    this.privateFallbackUsed = false,
+  });
+
+  factory SaveOutcome.cancelled() => const SaveOutcome(
+        uri: '',
+        displayName: '',
+        kind: SaveLocationKind.other,
+      );
+
+  bool get isCancelled => uri.isEmpty;
 }

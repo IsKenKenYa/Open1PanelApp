@@ -11,6 +11,10 @@
     {
       "name": "EntryAbility_label",
       "value": "1Panel 客户端"
+    },
+    {
+      "name": "permission_write_imagevideo_reason",
+      "value": "允许将导出的图片与视频保存到您的相册。"
     }
   ]
 }

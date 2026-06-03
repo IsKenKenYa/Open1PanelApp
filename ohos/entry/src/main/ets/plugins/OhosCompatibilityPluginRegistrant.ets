@@ -1,4 +1,5 @@
 import { FlutterEngine, Log } from '@ohos/flutter_ohos';
+import common from '@ohos.app.ability.common';
 import OhosPackageInfoPlugin from './OhosPackageInfoPlugin';
 import OhosPathProviderPlugin from './OhosPathProviderPlugin';
 import OhosSecureStoragePlugin from './OhosSecureStoragePlugin';
@@ -10,7 +11,13 @@ import OhosConnectivityPlugin from './OhosConnectivityPlugin';
 const TAG = 'OhosCompatibilityPluginRegistrant';
 
 export class OhosCompatibilityPluginRegistrant {
-  static registerWith(flutterEngine: FlutterEngine) {
+  // The UIAbility context is required for picker-aware plugins
+  // (OhosPlatformPlugin, OhosDownloadPlugin). Application context lacks the
+  // UI token needed to launch system picker dialogs.
+  static registerWith(
+    flutterEngine: FlutterEngine,
+    uiAbilityContext: common.UIAbilityContext,
+  ) {
     OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'shared_preferences', () => {
       flutterEngine.getPlugins()?.add(new OhosSharedPreferencesPlugin());
     });
@@ -27,7 +34,9 @@ export class OhosCompatibilityPluginRegistrant {
       flutterEngine.getPlugins()?.add(new OhosLocalAuthPlugin());
     });
     OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'onepanel_ohos_platform', () => {
-      flutterEngine.getPlugins()?.add(new OhosPlatformPlugin());
+      // Inject the UIAbility context so OhosPlatformPlugin can resolve it
+      // directly via getUIAbilityContext() when calling picker APIs.
+      flutterEngine.getPlugins()?.add(new OhosPlatformPlugin(uiAbilityContext));
     });
     OhosCompatibilityPluginRegistrant.registerPlugin(flutterEngine, 'connectivity_plus', () => {
       flutterEngine.getPlugins()?.add(new OhosConnectivityPlugin());

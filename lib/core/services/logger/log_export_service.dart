@@ -36,6 +36,7 @@ version: ${packageInfo.version}+${packageInfo.buildNumber}
         fileName: fileName,
         bytes: bytes,
         mimeType: 'text/plain',
+        category: 'logs',
       );
     } catch (e, stackTrace) {
       appLogger.eWithPackage(

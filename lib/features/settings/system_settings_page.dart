@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/panel_settings_page.dart';
 import 'package:onepanel_client/features/settings/security_settings_page.dart';
@@ -221,6 +222,22 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                 title: l10n.commonClear,
                 subtitle: l10n.systemSettingsAppLogsClearSubtitle,
                 onTap: () => _clearAppLogs(context),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDesignTokens.spacingMd),
+        _buildSectionTitle(
+            context, l10n.systemSettingsFileExportSection, theme),
+        Card(
+          child: Column(
+            children: [
+              _FilePickerToggleTile(
+                onChanged: () {
+                  if (context.mounted) {
+                    setState(() {});
+                  }
+                },
               ),
             ],
           ),
@@ -781,13 +798,32 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
     final result =
         await LogExportService().exportLogs(minLevel: appLogger.minLogLevel);
     if (!context.mounted) return;
-    if (result.success) {
-      SnackBarUtils.showSuccess(
-          context, '${l10n.commonSaveSuccess}: ${result.filePath ?? ''}');
+    if (result.wasCancelled) {
+      SnackBarUtils.showInfo(context, l10n.fileSaveCancelled);
+    } else if (result.success) {
+      final message = _buildSaveSuccessMessage(context, result);
+      SnackBarUtils.showSuccess(context, message);
+      if (result.privateFallbackUsed) {
+        SnackBarUtils.showWarning(context, l10n.fileSavePrivateFallback);
+      }
     } else {
       SnackBarUtils.showError(
           context, '${l10n.commonSaveFailed}: ${result.errorMessage ?? ''}');
     }
+  }
+
+  String _buildSaveSuccessMessage(BuildContext context, dynamic result) {
+    final l10n = context.l10n;
+    final displayName = (result.displayName as String?) ?? '';
+    if (displayName.isNotEmpty) {
+      try {
+        return l10n.fileSaveSuccessPicker(displayName);
+      } catch (_) {
+        // Fall back to plain concatenation if the l10n entry is missing.
+        return '${l10n.commonSaveSuccess}: $displayName';
+      }
+    }
+    return l10n.fileSaveSuccessDownloads;
   }
 
   Future<void> _clearAppLogs(BuildContext context) async {
@@ -893,5 +929,82 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
   void _showLogLevelLockedHint(BuildContext context) {
     final l10n = context.l10n;
     SnackBarUtils.showInfo(context, l10n.systemSettingsAppLogsLevelLocked);
+  }
+}
+
+/// State tile for the "use file picker" toggle. Loads the preference on
+/// mount and persists changes immediately. Lives outside the
+/// `_SystemSettingsPageState` so it can manage its own loading lifecycle
+/// independently from the parent provider.
+class _FilePickerToggleTile extends StatefulWidget {
+  const _FilePickerToggleTile({required this.onChanged});
+
+  /// Called after a successful save so the parent can refresh any
+  /// other UI that depends on the toggle (e.g. log export button label).
+  final VoidCallback onChanged;
+
+  @override
+  State<_FilePickerToggleTile> createState() => _FilePickerToggleTileState();
+}
+
+class _FilePickerToggleTileState extends State<_FilePickerToggleTile> {
+  static final AppPreferencesService _prefs = AppPreferencesService();
+
+  bool? _usePicker;
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final value = await _prefs.loadUseFilePickerForExport();
+    if (!mounted) return;
+    setState(() {
+      _usePicker = value;
+    });
+  }
+
+  Future<void> _onChanged(bool value) async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+    });
+    try {
+      await _prefs.saveUseFilePickerForExport(value);
+      if (!mounted) return;
+      setState(() {
+        _usePicker = value;
+      });
+      widget.onChanged();
+    } catch (error, stackTrace) {
+      appLogger.eWithPackage(
+        'features.settings.system_settings',
+        'Failed to persist useFilePickerForExport',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final value = _usePicker;
+    return SwitchListTile(
+      secondary: const Icon(Icons.folder_open_outlined),
+      title: Text(l10n.systemSettingsFileExportUsePicker),
+      subtitle: Text(l10n.systemSettingsFileExportUsePickerDesc),
+      value: value ?? true,
+      onChanged: value == null || _busy ? null : _onChanged,
+    );
   }
 }

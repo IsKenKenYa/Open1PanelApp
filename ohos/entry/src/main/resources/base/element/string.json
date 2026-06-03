@@ -11,6 +11,10 @@
     {
       "name": "EntryAbility_label",
       "value": "1Panel Client"
+    },
+    {
+      "name": "permission_write_imagevideo_reason",
+      "value": "Allow saving exported images and videos to your gallery."
     }
   ]
 }

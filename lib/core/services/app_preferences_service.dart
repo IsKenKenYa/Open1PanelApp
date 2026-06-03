@@ -18,6 +18,9 @@ class AppPreferencesService {
   static const String _useDynamicColorKey = 'app_use_dynamic_color';
   static const String _seedColorKey = 'app_seed_color';
   static const String _uiRenderModeKey = 'app_ui_render_mode';
+  // Default `true` so the picker is always available on OHOS; users can
+  // opt out to fall back to the public Downloads directory.
+  static const String _useFilePickerForExportKey = 'app_use_file_picker_for_export';
 
   Future<ThemeMode> loadThemeMode() async {
     final prefs = await SharedPreferences.getInstance();
@@ -151,5 +154,19 @@ class AppPreferencesService {
     };
 
     await prefs.setString(_uiRenderModeKey, value);
+  }
+
+  // Controls whether OHOS picker dialogs (DocumentViewPicker /
+  // AudioViewPicker / PhotoAccessHelper) are shown for exports and
+  // downloads. When false, files are written silently to the public
+  // Downloads directory under Open1Panel/<category>/.
+  Future<bool> loadUseFilePickerForExport() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_useFilePickerForExportKey) ?? true;
+  }
+
+  Future<void> saveUseFilePickerForExport(bool usePicker) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_useFilePickerForExportKey, usePicker);
   }
 }
