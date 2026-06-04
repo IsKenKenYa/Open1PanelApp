@@ -2776,10 +2776,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get systemSettingsFileExportSection => '文件导出与下载';
 
   @override
-  String get systemSettingsFileExportUsePicker => '使用文件选择器';
+  String get systemSettingsFileExportUsePicker => '保存文件时使用文件选择器';
 
   @override
-  String get systemSettingsFileExportUsePickerDesc => '关闭时直接保存到应用的下载目录';
+  String get systemSettingsFileExportUsePickerDesc => '关闭时直接保存到默认下载目录（按子目录归类）';
+
+  @override
+  String get systemSettingsFileExportSubDirTitle => '默认子目录名';
+
+  @override
+  String get systemSettingsFileExportSubDirHelper =>
+      '关闭选择器时使用，留空则直接保存到下载目录。默认 1Panel-Client';
 
   @override
   String fileSaveSuccessPicker(String displayName) {

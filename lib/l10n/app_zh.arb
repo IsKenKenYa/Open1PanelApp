@@ -1228,8 +1228,10 @@
   "systemSettingsLoadFailed": "加载设置失败",
   "systemSettingsPanelSection": "面板设置",
   "systemSettingsFileExportSection": "文件导出与下载",
-  "systemSettingsFileExportUsePicker": "使用文件选择器",
-  "systemSettingsFileExportUsePickerDesc": "关闭时直接保存到应用的下载目录",
+  "systemSettingsFileExportUsePicker": "保存文件时使用文件选择器",
+  "systemSettingsFileExportUsePickerDesc": "关闭时直接保存到默认下载目录（按子目录归类）",
+  "systemSettingsFileExportSubDirTitle": "默认子目录名",
+  "systemSettingsFileExportSubDirHelper": "关闭选择器时使用，留空则直接保存到下载目录。默认 1Panel-Client",
   "fileSaveSuccessPicker": "已保存到 {displayName} 的下载",
   "@fileSaveSuccessPicker": {
     "placeholders": {

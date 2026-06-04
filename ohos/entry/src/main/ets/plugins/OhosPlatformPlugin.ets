@@ -39,6 +39,11 @@ interface SaveOutcome {
   kind: 'pickerUri' | 'publicDownloadDir' | 'privateFallback';
 }
 
+interface OhosPublicDownloadDir {
+  path: string;
+  displayName: string;
+}
+
 // MIME kinds used to route pickers. Match values to
 // `mimeKind` argument from Dart-side `pickAndSaveBytesByKind`.
 type MimeKind = 'document' | 'audio' | 'image_video';
@@ -116,6 +121,9 @@ export default class OhosPlatformPlugin
           return;
         case 'pickSaveDirectory':
           result.success(await this.pickSaveDirectory());
+          return;
+        case 'getPublicDownloadDir':
+          result.success(await this.getPublicDownloadDir());
           return;
         case 'pickAndSaveBytes':
           // Legacy entry point kept for compatibility — routes to the new
@@ -258,6 +266,24 @@ export default class OhosPlatformPlugin
     }
   }
 
+  // Returns the on-device "Downloads" directory exposed by the system
+  // Files app, creating it on demand. Mirrors what `path_provider`
+  // would do on macOS — gives callers a stable path for subfolder-based
+  // saves when the picker is off.
+  private async getPublicDownloadDir(): Promise<OhosPublicDownloadDir> {
+    const context = this.requireContext();
+    // /storage/emulated/0/Download is not directly accessible from the
+    // OHOS app sandbox; we surface the same logical location through
+    // filesDir/Download so users can browse it in the Files app.
+    const downloadsDir = `${context.filesDir}/Download`;
+    await this.ensureDirectory(downloadsDir);
+    const result: OhosPublicDownloadDir = {
+      path: downloadsDir,
+      displayName: '下载',
+    };
+    return result;
+  }
+
   // Picker entry point. Routes to the picker that matches `kind`:
   //   document     — DocumentViewPicker.save()
   //   audio        — AudioViewPicker.save()
@@ -329,6 +355,13 @@ export default class OhosPlatformPlugin
   // Save into the public Downloads directory, creating a per-category
   // subfolder. Used when the user has the picker toggle off or when the
   // picker flow is unavailable.
+  //
+  // Layout:
+  //   <filesDir>/<subDir>/<category>/<fileName>   (subDir non-empty)
+  //   <filesDir>/<category>/<fileName>            (subDir empty)
+  //
+  // `subDir` is sanitized for filesystem use to defend against
+  // user-supplied separators or illegal characters.
   private async saveBytesToPublicDownload(call: MethodCall): Promise<SaveOutcome> {
     const context = this.requireContext();
     const fileName = this.sanitizeFileName(
@@ -341,11 +374,18 @@ export default class OhosPlatformPlugin
     const category = this.sanitizeCategory(
       (call.argument('category') as string | null) ?? 'files',
     );
+    const subDir = this.sanitizeSubDir(
+      (call.argument('subDir') as string | null) ?? '',
+    );
 
     // context.filesDir points to /data/storage/el2/base/files/ on OHOS,
-    // which the system exposes as "Files" in the Files app. Open1Panel/
-    // subfolder keeps exports discoverable without polluting root.
-    const exportDir = `${context.filesDir}/exports/${category}`;
+    // which the system exposes as "Files" in the Files app. A nested
+    // 1Panel-Client/<category>/ layout keeps exports discoverable
+    // without polluting root.
+    const baseDir = `${context.filesDir}/Download`;
+    const exportDir = subDir.length > 0
+      ? `${baseDir}/${subDir}/${category}`
+      : `${baseDir}/${category}`;
     await this.ensureDirectory(exportDir);
     const filePath = await this.nextAvailablePath(exportDir, fileName);
     const file = fs.openSync(
@@ -362,10 +402,13 @@ export default class OhosPlatformPlugin
       fs.closeSync(file);
     }
 
+    const displayName = subDir.length > 0
+      ? `${subDir}/${category}/${fileName}`
+      : `${category}/${fileName}`;
     Log.i(TAG, `saveBytesToPublicDownload: saved to ${filePath}`);
     return {
       uri: filePath,
-      displayName: fileName,
+      displayName,
       kind: 'publicDownloadDir',
     };
   }
@@ -471,6 +514,17 @@ export default class OhosPlatformPlugin
   private sanitizeCategory(category: string): string {
     const cleaned = category.replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
     return cleaned.length > 0 ? cleaned.substring(0, 32) : 'files';
+  }
+
+  // subDir mirrors the same policy as category: keep the alphabet tight,
+  // strip path separators, cap length. Empty input is allowed and is
+  // treated as "no parent folder" by callers.
+  private sanitizeSubDir(subDir: string): string {
+    const cleaned = subDir
+      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '')
+      .replace(/\.\.+/g, '.')
+      .trim();
+    return cleaned.length > 0 ? cleaned.substring(0, 64) : '';
   }
 
   private requireContext(): common.Context {

@@ -169,6 +169,26 @@ class AppRouter {
     return MaterialPageRoute(builder: (_) => const NotFoundPage());
   }
 
+  /// Generates a route that always uses the route entry's `defaultBuilder`,
+  /// bypassing any platform-specific override.
+  ///
+  /// Use this when hosting a route inside a desktop shell via
+  /// `DesktopRoutedModuleHost`. The outer `desktopBuilder` has already
+  /// wrapped the route in the appropriate shell (`UiRouteHost`); the
+  /// inner Navigator should render the actual page, not another shell
+  /// (which would cause infinite recursion).
+  static Route<dynamic> generateEmbeddedRoute(RouteSettings settings) {
+    _ensureRouteRegistryInitialized();
+    final registryRoute = _buildRouteFromRegistry(
+      settings,
+      useDefaultBuilder: true,
+    );
+    if (registryRoute != null) {
+      return registryRoute;
+    }
+    return MaterialPageRoute(builder: (_) => const NotFoundPage());
+  }
+
   // --- legacy switch block removed; all routes served by registry ---
 
   static void _ensureRouteRegistryInitialized() {
@@ -179,7 +199,26 @@ class AppRouter {
     _routeRegistryInitialized = true;
   }
 
-  static Route<dynamic>? _buildRouteFromRegistry(RouteSettings settings) {
+  /// Resets the route registry. Tests use this to discard the default
+  /// entries built by [_buildRouteRegistryEntries] and substitute their
+  /// own. Production code should never call this.
+  @visibleForTesting
+  static void resetRouteRegistryForTest() {
+    RouteRegistry.clear();
+    _routeRegistryInitialized = false;
+  }
+
+  /// Registers a single test route. Pairs with
+  /// [resetRouteRegistryForTest] so each test gets a minimal registry.
+  @visibleForTesting
+  static void registerRouteForTest(String name, RouteEntry entry) {
+    RouteRegistry.register(name, entry);
+  }
+
+  static Route<dynamic>? _buildRouteFromRegistry(
+    RouteSettings settings, {
+    bool useDefaultBuilder = false,
+  }) {
     final entry = RouteRegistry.lookup(settings.name);
     if (entry == null) {
       return null;
@@ -189,7 +228,7 @@ class AppRouter {
       settings: settings,
       builder: (context) {
         final target = UiTargetResolver.resolve(context);
-        final builder = entry.resolve(target);
+        final builder = entry.resolve(target, useDefault: useDefaultBuilder);
         return builder(context, settings);
       },
     );

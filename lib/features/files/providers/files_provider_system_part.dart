@@ -125,7 +125,11 @@ extension FilesProviderSystemMixin on FilesProvider {
         throw StateError('No server configured');
       }
 
-      final directory = await getDownloadsDirectory() ??
+      // Use PlatformSystemPaths so OHOS doesn't crash on the missing
+      // path_provider.getDownloadsDirectory() implementation. The native
+      // side will decide whether to surface the picker or write into the
+      // system download folder based on the user's picker toggle.
+      final directory = await PlatformSystemPaths.defaultDownloadDir() ??
           await getApplicationDocumentsDirectory();
       final downloadPath = directory.path;
 
@@ -178,7 +182,10 @@ extension FilesProviderSystemMixin on FilesProvider {
           downloadPath = dir.path;
         }
       } else {
-        final directory = await getDownloadsDirectory() ??
+        // Desktop + OHOS fallthrough: go through PlatformSystemPaths so
+        // the unsupported getDownloadsDirectory() on Linux/Windows never
+        // gets called. macOS uses ~/Downloads; Linux uses XDG_DOWNLOAD_DIR.
+        final directory = await PlatformSystemPaths.defaultDownloadDir() ??
             await getApplicationDocumentsDirectory();
         downloadPath = directory.path;
       }

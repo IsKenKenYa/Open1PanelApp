@@ -103,10 +103,19 @@ class PlatformCapabilitiesSnapshot {
 class PlatformCapabilities {
   const PlatformCapabilities._();
 
+  /// Test-only override for [defaultTargetPlatform]. Returns to the
+  /// real platform if [targetPlatform] is `null`.
+  static TargetPlatform? _testTargetPlatformOverride;
+
+  @visibleForTesting
+  static void setTargetPlatformForTest(TargetPlatform? targetPlatform) {
+    _testTargetPlatformOverride = targetPlatform;
+  }
+
   static PlatformCapabilitiesSnapshot current() {
     return resolveForTest(
       isWeb: kIsWeb,
-      targetPlatform: defaultTargetPlatform,
+      targetPlatform: _testTargetPlatformOverride ?? defaultTargetPlatform,
       operatingSystem: _readOperatingSystem(),
     );
   }

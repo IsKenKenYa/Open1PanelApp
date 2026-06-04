@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:onepanel_client/core/config/api_constants.dart';
+import 'package:onepanel_client/core/platform/services/platform_system_paths.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/data/repositories/files_repository.dart';
 
@@ -146,14 +147,22 @@ class FileTransferService {
     if (Platform.isAndroid) {
       downloadDir = Directory('/storage/emulated/0/Download');
       if (!await downloadDir.exists()) {
-        downloadDir = await getExternalStorageDirectory() ??
-            await getApplicationDocumentsDirectory();
+        // getExternalStorageDirectory throws on non-Android hosts; wrap
+        // in try/catch so test runs on macOS/Linux do not crash.
+        try {
+          downloadDir = await getExternalStorageDirectory() ??
+              await getApplicationDocumentsDirectory();
+        } catch (_) {
+          downloadDir = await getApplicationDocumentsDirectory();
+        }
       }
     } else if (Platform.isIOS) {
       downloadDir = await getApplicationDocumentsDirectory();
     } else {
-      downloadDir = await getDownloadsDirectory() ??
-          await getApplicationDocumentsDirectory();
+      // Desktop + OHOS: route through PlatformSystemPaths so we never
+      // hit `getDownloadsDirectory()` (which throws on non-macOS).
+      final resolved = await PlatformSystemPaths.defaultDownloadDir();
+      downloadDir = resolved ?? await getApplicationDocumentsDirectory();
     }
 
     // Sanitize characters that are illegal on most filesystems (Windows + Linux).

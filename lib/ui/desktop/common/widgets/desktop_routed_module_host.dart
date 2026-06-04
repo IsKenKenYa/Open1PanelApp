@@ -18,10 +18,18 @@ class DesktopRoutedModuleHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      onGenerateRoute: AppRouter.generateRoute,
+      // Use `generateEmbeddedRoute` (not `generateRoute`) so the inner
+      // Navigator resolves the route via its `defaultBuilder` instead
+      // of the desktop platform override. The override would push a
+      // new `UiRouteHost` wrapping `MacosShellContentPage`, which then
+      // renders *another* `DesktopRoutedModuleHost` for the same route
+      // — stack overflow at `FocusNode.descendants` after a few
+      // hundred frames. The outer `desktopBuilder` already hosted
+      // us in the shell; we just need to render the actual page here.
+      onGenerateRoute: AppRouter.generateEmbeddedRoute,
       onGenerateInitialRoutes: (_, __) {
         return [
-          AppRouter.generateRoute(
+          AppRouter.generateEmbeddedRoute(
             RouteSettings(name: routeName, arguments: routeArguments),
           ),
         ];

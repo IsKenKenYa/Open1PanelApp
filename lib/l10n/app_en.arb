@@ -1280,8 +1280,10 @@
   "systemSettingsLoadFailed": "Failed to load settings",
   "systemSettingsPanelSection": "Panel Settings",
   "systemSettingsFileExportSection": "File Export & Download",
-  "systemSettingsFileExportUsePicker": "Use file picker",
-  "systemSettingsFileExportUsePickerDesc": "When off, files save directly to the app's download directory",
+  "systemSettingsFileExportUsePicker": "Use file picker when saving",
+  "systemSettingsFileExportUsePickerDesc": "When off, files save into the default download directory (grouped by subfolder)",
+  "systemSettingsFileExportSubDirTitle": "Default sub-folder name",
+  "systemSettingsFileExportSubDirHelper": "Used when the picker is off. Leave empty to skip the parent folder. Default: 1Panel-Client",
   "fileSaveSuccessPicker": "Saved to {displayName} Downloads",
   "@fileSaveSuccessPicker": {
     "placeholders": {

@@ -126,6 +126,7 @@ class OhosPlatformChannel {
     required String fileName,
     required Uint8List bytes,
     required String category,
+    String? subDir,
   }) async {
     final raw = await _channel.invokeMapMethod<String, Object?>(
       'saveBytesToPublicDownload',
@@ -133,6 +134,7 @@ class OhosPlatformChannel {
         'fileName': fileName,
         'bytes': bytes,
         'category': category,
+        'subDir': subDir,
       },
     );
     if (raw == null) {
@@ -176,6 +178,18 @@ class OhosPlatformChannel {
 
   Future<String?> pickSaveDirectory() {
     return _channel.invokeMethod<String>('pickSaveDirectory');
+  }
+
+  /// Returns the OHOS public download directory the native side exposes
+  /// to the user. Maps to `Files/Downloads/...` in the system Files app.
+  /// Returns a map `{ path, displayName }` so callers can render a
+  /// user-friendly location name. The native side is responsible for
+  /// `mkdir` on missing directories.
+  Future<Map<String, Object?>> getPublicDownloadDir() async {
+    final raw = await _channel.invokeMapMethod<String, Object?>(
+      'getPublicDownloadDir',
+    );
+    return raw ?? const <String, Object?>{};
   }
 
   Future<String> saveBytesToDownload({

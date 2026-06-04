@@ -2874,11 +2874,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get systemSettingsFileExportSection => 'File Export & Download';
 
   @override
-  String get systemSettingsFileExportUsePicker => 'Use file picker';
+  String get systemSettingsFileExportUsePicker => 'Use file picker when saving';
 
   @override
   String get systemSettingsFileExportUsePickerDesc =>
-      'When off, files save directly to the app\'s download directory';
+      'When off, files save into the default download directory (grouped by subfolder)';
+
+  @override
+  String get systemSettingsFileExportSubDirTitle => 'Default sub-folder name';
+
+  @override
+  String get systemSettingsFileExportSubDirHelper =>
+      'Used when the picker is off. Leave empty to skip the parent folder. Default: 1Panel-Client';
 
   @override
   String fileSaveSuccessPicker(String displayName) {

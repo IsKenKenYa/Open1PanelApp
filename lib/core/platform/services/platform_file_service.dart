@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/platform/services/ohos_platform_channel.dart';
+import 'package:onepanel_client/core/platform/services/platform_system_paths.dart';
 import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 
@@ -44,6 +45,8 @@ class PlatformFileService {
     final safeFileName = _sanitizeFileName(fileName);
     final usePicker = await _shouldUsePicker();
     final mimeKind = _classifyMimeKind(mimeType);
+    final effectiveCategory = category ?? _defaultCategoryForMime(mimeType);
+    final subDir = await _loadSubDirectoryName();
 
     if (_capabilities.supportsNativeFileSave) {
       try {
@@ -65,7 +68,8 @@ class PlatformFileService {
         final outcome = await _ohosChannel.saveBytesToPublicDownload(
           fileName: safeFileName,
           bytes: bytes,
-          category: category ?? _defaultCategoryForMime(mimeType),
+          category: effectiveCategory,
+          subDir: subDir,
         );
         return _outcomeFromOhos(outcome, safeFileName);
       } catch (error, stackTrace) {
@@ -80,12 +84,14 @@ class PlatformFileService {
         final path = await _saveToFallbackDirectory(
           fileName: safeFileName,
           bytes: bytes,
+          subDir: subDir,
+          category: effectiveCategory,
         );
         return SaveOutcome(
           uri: path,
           displayName: safeFileName,
           kind: SaveLocationKind.privateFallback,
-          category: category,
+          category: effectiveCategory,
           privateFallbackUsed: true,
         );
       }
@@ -104,7 +110,7 @@ class PlatformFileService {
             uri: result,
             displayName: safeFileName,
             kind: SaveLocationKind.pickerUri,
-            category: category,
+            category: effectiveCategory,
           );
         }
         return SaveOutcome.cancelled();
@@ -120,12 +126,16 @@ class PlatformFileService {
     final path = await _saveToFallbackDirectory(
       fileName: safeFileName,
       bytes: bytes,
+      subDir: subDir,
+      category: effectiveCategory,
     );
     return SaveOutcome(
       uri: path,
-      displayName: safeFileName,
+      displayName: subDir.isNotEmpty
+          ? '$subDir/$effectiveCategory/$safeFileName'
+          : '$effectiveCategory/$safeFileName',
       kind: SaveLocationKind.publicDownloadDir,
-      category: category,
+      category: effectiveCategory,
     );
   }
 
@@ -296,7 +306,7 @@ class PlatformFileService {
   // back to `true` so the picker is always offered by default.
   Future<bool> _shouldUsePicker() async {
     try {
-      return await _preferencesService.loadUseFilePickerForExport();
+      return await _preferencesService.loadUseFilePickerForFileOperations();
     } catch (_) {
       return true;
     }
@@ -334,8 +344,13 @@ class PlatformFileService {
   Future<String> _saveToFallbackDirectory({
     required String fileName,
     required Uint8List bytes,
+    String subDir = '',
+    String? category,
   }) async {
-    final directory = await _getFallbackDownloadDir();
+    final directory = await _resolveTargetDir(
+      subDir: subDir,
+      category: category,
+    );
     if (!await directory.exists()) {
       await directory.create(recursive: true);
     }
@@ -343,6 +358,38 @@ class PlatformFileService {
     final file = await File(filePath).create(recursive: true);
     await file.writeAsBytes(bytes, flush: true);
     return file.path;
+  }
+
+  // Compose <downloads>/<subDir>/<category> for the silent save path.
+  // Returns a path under the application documents directory when
+  // PlatformSystemPaths cannot resolve a real system download dir
+  // (which is only expected in unusual environments).
+  Future<Directory> _resolveTargetDir({
+    required String subDir,
+    String? category,
+  }) async {
+    final resolved = await PlatformSystemPaths.defaultDownloadDir();
+    final base = resolved ?? await _getFallbackDownloadDir();
+    final segments = <String>[base.path];
+    if (subDir.trim().isNotEmpty) {
+      segments.add(_sanitizeSubDirName(subDir));
+    }
+    if (category != null && category.isNotEmpty) {
+      segments.add(_sanitizeSubDirName(category));
+    }
+    return Directory(segments.join(Platform.pathSeparator));
+  }
+
+  String _sanitizeSubDirName(String name) {
+    return name.replaceAll(RegExp(r'[<>:"/\\|?*\x00-\x1F]'), '_');
+  }
+
+  Future<String> _loadSubDirectoryName() async {
+    try {
+      return await _preferencesService.loadFileSaveSubDirectoryName();
+    } catch (_) {
+      return AppPreferencesService.defaultFileSaveSubDirectoryName;
+    }
   }
 
   Future<Directory> _getFallbackDownloadDir() async {
@@ -353,8 +400,15 @@ class PlatformFileService {
       final documents = await getApplicationDocumentsDirectory();
       return Directory('${documents.path}/exports');
     }
-    return await getDownloadsDirectory() ??
-        await getApplicationDocumentsDirectory();
+    // Desktop fallback: use the platform-abstracted system download dir
+    // (PlatformSystemPaths handles env vars and platform quirks). Only
+    // fall back to ApplicationDocumentsDirectory when the resolution
+    // itself fails (e.g. $HOME is unset, or path_provider throws).
+    final resolved = await PlatformSystemPaths.defaultDownloadDir();
+    if (resolved != null) {
+      return resolved;
+    }
+    return getApplicationDocumentsDirectory();
   }
 
   /// Appends numeric suffixes (`_1`, `_2`, ...) to avoid overwriting existing

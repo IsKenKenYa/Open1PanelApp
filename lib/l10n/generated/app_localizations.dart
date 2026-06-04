@@ -5405,14 +5405,26 @@ abstract class AppLocalizations {
   /// No description provided for @systemSettingsFileExportUsePicker.
   ///
   /// In en, this message translates to:
-  /// **'Use file picker'**
+  /// **'Use file picker when saving'**
   String get systemSettingsFileExportUsePicker;
 
   /// No description provided for @systemSettingsFileExportUsePickerDesc.
   ///
   /// In en, this message translates to:
-  /// **'When off, files save directly to the app\'s download directory'**
+  /// **'When off, files save into the default download directory (grouped by subfolder)'**
   String get systemSettingsFileExportUsePickerDesc;
+
+  /// No description provided for @systemSettingsFileExportSubDirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default sub-folder name'**
+  String get systemSettingsFileExportSubDirTitle;
+
+  /// No description provided for @systemSettingsFileExportSubDirHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Used when the picker is off. Leave empty to skip the parent folder. Default: 1Panel-Client'**
+  String get systemSettingsFileExportSubDirHelper;
 
   /// No description provided for @fileSaveSuccessPicker.
   ///

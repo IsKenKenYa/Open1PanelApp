@@ -17,7 +17,27 @@ class RouteEntry {
   final UiRouteBuilder defaultBuilder;
   final Map<UiPlatformKind, UiRouteBuilder> platformOverrides;
 
-  UiRouteBuilder resolve(UiTarget target) {
+  /// Resolves the builder to use for the given [target].
+  ///
+  /// When [useDefault] is true, the platform override is bypassed and
+  /// the `defaultBuilder` is returned. The shell-aware routing flow
+  /// (see `_shellAwareModuleEntry` in `AppRouter`) sets [useDefault] to
+  /// true when resolving a route that is already being hosted inside
+  /// a desktop shell via `DesktopRoutedModuleHost`. This prevents the
+  /// infinite shell-in-shell recursion that would otherwise happen:
+  ///
+  ///   outer push `route X` → `desktopBuilder` → `UiRouteHost(home)`
+  ///   → `MacosShellContentPage` → embedded Navigator
+  ///   → inner push `route X` → `desktopBuilder` → `UiRouteHost(home)`
+  ///   → `MacosShellContentPage` → ... (stack overflow)
+  ///
+  /// By forcing the inner resolution to use `defaultBuilder`, the
+  /// embedded Navigator renders the actual page (e.g. `FeedbackCenterPage`)
+  /// inside the existing shell, no recursion.
+  UiRouteBuilder resolve(UiTarget target, {bool useDefault = false}) {
+    if (useDefault) {
+      return defaultBuilder;
+    }
     return platformOverrides[target.platformKind] ?? defaultBuilder;
   }
 }
@@ -41,6 +61,21 @@ class RouteRegistry {
   /// Allows app startup to register entries without creating circular imports.
   static void registerAll(Map<String, RouteEntry> routes) {
     _routes.addAll(routes);
+  }
+
+  /// Clears the entire registry. [AppRouter.resetRouteRegistryForTest]
+  /// exposes this for tests; production code should not call it
+  /// directly. The method is intentionally non-`@visibleForTesting`
+  /// because it must be reachable from `app_router.dart`.
+  static void clear() {
+    _routes.clear();
+  }
+
+  /// Registers a single [entry] under [name]. Used by
+  /// [AppRouter.registerRouteForTest] for test injection; production
+  /// code should prefer [registerAll] from the app's route table.
+  static void register(String name, RouteEntry entry) {
+    _routes[name] = entry;
   }
 }
 

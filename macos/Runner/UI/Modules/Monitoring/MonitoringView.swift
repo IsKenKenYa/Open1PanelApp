@@ -1,5 +1,8 @@
 import SwiftUI
 
+// `LoadingView` lives in `UI/Components/LoadingView.swift` and is
+// wired into the Xcode project — no need to redeclare it here.
+
 struct MonitoringView: View {
     @StateObject private var viewModel = MonitoringViewModel()
     @EnvironmentObject var theme: ThemeManager

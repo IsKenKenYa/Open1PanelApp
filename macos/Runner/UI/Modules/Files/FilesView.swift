@@ -1,5 +1,8 @@
 import SwiftUI
 
+// `LoadingView` and `EmptyStateView` live in `UI/Components/` and are
+// wired into the Xcode project — no need to redeclare them here.
+
 struct FilesView: View {
     @StateObject private var viewModel = FilesViewModel()
     @EnvironmentObject var theme: ThemeManager

@@ -247,6 +247,14 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
                   }
                 },
               ),
+              const Divider(height: 1),
+              _FileSaveSubDirectoryTile(
+                onChanged: () {
+                  if (context.mounted) {
+                    setState(() {});
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -975,7 +983,7 @@ class _FilePickerToggleTileState extends State<_FilePickerToggleTile> {
   }
 
   Future<void> _load() async {
-    final value = await _prefs.loadUseFilePickerForExport();
+    final value = await _prefs.loadUseFilePickerForFileOperations();
     if (!mounted) return;
     setState(() {
       _usePicker = value;
@@ -988,7 +996,7 @@ class _FilePickerToggleTileState extends State<_FilePickerToggleTile> {
       _busy = true;
     });
     try {
-      await _prefs.saveUseFilePickerForExport(value);
+      await _prefs.saveUseFilePickerForFileOperations(value);
       if (!mounted) return;
       setState(() {
         _usePicker = value;
@@ -997,7 +1005,7 @@ class _FilePickerToggleTileState extends State<_FilePickerToggleTile> {
     } catch (error, stackTrace) {
       appLogger.eWithPackage(
         'features.settings.system_settings',
-        'Failed to persist useFilePickerForExport',
+        'Failed to persist useFilePickerForFileOperations',
         error: error,
         stackTrace: stackTrace,
       );
@@ -1020,6 +1028,120 @@ class _FilePickerToggleTileState extends State<_FilePickerToggleTile> {
       subtitle: Text(l10n.systemSettingsFileExportUsePickerDesc),
       value: value ?? true,
       onChanged: value == null || _busy ? null : _onChanged,
+    );
+  }
+}
+
+/// State tile for the "default sub-folder name" preference. Loaded
+/// independently from the picker toggle so it can be edited while
+/// the user is reviewing the file-saving section.
+class _FileSaveSubDirectoryTile extends StatefulWidget {
+  const _FileSaveSubDirectoryTile({required this.onChanged});
+
+  final VoidCallback onChanged;
+
+  @override
+  State<_FileSaveSubDirectoryTile> createState() =>
+      _FileSaveSubDirectoryTileState();
+}
+
+class _FileSaveSubDirectoryTileState extends State<_FileSaveSubDirectoryTile> {
+  static final AppPreferencesService _prefs = AppPreferencesService();
+
+  late final TextEditingController _controller;
+  bool _busy = false;
+
+  // Characters that are illegal in Windows / Linux / macOS filenames and
+  // that have no business showing up in a sub-folder name. We replace
+  // them with `_` and surface a hint to the user.
+  static final RegExp _illegalChars = RegExp(r'[<>:"/\\|?*\x00-\x1F]');
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    final value = await _prefs.loadFileSaveSubDirectoryName();
+    if (!mounted) return;
+    if (_controller.text != value) {
+      _controller.value = TextEditingValue(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
+    }
+  }
+
+  Future<void> _commit(String raw) async {
+    if (_busy) return;
+    final sanitized = raw.replaceAll(_illegalChars, '_');
+    setState(() {
+      _busy = true;
+    });
+    try {
+      await _prefs.saveFileSaveSubDirectoryName(sanitized);
+      if (!mounted) return;
+      if (sanitized != raw) {
+        // Replace the controller text silently so the field reflects
+        // the sanitized value.
+        _controller.value = TextEditingValue(
+          text: sanitized,
+          selection: TextSelection.collapsed(offset: sanitized.length),
+        );
+      }
+      widget.onChanged();
+    } catch (error, stackTrace) {
+      appLogger.eWithPackage(
+        'features.settings.system_settings',
+        'Failed to persist fileSaveSubDirectoryName',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return ListTile(
+      leading: const Icon(Icons.create_new_folder_outlined),
+      // ListTile.title is a single-line slot, but a TextField with
+      // labelText + helperText + OutlineInputBorder needs vertical
+      // room. Use a fixed-height Container so the inner field gets
+      // enough width without overflowing the ListTile row.
+      title: SizedBox(
+        height: 72,
+        child: TextField(
+          controller: _controller,
+          decoration: InputDecoration(
+            labelText: l10n.systemSettingsFileExportSubDirTitle,
+            helperText: l10n.systemSettingsFileExportSubDirHelper,
+            border: const OutlineInputBorder(),
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: _commit,
+          onEditingComplete: () => _commit(_controller.text),
+        ),
+      ),
     );
   }
 }
