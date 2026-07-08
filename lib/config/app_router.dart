@@ -22,6 +22,7 @@ import 'package:onepanel_client/features/server/server_list_page.dart';
 import 'package:onepanel_client/features/server/server_models.dart';
 import 'package:onepanel_client/features/security/security_verification_page.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
+import 'package:onepanel_client/features/shell/module_registry.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/ui/routing/ui_route_host.dart';
 import 'package:onepanel_client/ui/routing/route_registry.dart';
@@ -52,10 +53,6 @@ import 'package:onepanel_client/features/websites/pages/website_certificate_deta
 import 'package:onepanel_client/features/openresty/openresty_page.dart';
 import 'package:onepanel_client/features/openresty/pages/openresty_source_editor_page.dart';
 import 'package:onepanel_client/features/openresty/providers/openresty_provider.dart';
-import 'package:onepanel_client/features/ai/ai_page.dart';
-import 'package:onepanel_client/features/ai/agents/agents_provider.dart';
-import 'package:onepanel_client/features/ai/mcp_server_provider.dart';
-import 'package:onepanel_client/features/ai/ai_provider.dart';
 import 'package:onepanel_client/features/settings/menu_settings_page.dart';
 import 'package:onepanel_client/features/settings/menu_settings_provider.dart';
 import 'package:onepanel_client/features/settings/ssl_settings_page.dart';
@@ -471,14 +468,10 @@ class AppRouter {
       ),
       AppRoutes.ai: _shellAwareModuleEntry(
         routeName: AppRoutes.ai,
-        defaultBuilder: (_, __) => MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => AIProvider()),
-            ChangeNotifierProvider(create: (_) => AgentsProvider()),
-            ChangeNotifierProvider(create: (_) => McpServerProvider()),
-          ],
-          child: const AIPage(),
-        ),
+        // Delegate to ModuleRegistry.buildAiModule so provider registration
+        // has a single source of truth (architecture review candidate ⑧).
+        defaultBuilder: (context, _) =>
+            ModuleRegistry.buildAiModule(context),
       ),
       AppRoutes.securityVerification: _shellAwareModuleEntry(
         routeName: AppRoutes.securityVerification,

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../api/v2/ai_v2.dart';
+import '../../core/utils/error_message_utils.dart';
 import '../../data/models/ai_models.dart';
 import '../../data/models/common_models.dart';
 
@@ -163,38 +164,12 @@ class AIService {
     }
   }
 
-  /// 处理Dio异常
-  ///
-  /// 将Dio异常转换为更友好的错误信息
-  /// @param error Dio异常
-  /// @return 友好的错误信息
+  /// Translates a [DioException] to a user-facing message via
+  /// [ErrorMessageUtils]. Previously this method hard-coded Chinese strings
+  /// that leaked through e.toString() into the UI (architecture review
+  /// candidate ⑭/⑰). Now it delegates to the shared seam so the message
+  /// can be localized at the presentation layer.
   Exception _handleDioError(DioException error) {
-    switch (error.type) {
-      case DioExceptionType.connectionTimeout:
-        return Exception('连接超时，请检查网络连接');
-      case DioExceptionType.sendTimeout:
-        return Exception('发送超时，请重试');
-      case DioExceptionType.receiveTimeout:
-        return Exception('接收超时，请重试');
-      case DioExceptionType.badResponse:
-        final statusCode = error.response?.statusCode;
-        if (statusCode == 401) {
-          return Exception('未授权，请重新登录');
-        } else if (statusCode == 403) {
-          return Exception('权限不足');
-        } else if (statusCode == 404) {
-          return Exception('资源不存在');
-        } else if (statusCode == 500) {
-          return Exception('服务器内部错误');
-        } else {
-          return Exception('请求失败: ${error.response?.data}');
-        }
-      case DioExceptionType.cancel:
-        return Exception('请求已取消');
-      case DioExceptionType.unknown:
-        return Exception('网络错误，请检查网络连接');
-      default:
-        return Exception('未知错误');
-    }
+    return Exception(ErrorMessageUtils.normalize(error));
   }
 }

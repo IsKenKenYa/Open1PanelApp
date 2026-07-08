@@ -5,6 +5,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/monitoring_runtime_models.dart';
+import '../../data/models/monitor_models.dart';
 import '../../data/repositories/monitor_repository.dart';
 import 'monitoring_provider.dart';
 import 'widgets/monitor_chart.dart';

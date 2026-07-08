@@ -1,4 +1,4 @@
-part of '../runtime_models.dart';
+import 'package:equatable/equatable.dart';
 
 class NodeModuleRequest extends Equatable {
   final int id;

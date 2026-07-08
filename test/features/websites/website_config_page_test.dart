@@ -8,11 +8,11 @@ import 'package:onepanel_client/data/models/website_models.dart';
 import 'package:onepanel_client/features/websites/pages/website_config_page.dart';
 import 'package:onepanel_client/features/websites/providers/website_config_provider.dart';
 import 'package:onepanel_client/features/websites/services/website_config_service.dart';
-import 'package:onepanel_client/features/websites/services/website_service.dart';
+import 'package:onepanel_client/data/repositories/website_repository.dart';
 import 'package:onepanel_client/l10n/generated/app_localizations.dart';
 
-class _FakeWebsiteService extends WebsiteService {
-  _FakeWebsiteService({
+class _FakeWebsiteRepository extends WebsiteRepository {
+  _FakeWebsiteRepository({
     required this.currentRuntimeId,
     required this.runtimes,
   });
@@ -89,7 +89,7 @@ class _FakeWebsiteConfigService extends WebsiteConfigService {
 void main() {
   testWidgets('WebsiteConfigPage switches php runtime through dropdown',
       (tester) async {
-    final websiteService = _FakeWebsiteService(
+    final websiteRepository = _FakeWebsiteRepository(
       currentRuntimeId: 11,
       runtimes: const [
         RuntimeInfo(id: 11, name: 'php-8.2'),
@@ -97,13 +97,13 @@ void main() {
       ],
     );
     final configService = _FakeWebsiteConfigService(
-      onUpdatePhpVersion: websiteService.switchRuntime,
+      onUpdatePhpVersion: websiteRepository.switchRuntime,
     );
 
     final provider = WebsiteConfigProvider(
       websiteId: 1,
       service: configService,
-      websiteService: websiteService,
+      websiteRepository: websiteRepository,
     );
 
     await tester.pumpWidget(

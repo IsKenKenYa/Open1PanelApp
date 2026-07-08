@@ -1,4 +1,5 @@
-part of '../runtime_models.dart';
+import 'package:equatable/equatable.dart';
+import 'runtime_php_container_item_model.dart';
 
 class PHPContainerConfig extends Equatable {
   final int id;

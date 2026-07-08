@@ -1,4 +1,5 @@
-part of '../runtime_models.dart';
+import 'package:equatable/equatable.dart';
+import 'runtime_network_binding_model.dart';
 
 class RuntimeUpdate extends Equatable {
   final int id;

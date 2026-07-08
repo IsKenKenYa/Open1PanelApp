@@ -6,6 +6,7 @@ import 'package:battery_plus/battery_plus.dart';
 import '../../../../core/services/logger/logger_service.dart';
 import '../../../../core/storage/hive_storage_service.dart';
 import '../../../../data/repositories/monitor_repository.dart';
+import '../../../../data/models/monitor_models.dart';
 import '../models/monitor_hive_adapters.dart';
 
 /// 监控数据本地数据源

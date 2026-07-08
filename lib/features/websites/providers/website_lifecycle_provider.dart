@@ -4,7 +4,7 @@ import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/runtime_models.dart';
 import '../../../data/models/website_group_models.dart';
 import '../../../data/models/website_models.dart';
-import '../services/website_service.dart';
+import '../../../data/repositories/website_repository.dart';
 
 enum WebsiteLifecycleMode { create, edit }
 
@@ -111,12 +111,12 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
   WebsiteLifecycleProvider({
     required this.mode,
     this.websiteId,
-    WebsiteService? service,
-  }) : _service = service ?? WebsiteService();
+    WebsiteRepository? repository,
+  }) : _repository = repository ?? WebsiteRepository();
 
   final WebsiteLifecycleMode mode;
   final int? websiteId;
-  final WebsiteService _service;
+  final WebsiteRepository _repository;
 
   WebsiteLifecycleState _state = const WebsiteLifecycleState();
   WebsiteLifecycleState get state => _state;
@@ -127,9 +127,9 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
     _state = _state.copyWith(isLoading: true, error: null);
     notifyListeners();
     try {
-      final groups = await _service.listWebsiteGroups();
-      final runtimes = await _service.listPhpRuntimes();
-      final parentWebsites = await _service.listParentWebsites();
+      final groups = await _repository.listWebsiteGroups();
+      final runtimes = await _repository.listPhpRuntimes();
+      final parentWebsites = await _repository.listParentWebsites();
 
       var nextState = _state.copyWith(
         isLoading: false,
@@ -141,7 +141,7 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
       );
 
       if (isEditMode && websiteId != null) {
-        final website = await _service.getWebsiteDetail(websiteId!);
+        final website = await _repository.getWebsiteDetail(websiteId!);
         nextState = nextState.copyWith(
           website: website,
           type: _resolveType(website.type),
@@ -236,10 +236,10 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
     try {
       if (isEditMode) {
-        await _service.updateWebsiteByModel(_buildUpdateRequest());
+        await _repository.updateWebsiteByModel(_buildUpdateRequest());
       } else {
-        await _service.preCheck({});
-        await _service.createWebsite(_buildCreateRequest());
+        await _repository.preCheckWebsite({});
+        await _repository.createWebsite(_buildCreateRequest());
       }
       return true;
     } catch (e) {

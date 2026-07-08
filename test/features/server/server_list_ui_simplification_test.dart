@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/features/server/server_provider.dart';
 import 'package:onepanel_client/data/repositories/monitor_repository.dart';
+import 'package:onepanel_client/data/models/monitor_models.dart';
 
 void main() {
   group('Server List UI Simplification Tests', () {

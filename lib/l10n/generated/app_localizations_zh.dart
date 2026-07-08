@@ -3657,6 +3657,41 @@ class AppLocalizationsZh extends AppLocalizations {
   String get snapshotDeleteFailed => '快照删除失败';
 
   @override
+  String get snapshotLoadFailed => '加载快照列表失败';
+
+  @override
+  String snapshotLoadFailedWithError(String error) {
+    return '加载快照列表失败: $error';
+  }
+
+  @override
+  String get snapshotBackupAccountLoadFailed => '加载备份账户失败';
+
+  @override
+  String get snapshotNoBackupAccountHint => '没有可用的备份账户，请先在备份账户管理中添加备份账户';
+
+  @override
+  String get snapshotBackupAccountLabel => '备份账户';
+
+  @override
+  String get snapshotCreateErrorTitle => '创建快照失败';
+
+  @override
+  String get snapshotImportErrorTitle => '导入快照失败';
+
+  @override
+  String get snapshotRecoverErrorTitle => '恢复快照失败';
+
+  @override
+  String get snapshotRollbackErrorTitle => '回滚快照失败';
+
+  @override
+  String get snapshotEditDescErrorTitle => '更新描述失败';
+
+  @override
+  String get snapshotDeleteErrorTitle => '删除快照失败';
+
+  @override
   String get proxySettingsTitle => '代理设置';
 
   @override

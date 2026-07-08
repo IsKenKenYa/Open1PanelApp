@@ -6,10 +6,10 @@ import 'package:onepanel_client/data/models/runtime_models.dart';
 import 'package:onepanel_client/data/models/website_models.dart';
 import 'package:onepanel_client/features/websites/providers/website_config_provider.dart';
 import 'package:onepanel_client/features/websites/services/website_config_service.dart';
-import 'package:onepanel_client/features/websites/services/website_service.dart';
+import 'package:onepanel_client/data/repositories/website_repository.dart';
 
-class _FakeWebsiteService extends WebsiteService {
-  _FakeWebsiteService({
+class _FakeWebsiteRepository extends WebsiteRepository {
+  _FakeWebsiteRepository({
     required this.currentRuntimeId,
     required this.runtimes,
   });
@@ -85,7 +85,7 @@ class _FakeWebsiteConfigService extends WebsiteConfigService {
 
 void main() {
   test('WebsiteConfigProvider loads php runtime context', () async {
-    final websiteService = _FakeWebsiteService(
+    final websiteRepository = _FakeWebsiteRepository(
       currentRuntimeId: 11,
       runtimes: const [
         RuntimeInfo(id: 11, name: 'php-8.2'),
@@ -93,13 +93,13 @@ void main() {
       ],
     );
     final configService = _FakeWebsiteConfigService(
-      onUpdatePhpVersion: websiteService.switchRuntime,
+      onUpdatePhpVersion: websiteRepository.switchRuntime,
     );
 
     final provider = WebsiteConfigProvider(
       websiteId: 1,
       service: configService,
-      websiteService: websiteService,
+      websiteRepository: websiteRepository,
     );
 
     await provider.loadAll();
@@ -113,7 +113,7 @@ void main() {
 
   test('WebsiteConfigProvider updates php version and refreshes context',
       () async {
-    final websiteService = _FakeWebsiteService(
+    final websiteRepository = _FakeWebsiteRepository(
       currentRuntimeId: 11,
       runtimes: const [
         RuntimeInfo(id: 11, name: 'php-8.2'),
@@ -121,13 +121,13 @@ void main() {
       ],
     );
     final configService = _FakeWebsiteConfigService(
-      onUpdatePhpVersion: websiteService.switchRuntime,
+      onUpdatePhpVersion: websiteRepository.switchRuntime,
     );
 
     final provider = WebsiteConfigProvider(
       websiteId: 1,
       service: configService,
-      websiteService: websiteService,
+      websiteRepository: websiteRepository,
     );
 
     await provider.loadAll();

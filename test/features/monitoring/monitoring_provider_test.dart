@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/data/models/monitoring_runtime_models.dart';
 import 'package:onepanel_client/data/repositories/monitor_repository.dart';
+import 'package:onepanel_client/data/models/monitor_models.dart';
 import 'package:onepanel_client/features/monitoring/monitoring_provider.dart';
 import 'package:onepanel_client/features/monitoring/monitoring_service.dart';
 import 'package:onepanel_client/features/monitoring/data/datasources/monitor_local_datasource.dart';

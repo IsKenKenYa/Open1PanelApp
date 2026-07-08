@@ -2,6 +2,7 @@ import '../../core/services/base_component.dart';
 import '../../core/services/logger/logger_service.dart';
 import '../../data/repositories/monitor_repository.dart';
 import '../../data/models/monitoring_runtime_models.dart';
+import '../../data/models/monitor_models.dart';
 
 /// 监控服务
 ///

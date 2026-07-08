@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../data/repositories/monitor_repository.dart';
+import '../../../../data/models/monitor_models.dart';
 
 /// 监控折线图组件
 ///

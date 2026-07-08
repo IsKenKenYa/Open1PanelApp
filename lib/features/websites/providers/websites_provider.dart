@@ -3,7 +3,7 @@ import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/website_group_models.dart';
 import '../../../data/models/website_models.dart';
-import '../services/website_service.dart';
+import '../../../data/repositories/website_repository.dart';
 
 class WebsiteStats {
   final int total;
@@ -74,10 +74,10 @@ class WebsitesData {
 
 class WebsitesProvider extends ChangeNotifier with SafeChangeNotifier {
   WebsitesProvider({
-    WebsiteService? service,
-  }) : _service = service ?? WebsiteService();
+    WebsiteRepository? repository,
+  }) : _repository = repository ?? WebsiteRepository();
 
-  final WebsiteService _service;
+  final WebsiteRepository _repository;
 
   WebsitesData _data = const WebsitesData();
   WebsitesData get data => _data;
@@ -103,13 +103,13 @@ class WebsitesProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
 
     try {
-      final page = await _service.searchWebsites(
+      final page = await _repository.searchWebsites(
         name: _data.query.isEmpty ? null : _data.query,
         type: _data.typeFilter,
         page: 1,
         pageSize: 100,
       );
-      final groups = await _service.listWebsiteGroups();
+      final groups = await _repository.listWebsiteGroups();
       final websites = _data.groupFilterId == null
           ? page.items
           : page.items
@@ -147,37 +147,37 @@ class WebsitesProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<bool> startWebsite(int websiteId) async {
-    return _operate(() => _service.startWebsite(websiteId));
+    return _operate(() => _repository.startWebsite(websiteId));
   }
 
   Future<bool> stopWebsite(int websiteId) async {
-    return _operate(() => _service.stopWebsite(websiteId));
+    return _operate(() => _repository.stopWebsite(websiteId));
   }
 
   Future<bool> restartWebsite(int websiteId) async {
-    return _operate(() => _service.restartWebsite(websiteId));
+    return _operate(() => _repository.restartWebsite(websiteId));
   }
 
   Future<bool> deleteWebsite(int websiteId) async {
-    return _operate(() => _service.deleteWebsite(websiteId));
+    return _operate(() => _repository.deleteWebsite(websiteId));
   }
 
   Future<bool> batchOperate({
     required List<int> ids,
     required String action,
   }) {
-    return _operate(() => _service.batchOperate(ids: ids, operate: action));
+    return _operate(() => _repository.batchOperate(ids: ids, operate: action));
   }
 
   Future<bool> batchDelete(List<int> ids) {
-    return _operate(() => _service.batchDelete(ids: ids));
+    return _operate(() => _repository.batchDelete(ids));
   }
 
   Future<bool> batchSetGroup({
     required List<int> ids,
     required int groupId,
   }) {
-    return _operate(() => _service.batchSetGroup(ids: ids, groupId: groupId));
+    return _operate(() => _repository.batchSetGroup(ids: ids, groupId: groupId));
   }
 
   Future<void> refresh() => loadWebsites(

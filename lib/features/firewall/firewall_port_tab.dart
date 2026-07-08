@@ -6,6 +6,7 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/utils/platform_utils.dart';
 import 'package:onepanel_client/data/models/firewall_models.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
+import 'package:onepanel_client/shared/state/selection_controller.dart';
 import 'package:onepanel_client/shared/widgets/app_card.dart';
 
 import 'firewall_rule_form_page.dart';
@@ -23,13 +24,15 @@ class FirewallPortTab extends StatefulWidget {
 class _FirewallPortTabState extends State<FirewallPortTab> {
   bool _initialized = false;
   final TextEditingController _searchController = TextEditingController();
-  final Set<FirewallRule> _selected = <FirewallRule>{};
+  final SelectionController<FirewallRule> _selection =
+      SelectionController<FirewallRule>();
   String _strategyFilter = 'all';
   bool _selectionMode = false;
 
   @override
   void initState() {
     super.initState();
+    _selection.addListener(_onSelectionChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _initialized) {
         return;
@@ -39,8 +42,14 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
     });
   }
 
+  void _onSelectionChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    _selection.removeListener(_onSelectionChanged);
+    _selection.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -74,7 +83,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
               searchController: _searchController,
               strategyFilter: _strategyFilter,
               isSelectionMode: _selectionMode,
-              selectedCount: _selected.length,
+              selectedCount: _selection.selectedCount,
               isMutating: provider.isMutating,
               onSearch: _loadRules,
               onStrategyChanged: _onStrategyChanged,
@@ -92,7 +101,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
             );
           }
           final rule = provider.items[index - 1];
-          final selected = _selected.contains(rule);
+          final selected = _selection.isSelected(rule);
           return AppCard(
             title: rule.description ??
                 '${l10n.firewallPortLabel} ${rule.port ?? '—'}',
@@ -101,7 +110,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
                     value: selected,
                     onChanged: provider.isMutating
                         ? null
-                        : (_) => _toggleRuleSelection(rule),
+                        : (_) => _selection.toggle(rule),
                   )
                 : null,
             subtitle: Text(
@@ -131,7 +140,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
                       ),
                     ],
                   ),
-            onTap: _selectionMode ? () => _toggleRuleSelection(rule) : null,
+            onTap: _selectionMode ? () => _selection.toggle(rule) : null,
             child: Text('${l10n.firewallAddressLabel}: ${rule.address ?? '-'}'),
           );
         },
@@ -153,7 +162,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
     if (!mounted) {
       return;
     }
-    setState(_selected.clear);
+    _selection.clear();
   }
 
   Future<void> _onStrategyChanged(String value) async {
@@ -167,40 +176,30 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
     setState(() {
       _selectionMode = !_selectionMode;
       if (!_selectionMode) {
-        _selected.clear();
-      }
-    });
-  }
-
-  void _toggleRuleSelection(FirewallRule rule) {
-    setState(() {
-      if (_selected.contains(rule)) {
-        _selected.remove(rule);
-      } else {
-        _selected.add(rule);
+        _selection.clear();
       }
     });
   }
 
   Future<void> _deleteSelected(FirewallPortsProvider provider) async {
-    if (_selected.isEmpty) {
+    if (!_selection.hasSelection) {
       return;
     }
-    await provider.deleteRules(_selected.toList(growable: false));
+    await provider.deleteRules(_selection.toList());
     if (!mounted) {
       return;
     }
-    setState(_selected.clear);
+    _selection.clear();
   }
 
   Future<void> _toggleSelected(
     FirewallPortsProvider provider,
     String strategy,
   ) async {
-    if (_selected.isEmpty) {
+    if (!_selection.hasSelection) {
       return;
     }
-    for (final rule in _selected) {
+    for (final rule in _selection.toList()) {
       final current = (rule.strategy ?? '').toLowerCase();
       if (current == strategy) {
         continue;
@@ -210,7 +209,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
     if (!mounted) {
       return;
     }
-    setState(_selected.clear);
+    _selection.clear();
   }
 
   Future<void> _handleAction(
@@ -253,7 +252,7 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
         break;
     }
     if (mounted) {
-      setState(_selected.clear);
+      _selection.clear();
     }
   }
 }

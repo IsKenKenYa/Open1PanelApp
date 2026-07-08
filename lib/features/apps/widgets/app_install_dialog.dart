@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/l10n/generated/app_localizations.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import '../../../data/models/app_models.dart';
 import '../app_service.dart';
 
@@ -141,26 +142,11 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
 
 
 
-  /// 格式化错误信息，使其更友好
+  /// Formats an error for display using ErrorMessageUtils so typed
+  /// exceptions (DioException, NetworkException) are translated
+  /// consistently rather than regex-parsed from raw strings.
   String _formatError(Object error) {
-    final errorStr = error.toString();
-    
-    // 处理 docker-compose.yml 获取失败的错误
-    if (errorStr.contains('docker-compose.yml') && 
-        errorStr.contains('unsupported protocol scheme')) {
-      return '应用配置文件获取失败，可能是应用商店配置不完整';
-    }
-    
-    // 处理其他常见错误
-    if (errorStr.contains('DioException')) {
-      // 提取 message 部分
-      final messageMatch = RegExp(r'message:\s*(.+?)(?:,|$)').firstMatch(errorStr);
-      if (messageMatch != null) {
-        return messageMatch.group(1)?.trim() ?? errorStr;
-      }
-    }
-    
-    return errorStr;
+    return ErrorMessageUtils.userFacingMessage(error);
   }
 
   Future<void> _handleSubmit() async {

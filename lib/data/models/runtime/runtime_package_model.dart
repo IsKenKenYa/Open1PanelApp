@@ -1,4 +1,4 @@
-part of '../runtime_models.dart';
+import 'package:equatable/equatable.dart';
 
 class RuntimePackage extends Equatable {
   final int? id;

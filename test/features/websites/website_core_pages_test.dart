@@ -94,7 +94,7 @@ void main() {
   testWidgets('WebsitesPage supports search and selection mode',
       (tester) async {
     final provider = WebsitesProvider(
-      service: FakeWebsiteService(
+      repository: FakeWebsiteRepository(
         searchResult: const PageResult(
           items: [
             WebsiteInfo(
@@ -140,7 +140,7 @@ void main() {
   testWidgets('WebsiteCreateFlowPage renders create form', (tester) async {
     final provider = WebsiteLifecycleProvider(
       mode: WebsiteLifecycleMode.create,
-      service: FakeWebsiteService(
+      repository: FakeWebsiteRepository(
         groupResult: const [WebsiteGroup(id: 1, name: 'prod')],
       ),
     );

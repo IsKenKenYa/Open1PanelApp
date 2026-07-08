@@ -10,22 +10,22 @@ import 'package:onepanel_client/features/apps/app_service.dart';
 import 'package:onepanel_client/features/backups/models/backup_records_args.dart';
 import 'package:onepanel_client/features/backups/models/backup_recover_args.dart';
 import 'package:onepanel_client/features/backups/models/backup_recover_source.dart';
-import 'package:onepanel_client/features/websites/services/website_service.dart';
+import 'package:onepanel_client/data/repositories/website_repository.dart';
 
 class BackupRecoverService {
   BackupRecoverService({
     BackupRepository? repository,
     AppService? appService,
-    WebsiteService? websiteService,
+    WebsiteRepository? websiteRepository,
     ApiClientManager? clientManager,
   })  : _repository = repository ?? BackupRepository(),
         _appService = appService ?? AppService(),
-        _websiteService = websiteService ?? WebsiteService(),
+        _websiteRepository = websiteRepository ?? WebsiteRepository(),
         _clientManager = clientManager ?? ApiClientManager.instance;
 
   final BackupRepository _repository;
   final AppService _appService;
-  final WebsiteService _websiteService;
+  final WebsiteRepository _websiteRepository;
   final ApiClientManager _clientManager;
 
   static const Set<String> _databaseTypes = <String>{
@@ -55,7 +55,7 @@ class BackupRecoverService {
   }
 
   Future<List<Map<String, dynamic>>> loadWebsiteOptions() {
-    return _websiteService.getWebsiteOptions();
+    return _websiteRepository.getWebsiteOptions();
   }
 
   Future<List<DatabaseItemOption>> loadDatabaseOptions(String type) async {

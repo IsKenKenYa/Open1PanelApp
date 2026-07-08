@@ -1,4 +1,4 @@
-part of '../runtime_models.dart';
+import 'package:equatable/equatable.dart';
 
 class RuntimeExposedPort extends Equatable {
   final int hostPort;

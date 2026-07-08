@@ -14,6 +14,7 @@ import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffol
 
 import '../providers/websites_provider.dart';
 import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
+import '../../../shared/state/selection_controller.dart';
 import '../widgets/website_async_state_view.dart';
 import '../widgets/website_list_controls_widget.dart';
 import '../widgets/website_list_helpers.dart';
@@ -30,7 +31,7 @@ class WebsiteListPageBody extends StatefulWidget {
 class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
   String? _activeServerId;
   final TextEditingController _searchController = TextEditingController();
-  final Set<int> _selectedIds = <int>{};
+  final SelectionController<int> _selection = SelectionController<int>();
   bool _selectionMode = false;
   String? _typeFilter;
   int? _groupFilterId;
@@ -39,14 +40,21 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
   @override
   void initState() {
     super.initState();
+    _selection.addListener(_onSelectionChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<WebsitesProvider>().loadWebsites();
     });
   }
 
+  void _onSelectionChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    _selection.removeListener(_onSelectionChanged);
+    _selection.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -65,7 +73,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
     }
     _activeServerId = serverId;
     _searchController.clear();
-    _selectedIds.clear();
+    _selection.clear();
     _selectionMode = false;
     _lastSelectedIndex = null;
     _typeFilter = null;
@@ -82,7 +90,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
       final id = websites[currentIndex].id;
       if (id != null) {
         setState(() {
-          _selectedIds.add(id);
+          _selection.select(id);
           _lastSelectedIndex = currentIndex;
         });
       }
@@ -100,7 +108,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
         if (i >= 0 && i < websites.length) {
           final id = websites[i].id;
           if (id != null) {
-            _selectedIds.add(id);
+            _selection.select(id);
           }
         }
       }
@@ -168,7 +176,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                     selectedGroupId: _groupFilterId,
                     selectedType: _typeFilter,
                     selectionMode: _selectionMode,
-                    selectedCount: _selectedIds.length,
+                    selectedCount: _selection.selectedCount,
                     onSearch: () => applyWebsiteFilters(
                       context.read<WebsitesProvider>(),
                       query: _searchController.text.trim(),
@@ -197,7 +205,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                       setState(() {
                         _selectionMode = !_selectionMode;
                         if (!_selectionMode) {
-                          _selectedIds.clear();
+                          _selection.clear();
                         }
                       });
                     },
@@ -205,11 +213,11 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                     onBatchStop: () => _batchOperate(context, 'stop'),
                     onBatchRestart: () => _batchOperate(context, 'restart'),
                     onBatchDelete: () async {
-                      if (_selectedIds.isEmpty) return;
+                      if (!_selection.hasSelection) return;
                       await _confirmDelete(
                         context,
                         context.read<WebsitesProvider>(),
-                        _selectedIds.toList(growable: false),
+                        _selection.toList(),
                         null,
                       );
                     },
@@ -225,7 +233,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                 }
                 final website = data.websites[index - 2];
                 final id = website.id;
-                final selected = id != null && _selectedIds.contains(id);
+                final selected = id != null && _selection.isSelected(id);
                 
                 final isDesktop = PlatformUtils.isDesktop(context);
 
@@ -242,27 +250,27 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
 
                       setState(() {
                         if (isControlPressed) {
-                          if (_selectedIds.contains(id)) {
-                            _selectedIds.remove(id);
+                          if (_selection.isSelected(id)) {
+                            _selection.deselect(id);
                           } else {
-                            _selectedIds.add(id);
+                            _selection.select(id);
                           }
                           _lastSelectedIndex = index - 2;
                         } else if (isShiftPressed) {
                           _handleSelectRange(index - 2, data.websites);
                         } else {
-                          _selectedIds.clear();
-                          _selectedIds.add(id);
+                          _selection.clear();
+                          _selection.select(id);
                           _lastSelectedIndex = index - 2;
                         }
                       });
                     } else {
                       _selectionMode && id != null
                         ? setState(() {
-                            if (_selectedIds.contains(id)) {
-                              _selectedIds.remove(id);
+                            if (_selection.isSelected(id)) {
+                              _selection.deselect(id);
                             } else {
-                              _selectedIds.add(id);
+                              _selection.select(id);
                             }
                           })
                         : openWebsiteDetail(context, website);
@@ -272,9 +280,9 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                     if (id != null) {
                       setState(() {
                         if (value) {
-                          _selectedIds.add(id);
+                          _selection.select(id);
                         } else {
-                          _selectedIds.remove(id);
+                          _selection.deselect(id);
                         }
                         _lastSelectedIndex = index - 2;
                       });
@@ -291,8 +299,8 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
                     onSecondaryTapDown: (details) {
                       if (!selected && id != null) {
                         setState(() {
-                          _selectedIds.clear();
-                          _selectedIds.add(id);
+                          _selection.clear();
+                          _selection.select(id);
                           _lastSelectedIndex = index - 2;
                         });
                       }
@@ -392,15 +400,15 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
   }
 
   Future<void> _batchOperate(BuildContext context, String action) async {
-    if (_selectedIds.isEmpty) return;
+    if (!_selection.hasSelection) return;
     final ok = await context.read<WebsitesProvider>().batchOperate(
-          ids: _selectedIds.toList(growable: false),
+          ids: _selection.toList(),
           action: action,
         );
     if (!context.mounted) return;
     if (ok) {
       SnackBarUtils.showSuccess(context, context.l10n.websitesOperateSuccess);
-      setState(() => _selectedIds.clear());
+      setState(() => _selection.clear());
     } else {
       SnackBarUtils.showError(context, context.l10n.websitesOperateFailed);
     }
@@ -417,7 +425,7 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
       provider: provider,
       ids: ids,
       domain: domain,
-      clearSelection: () => setState(() => _selectedIds.clear()),
+      clearSelection: () => setState(() => _selection.clear()),
     );
   }
 
@@ -425,13 +433,13 @@ class _WebsiteListPageBodyState extends State<WebsiteListPageBody> {
     BuildContext context,
     List<WebsiteGroup> groups,
   ) async {
-    if (_selectedIds.isEmpty || groups.isEmpty) return;
+    if (!_selection.hasSelection || groups.isEmpty) return;
     await runWebsiteBatchSetGroup(
       context,
       provider: context.read<WebsitesProvider>(),
-      ids: _selectedIds.toList(growable: false),
+      ids: _selection.toList(),
       groups: groups,
-      clearSelection: () => setState(() => _selectedIds.clear()),
+      clearSelection: () => setState(() => _selection.clear()),
     );
   }
 }

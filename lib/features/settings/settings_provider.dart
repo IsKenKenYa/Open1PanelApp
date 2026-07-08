@@ -266,7 +266,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
       );
       _data = _data.copyWith(
         isMemoLoading: false,
-        error: '加载仪表盘备忘录失败: $e',
+        error: '加载仪表盘备忘录失败: ${ErrorMessageUtils.userFacingMessage(e)}',
       );
       notifyListeners();
     }
@@ -293,7 +293,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
       );
       _data = _data.copyWith(
         isMemoSaving: false,
-        error: '更新仪表盘备忘录失败: $e',
+        error: '更新仪表盘备忘录失败: ${ErrorMessageUtils.userFacingMessage(e)}',
       );
       notifyListeners();
       return false;
@@ -334,7 +334,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
       );
       _data = _data.copyWith(
         isPasskeysLoading: false,
-        error: '加载 Passkey 列表失败: $e',
+        error: '加载 Passkey 列表失败: ${ErrorMessageUtils.userFacingMessage(e)}',
       );
       notifyListeners();
     }
@@ -421,7 +421,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
       );
       _data = _data.copyWith(
         passkeyDeletingId: null,
-        error: '删除 Passkey 失败: $e',
+        error: '删除 Passkey 失败: ${ErrorMessageUtils.userFacingMessage(e)}',
       );
       notifyListeners();
       return false;

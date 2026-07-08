@@ -4,19 +4,19 @@ import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/runtime_models.dart';
 import 'package:onepanel_client/data/models/website_group_models.dart';
 import 'package:onepanel_client/data/models/website_models.dart';
+import 'package:onepanel_client/data/repositories/website_repository.dart';
 import 'package:onepanel_client/features/websites/providers/website_detail_provider.dart';
 import 'package:onepanel_client/features/websites/providers/website_lifecycle_provider.dart';
 import 'package:onepanel_client/features/websites/providers/websites_provider.dart';
-import 'package:onepanel_client/features/websites/services/website_service.dart';
 
-class FakeWebsiteService extends WebsiteService {
+class FakeWebsiteRepository extends WebsiteRepository {
   PageResult<WebsiteInfo> searchResult;
   List<WebsiteGroup> groupResult;
   List<RuntimeInfo> runtimeResult;
   List<WebsiteInfo> parentResult;
   WebsiteInfo? detailResult;
 
-  FakeWebsiteService({
+  FakeWebsiteRepository({
     this.searchResult = const PageResult<WebsiteInfo>(items: [], total: 0),
     this.groupResult = const [],
     this.runtimeResult = const [],
@@ -86,7 +86,7 @@ class FakeWebsiteService extends WebsiteService {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> preCheck(
+  Future<List<Map<String, dynamic>>> preCheckWebsite(
       Map<String, dynamic> request) async {
     return const [];
   }
@@ -102,7 +102,7 @@ class FakeWebsiteService extends WebsiteService {
   }
 
   @override
-  Future<void> changeDefaultServer(int id) async {
+  Future<void> changeDefaultServer({required int id}) async {
     lastDefaultId = id;
   }
 
@@ -118,7 +118,7 @@ class FakeWebsiteService extends WebsiteService {
 
 void main() {
   test('WebsitesProvider applies search/type/group filters', () async {
-    final service = FakeWebsiteService(
+    final repository = FakeWebsiteRepository(
       searchResult: const PageResult(
         items: [
           WebsiteInfo(id: 1, primaryDomain: 'a.com', webSiteGroupId: 1),
@@ -131,7 +131,7 @@ void main() {
         WebsiteGroup(id: 2, name: 'test'),
       ],
     );
-    final provider = WebsitesProvider(service: service);
+    final provider = WebsitesProvider(repository: repository);
 
     await provider.loadWebsites(
       query: 'demo',
@@ -139,32 +139,32 @@ void main() {
       websiteGroupId: 1,
     );
 
-    expect(service.lastSearchName, 'demo');
-    expect(service.lastSearchType, 'runtime');
+    expect(repository.lastSearchName, 'demo');
+    expect(repository.lastSearchType, 'runtime');
     expect(provider.data.websites, hasLength(1));
     expect(provider.data.groupFilterId, 1);
     expect(provider.data.groups, hasLength(2));
   });
 
-  test('WebsitesProvider batchSetGroup delegates to service', () async {
-    final service = FakeWebsiteService();
-    final provider = WebsitesProvider(service: service);
+  test('WebsitesProvider batchSetGroup delegates to repository', () async {
+    final repository = FakeWebsiteRepository();
+    final provider = WebsitesProvider(repository: repository);
 
     final ok = await provider.batchSetGroup(ids: const [1, 2], groupId: 3);
 
     expect(ok, isTrue);
-    expect(service.lastBatchIds, [1, 2]);
-    expect(service.lastBatchGroupId, 3);
+    expect(repository.lastBatchIds, [1, 2]);
+    expect(repository.lastBatchGroupId, 3);
   });
 
   test('WebsiteLifecycleProvider create submits WebsiteCreate', () async {
-    final service = FakeWebsiteService(
+    final repository = FakeWebsiteRepository(
       groupResult: const [WebsiteGroup(id: 1, name: 'prod')],
       runtimeResult: const [RuntimeInfo(id: 10, name: 'php-8.2')],
     );
     final provider = WebsiteLifecycleProvider(
       mode: WebsiteLifecycleMode.create,
-      service: service,
+      repository: repository,
     );
 
     await provider.load();
@@ -177,13 +177,13 @@ void main() {
     final ok = await provider.submit();
 
     expect(ok, isTrue);
-    expect(service.createdRequest, isNotNull);
-    expect(service.createdRequest!.alias, 'main-site');
-    expect(service.createdRequest!.domains!.first.domain, 'example.com');
+    expect(repository.createdRequest, isNotNull);
+    expect(repository.createdRequest!.alias, 'main-site');
+    expect(repository.createdRequest!.domains!.first.domain, 'example.com');
   });
 
   test('WebsiteLifecycleProvider edit submits WebsiteUpdate', () async {
-    final service = FakeWebsiteService(
+    final repository = FakeWebsiteRepository(
       groupResult: const [WebsiteGroup(id: 2, name: 'ops')],
       detailResult: const WebsiteInfo(
         id: 9,
@@ -198,7 +198,7 @@ void main() {
     final provider = WebsiteLifecycleProvider(
       mode: WebsiteLifecycleMode.edit,
       websiteId: 9,
-      service: service,
+      repository: repository,
     );
 
     await provider.load();
@@ -209,20 +209,21 @@ void main() {
     final ok = await provider.submit();
 
     expect(ok, isTrue);
-    expect(service.updatedRequest, isNotNull);
-    expect(service.updatedRequest!.primaryDomain, 'new.com');
-    expect(service.updatedRequest!.id, 9);
+    expect(repository.updatedRequest, isNotNull);
+    expect(repository.updatedRequest!.primaryDomain, 'new.com');
+    expect(repository.updatedRequest!.id, 9);
   });
 
-  test('WebsiteDetailProvider setDefaultServer delegates to service', () async {
-    final service = FakeWebsiteService();
+  test('WebsiteDetailProvider setDefaultServer delegates to repository',
+      () async {
+    final repository = FakeWebsiteRepository();
     final provider = WebsiteDetailProvider(
       websiteId: 5,
-      service: service,
+      repository: repository,
     );
 
     await provider.setDefaultServer();
 
-    expect(service.lastDefaultId, 5);
+    expect(repository.lastDefaultId, 5);
   });
 }

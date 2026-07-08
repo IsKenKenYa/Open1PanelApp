@@ -52,7 +52,7 @@ class ApiExceptionHandler {
           logContext ?? 'core.network.api_exception_handler',
           'No API config available, throwing gentle exception',
         );
-        throw const NetworkConnectionException('未配置服务器连接');
+        throw const NetworkConnectionException('No server connection configured');
       } else if (e is NetworkException) {
         appLogger.wWithPackage(
           logContext ?? 'core.network.api_exception_handler',

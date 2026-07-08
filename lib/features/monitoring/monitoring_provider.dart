@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../data/repositories/monitor_repository.dart';
 import '../../data/models/monitoring_runtime_models.dart';
+import '../../data/models/monitor_models.dart';
 import 'monitoring_service.dart';
 import 'data/datasources/monitor_local_datasource.dart';
 import '../../core/services/logger/logger_service.dart';

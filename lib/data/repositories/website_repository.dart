@@ -56,6 +56,14 @@ class WebsiteRepository {
     return api.listWebsites();
   }
 
+  /// Returns only websites that have a non-null [WebsiteInfo.id],
+  /// suitable for use as parent-website selectors. Previously lived in
+  /// WebsiteService.
+  Future<List<WebsiteInfo>> listParentWebsites() async {
+    final result = await listWebsites();
+    return result.where((item) => item.id != null).toList(growable: false);
+  }
+
   Future<WebsiteInfo> getWebsiteDetail(int id) async {
     final api = await _ensureWebsiteApi();
     return api.getWebsiteDetail(id);
@@ -69,6 +77,12 @@ class WebsiteRepository {
   Future<void> updateWebsite(Map<String, dynamic> request) async {
     final api = await _ensureWebsiteApi();
     await api.updateWebsite(request);
+  }
+
+  /// Convenience wrapper that serializes a [WebsiteUpdate] model before
+  /// forwarding to [updateWebsite]. Previously lived in WebsiteService.
+  Future<void> updateWebsiteByModel(WebsiteUpdate request) {
+    return updateWebsite(request.toJson());
   }
 
   Future<void> startWebsite(int id) async {
@@ -97,6 +111,15 @@ class WebsiteRepository {
   Future<void> deleteWebsite(int id) async {
     final api = await _ensureWebsiteApi();
     await api.deleteWebsite(id);
+  }
+
+  /// Deletes multiple websites sequentially. Previously lived in
+  /// WebsiteService; the 1Panel V2 API does not expose a batch-delete
+  /// endpoint, so the loop is the canonical implementation.
+  Future<void> batchDelete(List<int> ids) async {
+    for (final id in ids) {
+      await deleteWebsite(id);
+    }
   }
 
   Future<void> batchOperate({

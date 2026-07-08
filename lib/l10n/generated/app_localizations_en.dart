@@ -3793,6 +3793,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get snapshotDeleteFailed => 'Failed to delete snapshot';
 
   @override
+  String get snapshotLoadFailed => 'Failed to load snapshot list';
+
+  @override
+  String snapshotLoadFailedWithError(String error) {
+    return 'Failed to load snapshot list: $error';
+  }
+
+  @override
+  String get snapshotBackupAccountLoadFailed =>
+      'Failed to load backup accounts';
+
+  @override
+  String get snapshotNoBackupAccountHint =>
+      'No backup account available. Please add one in Backup Account management first.';
+
+  @override
+  String get snapshotBackupAccountLabel => 'Backup Account';
+
+  @override
+  String get snapshotCreateErrorTitle => 'Failed to create snapshot';
+
+  @override
+  String get snapshotImportErrorTitle => 'Failed to import snapshot';
+
+  @override
+  String get snapshotRecoverErrorTitle => 'Failed to recover snapshot';
+
+  @override
+  String get snapshotRollbackErrorTitle => 'Failed to rollback snapshot';
+
+  @override
+  String get snapshotEditDescErrorTitle => 'Failed to update description';
+
+  @override
+  String get snapshotDeleteErrorTitle => 'Failed to delete snapshot';
+
+  @override
   String get proxySettingsTitle => 'Proxy Settings';
 
   @override

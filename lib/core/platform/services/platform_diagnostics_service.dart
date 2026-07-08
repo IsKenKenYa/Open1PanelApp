@@ -38,9 +38,10 @@ class PlatformDiagnosticsService {
     return info;
   }
 
-  Future<String> buildFeedbackTemplate() async {
-    final info = await collectRuntimeInfo();
-    return '''
+  /// Markdown template with `{{placeholder}}` markers, separated from the
+  /// runtime-info interpolation logic so the template can be maintained
+  /// independently (architecture review candidate ⑬).
+  static const String _feedbackTemplate = '''
 ## 问题摘要
 -
 
@@ -59,18 +60,42 @@ class PlatformDiagnosticsService {
 -
 
 ## HarmonyOS / 构建信息
-- app: ${info['appName']} ${info['version']}
-- package: ${info['packageName']}
-- channel: ${info['releaseChannel']}
-- targetPlatform: ${info['targetPlatform']}
-- operatingSystem: ${info['operatingSystem']}
-- isOhos: ${info['isOhos']}
-- device: ${info['deviceType'] ?? 'unknown'}
-- osVersion: ${info['displayVersion'] ?? info['osFullName'] ?? 'unknown'}
-- flutterOhosVersion: ${info['flutterOhosVersion'] ?? 'unknown'}
-- hapCommit: ${info['hapCommit'] ?? '请填写构建提交哈希'}
+- app: {{appName}} {{version}}
+- package: {{packageName}}
+- channel: {{releaseChannel}}
+- targetPlatform: {{targetPlatform}}
+- operatingSystem: {{operatingSystem}}
+- isOhos: {{isOhos}}
+- device: {{deviceType}}
+- osVersion: {{osVersion}}
+- flutterOhosVersion: {{flutterOhosVersion}}
+- hapCommit: {{hapCommit}}
 - clearedBackgroundBeforeReopen: 是/否
-'''
+''';
+
+  Future<String> buildFeedbackTemplate() async {
+    final info = await collectRuntimeInfo();
+    return _feedbackTemplate
+        .replaceAll('{{appName}}', info['appName']?.toString() ?? 'unknown')
+        .replaceAll('{{version}}', info['version']?.toString() ?? 'unknown')
+        .replaceAll(
+            '{{packageName}}', info['packageName']?.toString() ?? 'unknown')
+        .replaceAll('{{releaseChannel}}',
+            info['releaseChannel']?.toString() ?? 'unknown')
+        .replaceAll('{{targetPlatform}}',
+            info['targetPlatform']?.toString() ?? 'unknown')
+        .replaceAll('{{operatingSystem}}',
+            info['operatingSystem']?.toString() ?? 'unknown')
+        .replaceAll('{{isOhos}}', info['isOhos']?.toString() ?? 'false')
+        .replaceAll(
+            '{{deviceType}}', info['deviceType']?.toString() ?? 'unknown')
+        .replaceAll('{{osVersion}}',
+            (info['displayVersion'] ?? info['osFullName'] ?? 'unknown')
+                .toString())
+        .replaceAll('{{flutterOhosVersion}}',
+            info['flutterOhosVersion']?.toString() ?? 'unknown')
+        .replaceAll('{{hapCommit}}',
+            info['hapCommit']?.toString() ?? '请填写构建提交哈希')
         .trim();
   }
 

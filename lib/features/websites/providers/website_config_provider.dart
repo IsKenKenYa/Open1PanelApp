@@ -5,20 +5,20 @@ import '../../../data/models/file/file_info.dart';
 import '../../../data/models/openresty_models.dart';
 import '../../../data/models/runtime_models.dart';
 import '../../../data/models/website_models.dart';
+import '../../../data/repositories/website_repository.dart';
 import '../services/website_config_service.dart';
-import '../services/website_service.dart';
 
 class WebsiteConfigProvider extends ChangeNotifier with SafeChangeNotifier {
   final int websiteId;
   final WebsiteConfigService _service;
-  final WebsiteService _websiteService;
+  final WebsiteRepository _websiteRepository;
 
   WebsiteConfigProvider({
     required this.websiteId,
     WebsiteConfigService? service,
-    WebsiteService? websiteService,
+    WebsiteRepository? websiteRepository,
   })  : _service = service ?? WebsiteConfigService(),
-        _websiteService = websiteService ?? WebsiteService();
+        _websiteRepository = websiteRepository ?? WebsiteRepository();
 
   bool isLoading = false;
   bool isUpdatingPhpVersion = false;
@@ -76,8 +76,8 @@ class WebsiteConfigProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> loadPhpVersionContext() async {
     final result = await Future.wait<dynamic>([
-      _websiteService.getWebsiteDetail(websiteId),
-      _websiteService.listPhpRuntimes(),
+      _websiteRepository.getWebsiteDetail(websiteId),
+      _websiteRepository.listPhpRuntimes(),
     ]);
     website = result[0] as WebsiteInfo;
     phpRuntimes = result[1] as List<RuntimeInfo>;

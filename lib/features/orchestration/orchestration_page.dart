@@ -118,13 +118,17 @@ class _OrchestrationPageState extends State<OrchestrationPage>
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ComposeProvider()),
-        ChangeNotifierProvider(create: (_) => DockerImageProvider()),
-        ChangeNotifierProvider(create: (_) => NetworkProvider()),
-        ChangeNotifierProvider(create: (_) => VolumeProvider()),
-      ],
+    // When OrchestrationPage is embedded inside the containers module shell,
+    // the parent ContainersPage already provides ComposeProvider,
+    // DockerImageProvider, NetworkProvider, and VolumeProvider. Re-registering
+    // them here would create independent instances whose state diverges from
+    // the containers view (architecture review candidate ⑧).
+    //
+    // _provideIfMissing checks whether each provider is already available in
+    // the ancestor tree and only creates a new one when missing (standalone
+    // route access).
+    return _provideIfMissing(
+      context,
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -156,5 +160,41 @@ class _OrchestrationPageState extends State<OrchestrationPage>
         },
       ),
     );
+  }
+
+  /// Wraps [child] with provider registrations only for those not already
+  /// available in the ancestor tree. This prevents duplicate independent
+  /// instances when OrchestrationPage is embedded inside ContainersPage
+  /// (which already provides the same providers).
+  Widget _provideIfMissing(BuildContext context, {required Widget child}) {
+    var result = child;
+    // Check each provider; wrap only when missing. Order doesn't matter
+    // since they are independent provider types.
+    if (_missing<VolumeProvider>(context)) {
+      result = ChangeNotifierProvider(
+          create: (_) => VolumeProvider(), child: result);
+    }
+    if (_missing<NetworkProvider>(context)) {
+      result = ChangeNotifierProvider(
+          create: (_) => NetworkProvider(), child: result);
+    }
+    if (_missing<DockerImageProvider>(context)) {
+      result = ChangeNotifierProvider(
+          create: (_) => DockerImageProvider(), child: result);
+    }
+    if (_missing<ComposeProvider>(context)) {
+      result = ChangeNotifierProvider(
+          create: (_) => ComposeProvider(), child: result);
+    }
+    return result;
+  }
+
+  static bool _missing<T extends ChangeNotifier>(BuildContext context) {
+    try {
+      Provider.of<T>(context, listen: false);
+      return false;
+    } on ProviderNotFoundException {
+      return true;
+    }
   }
 }

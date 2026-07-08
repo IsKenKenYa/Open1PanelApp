@@ -3,21 +3,21 @@ import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/file/file_info.dart';
 import '../../../data/models/openresty_models.dart';
 import '../../../data/models/website_models.dart';
+import '../../../data/repositories/website_repository.dart';
 import '../services/website_config_service.dart';
-import '../services/website_service.dart';
 
 class WebsiteConfigCenterProvider extends ChangeNotifier
     with SafeChangeNotifier {
   WebsiteConfigCenterProvider({
     required this.websiteId,
     WebsiteConfigService? service,
-    WebsiteService? websiteService,
+    WebsiteRepository? websiteRepository,
   })  : _service = service,
-        _websiteService = websiteService;
+        _websiteRepository = websiteRepository;
 
   final int websiteId;
   WebsiteConfigService? _service;
-  WebsiteService? _websiteService;
+  WebsiteRepository? _websiteRepository;
 
   bool isLoading = false;
   String? error;
@@ -29,7 +29,7 @@ class WebsiteConfigCenterProvider extends ChangeNotifier
 
   Future<void> _ensureService() async {
     _service ??= WebsiteConfigService();
-    _websiteService ??= WebsiteService();
+    _websiteRepository ??= WebsiteRepository();
   }
 
   Future<void> load() async {
@@ -39,7 +39,7 @@ class WebsiteConfigCenterProvider extends ChangeNotifier
     try {
       await _ensureService();
       final results = await Future.wait<dynamic>([
-        _websiteService!.getWebsiteDetail(websiteId),
+        _websiteRepository!.getWebsiteDetail(websiteId),
         _service!.getConfigFile(websiteId: websiteId),
         _service!.loadScope(websiteId: websiteId, scope: NginxKey.indexKey),
         _service!.getResource(websiteId),

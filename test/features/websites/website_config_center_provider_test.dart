@@ -5,7 +5,7 @@ import 'package:onepanel_client/data/models/openresty_models.dart';
 import 'package:onepanel_client/data/models/website_models.dart';
 import 'package:onepanel_client/features/websites/providers/website_config_center_provider.dart';
 import 'package:onepanel_client/features/websites/services/website_config_service.dart';
-import 'package:onepanel_client/features/websites/services/website_service.dart';
+import 'package:onepanel_client/data/repositories/website_repository.dart';
 
 class _FakeWebsiteConfigService extends WebsiteConfigService {
   @override
@@ -40,7 +40,7 @@ class _FakeWebsiteConfigService extends WebsiteConfigService {
   }
 }
 
-class _FakeWebsiteService extends WebsiteService {
+class _FakeWebsiteRepository extends WebsiteRepository {
   @override
   Future<WebsiteInfo> getWebsiteDetail(int id) async {
     return const WebsiteInfo(
@@ -56,7 +56,7 @@ void main() {
     final provider = WebsiteConfigCenterProvider(
       websiteId: 1,
       service: _FakeWebsiteConfigService(),
-      websiteService: _FakeWebsiteService(),
+      websiteRepository: _FakeWebsiteRepository(),
     );
 
     await provider.load();

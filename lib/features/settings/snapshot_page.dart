@@ -32,12 +32,13 @@ class _SnapshotPageState extends State<SnapshotPage> {
       await provider.loadSnapshots();
     } catch (e) {
       if (mounted) {
+        final l10n = context.l10n;
         setState(() {
-          _loadError = '加载快照列表失败: $e';
+          _loadError = l10n.snapshotLoadFailedWithError(e.toString());
         });
         SnackBarUtils.showErrorWithDebugDetails(
           context,
-          '加载快照列表失败',
+          l10n.snapshotLoadFailed,
           error: e,
         );
       }
@@ -58,7 +59,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
       if (mounted) {
         SnackBarUtils.showErrorWithDebugDetails(
           context,
-          '加载备份账户失败',
+          context.l10n.snapshotBackupAccountLoadFailed,
           error: e,
         );
       }
@@ -212,9 +213,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (_backupAccounts == null || _backupAccounts!.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text('没有可用的备份账户，请先在备份账户管理中添加备份账户'),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(l10n.snapshotNoBackupAccountHint),
                   )
                 else ...[
                   Text(l10n.snapshotEnterDesc),
@@ -230,9 +231,9 @@ class _SnapshotPageState extends State<SnapshotPage> {
                   const SizedBox(height: 16),
                   DropdownButtonFormField<int>(
                     initialValue: selectedAccountId,
-                    decoration: const InputDecoration(
-                      labelText: '备份账户',
-                      prefixIcon: Icon(Icons.cloud_outlined),
+                    decoration: InputDecoration(
+                      labelText: l10n.snapshotBackupAccountLabel,
+                      prefixIcon: const Icon(Icons.cloud_outlined),
                     ),
                     items: _backupAccounts!.map((account) {
                       return DropdownMenuItem<int>(
@@ -288,7 +289,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                           }
                         } catch (e, stackTrace) {
                           if (context.mounted) {
-                            SnackBarUtils.showErrorWithDebugDetails(context, '创建快照失败', error: e, stackTrace: stackTrace);
+                            SnackBarUtils.showErrorWithDebugDetails(context, l10n.snapshotCreateErrorTitle, error: e, stackTrace: stackTrace);
                           }
                         }
                       },
@@ -333,7 +334,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  SnackBarUtils.showErrorWithDebugDetails(context, '导入快照失败', error: e, stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, l10n.snapshotImportErrorTitle, error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -389,7 +390,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  SnackBarUtils.showErrorWithDebugDetails(context, '恢复快照失败', error: e, stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, l10n.snapshotRecoverErrorTitle, error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -424,7 +425,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  SnackBarUtils.showErrorWithDebugDetails(context, '回滚快照失败', error: e, stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, l10n.snapshotRollbackErrorTitle, error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -468,7 +469,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  SnackBarUtils.showErrorWithDebugDetails(context, '更新描述失败', error: e, stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, l10n.snapshotEditDescErrorTitle, error: e, stackTrace: stackTrace);
                 }
               }
             },
@@ -504,7 +505,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
                 }
               } catch (e, stackTrace) {
                 if (context.mounted) {
-                  SnackBarUtils.showErrorWithDebugDetails(context, '删除快照失败', error: e, stackTrace: stackTrace);
+                  SnackBarUtils.showErrorWithDebugDetails(context, l10n.snapshotDeleteErrorTitle, error: e, stackTrace: stackTrace);
                 }
               }
             },

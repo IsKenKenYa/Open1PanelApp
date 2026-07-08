@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/ai/ai_page.dart';
 import 'package:onepanel_client/features/ai/ai_provider.dart';
+import 'package:onepanel_client/features/ai/agents/agents_provider.dart';
 import 'package:onepanel_client/features/ai/mcp_server_provider.dart';
 import 'package:onepanel_client/features/apps/apps_page.dart';
 import 'package:onepanel_client/features/containers/containers_page.dart';
@@ -53,6 +54,22 @@ class ModuleRegistry {
 
   static ModuleRegistration? registrationFor(ClientModule module) =>
       _entries[module];
+
+  /// Builds the AI module page with its required providers.
+  ///
+  /// This is the **single registration point** for AIProvider,
+  /// AgentsProvider, and McpServerProvider. Both the shell-embedded path
+  /// ([buildShellPage]) and the routed path ([app_router.dart] AI route)
+  /// must delegate here to avoid creating independent provider instances
+  /// that lose state on navigation (architecture review candidate ⑧).
+  static Widget buildAiModule(BuildContext context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AIProvider()),
+          ChangeNotifierProvider(create: (_) => AgentsProvider()),
+          ChangeNotifierProvider(create: (_) => McpServerProvider()),
+        ],
+        child: const AIPage(),
+      );
 
   /// Builds the shell-embedded page for [module], applying the server-id
   /// keying guard so Flutter rebuilds the subtree when switching servers.
@@ -135,13 +152,8 @@ class ModuleRegistry {
       const SecurityVerificationPage();
   static Widget _settingsBuilder(BuildContext _) => const SettingsPage();
 
-  static Widget _aiBuilder(BuildContext _) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => AIProvider()),
-          ChangeNotifierProvider(create: (_) => McpServerProvider()),
-        ],
-        child: const AIPage(),
-      );
+  /// AI module delegates to [buildAiModule] (single registration point).
+  static Widget _aiBuilder(BuildContext ctx) => buildAiModule(ctx);
 
   // Standalone builders reuse the same widget construction as the shell
   // builders since the page content is identical; only the navigation
@@ -150,11 +162,6 @@ class ModuleRegistry {
   static Widget _websitesStandalone(BuildContext _) => const WebsitesPage();
   static Widget _verificationStandalone(BuildContext _) =>
       const SecurityVerificationPage();
-  static Widget _aiStandalone(BuildContext _) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => AIProvider()),
-          ChangeNotifierProvider(create: (_) => McpServerProvider()),
-        ],
-        child: const AIPage(),
-      );
+  // _aiStandalone delegates to buildAiModule (single registration point).
+  static Widget _aiStandalone(BuildContext ctx) => buildAiModule(ctx);
 }

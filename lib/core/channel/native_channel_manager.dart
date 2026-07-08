@@ -1,37 +1,65 @@
 import 'package:flutter/services.dart';
 
+import 'native_channel_port.dart';
 import 'native_channel_read_handlers.dart';
 import 'native_channel_write_handlers.dart';
 
-/// macOS Native Channel 主路由器。
-/// 仅负责初始化 MethodChannel 并将各 method 分发到
-/// [NativeChannelReadHandlers] 或 [NativeChannelWriteHandlers]。
-class NativeChannelManager {
+/// Native Channel dispatcher.
+///
+/// Routes MethodChannel calls to [NativeChannelReadHandlers] or
+/// [NativeChannelWriteHandlers]. Implements [NativeChannelPort] so tests
+/// can substitute a mock (architecture review candidate ⑬/㉑).
+///
+/// The static API is preserved for backward compatibility with
+/// `main.dart`'s single `init()` call; the instance API enables future
+/// constructor-injection refactoring.
+class NativeChannelManager implements NativeChannelPort {
+  NativeChannelManager._();
+
+  static final NativeChannelManager _instance = NativeChannelManager._();
+
+  /// The singleton instance (for future DI refactoring).
+  static NativeChannelPort get instance => _instance;
+
   static const MethodChannel _methodChannel =
       MethodChannel('com.onepanel.client/method');
 
+  /// Static entry point called from `main.dart`.
   static void init() {
     _methodChannel.setMethodCallHandler(_handleMethodCall);
   }
 
+  @override
+  void initInstance() {
+    _methodChannel.setMethodCallHandler(_handleMethodCall);
+  }
+
+  @override
+  Future<dynamic> handleMethodCall(String method, dynamic arguments) async {
+    return _dispatch(method, arguments);
+  }
+
   static Future<dynamic> _handleMethodCall(MethodCall call) async {
-    final args = call.arguments;
-    switch (call.method) {
+    return _dispatch(call.method, call.arguments);
+  }
+
+  static Future<dynamic> _dispatch(String method, dynamic arguments) async {
+    switch (method) {
       // ── Read: 已有 ─────────────────────────────────────────────────────
       case 'getServers':
-        return NativeChannelReadHandlers.getServers(args);
+        return NativeChannelReadHandlers.getServers(arguments);
       case 'getFiles':
-        return NativeChannelReadHandlers.getFiles(args);
+        return NativeChannelReadHandlers.getFiles(arguments);
       case 'getApps':
-        return NativeChannelReadHandlers.getApps(args);
+        return NativeChannelReadHandlers.getApps(arguments);
       case 'getWebsites':
-        return NativeChannelReadHandlers.getWebsites(args);
+        return NativeChannelReadHandlers.getWebsites(arguments);
       case 'getMonitoring':
-        return NativeChannelReadHandlers.getMonitoring(args);
+        return NativeChannelReadHandlers.getMonitoring(arguments);
       case 'getContainers':
-        return NativeChannelReadHandlers.getContainers(args);
+        return NativeChannelReadHandlers.getContainers(arguments);
       case 'getSettings':
-        return NativeChannelReadHandlers.getSettings(args);
+        return NativeChannelReadHandlers.getSettings(arguments);
       case 'getTranslations':
         return NativeChannelReadHandlers.getTranslations();
       case 'getUIRenderMode':
@@ -39,80 +67,80 @@ class NativeChannelManager {
 
       // ── Read: 新增 ─────────────────────────────────────────────────────
       case 'getDashboard':
-        return NativeChannelReadHandlers.getDashboard(args);
+        return NativeChannelReadHandlers.getDashboard(arguments);
       case 'getDatabases':
-        return NativeChannelReadHandlers.getDatabases(args);
+        return NativeChannelReadHandlers.getDatabases(arguments);
       case 'getFirewallRules':
-        return NativeChannelReadHandlers.getFirewallRules(args);
+        return NativeChannelReadHandlers.getFirewallRules(arguments);
       case 'getCronJobs':
-        return NativeChannelReadHandlers.getCronJobs(args);
+        return NativeChannelReadHandlers.getCronJobs(arguments);
       case 'getBackups':
-        return NativeChannelReadHandlers.getBackups(args);
+        return NativeChannelReadHandlers.getBackups(arguments);
       case 'getAIModels':
-        return NativeChannelReadHandlers.getAIModels(args);
+        return NativeChannelReadHandlers.getAIModels(arguments);
 
       // ── Write: 服务器 ───────────────────────────────────────────────────
       // ── Write: 服务器 ───────────────────────────────────────────────────
       case 'addServer':
-        return NativeChannelWriteHandlers.addServer(args);
+        return NativeChannelWriteHandlers.addServer(arguments);
 
       case 'connectServer':
-        return NativeChannelWriteHandlers.connectServer(args);
+        return NativeChannelWriteHandlers.connectServer(arguments);
       case 'deleteServer':
-        return NativeChannelWriteHandlers.deleteServer(args);
+        return NativeChannelWriteHandlers.deleteServer(arguments);
 
       // ── Write: 网站 ─────────────────────────────────────────────────────
       case 'toggleWebsiteStatus':
-        return NativeChannelWriteHandlers.toggleWebsiteStatus(args);
+        return NativeChannelWriteHandlers.toggleWebsiteStatus(arguments);
       case 'deleteWebsite':
-        return NativeChannelWriteHandlers.deleteWebsite(args);
+        return NativeChannelWriteHandlers.deleteWebsite(arguments);
 
       // ── Write: 容器 ─────────────────────────────────────────────────────
       case 'toggleContainerState':
-        return NativeChannelWriteHandlers.toggleContainerState(args);
+        return NativeChannelWriteHandlers.toggleContainerState(arguments);
       case 'restartContainer':
-        return NativeChannelWriteHandlers.restartContainer(args);
+        return NativeChannelWriteHandlers.restartContainer(arguments);
       case 'deleteContainer':
-        return NativeChannelWriteHandlers.deleteContainer(args);
+        return NativeChannelWriteHandlers.deleteContainer(arguments);
 
       // ── Write: 应用 ─────────────────────────────────────────────────────
       case 'startApp':
-        return NativeChannelWriteHandlers.startApp(args);
+        return NativeChannelWriteHandlers.startApp(arguments);
       case 'stopApp':
-        return NativeChannelWriteHandlers.stopApp(args);
+        return NativeChannelWriteHandlers.stopApp(arguments);
       case 'uninstallApp':
-        return NativeChannelWriteHandlers.uninstallApp(args);
+        return NativeChannelWriteHandlers.uninstallApp(arguments);
 
       // ── Write: 文件 ─────────────────────────────────────────────────────
       case 'deleteFile':
-        return NativeChannelWriteHandlers.deleteFile(args);
+        return NativeChannelWriteHandlers.deleteFile(arguments);
       case 'createFolder':
-        return NativeChannelWriteHandlers.createFolder(args);
+        return NativeChannelWriteHandlers.createFolder(arguments);
 
       // ── Write: 定时任务 ─────────────────────────────────────────────────
       case 'toggleCronJobStatus':
-        return NativeChannelWriteHandlers.toggleCronJobStatus(args);
+        return NativeChannelWriteHandlers.toggleCronJobStatus(arguments);
       case 'deleteCronJob':
-        return NativeChannelWriteHandlers.deleteCronJob(args);
+        return NativeChannelWriteHandlers.deleteCronJob(arguments);
 
       // ── Write: 备份 ─────────────────────────────────────────────────────
       case 'deleteBackup':
-        return NativeChannelWriteHandlers.deleteBackup(args);
+        return NativeChannelWriteHandlers.deleteBackup(arguments);
 
       // ── Write: AI ───────────────────────────────────────────────────────
       case 'deleteAIModel':
-        return NativeChannelWriteHandlers.deleteAIModel(args);
+        return NativeChannelWriteHandlers.deleteAIModel(arguments);
 
       // ── Write: 防火墙 ───────────────────────────────────────────────────
       case 'addFirewallRule':
-        return NativeChannelWriteHandlers.addFirewallRule(args);
+        return NativeChannelWriteHandlers.addFirewallRule(arguments);
 
       case 'deleteFirewallRule':
-        return NativeChannelWriteHandlers.deleteFirewallRule(args);
+        return NativeChannelWriteHandlers.deleteFirewallRule(arguments);
 
       // ── Write: 缓存 ─────────────────────────────────────────────────────
       case 'clearCache':
-        return NativeChannelWriteHandlers.clearCache(args);
+        return NativeChannelWriteHandlers.clearCache(arguments);
 
       default:
         throw MissingPluginException();

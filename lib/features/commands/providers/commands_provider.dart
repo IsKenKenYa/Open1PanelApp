@@ -7,6 +7,7 @@ import 'package:onepanel_client/data/models/command_models.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/system_group_models.dart';
 import 'package:onepanel_client/features/commands/services/command_service.dart';
+import 'package:onepanel_client/shared/state/selection_controller.dart';
 
 class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   CommandsProvider({
@@ -14,10 +15,10 @@ class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
   }) : _service = service ?? CommandService();
 
   final CommandService _service;
+  final SelectionController<int> _selection = SelectionController<int>();
 
   List<CommandInfo> _commands = const <CommandInfo>[];
   List<GroupInfo> _groups = const <GroupInfo>[];
-  final Set<int> _selectedIds = <int>{};
   final Set<int> _selectedPreviewIds = <int>{};
   List<CommandInfo> _importPreviewItems = const <CommandInfo>[];
   String _searchQuery = '';
@@ -28,7 +29,7 @@ class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
 
   List<CommandInfo> get commands => _commands;
   List<GroupInfo> get groups => _groups;
-  Set<int> get selectedIds => Set<int>.unmodifiable(_selectedIds);
+  Set<int> get selectedIds => _selection.selectedIds;
   Set<int> get selectedPreviewIds => Set<int>.unmodifiable(_selectedPreviewIds);
   List<CommandInfo> get importPreviewItems => _importPreviewItems;
   String get searchQuery => _searchQuery;
@@ -36,7 +37,7 @@ class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
   bool get isDeleting => _isDeleting;
   bool get isExporting => _isExporting;
   bool get isImporting => _isImporting;
-  bool get hasSelection => _selectedIds.isNotEmpty;
+  bool get hasSelection => _selection.hasSelection;
   bool get hasImportPreview => _importPreviewItems.isNotEmpty;
 
   Future<void> load({bool forceRefresh = false}) async {
@@ -50,7 +51,7 @@ class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
         ),
       );
       _commands = result.items;
-      _selectedIds.clear();
+      _selection.clear();
       setSuccess(isEmpty: _commands.isEmpty);
     } catch (error, stackTrace) {
       appLogger.eWithPackage(
@@ -75,11 +76,7 @@ class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
   }
 
   void toggleSelection(int id) {
-    if (_selectedIds.contains(id)) {
-      _selectedIds.remove(id);
-    } else {
-      _selectedIds.add(id);
-    }
+    _selection.toggle(id);
     notifyListeners();
   }
 
@@ -92,10 +89,10 @@ class CommandsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
   }
 
   Future<void> deleteSelected() async {
-    if (_selectedIds.isEmpty) {
+    if (!_selection.hasSelection) {
       return;
     }
-    await _deleteByIds(_selectedIds.toList(growable: false));
+    await _deleteByIds(_selection.toList());
   }
 
   Future<FileSaveResult?> exportAllCommands() async {

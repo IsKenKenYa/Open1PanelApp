@@ -7106,6 +7106,72 @@ abstract class AppLocalizations {
   /// **'Failed to delete snapshot'**
   String get snapshotDeleteFailed;
 
+  /// No description provided for @snapshotLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load snapshot list'**
+  String get snapshotLoadFailed;
+
+  /// No description provided for @snapshotLoadFailedWithError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load snapshot list: {error}'**
+  String snapshotLoadFailedWithError(String error);
+
+  /// No description provided for @snapshotBackupAccountLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load backup accounts'**
+  String get snapshotBackupAccountLoadFailed;
+
+  /// No description provided for @snapshotNoBackupAccountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup account available. Please add one in Backup Account management first.'**
+  String get snapshotNoBackupAccountHint;
+
+  /// No description provided for @snapshotBackupAccountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Account'**
+  String get snapshotBackupAccountLabel;
+
+  /// No description provided for @snapshotCreateErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create snapshot'**
+  String get snapshotCreateErrorTitle;
+
+  /// No description provided for @snapshotImportErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import snapshot'**
+  String get snapshotImportErrorTitle;
+
+  /// No description provided for @snapshotRecoverErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to recover snapshot'**
+  String get snapshotRecoverErrorTitle;
+
+  /// No description provided for @snapshotRollbackErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to rollback snapshot'**
+  String get snapshotRollbackErrorTitle;
+
+  /// No description provided for @snapshotEditDescErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update description'**
+  String get snapshotEditDescErrorTitle;
+
+  /// No description provided for @snapshotDeleteErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete snapshot'**
+  String get snapshotDeleteErrorTitle;
+
   /// No description provided for @proxySettingsTitle.
   ///
   /// In en, this message translates to:
