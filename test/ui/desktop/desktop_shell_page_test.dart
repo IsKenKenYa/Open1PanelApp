@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/services/app_settings_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/pinned_modules_controller.dart';
@@ -11,6 +12,17 @@ import 'package:onepanel_client/ui/desktop/common/widgets/desktop_sidebar.dart';
 import 'package:onepanel_client/ui/desktop/common/widgets/desktop_top_tool_area.dart';
 
 void main() {
+  setUp(() {
+    // Pretend we are running on macOS so `inputDeviceKinds` returns
+    // `pointer` and the sidebar is rendered in the offscreen-tree
+    // (i.e. visible) for the assertions below.
+    PlatformCapabilities.setTargetPlatformForTest(TargetPlatform.macOS);
+  });
+
+  tearDown(() {
+    PlatformCapabilities.setTargetPlatformForTest(null);
+  });
+
   testWidgets('DesktopShellPage renders sidebar + top tool area', (tester) async {
     await tester.pumpWidget(
       MultiProvider(

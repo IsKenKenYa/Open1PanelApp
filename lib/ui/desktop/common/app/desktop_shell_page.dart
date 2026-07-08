@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/core/utils/platform_utils.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/pinned_modules_controller.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
@@ -85,6 +86,11 @@ class _DesktopShellPageState extends State<DesktopShellPage> {
             (!currentServer.hasServer && _selectedModule.requiresServer)
                 ? ClientModule.servers
                 : _selectedModule;
+        final inputKind = PlatformUtils.inputDeviceKinds(context);
+        // Touch-mode placeholder: a full FAB / drawer overlay will
+        // be wired in a follow-up; for now the sidebar simply
+        // collapses when running under a touch-form-factor host.
+        // if (inputKind == InputDeviceKind.touch) { /* TODO: drawer */ }
 
         return Scaffold(
           backgroundColor: scheme.surface,
@@ -103,21 +109,24 @@ class _DesktopShellPageState extends State<DesktopShellPage> {
               Expanded(
                 child: Row(
                   children: [
-                    DesktopSidebar(
-                      modules: modules,
-                      selectedModule: selectedModule,
-                      hasServer: currentServer.hasServer,
-                      onSelect: (module) {
-                        if (!currentServer.hasServer && module.requiresServer) {
-                          ServerSwitcherAction.showServerPicker(context);
-                          return;
-                        }
-                        setState(() {
-                          _selectedModule = module;
-                          _embeddedRouteName = null;
-                          _embeddedRouteArguments = null;
-                        });
-                      },
+                    Offstage(
+                      offstage: inputKind == InputDeviceKind.touch,
+                      child: DesktopSidebar(
+                        modules: modules,
+                        selectedModule: selectedModule,
+                        hasServer: currentServer.hasServer,
+                        onSelect: (module) {
+                          if (!currentServer.hasServer && module.requiresServer) {
+                            ServerSwitcherAction.showServerPicker(context);
+                            return;
+                          }
+                          setState(() {
+                            _selectedModule = module;
+                            _embeddedRouteName = null;
+                            _embeddedRouteArguments = null;
+                          });
+                        },
+                      ),
                     ),
                     Expanded(
                       child: ColoredBox(

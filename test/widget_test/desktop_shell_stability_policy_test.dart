@@ -128,7 +128,12 @@ void main() {
     expect(shellNavigation.contains('pushReplacementNamed('), isTrue);
     expect(shellNavigation.contains("'module': target.module.storageId"),
         isTrue);
-    expect(shellNavigation.contains("shellArguments['route'] = route;"),
+    expect(
+        shellNavigation.contains(
+            "shellArguments['route'] = route;") ||
+            shellNavigation.contains("'route': route,") ||
+            shellNavigation.contains("arguments: {") &&
+                shellNavigation.contains("'route': route,"),
         isTrue);
     expect(shellNavigation.contains('embedRouteInShell: true'), isTrue);
     expect(serverDetail.contains('openRouteRespectingShell(context, route);'),

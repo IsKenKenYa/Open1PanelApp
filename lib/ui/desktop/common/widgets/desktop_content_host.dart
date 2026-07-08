@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/features/shell/module_page_factory.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
 import 'package:onepanel_client/features/shell/widgets/no_server_selected_state.dart';
 import 'package:onepanel_client/ui/desktop/common/widgets/desktop_routed_module_host.dart';
+import 'package:onepanel_client/ui/desktop/common/widgets/shell_content_host.dart';
 
+/// Container widget for the desktop/tablet shell's right content area.
+///
+/// Routes the inner module presentation to [ShellContentHost] so the
+/// shared inner `Navigator` is reused by every desktop/tablet shell
+/// page. The legacy [DesktopRoutedModuleHost] path is still available
+/// for callers that pass an explicit `embeddedRoute` (e.g. the
+/// Windows/MacOS "embedded route" breadcrumb that hosts a single
+/// detail page instead of a full module tree).
+///
+/// When the surrounding shell switches between modules (e.g. user
+/// clicks a different item in the sidebar), the parent is expected to
+/// keep this widget alive for each previously-visited module — either
+/// by [IndexedStack] with a per-module [KeyedSubtree] key, or by
+/// handing the same `key` through from the parent's state. That way
+/// each module's inner stack survives the switch.
 class DesktopContentHost extends StatefulWidget {
   const DesktopContentHost({
     super.key,
@@ -47,11 +62,12 @@ class _DesktopContentHostState extends State<DesktopContentHost> {
     if (module.requiresServer && widget.serverId == null) {
       return;
     }
-    _moduleCache[module] = buildShellModulePage(
-      context,
-      module: module,
-      serverId: widget.serverId,
-      useStableModuleKey: true,
+    _moduleCache[module] = KeyedSubtree(
+      key: ValueKey('desktop-shell-content-host:${module.storageId}'),
+      child: ShellContentHost(
+        module: module,
+        serverId: widget.serverId,
+      ),
     );
   }
 
@@ -81,10 +97,7 @@ class _DesktopContentHostState extends State<DesktopContentHost> {
         for (final module in modules)
           HeroMode(
             enabled: module == widget.module,
-            child: KeyedSubtree(
-              key: ValueKey('desktop-module:${module.storageId}'),
-              child: _moduleCache[module]!,
-            ),
+            child: _moduleCache[module]!,
           ),
       ],
     );

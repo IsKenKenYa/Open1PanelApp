@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:onepanel_client/core/utils/platform_utils.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/pinned_modules_controller.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
@@ -34,6 +35,13 @@ class _MacosShellContentPageState extends State<MacosShellContentPage> {
   late ClientModule _selectedModule;
   String? _embeddedRouteName;
   Object? _embeddedRouteArguments;
+
+  /// Whether the touch-mode sidebar overlay is currently visible.
+  ///
+  /// Only relevant when [PlatformUtils.inputDeviceKinds] reports
+  /// [InputDeviceKind.touch] — the pointer (desktop) layout always
+  /// shows the sidebar permanently.
+  bool _isTouchSidebarVisible = false;
 
   @override
   void initState() {
@@ -86,29 +94,55 @@ class _MacosShellContentPageState extends State<MacosShellContentPage> {
             (!currentServer.hasServer && _selectedModule.requiresServer)
                 ? ClientModule.servers
                 : _selectedModule;
+        final inputKind = PlatformUtils.inputDeviceKinds(context);
+        // In touch mode the sidebar is collapsed by default; the user
+        // opens it via the FloatingActionButton. In pointer mode the
+        // sidebar is always visible.
+        final sidebarVisible = inputKind == InputDeviceKind.pointer ||
+            _isTouchSidebarVisible;
 
         final child = Scaffold(
           backgroundColor: scheme.surface,
+          floatingActionButton: inputKind == InputDeviceKind.touch
+              ? FloatingActionButton(
+                  key: const Key('macos-touch-sidebar-toggle'),
+                  onPressed: () {
+                    setState(() {
+                      _isTouchSidebarVisible = !_isTouchSidebarVisible;
+                    });
+                  },
+                  child: Icon(
+                    _isTouchSidebarVisible
+                        ? Icons.menu_open
+                        : Icons.menu,
+                  ),
+                )
+              : null,
           body: Row(
             children: [
               // macOS style Sidebar
-              DesktopSidebar(
-                width: 250,
-                backgroundColor: scheme.surfaceContainerLow,
-                modules: modules,
-                selectedModule: selectedModule,
-                hasServer: currentServer.hasServer,
-                onSelect: (module) {
-                  if (!currentServer.hasServer && module.requiresServer) {
-                    ServerSwitcherAction.showServerPicker(context);
-                    return;
-                  }
-                  setState(() {
-                    _selectedModule = module;
-                    _embeddedRouteName = null;
-                    _embeddedRouteArguments = null;
-                  });
-                },
+              Offstage(
+                offstage: !sidebarVisible,
+                child: DesktopSidebar(
+                  width: 250,
+                  backgroundColor: scheme.surfaceContainerLow,
+                  modules: modules,
+                  selectedModule: selectedModule,
+                  hasServer: currentServer.hasServer,
+                  onSelect: (module) {
+                    if (!currentServer.hasServer && module.requiresServer) {
+                      ServerSwitcherAction.showServerPicker(context);
+                      return;
+                    }
+                    setState(() {
+                      _selectedModule = module;
+                      _embeddedRouteName = null;
+                      _embeddedRouteArguments = null;
+                      // Auto-close the touch overlay after a selection.
+                      _isTouchSidebarVisible = false;
+                    });
+                  },
+                ),
               ),
               Expanded(
                 child: Column(

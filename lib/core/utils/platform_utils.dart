@@ -2,6 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 
+/// Coarse classification of the dominant input device the user is
+/// working with. Used by shell-level affordances to decide between
+/// pointer-driven (mouse + keyboard) and touch-driven layouts.
+enum InputDeviceKind {
+  /// Mouse + keyboard (or trackpad + keyboard). Default for desktop
+  /// host platforms and for any host whose screen width is at least
+  /// `tabletWidthBreakpoint`.
+  pointer,
+
+  /// Touch-first interaction. Default for phone- and tablet-form-factor
+  /// devices.
+  touch,
+}
+
 class PlatformUtils {
   // Material Design 3 canonical breakpoints: 600 compact/medium, 1024 medium/expanded
   static const double mobileWidthBreakpoint = 600.0;
@@ -44,6 +58,32 @@ class PlatformUtils {
       return MediaQuery.sizeOf(context).width < mobileWidthBreakpoint;
     }
     return MediaQuery.sizeOf(context).width < mobileWidthBreakpoint;
+  }
+
+  /// Resolves the dominant input device kind for the current runtime.
+  ///
+  /// Rules:
+  /// - Desktop host platforms (macOS / Windows / Linux / Linux) default
+  ///   to [InputDeviceKind.pointer].
+  /// - Mobile host platforms (iOS / Android / OHOS) default to
+  ///   [InputDeviceKind.touch].
+  /// - For the web build we fall back to screen width: smaller than
+  ///   `tabletWidthBreakpoint` is `touch`, otherwise `pointer`.
+  ///
+  /// The classification is purely a hint used to switch between two
+  /// shell-level affordance layers (a permanent `NavigationRail` vs a
+  /// collapsible floating button + edge-swipe-back). It never changes
+  /// the visual style — both layouts honour the active MDUI3 theme.
+  static InputDeviceKind inputDeviceKinds(BuildContext context) {
+    if (kIsWeb) {
+      return MediaQuery.sizeOf(context).width >= tabletWidthBreakpoint
+          ? InputDeviceKind.pointer
+          : InputDeviceKind.touch;
+    }
+    if (isDesktopPlatform) {
+      return InputDeviceKind.pointer;
+    }
+    return InputDeviceKind.touch;
   }
 
   // Specific Platforms based on TargetPlatform

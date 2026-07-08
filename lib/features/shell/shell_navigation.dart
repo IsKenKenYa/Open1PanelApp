@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/utils/platform_utils.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
+import 'package:onepanel_client/ui/desktop/common/widgets/shell_content_host.dart';
+import 'package:onepanel_client/ui/desktop/common/widgets/shell_fade_through_route.dart';
 
 class ShellRouteTarget {
   const ShellRouteTarget({
@@ -169,6 +171,33 @@ ShellRouteTarget? shellRouteTargetForRoute(String route) {
   return null;
 }
 
+/// Returns the [NavigatorState] of the [ShellContentHost] that wraps
+/// `context`, or `null` when no host is mounted (e.g. during the first
+/// frame, on a platform that does not use the desktop/tablet shell, or
+/// when the caller lives outside any [ShellContentHost] such as a
+/// top-level sidebar item that just wants to swap modules).
+///
+/// The lookup walks up the widget tree from the caller's [BuildContext]
+/// to find the nearest [ShellContentHost] state. This avoids the
+/// previous single-static-[GlobalKey] approach which — when the outer
+/// `DesktopContentHost` mounted *all* module hosts via `IndexedStack`
+/// at the same time — collided on key uniqueness and silently dropped
+/// the inner `Navigator` of the previously-inactive module, which
+/// manifested as "page content lost after opening several modules".
+NavigatorState? findShellContentNavigator(BuildContext context) {
+  // Walk the ancestor chain manually so the caller's own element is
+  // also considered (findAncestorStateOfType skips the current
+  // element, which matters when the caller IS a ShellContentHost
+  // element — e.g. unit tests that grab `tester.element(...)`).
+  final ShellContentHostState? direct = (context.widget is ShellContentHost)
+      ? (context as StatefulElement).state as ShellContentHostState?
+      : null;
+  if (direct != null) {
+    return direct.innerNavigator;
+  }
+  return context.findAncestorStateOfType<ShellContentHostState>()?.innerNavigator;
+}
+
 Future<void> openRouteRespectingShell(
   BuildContext context,
   String route, {
@@ -176,25 +205,83 @@ Future<void> openRouteRespectingShell(
 }) {
   final target = shellRouteTargetForRoute(route);
   if (target != null && PlatformUtils.isDesktop(context)) {
-    final shellArguments = <String, dynamic>{
-      'module': target.module.storageId,
-    };
-    // embedRouteInShell: true means the route is a sub-page of a module
-    // (e.g. container detail inside containers module) — push it into the
-    // shell's content area rather than as a full-screen route.
+    // When the route is a sub-page of a module (e.g. container detail
+    // inside the containers module) push it into the shell's inner
+    // navigator so only the content area animates; the surrounding
+    // NavigationRail / AppBar stays stable.
     if (target.embedRouteInShell) {
-      shellArguments['route'] = route;
-      if (arguments != null) {
-        shellArguments['routeArgs'] = arguments;
+      final innerNavigator = findShellContentNavigator(context);
+      if (innerNavigator != null) {
+        return innerNavigator.push(
+          _buildShellSubPageRoute(context, route, arguments),
+        );
       }
+      // Fall back to the legacy behaviour when the inner navigator
+      // has not been mounted yet (e.g. mid-build, or shell not yet
+      // visible).
+      return Navigator.of(context).pushReplacementNamed(
+        AppRoutes.home,
+        arguments: _buildShellHomeArguments(
+          target: target,
+          route: route,
+          arguments: arguments,
+        ),
+      );
     }
 
     return Navigator.of(context).pushReplacementNamed(
       AppRoutes.home,
-      arguments: shellArguments,
+      arguments: <String, dynamic>{
+        'module': target.module.storageId,
+      },
     );
   }
 
   // Mobile uses traditional push navigation; the shell is not involved.
   return Navigator.of(context).pushNamed(route, arguments: arguments);
+}
+
+Route<T> _buildShellSubPageRoute<T>(
+  BuildContext context,
+  String route,
+  Object? arguments,
+) {
+  return ShellFadeThroughPageRoute<T>(
+    settings: RouteSettings(name: route, arguments: arguments),
+    builder: (context) {
+      // `generateEmbeddedRoute` always resolves via the route's
+      // `defaultBuilder` (skipping the desktop platform override
+      // that would otherwise re-host the page inside a fresh shell)
+      // and returns a `PageRoute` whose builder produces the actual
+      // page widget. We extract that widget and re-mount it inside
+      // our own fade-through transition so the inner navigator
+      // controls the animation instead of the inner route.
+      final embedded = AppRouter.generateEmbeddedRoute(
+        RouteSettings(name: route, arguments: arguments),
+      );
+      if (embedded is PageRoute<T>) {
+        return embedded.buildPage(
+          context,
+          const AlwaysStoppedAnimation<double>(1.0),
+          const AlwaysStoppedAnimation<double>(1.0),
+        );
+      }
+      return const SizedBox.shrink();
+    },
+  );
+}
+
+Map<String, dynamic> _buildShellHomeArguments({
+  required ShellRouteTarget target,
+  required String route,
+  Object? arguments,
+}) {
+  final shellArguments = <String, dynamic>{
+    'module': target.module.storageId,
+    'route': route,
+  };
+  if (arguments != null) {
+    shellArguments['routeArgs'] = arguments;
+  }
+  return shellArguments;
 }
