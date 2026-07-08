@@ -7,7 +7,6 @@ mixin _ToolboxClamPageActionsPart on State<ToolboxClamPage> {
     ClamBaseInfo? existing,
   }) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final isEdit = existing != null;
 
     final nameController = TextEditingController(text: existing?.name ?? '');

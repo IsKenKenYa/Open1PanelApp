@@ -209,7 +209,6 @@ class ServerDetailPage extends StatelessWidget {
 
     final serverProvider = context.read<ServerProvider>();
     final currentServerController = context.read<CurrentServerController>();
-    final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final successMessage = l10n.serverDeleteSuccess(target.config.name);
 

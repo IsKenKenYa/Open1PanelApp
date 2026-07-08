@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:onepanel_client/core/platform/services/ohos_channel_names.dart';
 import 'package:onepanel_client/core/platform/services/platform_download_service.dart';
 import 'package:onepanel_client/core/platform/services/platform_file_service.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
@@ -28,6 +29,21 @@ class OhosDownloadService implements PlatformDownloadService {
     required this.eventChannel,
     required this.platformFileService,
   });
+
+  /// Convenience factory wiring the canonical channel names from
+  /// [OhosChannelNames]. Business code should prefer this over constructing
+  /// raw [MethodChannel]/[EventChannel] literals, which leaks channel names
+  /// outside the platform layer (violates AGENTS.md).
+  factory OhosDownloadService.defaultChannels(
+    PlatformFileService platformFileService,
+  ) {
+    return OhosDownloadService(
+      methodChannel: const MethodChannel(OhosChannelNames.ohosDownload),
+      eventChannel:
+          const EventChannel(OhosChannelNames.ohosDownloadProgress),
+      platformFileService: platformFileService,
+    );
+  }
 
   final MethodChannel methodChannel;
   final EventChannel eventChannel;

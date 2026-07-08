@@ -7,7 +7,6 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
     String operation,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     bool success;
     switch (operation) {
       case 'start':
@@ -36,7 +35,6 @@ mixin _ToolboxFail2banPageActionsPart on State<ToolboxFail2banPage> {
     bool enabled,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final success = await provider.toggle(enabled);
     if (!context.mounted) {
       return;

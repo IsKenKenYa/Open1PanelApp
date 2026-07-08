@@ -77,6 +77,59 @@
 - 在能力还原基础上允许客户端增强，增强方向至少包含：多机统一管理、MFA（多因素认证）等移动端价值能力。
 - 当 Swagger、注解、路由与真实返回不一致时：必须通过客户端 API 测试确认真实行为并在客户端兼容；严禁通过修改上游文件来"修复契约"。
 
+## 模块适配与原生UI工作流（持续活规范）
+
+本节整合了原 `docs/模块适配专属工作流.md` 与 `docs/原生UI适配专属工作流.md` 的有效内容，作为持续适配 1Panel API 与原生 UI 的活规范。两份独立文档已删除。
+
+### V2 契约单一规范源
+- V2 适配一律以 `docs/OpenSource/1Panel/core/cmd/server/docs/swagger.json` 为准（只读）。
+- `swagger.json` 的 `basePath` 为 `/api/v2`，服务端路由位于 `agent/app/api/v2`、`core/app/api/v2`。
+- V1 历史调研：不得在本仓对 `docs/OpenSource/1Panel` 执行切分支/切 tag；使用 `git show <tag>:core/cmd/server/docs/swagger.json` 导出到临时目录后分析。
+- 契约偏差处理：Swagger 与实际返回不一致时，以真实测试结果为客户端修复依据；Swagger 与行为语义有差异时，对照 `docs/OpenSource/1Panel/frontend/` 前端调用链路确认兼容方案。
+
+### 模块适配 7 步闭环
+1. 需求拆解（能力边界、依赖、验收标准）
+2. 测试用例设计（单测、集成、UI/交互、契约偏差）
+3. 自动化测试基线准备（脚本、夹具、环境变量、门禁）
+4. 功能开发（按分层架构实现）
+5. 单元测试执行与修复
+6. 集成测试执行与修复（涉及 API/网络/数据写入为必跑项）
+7. 文档与基线回写（模块文档、分析基线、兼容策略）
+
+### API 文档获取脚本
+```bash
+cd docs/development/modules
+python3 analyze_module_api.py <模块关键词> [输出目录]       # 提取模块 API
+python3 check_module_api_updates.py --all                    # 检查 API 变更
+python3 check_module_client_coverage.py --all                # 检查客户端覆盖差异
+```
+- `missing_in_client`（Swagger 存在未适配端点）视为阻断项，进入 API 测试阶段前清零。
+- 支持的模块关键词：dashboard、container、website、app、database、file、monitor、backup、ssl、firewall、cronjob、ssh、runtime、process、log、host、auth、device、toolbox、ai、command、group、setting。
+
+### 原生 UI 双轨门禁
+- MDUI3 是全平台可用 UI 基线，必须持续可运行，不得降级为"仅回退方案"。
+- Apple（iOS/iPadOS/macOS）与 Windows 必须建设原生 UI 轨道；原生轨道用于"锦上添花"，不得削弱 MDUI3 基线可用性。
+- 原生层只承载 Presentation 与平台能力接入，共享业务核心保持 Dart 实现。
+
+**原生专项门禁命令**：
+- Windows 原生轨道：`dotnet build windows/runner/native_host/OnePanelNativeHost/OnePanelNativeHost.csproj -c Debug`
+- Apple 原生轨道（CI/macOS）：`xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -sdk iphonesimulator build` + `xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner -configuration Debug build`
+- HarmonyOS：`hflutter build hap --release`（详见 `docs/development/harmonyos_build_and_sideload.md`）
+
+### 语义对齐检查清单（原生 UI 适配必检）
+- [ ] 入口语义一致（模块入口、导航层级一致）
+- [ ] 主流程一致（创建、编辑、删除、批量操作行为一致）
+- [ ] 错误反馈一致（失败提示、重试路径一致）
+- [ ] 权限与危险操作一致（二次确认与权限提示一致）
+- [ ] 国际化一致（中英文文案来源一致）
+- [ ] 无跨层调用（原生 UI 不得直连 API）
+
+### 持续适配机制
+- 1Panel 子模块快照更新后必跑 `check_module_api_updates.py --all` + `check_module_client_coverage.py --all`。
+- 新增 1Panel API 端点时，走上述 7 步闭环。
+- 原生 UI 新增平台能力时，走语义对齐 6 项检查 + 原生专项门禁。
+- 跨平台治理总纲见 `docs/development/cross_platform_ui_governance.md`。
+
 ## 架构与分层（强制）
 - 共享业务核心必须由 Dart 实现，原生层只承载 UI 容器与平台能力接入。
 - 强制六层划分：
@@ -192,7 +245,7 @@ flutter build ios --release                  # 构建 iOS（仅 macOS）
 
 ### 文档同步规则
 - 规范变更必须同步更新 `AGENTS.md`（本文）、`CLAUDE.md`、`.kiro/steering/*.md`。
-- 跨平台 UI 或原生扩展策略变更时，必须同步更新 `docs/development/cross_platform_ui_governance.md`、`docs/模块适配专属工作流.md`、`docs/原生UI适配专属工作流.md`。
+- 跨平台 UI 或原生扩展策略变更时，必须同步更新 `docs/development/cross_platform_ui_governance.md` 与本文「模块适配与原生UI工作流」章节。
 
 ### AI IDE 特定配置
 - **Claude Code**：参考 `AGENTS.md` + `CLAUDE.md`
@@ -249,7 +302,7 @@ flutter build ios --release                  # 构建 iOS（仅 macOS）
 ### 允许的文档类型
 - 核心规范：`README.md`、`AGENTS.md`、`CLAUDE.md`、`CHANGELOG.md`
 - AI IDE 配置：`.kiro/steering/*.md`、`.cursorrules`、`.github/copilot-instructions.md`
-- 架构与策略：`docs/development/*.md`、`docs/模块适配专属工作流.md`、`docs/原生UI适配专属工作流.md`
+- 架构与策略：`docs/development/*.md`（跨平台治理总纲 `cross_platform_ui_governance.md`；模块适配与原生 UI 工作流见本文对应章节）
 - 上游参考（只读）：`docs/OpenSource/1Panel/**`
 
 ### 信息记录位置

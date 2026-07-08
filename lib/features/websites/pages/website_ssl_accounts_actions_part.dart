@@ -24,10 +24,10 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     final existingType =
         _readString(existing ?? const <String, dynamic>{}, const ['type']);
     var selectedType =
-        (existingType == '-') ? _kDnsProviderTemplates.first.type : existingType;
+        (existingType == '-') ? kDnsProviderTemplates.first.type : existingType;
 
     Map<String, TextEditingController> buildTemplateControllers(
-      _DnsProviderTemplate template,
+      DnsProviderTemplate template,
     ) {
       return {
         for (final field in template.fields)
@@ -43,7 +43,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
     );
 
     var templateControllers = buildTemplateControllers(
-      _findDnsTemplate(selectedType) ?? _kDnsProviderTemplates.first,
+      findDnsTemplate(selectedType) ?? kDnsProviderTemplates.first,
     );
 
     await showDialog<void>(
@@ -51,7 +51,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setState) {
-            final template = _findDnsTemplate(selectedType);
+            final template = findDnsTemplate(selectedType);
             return AlertDialog(
               title: Text(
                 isEdit
@@ -75,7 +75,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                           labelText: l10n.websitesSslAccountsTypeLabel,
                         ),
                         items: [
-                          for (final t in _kDnsProviderTemplates)
+                          for (final t in kDnsProviderTemplates)
                             DropdownMenuItem(
                               value: t.type,
                               child: Text(t.type),
@@ -92,7 +92,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                               c.dispose();
                             }
                             selectedType = value;
-                            final newTemplate = _findDnsTemplate(value);
+                            final newTemplate = findDnsTemplate(value);
                             if (newTemplate != null) {
                               templateControllers =
                                   buildTemplateControllers(newTemplate);
@@ -110,7 +110,7 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
                       ),
                     const SizedBox(height: 12),
                     if (template != null)
-                      _DnsDynamicAuthFields(
+                      DnsDynamicAuthFields(
                         key: ValueKey(template.type),
                         template: template,
                         controllers: templateControllers,
@@ -970,136 +970,4 @@ extension _WebsiteSslAccountsActions on _WebsiteSslAccountsBody {
 
 }
 
-// ---------------------------------------------------------------------------
-// DNS provider preset templates
-// ---------------------------------------------------------------------------
-
-class _DnsTemplateField {
-  const _DnsTemplateField(
-    this.key,
-    this.label, {
-    this.sensitive = false,
-  });
-
-  final String key;
-  final String label;
-  final bool sensitive;
-}
-
-class _DnsProviderTemplate {
-  const _DnsProviderTemplate(this.type, this.fields);
-
-  final String type;
-  final List<_DnsTemplateField> fields;
-}
-
-const List<_DnsProviderTemplate> _kDnsProviderTemplates = [
-  _DnsProviderTemplate('cloudflare', [
-    _DnsTemplateField('dnsApiToken', 'API Token', sensitive: true),
-  ]),
-  _DnsProviderTemplate('aliyun', [
-    _DnsTemplateField('accessKey', 'Access Key ID'),
-    _DnsTemplateField('secretKey', 'Access Key Secret', sensitive: true),
-  ]),
-  _DnsProviderTemplate('dnspod', [
-    _DnsTemplateField('id', 'Secret ID'),
-    _DnsTemplateField('token', 'Secret Token', sensitive: true),
-  ]),
-  _DnsProviderTemplate('huaweiCloud', [
-    _DnsTemplateField('accessKey', 'Access Key ID'),
-    _DnsTemplateField('secretKey', 'Secret Access Key', sensitive: true),
-  ]),
-  _DnsProviderTemplate('tencentCloud', [
-    _DnsTemplateField('secretId', 'Secret ID'),
-    _DnsTemplateField('secretKey', 'Secret Key', sensitive: true),
-  ]),
-  _DnsProviderTemplate('godaddy', [
-    _DnsTemplateField('apiKey', 'API Key'),
-    _DnsTemplateField('apiSecret', 'API Secret', sensitive: true),
-  ]),
-  _DnsProviderTemplate('route53', [
-    _DnsTemplateField('accessKey', 'Access Key ID'),
-    _DnsTemplateField('secretKey', 'Secret Access Key', sensitive: true),
-    _DnsTemplateField('region', 'Region'),
-  ]),
-  _DnsProviderTemplate('digitalocean', [
-    _DnsTemplateField('authToken', 'Auth Token', sensitive: true),
-  ]),
-  _DnsProviderTemplate('vultr', [
-    _DnsTemplateField('apiKey', 'API Key', sensitive: true),
-  ]),
-  _DnsProviderTemplate('namecheap', [
-    _DnsTemplateField('apiUser', 'API User'),
-    _DnsTemplateField('apiKey', 'API Key', sensitive: true),
-  ]),
-];
-
-_DnsProviderTemplate? _findDnsTemplate(String type) {
-  for (final t in _kDnsProviderTemplates) {
-    if (t.type == type) {
-      return t;
-    }
-  }
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// DNS dialog with template-driven fields and sensitive-field masking
-// ---------------------------------------------------------------------------
-
-class _DnsDynamicAuthFields extends StatefulWidget {
-  const _DnsDynamicAuthFields({
-    super.key,
-    required this.template,
-    required this.controllers,
-  });
-
-  final _DnsProviderTemplate template;
-  final Map<String, TextEditingController> controllers;
-
-  @override
-  State<_DnsDynamicAuthFields> createState() => _DnsDynamicAuthFieldsState();
-}
-
-class _DnsDynamicAuthFieldsState extends State<_DnsDynamicAuthFields> {
-  final Set<String> _visibleFields = {};
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final field in widget.template.fields) ...[
-          TextField(
-            controller: widget.controllers[field.key],
-            obscureText: field.sensitive && !_visibleFields.contains(field.key),
-            decoration: InputDecoration(
-              labelText: field.label,
-              suffixIcon: field.sensitive
-                  ? IconButton(
-                      icon: Icon(
-                        _visibleFields.contains(field.key)
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
-                      tooltip: _visibleFields.contains(field.key)
-                          ? 'Hide'
-                          : 'Show',
-                      onPressed: () => setState(() {
-                        if (_visibleFields.contains(field.key)) {
-                          _visibleFields.remove(field.key);
-                        } else {
-                          _visibleFields.add(field.key);
-                        }
-                      }),
-                    )
-                  : null,
-            ),
-          ),
-          const SizedBox(height: 12),
-        ],
-      ],
-    );
-  }
-}
 

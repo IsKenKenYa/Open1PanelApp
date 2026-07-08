@@ -122,3 +122,5 @@ coverage/
 test_output.txt
 key/
 graphify-out/
+.codegraph
+architecture-review-*

@@ -13,8 +13,7 @@
 
 ## Native UI Adaptation and Hard Gates
 
-- Native UI adaptation workflow and AI-agent constraints: `docs/原生UI适配专属工作流.md`
-- Module adaptation workflow: `docs/模块适配专属工作流.md`
+- Native UI adaptation workflow and module adaptation workflow: `AGENTS.md` § 模块适配与原生UI工作流
 - Cross-platform governance baseline: `docs/development/cross_platform_ui_governance.md`
 
 Required hard gates (any failure must block progression):

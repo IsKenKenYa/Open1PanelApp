@@ -82,7 +82,6 @@ class _EditAppConfigDialogState extends State<EditAppConfigDialog> {
     final provider = context.read<InstalledAppsProvider>();
     final l10n = context.l10n;
     final navigator = Navigator.of(context);
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
       // 1. Update Params

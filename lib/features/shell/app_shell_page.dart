@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/features/apps/apps_page.dart';
-import 'package:onepanel_client/features/ai/ai_page.dart';
-import 'package:onepanel_client/features/ai/ai_provider.dart';
-import 'package:onepanel_client/features/ai/mcp_server_provider.dart';
 import 'package:onepanel_client/features/security/app_lock_controller.dart';
-import 'package:onepanel_client/features/security/security_verification_page.dart';
-import 'package:onepanel_client/features/websites/websites_page.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/pinned_modules_controller.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
 import 'package:onepanel_client/features/shell/module_page_factory.dart';
+import 'package:onepanel_client/features/shell/module_registry.dart';
 import 'package:onepanel_client/features/shell/widgets/adaptive_shell_navigation_widget.dart';
 import 'package:onepanel_client/features/shell/widgets/channel_watermark_badge_widget.dart';
 import 'package:onepanel_client/features/shell/widgets/mobile_more_modules_drawer.dart';
@@ -269,19 +264,7 @@ class _AppShellPageState extends State<AppShellPage> {
 
     if (!mounted) return;
 
-    final Widget? page = switch (module) {
-      ClientModule.apps => const AppsPage(),
-      ClientModule.websites => const WebsitesPage(),
-      ClientModule.ai => MultiProvider(
-          providers: [
-            ChangeNotifierProvider(create: (_) => AIProvider()),
-            ChangeNotifierProvider(create: (_) => McpServerProvider()),
-          ],
-          child: const AIPage(),
-        ),
-      ClientModule.verification => const SecurityVerificationPage(),
-      _ => null,
-    };
+    final Widget? page = ModuleRegistry.buildStandalonePage(module, context);
 
     if (page == null) {
       _handleModuleOpen(module);

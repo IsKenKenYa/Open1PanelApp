@@ -210,7 +210,6 @@ class ServerListViewModel extends ChangeNotifier with SafeChangeNotifier {
     if (!confirmed || !context.mounted) return;
 
     final currentServerController = context.read<CurrentServerController>();
-    final messenger = ScaffoldMessenger.of(context);
     final successMessage = l10n.serverDeleteSuccess(item.config.name);
 
     try {

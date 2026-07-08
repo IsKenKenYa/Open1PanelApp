@@ -2,13 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/cronjob_record_models.dart';
+import 'package:onepanel_client/data/repositories/cronjob_repository.dart';
 import 'package:onepanel_client/features/cronjobs/providers/cronjob_records_provider.dart';
-import 'package:onepanel_client/features/cronjobs/services/cronjob_service.dart';
 
-class _MockCronjobService extends Mock implements CronjobService {}
+class _MockCronjobRepository extends Mock implements CronjobRepository {}
 
 void main() {
-  late _MockCronjobService service;
+  late _MockCronjobRepository repository;
   late CronjobRecordsProvider provider;
 
   const record = CronjobRecordInfo(
@@ -30,17 +30,17 @@ void main() {
   });
 
   setUp(() {
-    service = _MockCronjobService();
-    when(() => service.searchRecords(any())).thenAnswer(
+    repository = _MockCronjobRepository();
+    when(() => repository.searchRecords(any())).thenAnswer(
       (_) async => const PageResult<CronjobRecordInfo>(
         items: <CronjobRecordInfo>[record],
         total: 1,
       ),
     );
-    when(() => service.loadRecordLog(any()))
+    when(() => repository.loadRecordLog(any()))
         .thenAnswer((_) async => 'record log content');
-    when(() => service.cleanRecords(any())).thenAnswer((_) async {});
-    provider = CronjobRecordsProvider(service: service);
+    when(() => repository.cleanRecords(any())).thenAnswer((_) async {});
+    provider = CronjobRecordsProvider(repository: repository);
   });
 
   test('load fetches records', () async {
@@ -57,10 +57,10 @@ void main() {
     expect(provider.selectedLog, 'record log content');
   });
 
-  test('cleanRecords calls service and reloads', () async {
+  test('cleanRecords calls repository and reloads', () async {
     await provider.load(1);
-    clearInteractions(service);
-    when(() => service.searchRecords(any())).thenAnswer(
+    clearInteractions(repository);
+    when(() => repository.searchRecords(any())).thenAnswer(
       (_) async => const PageResult<CronjobRecordInfo>(
         items: <CronjobRecordInfo>[record],
         total: 1,
@@ -74,7 +74,7 @@ void main() {
 
     expect(result, isTrue);
     verify(
-      () => service.cleanRecords(
+      () => repository.cleanRecords(
         const CronjobRecordCleanRequest(
           cronjobId: 1,
           cleanData: true,
@@ -82,6 +82,6 @@ void main() {
         ),
       ),
     ).called(1);
-    verify(() => service.searchRecords(any())).called(1);
+    verify(() => repository.searchRecords(any())).called(1);
   });
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
 import 'package:onepanel_client/core/platform/services/ohos_download_service.dart';
@@ -72,13 +71,11 @@ class TransferManagerProvider extends ChangeNotifier with SafeChangeNotifier {
 
   void _initOhosDownloadService() {
     if (_ohosDownloadService != null) return;
-    // MethodChannel for commands (pause/resume/cancel), EventChannel for
-    // real-time progress streams — OHOS native downloader pushes events
-    // rather than requiring the Dart side to poll.
-    _ohosDownloadService = OhosDownloadService(
-      methodChannel: const MethodChannel('onepanel/ohos_download'),
-      eventChannel: const EventChannel('onepanel/ohos_download_progress'),
-      platformFileService: PlatformFileService(),
+    // The factory wires the canonical channel names from OhosChannelNames,
+    // keeping channel literals inside the platform layer (AGENTS.md: business
+    // code must not construct raw MethodChannel/EventChannel).
+    _ohosDownloadService = OhosDownloadService.defaultChannels(
+      PlatformFileService(),
     );
     _ohosProgressSub = _ohosDownloadService!.onProgress.listen((_) {
       loadTasks();

@@ -4,14 +4,14 @@ import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/cronjob_list_models.dart';
 import 'package:onepanel_client/data/models/system_group_models.dart';
-import 'package:onepanel_client/features/cronjobs/services/cronjob_service.dart';
+import 'package:onepanel_client/data/repositories/cronjob_repository.dart';
 
 class CronjobsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   CronjobsProvider({
-    CronjobService? service,
-  }) : _service = service ?? CronjobService();
+    CronjobRepository? repository,
+  }) : _repository = repository ?? CronjobRepository();
 
-  final CronjobService _service;
+  final CronjobRepository _repository;
 
   List<CronjobSummary> _items = const <CronjobSummary>[];
   List<GroupInfo> _groups = const <GroupInfo>[];
@@ -28,8 +28,8 @@ class CronjobsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
   Future<void> load({bool forceRefresh = false}) async {
     setLoading();
     try {
-      _groups = await _service.loadGroups(forceRefresh: forceRefresh);
-      final result = await _service.searchCronjobs(
+      _groups = await _repository.loadGroups(forceRefresh: forceRefresh);
+      final result = await _repository.searchCronjobsWithPreview(
         CronjobListQuery(
           info: _searchQuery.trim().isEmpty ? null : _searchQuery.trim(),
           groupIds: _selectedGroupId == null
@@ -63,28 +63,28 @@ class CronjobsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStat
 
   Future<bool> updateStatus(CronjobSummary item, String status) async {
     return _runMutation(() async {
-      await _service.updateStatus(item.id, status);
+      await _repository.updateStatus(CronjobStatusUpdate(id: item.id, status: status));
       await load(forceRefresh: true);
     });
   }
 
   Future<bool> handleOnce(CronjobSummary item) async {
     return _runMutation(() async {
-      await _service.handleOnce(item.id);
+      await _repository.handleOnce(item.id);
       await load(forceRefresh: true);
     });
   }
 
   Future<bool> stop(CronjobSummary item) async {
     return _runMutation(() async {
-      await _service.stop(item.id);
+      await _repository.stop(item.id);
       await load(forceRefresh: true);
     });
   }
 
   Future<bool> delete(CronjobSummary item) async {
     return _runMutation(() async {
-      await _service.delete(item.id);
+      await _repository.deleteById(item.id);
       await load(forceRefresh: true);
     });
   }

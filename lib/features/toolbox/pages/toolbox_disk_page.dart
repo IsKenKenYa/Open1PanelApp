@@ -119,7 +119,6 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
   Future<void> _showMountDialog(DiskBasicInfo disk) async {
     final l10n = context.l10n;
     final diskProvider = context.read<ToolboxDiskProvider>();
-    final messenger = ScaffoldMessenger.of(context);
     final filesystemController = TextEditingController(
         text: disk.filesystem.isEmpty ? 'ext4' : disk.filesystem);
     final mountPointController = TextEditingController(text: disk.mountPoint);
@@ -199,7 +198,6 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
   Future<void> _showPartitionDialog(DiskInfo disk) async {
     final l10n = context.l10n;
     final diskProvider = context.read<ToolboxDiskProvider>();
-    final messenger = ScaffoldMessenger.of(context);
     final filesystemController = TextEditingController(text: 'ext4');
     final mountPointController = TextEditingController();
     final labelController = TextEditingController();
@@ -281,7 +279,6 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
   Future<void> _handleUnmount(DiskBasicInfo disk) async {
     final l10n = context.l10n;
     final diskProvider = context.read<ToolboxDiskProvider>();
-    final messenger = ScaffoldMessenger.of(context);
     final success = await diskProvider.unmountDisk(
       DiskUnmountRequest(mountPoint: disk.mountPoint),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:onepanel_client/api/v2/setting_v2.dart' as api;
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/data/models/ssh_settings_models.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
@@ -23,10 +22,13 @@ class _FakeSettingsService extends SettingsService {
   String? lastBoundMfaCode;
   String? lastUnboundMfaCode;
 
-  api.TerminalUpdate? lastTerminalUpdate;
-  api.ProxyUpdate? lastProxyUpdate;
-  api.PasswordUpdate? lastPasswordUpdate;
-  api.UpgradeRequest? lastUpgradeRequest;
+  String? lastTerminalFontSize;
+  String? lastTerminalFontFamily;
+  String? lastProxyUrl;
+  int? lastProxyPort;
+  String? lastPasswordOld;
+  String? lastPasswordNew;
+  String? lastUpgradeVersion;
 
   bool shouldThrowOnLoad = false;
   bool shouldThrowOnMemo = false;
@@ -107,23 +109,39 @@ class _FakeSettingsService extends SettingsService {
   }
 
   @override
-  Future<void> updateTerminalSettings(api.TerminalUpdate request) async {
-    lastTerminalUpdate = request;
+  Future<void> updateTerminalSettings({
+    String? lineTheme,
+    String? fontSize,
+    String? fontFamily,
+    String? backgroundColor,
+    String? foregroundColor,
+    String? cursorStyle,
+    String? cursorBlink,
+    String? scrollSensitivity,
+    String? scrollback,
+    String? lineHeight,
+    String? letterSpacing,
+  }) async {
+    lastTerminalFontSize = fontSize;
+    lastTerminalFontFamily = fontFamily;
   }
 
   @override
-  Future<void> updateProxySettings(api.ProxyUpdate request) async {
-    lastProxyUpdate = request;
+  Future<void> updateProxySettings({String? proxyUrl, int? proxyPort}) async {
+    lastProxyUrl = proxyUrl;
+    lastProxyPort = proxyPort;
   }
 
   @override
-  Future<void> updatePasswordSettings(api.PasswordUpdate request) async {
-    lastPasswordUpdate = request;
+  Future<void> updatePasswordSettings(
+      String oldPassword, String newPassword) async {
+    lastPasswordOld = oldPassword;
+    lastPasswordNew = newPassword;
   }
 
   @override
-  Future<void> upgrade(api.UpgradeRequest request) async {
-    lastUpgradeRequest = request;
+  Future<void> upgrade({String? version}) async {
+    lastUpgradeVersion = version;
   }
 }
 
@@ -336,8 +354,8 @@ void main() {
       );
 
       expect(result, isTrue);
-      expect(service.lastTerminalUpdate?.fontSize, '16');
-      expect(service.lastTerminalUpdate?.fontFamily, 'Monaco');
+      expect(service.lastTerminalFontSize, '16');
+      expect(service.lastTerminalFontFamily, 'Monaco');
     });
   });
 
@@ -354,8 +372,8 @@ void main() {
       );
 
       expect(result, isTrue);
-      expect(service.lastProxyUpdate?.proxyUrl, 'http://proxy.example.com');
-      expect(service.lastProxyUpdate?.proxyPort, 8080);
+      expect(service.lastProxyUrl, 'http://proxy.example.com');
+      expect(service.lastProxyPort, 8080);
     });
   });
 
@@ -369,8 +387,8 @@ void main() {
       final result = await provider.updatePassword('old123', 'new456');
 
       expect(result, isTrue);
-      expect(service.lastPasswordUpdate?.oldPassword, 'old123');
-      expect(service.lastPasswordUpdate?.newPassword, 'new456');
+      expect(service.lastPasswordOld, 'old123');
+      expect(service.lastPasswordNew, 'new456');
     });
   });
 
@@ -437,7 +455,7 @@ void main() {
       final result = await provider.upgrade(version: '2.0.0');
 
       expect(result, isTrue);
-      expect(service.lastUpgradeRequest?.version, '2.0.0');
+      expect(service.lastUpgradeVersion, '2.0.0');
     });
   });
 

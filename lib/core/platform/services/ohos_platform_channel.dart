@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+import 'ohos_channel_names.dart';
+
 /// Structured outcome returned by OHOS save operations. Distinguishes
 /// the three save targets so the UI can show appropriate success toasts.
 enum SaveLocationKind {
@@ -59,7 +61,7 @@ class OhosPlatformChannel {
     MethodChannel channel = const MethodChannel(channelName),
   }) : _channel = channel;
 
-  static const String channelName = 'onepanel/ohos_platform';
+  static const String channelName = OhosChannelNames.ohosPlatform;
 
   final MethodChannel _channel;
 
@@ -209,7 +211,7 @@ class OhosPlatformChannel {
   // Duplicates OhosDownloadService's channel so diagnostics and legacy callers
   // can access downloads without depending on the full service.
   static const MethodChannel _downloadChannel =
-      MethodChannel('onepanel/ohos_download');
+      MethodChannel(OhosChannelNames.ohosDownload);
 
   Future<String?> downloadFile({
     required String url,

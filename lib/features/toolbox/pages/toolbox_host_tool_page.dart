@@ -223,7 +223,6 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
     ToolboxHostToolProvider provider,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final configPathController =
         TextEditingController(text: provider.serviceInfo.configPath);
     final serviceNameController =
@@ -284,7 +283,6 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
     ToolboxHostToolProvider provider,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final controller = TextEditingController(text: provider.configContent);
     await showDialog<void>(
       context: context,
@@ -329,7 +327,6 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
     HostToolProcessConfig? initialValue,
   }) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final nameController =
         TextEditingController(text: initialValue?.name ?? '');
     final commandController =
@@ -443,7 +440,6 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
     String action,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     if (action == 'edit') {
       await _showProcessDialog(context, provider, initialValue: process);
       return;

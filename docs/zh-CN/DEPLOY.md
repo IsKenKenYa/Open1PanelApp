@@ -13,8 +13,7 @@
 
 ## 原生 UI 适配与强门禁
 
-- 原生 UI 适配流程与自动化约束：`docs/原生UI适配专属工作流.md`
-- 模块链路适配流程：`docs/模块适配专属工作流.md`
+- 原生 UI 适配流程与模块链路适配流程：`AGENTS.md` § 模块适配与原生UI工作流
 - 跨平台治理总纲：`docs/development/cross_platform_ui_governance.md`
 
 强制门禁（任一失败即阻断推进）：

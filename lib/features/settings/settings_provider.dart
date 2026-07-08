@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'settings_service.dart';
-import '../../api/v2/setting_v2.dart' as api;
 import '../../data/models/setting_models.dart';
 import '../../data/models/ssh_settings_models.dart';
 import '../../core/services/passkey_service.dart';
@@ -145,7 +145,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     _data = _data.copyWith(
       isLoading: false,
       isRefreshing: false,
-      error: '$action失败: $error',
+      error: '$action失败: ${ErrorMessageUtils.userFacingMessage(error)}',
     );
     notifyListeners();
   }
@@ -519,7 +519,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> loadSnapshots() async {
     try {
-      final result = await _service.searchSnapshots(api.SnapshotSearch());
+      final result = await _service.searchSnapshots();
       _data = _data.copyWith(snapshots: result?['items'] as List<dynamic>?);
       notifyListeners();
     } catch (e, stackTrace) {
@@ -534,8 +534,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
         throw StateError('系统设置当前不可更新');
       }
 
-      await _service
-          .updateSystemSetting(api.SettingUpdate(key: key, value: value));
+      await _service.updateSystemSetting(key, value);
       await loadSystemSettings();
       return true;
     } catch (e, stackTrace) {
@@ -559,19 +558,17 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
   }) async {
     try {
       await _service.updateTerminalSettings(
-        api.TerminalUpdate(
-          lineTheme: lineTheme,
-          fontSize: fontSize,
-          fontFamily: fontFamily,
-          backgroundColor: backgroundColor,
-          foregroundColor: foregroundColor,
-          cursorStyle: cursorStyle,
-          cursorBlink: cursorBlink,
-          scrollSensitivity: scrollSensitivity,
-          scrollback: scrollback,
-          lineHeight: lineHeight,
-          letterSpacing: letterSpacing,
-        ),
+        lineTheme: lineTheme,
+        fontSize: fontSize,
+        fontFamily: fontFamily,
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
+        cursorStyle: cursorStyle,
+        cursorBlink: cursorBlink,
+        scrollSensitivity: scrollSensitivity,
+        scrollback: scrollback,
+        lineHeight: lineHeight,
+        letterSpacing: letterSpacing,
       );
       await loadTerminalSettings();
       return true;
@@ -586,10 +583,10 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     int? proxyPort,
   }) async {
     try {
-      await _service.updateProxySettings(api.ProxyUpdate(
+      await _service.updateProxySettings(
         proxyUrl: proxyUrl,
         proxyPort: proxyPort,
-      ));
+      );
       await loadSystemSettings();
       return true;
     } catch (e, stackTrace) {
@@ -600,8 +597,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> updateAppStoreConfig(String? storeUrl) async {
     try {
-      await _service
-          .updateAppStoreConfig(api.AppStoreConfigUpdate(storeUrl: storeUrl));
+      await _service.updateAppStoreConfig(storeUrl);
       await loadAppStoreConfig();
       return true;
     } catch (e, stackTrace) {
@@ -622,16 +618,14 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
       final authMode =
           (privateKey != null && privateKey.trim().isNotEmpty) ? 'key' : 'password';
       await _service.saveSSHConnection(
-        api.SSHConnectionSave(
-          addr: host,
-          port: port,
-          user: user,
-          authMode: authMode,
-          password: password,
-          privateKey: privateKey,
-          passPhrase: passPhrase,
-          localSSHConnShow: _data.sshConnection?.localSSHConnShow,
-        ),
+        addr: host,
+        port: port,
+        user: user,
+        authMode: authMode,
+        password: password,
+        privateKey: privateKey,
+        passPhrase: passPhrase,
+        localSSHConnShow: _data.sshConnection?.localSSHConnShow,
       );
       await loadSSHConnection();
       return true;
@@ -652,15 +646,13 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
   }) async {
     try {
       return await _service.checkSSHConnection(
-        api.SSHConnectionCheck(
-          addr: host,
-          port: port,
-          user: user,
-          authMode: authMode,
-          password: password,
-          privateKey: privateKey,
-          passPhrase: passPhrase,
-        ),
+        addr: host,
+        port: port,
+        user: user,
+        authMode: authMode,
+        password: password,
+        privateKey: privateKey,
+        passPhrase: passPhrase,
       );
     } catch (e, stackTrace) {
       _setError('测试SSH连接', e, stackTrace: stackTrace);
@@ -674,10 +666,8 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
   }) async {
     try {
       await _service.updateDefaultSSHConnection(
-        api.SSHDefaultUpdate(
-          withReset: withReset,
-          defaultConn: visible ? 'Enable' : 'Disable',
-        ),
+        visible: visible,
+        withReset: withReset,
       );
       await loadSSHConnection();
       return true;
@@ -727,10 +717,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> updatePassword(String oldPassword, String newPassword) async {
     try {
-      await _service.updatePasswordSettings(api.PasswordUpdate(
-        oldPassword: oldPassword,
-        newPassword: newPassword,
-      ));
+      await _service.updatePasswordSettings(oldPassword, newPassword);
       return true;
     } catch (e, stackTrace) {
       _setError('更新密码', e, stackTrace: stackTrace);
@@ -758,11 +745,11 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     required int validityTime,
   }) async {
     try {
-      await _service.updateApiConfig(api.ApiConfigUpdate(
+      await _service.updateApiConfig(
         status: status,
         ipWhiteList: ipWhiteList,
         validityTime: validityTime,
-      ));
+      );
       await loadSystemSettings();
       return true;
     } catch (e, stackTrace) {
@@ -778,12 +765,12 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
     required String key,
   }) async {
     try {
-      await _service.updateSSL(api.SSLUpdate(
+      await _service.updateSSL(
         domain: domain,
         sslType: sslType,
         cert: cert,
         key: key,
-      ));
+      );
       await loadSSLInfo();
       return true;
     } catch (e, stackTrace) {
@@ -812,11 +799,11 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
       'createSnapshot: source=$sourceAccountIDs download=$downloadAccountID',
     );
     try {
-      await _service.createSnapshot(api.SnapshotCreate(
+      await _service.createSnapshot(
         description: description,
         sourceAccountIDs: sourceAccountIDs,
         downloadAccountID: downloadAccountID,
-      ));
+      );
       await loadSnapshots();
       return true;
     } catch (e, stackTrace) {
@@ -841,7 +828,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> deleteSnapshot(List<int> ids) async {
     try {
-      await _service.deleteSnapshot(api.SnapshotDelete(ids: ids));
+      await _service.deleteSnapshot(ids);
       await loadSnapshots();
       return true;
     } catch (e, stackTrace) {
@@ -854,7 +841,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
   // afterwards -- an immediate refresh would be unreliable.
   Future<bool> recoverSnapshot(int id) async {
     try {
-      await _service.recoverSnapshot(api.SnapshotRecover(id: id));
+      await _service.recoverSnapshot(id);
       return true;
     } catch (e, stackTrace) {
       _setError('恢复快照', e, stackTrace: stackTrace);
@@ -864,7 +851,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> rollbackSnapshot(int id) async {
     try {
-      await _service.rollbackSnapshot(api.SnapshotRollback(id: id));
+      await _service.rollbackSnapshot(id);
       return true;
     } catch (e, stackTrace) {
       _setError('回滚快照', e, stackTrace: stackTrace);
@@ -874,7 +861,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> importSnapshot(String path) async {
     try {
-      await _service.importSnapshot(api.SnapshotImport(path: path));
+      await _service.importSnapshot(path);
       await loadSnapshots();
       return true;
     } catch (e, stackTrace) {
@@ -885,8 +872,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> updateSnapshotDescription(int id, String description) async {
     try {
-      await _service.updateSnapshotDescription(
-          api.SnapshotDescriptionUpdate(id: id, description: description));
+      await _service.updateSnapshotDescription(id, description);
       await loadSnapshots();
       return true;
     } catch (e, stackTrace) {
@@ -897,7 +883,7 @@ class SettingsProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<bool> upgrade({String? version}) async {
     try {
-      await _service.upgrade(api.UpgradeRequest(version: version));
+      await _service.upgrade(version: version);
       return true;
     } catch (e, stackTrace) {
       _setError('执行升级', e, stackTrace: stackTrace);

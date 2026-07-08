@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:onepanel_client/api/v2/setting_v2.dart' as api;
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/data/models/ssh_settings_models.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
@@ -7,8 +6,10 @@ import 'package:onepanel_client/features/settings/settings_service.dart';
 
 class _FakeSettingsService extends SettingsService {
   String? lastStoreUrl;
-  api.SSHConnectionSave? lastSshRequest;
-  api.SettingUpdate? lastSystemSettingRequest;
+  String? lastSshAddr;
+  int? lastSshPort;
+  String? lastSystemSettingKey;
+  String? lastSystemSettingValue;
   dynamic settingsAvailability = true;
   int checkSettingsAvailableCallCount = 0;
 
@@ -50,24 +51,34 @@ class _FakeSettingsService extends SettingsService {
   }
 
   @override
-  Future<void> updateAppStoreConfig(api.AppStoreConfigUpdate request) async {
-    lastStoreUrl = request.storeUrl;
-    _appStoreConfig = <String, dynamic>{'storeUrl': request.storeUrl};
+  Future<void> updateAppStoreConfig(String? storeUrl) async {
+    lastStoreUrl = storeUrl;
+    _appStoreConfig = <String, dynamic>{'storeUrl': storeUrl};
   }
 
   @override
-  Future<void> saveSSHConnection(api.SSHConnectionSave request) async {
-    lastSshRequest = request;
+  Future<void> saveSSHConnection({
+    String? addr,
+    int? port,
+    String? user,
+    String? authMode,
+    String? password,
+    String? privateKey,
+    String? passPhrase,
+    String? localSSHConnShow,
+  }) async {
+    lastSshAddr = addr;
+    lastSshPort = port;
     _sshConnection = SshLocalConnectionInfo(
-      addr: request.addr ?? '',
-      port: request.port ?? 22,
-      user: request.user ?? '',
-      authMode: request.authMode ?? 'password',
-      password: request.password,
-      privateKey: request.privateKey,
-      passPhrase: request.passPhrase,
+      addr: addr ?? '',
+      port: port ?? 22,
+      user: user ?? '',
+      authMode: authMode ?? 'password',
+      password: password,
+      privateKey: privateKey,
+      passPhrase: passPhrase,
       localSSHConnShow:
-          request.localSSHConnShow ?? _sshConnection.localSSHConnShow,
+          localSSHConnShow ?? _sshConnection.localSSHConnShow,
     );
   }
 
@@ -78,8 +89,9 @@ class _FakeSettingsService extends SettingsService {
   }
 
   @override
-  Future<void> updateSystemSetting(api.SettingUpdate request) async {
-    lastSystemSettingRequest = request;
+  Future<void> updateSystemSetting(String key, String value) async {
+    lastSystemSettingKey = key;
+    lastSystemSettingValue = value;
   }
 }
 
@@ -122,8 +134,8 @@ void main() {
       );
 
       expect(ok, isTrue);
-      expect(service.lastSshRequest?.addr, '10.0.0.2');
-      expect(service.lastSshRequest?.port, 2222);
+      expect(service.lastSshAddr, '10.0.0.2');
+      expect(service.lastSshPort, 2222);
       expect(provider.data.sshConnection?.addr, '10.0.0.2');
       expect(provider.data.sshConnection?.port, 2222);
     });
@@ -136,8 +148,8 @@ void main() {
 
       expect(ok, isTrue);
       expect(service.checkSettingsAvailableCallCount, 1);
-      expect(service.lastSystemSettingRequest?.key, 'panelName');
-      expect(service.lastSystemSettingRequest?.value, 'Panel X');
+      expect(service.lastSystemSettingKey, 'panelName');
+      expect(service.lastSystemSettingValue, 'Panel X');
     });
 
     test('updateSystemSetting stops when setting is unavailable', () async {
@@ -148,7 +160,7 @@ void main() {
 
       expect(ok, isFalse);
       expect(service.checkSettingsAvailableCallCount, 1);
-      expect(service.lastSystemSettingRequest, isNull);
+      expect(service.lastSystemSettingKey, isNull);
       expect(provider.data.error, contains('更新系统设置失败'));
     });
   });

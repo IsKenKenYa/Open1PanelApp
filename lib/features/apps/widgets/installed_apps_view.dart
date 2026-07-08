@@ -39,7 +39,6 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
   Future<void> _showUninstallDialog(AppInstallInfo app) async {
     final l10n = context.l10n;
     final provider = context.read<InstalledAppsProvider>();
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
     Map<String, dynamic> checkResult = const {};
     try {
       checkResult = await provider.checkUninstall(app.id.toString());

@@ -3,6 +3,12 @@ import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/data/models/ssh_settings_models.dart';
 import 'package:onepanel_client/data/repositories/setting_repository.dart';
 
+/// Settings business service.
+///
+/// The interface exposes **business-semantic parameters** (atomic values), not
+/// API-layer DTOs. DTO construction lives inside this implementation so the
+/// State layer (Provider) never imports `setting_v2.dart`. This keeps the seam
+/// between State and API/Infra intact — see AGENTS.md architecture rules.
 class SettingsService {
   SettingsService({SettingRepository? repository})
       : _repository = repository ?? SettingRepository();
@@ -104,9 +110,19 @@ class SettingsService {
     return response.data;
   }
 
-  Future<void> updateSSL(api.SSLUpdate request) async {
+  Future<void> updateSSL({
+    required String domain,
+    required String sslType,
+    required String cert,
+    required String key,
+  }) async {
     final apiClient = await _getApi();
-    await apiClient.updateSSL(request);
+    await apiClient.updateSSL(api.SSLUpdate(
+      domain: domain,
+      sslType: sslType,
+      cert: cert,
+      key: key,
+    ));
   }
 
   Future<void> downloadSSL() async {
@@ -120,9 +136,9 @@ class SettingsService {
     return response.data;
   }
 
-  Future<void> upgrade(api.UpgradeRequest request) async {
+  Future<void> upgrade({String? version}) async {
     final apiClient = await _getApi();
-    await apiClient.upgrade(request);
+    await apiClient.upgrade(api.UpgradeRequest(version: version));
   }
 
   Future<List<dynamic>?> getUpgradeReleases() async {
@@ -138,46 +154,57 @@ class SettingsService {
     return response.data;
   }
 
-  Future<dynamic> searchSnapshots(api.SnapshotSearch request) async {
+  Future<dynamic> searchSnapshots() async {
     final apiClient = await _getApi();
-    final response = await apiClient.searchSnapshots(request);
+    final response = await apiClient.searchSnapshots(api.SnapshotSearch());
     return response.data;
   }
 
-  Future<void> createSnapshot(api.SnapshotCreate request) async {
+  Future<void> createSnapshot({
+    String? description,
+    required String sourceAccountIDs,
+    required int downloadAccountID,
+  }) async {
     final apiClient = await _getApi();
-    await apiClient.createSnapshot(request);
+    await apiClient.createSnapshot(api.SnapshotCreate(
+      description: description,
+      sourceAccountIDs: sourceAccountIDs,
+      downloadAccountID: downloadAccountID,
+    ));
   }
 
-  Future<void> deleteSnapshot(api.SnapshotDelete request) async {
+  Future<void> deleteSnapshot(List<int> ids) async {
     final apiClient = await _getApi();
-    await apiClient.deleteSnapshot(request);
+    await apiClient.deleteSnapshot(api.SnapshotDelete(ids: ids));
   }
 
-  Future<void> recoverSnapshot(api.SnapshotRecover request) async {
+  Future<void> recoverSnapshot(int id) async {
     final apiClient = await _getApi();
-    await apiClient.recoverSnapshot(request);
+    await apiClient.recoverSnapshot(api.SnapshotRecover(id: id));
   }
 
-  Future<void> rollbackSnapshot(api.SnapshotRollback request) async {
+  Future<void> rollbackSnapshot(int id) async {
     final apiClient = await _getApi();
-    await apiClient.rollbackSnapshot(request);
+    await apiClient.rollbackSnapshot(api.SnapshotRollback(id: id));
   }
 
-  Future<void> importSnapshot(api.SnapshotImport request) async {
+  Future<void> importSnapshot(String path) async {
     final apiClient = await _getApi();
-    await apiClient.importSnapshot(request);
+    await apiClient.importSnapshot(api.SnapshotImport(path: path));
   }
 
-  Future<void> updateSnapshotDescription(
-      api.SnapshotDescriptionUpdate request) async {
+  Future<void> updateSnapshotDescription(int id, String description) async {
     final apiClient = await _getApi();
-    await apiClient.updateSnapshotDescription(request);
+    await apiClient.updateSnapshotDescription(
+        api.SnapshotDescriptionUpdate(id: id, description: description));
   }
 
-  Future<void> updateProxySettings(api.ProxyUpdate request) async {
+  Future<void> updateProxySettings({String? proxyUrl, int? proxyPort}) async {
     final apiClient = await _getApi();
-    await apiClient.updateProxySettings(request);
+    await apiClient.updateProxySettings(api.ProxyUpdate(
+      proxyUrl: proxyUrl,
+      proxyPort: proxyPort,
+    ));
   }
 
   Future<List<Map<String, dynamic>>?> getBackupAccountOptions() async {
@@ -186,9 +213,9 @@ class SettingsService {
     return response.data;
   }
 
-  Future<void> updateSystemSetting(api.SettingUpdate request) async {
+  Future<void> updateSystemSetting(String key, String value) async {
     final apiClient = await _getApi();
-    await apiClient.updateSystemSetting(request);
+    await apiClient.updateSystemSetting(api.SettingUpdate(key: key, value: value));
   }
 
   Future<dynamic> checkSettingsAvailable() async {
@@ -197,9 +224,33 @@ class SettingsService {
     return response.data;
   }
 
-  Future<void> updateTerminalSettings(api.TerminalUpdate request) async {
+  Future<void> updateTerminalSettings({
+    String? lineTheme,
+    String? fontSize,
+    String? fontFamily,
+    String? backgroundColor,
+    String? foregroundColor,
+    String? cursorStyle,
+    String? cursorBlink,
+    String? scrollSensitivity,
+    String? scrollback,
+    String? lineHeight,
+    String? letterSpacing,
+  }) async {
     final apiClient = await _getApi();
-    await apiClient.updateTerminalSettings(request);
+    await apiClient.updateTerminalSettings(api.TerminalUpdate(
+      lineTheme: lineTheme,
+      fontSize: fontSize,
+      fontFamily: fontFamily,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
+      cursorStyle: cursorStyle,
+      cursorBlink: cursorBlink,
+      scrollSensitivity: scrollSensitivity,
+      scrollback: scrollback,
+      lineHeight: lineHeight,
+      letterSpacing: letterSpacing,
+    ));
   }
 
   // Server API returns menu data in three different formats (List, Map with
@@ -225,9 +276,9 @@ class SettingsService {
     return const <String>[];
   }
 
-  Future<void> updateMenuSettings(api.MenuUpdate request) async {
+  Future<void> updateMenuSettings(List<String> menus) async {
     final apiClient = await _getApi();
-    await apiClient.updateMenuSettings(request);
+    await apiClient.updateMenuSettings(api.MenuUpdate(menus: menus));
   }
 
   Future<dynamic> generateApiKey() async {
@@ -242,9 +293,10 @@ class SettingsService {
     return response.data;
   }
 
-  Future<void> updateAppStoreConfig(api.AppStoreConfigUpdate request) async {
+  Future<void> updateAppStoreConfig(String? storeUrl) async {
     final apiClient = await _getApi();
-    await apiClient.updateAppStoreConfig(request);
+    await apiClient.updateAppStoreConfig(
+        api.AppStoreConfigUpdate(storeUrl: storeUrl));
   }
 
   Future<dynamic> getAuthSetting() async {
@@ -259,29 +311,81 @@ class SettingsService {
     return response.data ?? const SshLocalConnectionInfo();
   }
 
-  Future<void> saveSSHConnection(api.SSHConnectionSave request) async {
+  Future<void> saveSSHConnection({
+    String? addr,
+    int? port,
+    String? user,
+    String? authMode,
+    String? password,
+    String? privateKey,
+    String? passPhrase,
+    String? localSSHConnShow,
+  }) async {
     final apiClient = await _getApi();
-    await apiClient.saveSSHConnection(request);
+    await apiClient.saveSSHConnection(api.SSHConnectionSave(
+      addr: addr,
+      port: port,
+      user: user,
+      authMode: authMode,
+      password: password,
+      privateKey: privateKey,
+      passPhrase: passPhrase,
+      localSSHConnShow: localSSHConnShow,
+    ));
   }
 
-  Future<bool> checkSSHConnection(api.SSHConnectionCheck request) async {
+  Future<bool> checkSSHConnection({
+    String? addr,
+    int? port,
+    String? user,
+    String? authMode,
+    String? password,
+    String? privateKey,
+    String? passPhrase,
+  }) async {
     final apiClient = await _getApi();
-    final response = await apiClient.checkSSHConnection(request);
+    final response = await apiClient.checkSSHConnection(api.SSHConnectionCheck(
+      addr: addr,
+      port: port,
+      user: user,
+      authMode: authMode,
+      password: password,
+      privateKey: privateKey,
+      passPhrase: passPhrase,
+    ));
     return response.data ?? false;
   }
 
-  Future<void> updateDefaultSSHConnection(api.SSHDefaultUpdate request) async {
+  Future<void> updateDefaultSSHConnection({
+    required bool visible,
+    bool withReset = false,
+  }) async {
     final apiClient = await _getApi();
-    await apiClient.updateDefaultSSHConnection(request);
+    await apiClient.updateDefaultSSHConnection(api.SSHDefaultUpdate(
+      withReset: withReset,
+      defaultConn: visible ? 'Enable' : 'Disable',
+    ));
   }
 
-  Future<void> updatePasswordSettings(api.PasswordUpdate request) async {
+  Future<void> updatePasswordSettings(
+      String oldPassword, String newPassword) async {
     final apiClient = await _getApi();
-    await apiClient.updatePasswordSettings(request);
+    await apiClient.updatePasswordSettings(api.PasswordUpdate(
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    ));
   }
 
-  Future<void> updateApiConfig(api.ApiConfigUpdate request) async {
+  Future<void> updateApiConfig({
+    required String status,
+    required String ipWhiteList,
+    required int validityTime,
+  }) async {
     final apiClient = await _getApi();
-    await apiClient.updateApiConfig(request);
+    await apiClient.updateApiConfig(api.ApiConfigUpdate(
+      status: status,
+      ipWhiteList: ipWhiteList,
+      validityTime: validityTime,
+    ));
   }
 }

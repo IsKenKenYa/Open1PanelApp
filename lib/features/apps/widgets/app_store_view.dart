@@ -282,7 +282,6 @@ class _AppStoreViewState extends State<AppStoreView> {
 
   Future<void> _showInstallDialog(BuildContext context, AppItem app) async {
     final provider = this.context.read<AppStoreProvider>();
-    final scaffoldMessenger = ScaffoldMessenger.of(this.context);
     final colorScheme = Theme.of(this.context).colorScheme;
     final result = await showDialog<bool>(
       context: context,

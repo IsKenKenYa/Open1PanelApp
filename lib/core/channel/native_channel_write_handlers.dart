@@ -2,7 +2,8 @@ import '../../features/ai/ai_repository.dart';
 import '../../features/apps/app_service.dart';
 import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
-import '../../features/cronjobs/services/cronjob_service.dart';
+import '../../data/models/cronjob_list_models.dart';
+import '../../data/repositories/cronjob_repository.dart';
 import '../../features/files/services/file_browser_service.dart';
 import '../../features/firewall/firewall_service.dart';
 import '../../features/server/server_repository.dart';
@@ -231,9 +232,9 @@ class NativeChannelWriteHandlers {
     try {
       final id = _toInt(arguments['id']);
       final currentStatus = arguments['currentStatus'] as String? ?? '';
-      final service = CronjobService();
+      final service = CronjobRepository();
       final newStatus = currentStatus == 'Enable' ? 'Disable' : 'Enable';
-      await service.updateStatus(id, newStatus);
+      await service.updateStatus(CronjobStatusUpdate(id: id, status: newStatus));
       return _ok();
     } catch (e) {
       appLogger.e('toggleCronJobStatus failed: $e');
@@ -245,8 +246,8 @@ class NativeChannelWriteHandlers {
   static Future<Map<String, dynamic>> deleteCronJob(dynamic arguments) async {
     try {
       final id = _toInt(arguments['id']);
-      final service = CronjobService();
-      await service.delete(id);
+      final service = CronjobRepository();
+      await service.deleteById(id);
       return _ok();
     } catch (e) {
       appLogger.e('deleteCronJob failed: $e');

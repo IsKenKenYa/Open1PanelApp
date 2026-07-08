@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/features/settings/settings_service.dart';
-import 'package:onepanel_client/api/v2/setting_v2.dart' as api;
 
 class MenuSettingsProvider extends ChangeNotifier with SafeChangeNotifier {
   MenuSettingsProvider({SettingsService? service})
@@ -88,7 +87,7 @@ class MenuSettingsProvider extends ChangeNotifier with SafeChangeNotifier {
           .map((String item) => item.trim())
           .where((String item) => item.isNotEmpty)
           .toList(growable: false);
-      await _service.updateMenuSettings(api.MenuUpdate(menus: filtered));
+      await _service.updateMenuSettings(filtered);
       _menus = filtered;
       return true;
     } catch (error, stackTrace) {

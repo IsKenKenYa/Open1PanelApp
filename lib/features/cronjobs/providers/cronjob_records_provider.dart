@@ -3,14 +3,14 @@ import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/cronjob_record_models.dart';
-import 'package:onepanel_client/features/cronjobs/services/cronjob_service.dart';
+import 'package:onepanel_client/data/repositories/cronjob_repository.dart';
 
 class CronjobRecordsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncStateNotifier {
   CronjobRecordsProvider({
-    CronjobService? service,
-  }) : _service = service ?? CronjobService();
+    CronjobRepository? repository,
+  }) : _repository = repository ?? CronjobRepository();
 
-  final CronjobService _service;
+  final CronjobRepository _repository;
 
   int? _cronjobId;
   List<CronjobRecordInfo> _items = const <CronjobRecordInfo>[];
@@ -29,7 +29,7 @@ class CronjobRecordsProvider extends ChangeNotifier with SafeChangeNotifier, Asy
     _cronjobId = cronjobId;
     setLoading();
     try {
-      final result = await _service.searchRecords(
+      final result = await _repository.searchRecords(
         CronjobRecordQuery(
           cronjobId: cronjobId,
           status: _statusFilter,
@@ -62,7 +62,7 @@ class CronjobRecordsProvider extends ChangeNotifier with SafeChangeNotifier, Asy
   Future<void> loadRecordLog(int id) async {
     try {
       _selectedRecordId = id;
-      _selectedLog = await _service.loadRecordLog(id);
+      _selectedLog = await _repository.loadRecordLog(id);
       notifyListeners();
     } catch (error, stackTrace) {
       appLogger.eWithPackage(
@@ -85,7 +85,7 @@ class CronjobRecordsProvider extends ChangeNotifier with SafeChangeNotifier, Asy
     clearError(notify: false);
     notifyListeners();
     try {
-      await _service.cleanRecords(
+      await _repository.cleanRecords(
         CronjobRecordCleanRequest(
           cronjobId: cronjobId,
           cleanData: cleanData,

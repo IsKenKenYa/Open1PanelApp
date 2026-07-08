@@ -5,14 +5,14 @@ import 'package:onepanel_client/core/config/api_config.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/cronjob_list_models.dart';
 import 'package:onepanel_client/data/models/system_group_models.dart';
+import 'package:onepanel_client/data/repositories/cronjob_repository.dart';
 import 'package:onepanel_client/features/cronjobs/pages/cronjobs_page.dart';
 import 'package:onepanel_client/features/cronjobs/providers/cronjobs_provider.dart';
-import 'package:onepanel_client/features/cronjobs/services/cronjob_service.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-class _MockCronjobService extends Mock implements CronjobService {}
+class _MockCronjobRepository extends Mock implements CronjobRepository {}
 
 class _FakeCurrentServerController extends CurrentServerController {
   final ApiConfig _config = ApiConfig(
@@ -37,14 +37,14 @@ void main() {
   });
 
   testWidgets('CronjobsPage renders cronjob card and actions', (tester) async {
-    final service = _MockCronjobService();
-    when(() => service.loadGroups(forceRefresh: any(named: 'forceRefresh')))
+    final repository = _MockCronjobRepository();
+    when(() => repository.loadGroups(forceRefresh: any(named: 'forceRefresh')))
         .thenAnswer(
       (_) async => const <GroupInfo>[
         GroupInfo(id: 1, name: 'Default', type: 'cronjob', isDefault: true),
       ],
     );
-    when(() => service.searchCronjobs(any())).thenAnswer(
+    when(() => repository.searchCronjobsWithPreview(any())).thenAnswer(
       (_) async => const PageResult<CronjobSummary>(
         items: <CronjobSummary>[
           CronjobSummary(
@@ -76,7 +76,7 @@ void main() {
             value: _FakeCurrentServerController(),
           ),
           ChangeNotifierProvider<CronjobsProvider>(
-            create: (_) => CronjobsProvider(service: service),
+            create: (_) => CronjobsProvider(repository: repository),
           ),
         ],
         child: MaterialApp(
@@ -96,7 +96,7 @@ void main() {
 
   testWidgets('CronjobsPage does not load when no server is active',
       (tester) async {
-    final service = _MockCronjobService();
+    final repository = _MockCronjobRepository();
 
     await tester.pumpWidget(
       MultiProvider(
@@ -105,7 +105,7 @@ void main() {
             value: _NoServerCurrentServerController(),
           ),
           ChangeNotifierProvider<CronjobsProvider>(
-            create: (_) => CronjobsProvider(service: service),
+            create: (_) => CronjobsProvider(repository: repository),
           ),
         ],
         child: MaterialApp(
@@ -119,7 +119,7 @@ void main() {
     await tester.pumpAndSettle();
 
     verifyNever(
-        () => service.loadGroups(forceRefresh: any(named: 'forceRefresh')));
-    verifyNever(() => service.searchCronjobs(any()));
+        () => repository.loadGroups(forceRefresh: any(named: 'forceRefresh')));
+    verifyNever(() => repository.searchCronjobsWithPreview(any()));
   });
 }

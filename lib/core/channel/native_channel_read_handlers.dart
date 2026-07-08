@@ -8,7 +8,7 @@ import '../../features/ai/ai_repository.dart';
 import '../../features/apps/app_service.dart';
 import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
-import '../../features/cronjobs/services/cronjob_service.dart';
+import '../../data/repositories/cronjob_repository.dart';
 import '../../features/dashboard/services/dashboard_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../features/files/services/file_browser_service.dart';
@@ -252,8 +252,8 @@ class NativeChannelReadHandlers {
   /// 定时任务：返回任务列表（含下次执行时间预览）。
   static Future<dynamic> getCronJobs(dynamic arguments) async {
     try {
-      final service = CronjobService();
-      final page = await service.searchCronjobs(
+      final service = CronjobRepository();
+      final page = await service.searchCronjobsWithPreview(
         const CronjobListQuery(page: 1, pageSize: 100),
       );
       return page.items

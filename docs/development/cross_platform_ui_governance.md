@@ -274,8 +274,7 @@ Any changes to cross-platform UI governance must update all three locations toge
 
 Operational workflow references:
 
-- `docs/模块适配专属工作流.md`
-- `docs/原生UI适配专属工作流.md`
+- `AGENTS.md` § 模块适配与原生UI工作流（持续活规范）
 
 ## 执行状态
 

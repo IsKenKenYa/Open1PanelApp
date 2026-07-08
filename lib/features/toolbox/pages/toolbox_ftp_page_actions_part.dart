@@ -7,7 +7,6 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
     String operation,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final success = await provider.operateService(operation);
     if (!context.mounted) {
       return;
@@ -25,7 +24,6 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
     FtpInfo? existing,
   }) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final isEdit = existing != null;
     final userController = TextEditingController(text: existing?.user ?? '');
     final pathController = TextEditingController(text: existing?.path ?? '');
@@ -135,7 +133,6 @@ mixin _ToolboxFtpPageActionsPart on State<ToolboxFtpPage> {
     FtpInfo user,
   ) async {
     final l10n = context.l10n;
-    final messenger = ScaffoldMessenger.of(context);
     final confirmed = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
