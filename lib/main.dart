@@ -19,6 +19,7 @@ import 'package:onepanel_client/l10n/generated/app_localizations.dart';
 import 'package:onepanel_client/features/settings/about_page.dart';
 
 import 'package:onepanel_client/core/channel/native_channel_manager.dart';
+import 'package:onepanel_client/core/channel/native_channel_port.dart';
 import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/theme/ui_render_policy.dart';
 import 'package:onepanel_client/core/theme/ui_render_mode.dart';
@@ -37,8 +38,11 @@ import 'features/monitoring/monitoring_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Native Channel Manager for headless/engine-only communication as early as possible
-  NativeChannelManager.init();
+  // Initialize Native Channel Manager for headless/engine-only communication
+  // as early as possible. Uses the instance path via NativeChannelPort so
+  // the dispatch can be substituted in tests (architecture review R5 ⑬).
+  final NativeChannelPort nativeChannel = NativeChannelManager.instance;
+  nativeChannel.initInstance();
 
   final capabilities = PlatformCapabilities.current();
   final isAndroid = capabilities.supportsBackgroundDownloader;

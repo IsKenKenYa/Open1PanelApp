@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/data/models/paged_query.dart';
 
 import 'package:onepanel_client/api/v2/database_v2.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
@@ -53,7 +54,7 @@ class DatabaseRepository {
     String? targetDatabase,
     String? query,
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) async {
     final api = await _getApi();
     switch (scope) {

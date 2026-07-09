@@ -7,6 +7,7 @@ import 'package:onepanel_client/features/processes/widgets/process_filter_sheet_
 import 'package:onepanel_client/features/processes/widgets/process_sort_bar_widget.dart';
 import 'package:onepanel_client/features/processes/widgets/process_summary_card_widget.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
+import 'package:onepanel_client/shared/mixins/server_aware_page_mixin.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
@@ -19,15 +20,13 @@ class ProcessesPage extends StatefulWidget {
   State<ProcessesPage> createState() => _ProcessesPageState();
 }
 
-class _ProcessesPageState extends State<ProcessesPage> {
+class _ProcessesPageState extends State<ProcessesPage>
+    with ServerAwarePageMixin {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !context.read<CurrentServerController>().hasServer) {
-        return;
-      }
-      context.read<ProcessesProvider>().load();
+      checkServerAndLoad();
     });
   }
 

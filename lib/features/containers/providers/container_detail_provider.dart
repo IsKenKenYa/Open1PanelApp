@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/container_models.dart'
     hide Container;
@@ -62,7 +63,7 @@ class ContainerDetailProvider extends ChangeNotifier with SafeChangeNotifier {
       if (isDisposed) return;
     } catch (e) {
       if (!isDisposed) {
-        _inspectError = e.toString();
+        _inspectError = ErrorMessageUtils.userFacingMessage(e);
       }
     } finally {
       if (!isDisposed) {
@@ -84,7 +85,7 @@ class ContainerDetailProvider extends ChangeNotifier with SafeChangeNotifier {
       if (isDisposed) return;
     } catch (e) {
       if (!isDisposed) {
-        _logsError = e.toString();
+        _logsError = ErrorMessageUtils.userFacingMessage(e);
       }
     } finally {
       if (!isDisposed) {
@@ -109,7 +110,7 @@ class ContainerDetailProvider extends ChangeNotifier with SafeChangeNotifier {
         if (e is NetworkException) {
           _statsError = e.message;
         } else {
-          _statsError = e.toString();
+          _statsError = ErrorMessageUtils.userFacingMessage(e);
         }
       }
     } finally {

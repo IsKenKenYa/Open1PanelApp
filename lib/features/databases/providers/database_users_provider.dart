@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
 import 'package:onepanel_client/features/databases/services/database_user_service.dart';
@@ -36,7 +37,7 @@ class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
       final context = await _service.loadContext(item);
       _state = DatabaseUsersState(context: context);
     } catch (e) {
-      _state = DatabaseUsersState(error: e.toString());
+      _state = DatabaseUsersState(error: ErrorMessageUtils.userFacingMessage(e));
     }
     notifyListeners();
   }
@@ -100,7 +101,7 @@ class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
     } catch (e) {
       _state = DatabaseUsersState(
         context: _state.context,
-        error: e.toString(),
+        error: ErrorMessageUtils.userFacingMessage(e),
       );
       notifyListeners();
       return false;

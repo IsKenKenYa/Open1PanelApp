@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/website_group_models.dart';
@@ -140,7 +141,7 @@ class WebsitesProvider extends ChangeNotifier with SafeChangeNotifier {
     } catch (e) {
       _data = _data.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: ErrorMessageUtils.userFacingMessage(e),
       );
     }
     notifyListeners();
@@ -197,7 +198,7 @@ class WebsitesProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadWebsites();
       return true;
     } catch (e) {
-      _data = _data.copyWith(error: e.toString());
+      _data = _data.copyWith(error: ErrorMessageUtils.userFacingMessage(e));
       notifyListeners();
       return false;
     }

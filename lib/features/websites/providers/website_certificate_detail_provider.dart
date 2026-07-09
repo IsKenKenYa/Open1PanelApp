@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/ssl_models.dart';
@@ -26,7 +27,7 @@ class WebsiteCertificateDetailProvider extends ChangeNotifier
     try {
       certificate = await _service.fetchCertificateById(certificateId);
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -66,7 +67,7 @@ class WebsiteCertificateDetailProvider extends ChangeNotifier
         certificate = await _service.fetchCertificateById(certificateId);
       }
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isUpdating = false;
       notifyListeners();

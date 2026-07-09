@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/presentation/async_state_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
@@ -89,7 +90,7 @@ class HostAssetsProvider extends ChangeNotifier with SafeChangeNotifier, AsyncSt
     } catch (error) {
       _testStates[host.id] = HostAssetTestState(
         status: HostAssetTestStatus.failure,
-        message: error.toString(),
+        message: ErrorMessageUtils.userFacingMessage(error),
       );
       setError(error, notify: false);
     } finally {

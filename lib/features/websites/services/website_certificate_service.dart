@@ -1,4 +1,5 @@
 import '../../../data/models/ssl_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import '../../../data/repositories/website_ssl_repository.dart';
 
 class WebsiteCertificateService {
@@ -9,7 +10,7 @@ class WebsiteCertificateService {
 
   Future<List<WebsiteSSL>> searchCertificates({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     String order = 'descending',
     String orderBy = 'expire_date',
     String? domain,

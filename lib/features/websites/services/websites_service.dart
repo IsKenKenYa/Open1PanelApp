@@ -1,4 +1,5 @@
 import '../../../data/repositories/website_repository.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import '../../../data/models/website_models.dart';
 
 class WebsitesService {
@@ -9,7 +10,7 @@ class WebsitesService {
 
   Future<List<WebsiteInfo>> fetchWebsites({
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
   }) async {
     final result = await _repository.searchWebsites(
       page: page,

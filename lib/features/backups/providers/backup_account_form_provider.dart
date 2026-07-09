@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'dart:async';
 
@@ -207,7 +208,7 @@ class BackupAccountFormProvider extends ChangeNotifier with SafeChangeNotifier, 
         stackTrace: stackTrace,
       );
       _isConnectionVerified = false;
-      _testMessage = error.toString();
+      _testMessage = ErrorMessageUtils.userFacingMessage(error);
       setError(error, notify: false);
       return false;
     } finally {

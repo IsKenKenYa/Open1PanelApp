@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import 'package:flutter/foundation.dart';
@@ -157,7 +158,7 @@ class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
       _configRollbackSnapshot = _snapshotStore.read(_configScope);
       _error = null;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -187,7 +188,7 @@ class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
           await _service.loadScope(scope: scope, websiteId: websiteId);
       _error = null;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       notifyListeners();
     }

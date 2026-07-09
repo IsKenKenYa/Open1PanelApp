@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/ssl_models.dart';
 import '../services/website_certificate_service.dart';
@@ -99,7 +100,7 @@ class WebsiteSslCenterProvider extends ChangeNotifier with SafeChangeNotifier {
       _allCertificates = await _service!.listCertificates(domain: domain);
       _applyFilters();
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -112,7 +113,7 @@ class WebsiteSslCenterProvider extends ChangeNotifier with SafeChangeNotifier {
       await _service!.deleteCertificate(id);
       await load();
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
     }
   }

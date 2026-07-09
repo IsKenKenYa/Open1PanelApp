@@ -1,4 +1,5 @@
 import 'package:onepanel_client/api/v2/runtime_v2.dart' as runtime_api;
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/api/v2/website_group_v2.dart';
 import 'package:onepanel_client/api/v2/website_v2.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
@@ -40,7 +41,7 @@ class WebsiteRepository {
     String? name,
     String? type,
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
   }) async {
     final api = await _ensureWebsiteApi();
     return api.getWebsites(

@@ -18,7 +18,7 @@ extension FilesProviderRecycleMixin on FilesProvider {
 
   Future<List<RecycleBinItem>> loadRecycleBinFiles({
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
   }) async {
     appLogger.dWithPackage('files_provider', 'loadRecycleBinFiles: 加载回收站文件列表');
     try {

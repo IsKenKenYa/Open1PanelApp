@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/app_models.dart';
 import '../app_service.dart';
@@ -13,7 +15,7 @@ class AppStoreProvider extends ChangeNotifier with SafeChangeNotifier {
   bool _isLoading = false;
   String? _error;
   int _page = 1;
-  int _pageSize = 20;
+  int _pageSize = PagedQuery.searchPageSize;
   int _total = 0;
   bool _hasMore = true;
 
@@ -37,7 +39,7 @@ class AppStoreProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> loadApps({
     bool refresh = false,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     String? name,
     String? type,
     String? resource,
@@ -82,7 +84,7 @@ class AppStoreProvider extends ChangeNotifier with SafeChangeNotifier {
       _hasMore = _apps.length < _total;
     } catch (e) {
       if (!isDisposed) {
-        _error = e.toString();
+        _error = ErrorMessageUtils.userFacingMessage(e);
         if (!refresh && _page > 1) {
           _page--; // Revert page increment on failure
         }
@@ -106,7 +108,7 @@ class AppStoreProvider extends ChangeNotifier with SafeChangeNotifier {
       await _appService.installApp(request);
     } catch (e) {
       if (!isDisposed) {
-        _error = 'Installation failed: ${e.toString()}';
+        _error = 'Installation failed: ${ErrorMessageUtils.userFacingMessage(e)}';
       }
       rethrow;
     } finally {
@@ -128,7 +130,7 @@ class AppStoreProvider extends ChangeNotifier with SafeChangeNotifier {
       await _appService.syncRemoteApps();
     } catch (e) {
       if (!isDisposed) {
-        _error = e.toString();
+        _error = ErrorMessageUtils.userFacingMessage(e);
       }
       rethrow;
     } finally {
@@ -150,7 +152,7 @@ class AppStoreProvider extends ChangeNotifier with SafeChangeNotifier {
       await _appService.syncLocalApps();
     } catch (e) {
       if (!isDisposed) {
-        _error = e.toString();
+        _error = ErrorMessageUtils.userFacingMessage(e);
       }
       rethrow;
     } finally {

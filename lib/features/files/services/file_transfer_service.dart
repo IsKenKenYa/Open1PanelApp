@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -42,7 +43,7 @@ class FileTransferService {
 
   Future<List<FileInfo>> searchUploadedFiles({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     String? search,
   }) async {
     final api = await _repository.getApi();

@@ -1,4 +1,5 @@
 import 'package:onepanel_client/data/models/runtime_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/repositories/runtime_repository.dart';
 
@@ -15,7 +16,7 @@ class PhpRuntimeService {
 
   Future<PageResult<PHPExtensionRecord>> loadExtensionRecords({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     bool all = false,
   }) {
     return _repository.searchPhpExtensionRecords(

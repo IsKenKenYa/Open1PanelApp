@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:onepanel_client/data/models/paged_query.dart';
 
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/core/services/file_save_service.dart';
@@ -48,7 +49,7 @@ class SSHService {
 
   Future<PageResult<SshCertInfo>> searchCerts({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) {
     return _repository.searchCerts(
       SshCertSearchRequest(page: page, pageSize: pageSize),

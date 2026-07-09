@@ -1,4 +1,5 @@
 import 'package:onepanel_client/data/models/common_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/data/models/logs_models.dart';
 import 'package:onepanel_client/data/models/task_log_models.dart';
@@ -43,7 +44,7 @@ class LogsService {
     required String fileName,
     bool useCoreLogs = false,
     int page = 1,
-    int pageSize = 200,
+    int pageSize = PagedQuery.logPageSize,
     bool latest = true,
   }) {
     final effectiveName = useCoreLogs ? 'Core-$fileName' : fileName;
@@ -64,7 +65,7 @@ class LogsService {
     String? taskOperate,
     int? resourceId,
     int page = 1,
-    int pageSize = 200,
+    int pageSize = PagedQuery.logPageSize,
     bool latest = true,
   }) {
     return _logsRepository.readLogLines(

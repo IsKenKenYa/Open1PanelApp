@@ -23,12 +23,11 @@ class SecureApiKeyStore implements ApiKeyStore {
 
   // OHOS: HUKS can silently return null even after a successful write,
   // so we keep a parallel SharedPreferences copy as a safety net.
+  // Desktop platforms (macOS/Windows/Linux) use system Keychain/DPAPI/
+  // libsecret via PlatformSecureStorage and do NOT need a plaintext
+  // fallback (architecture review R5 candidate 8).
   bool get _shouldUsePrefsFallback =>
-      !kIsWeb &&
-      (io.Platform.isMacOS ||
-          io.Platform.isWindows ||
-          io.Platform.isLinux ||
-          PlatformCapabilities.current().isOhos);
+      !kIsWeb && PlatformCapabilities.current().isOhos;
 
   bool get _shouldUseEnvFallbackForDebug =>
       kDebugMode &&

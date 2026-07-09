@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../firewall_service.dart';
@@ -27,7 +28,7 @@ class FirewallStatusProvider extends ChangeNotifier with SafeChangeNotifier {
     try {
       _status = await _service.loadBaseInfo(tab: tab);
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _loading = false;
       notifyListeners();
@@ -50,7 +51,7 @@ class FirewallStatusProvider extends ChangeNotifier with SafeChangeNotifier {
       );
       await load();
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _busy = false;
       notifyListeners();

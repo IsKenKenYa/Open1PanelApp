@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/common_models.dart';
@@ -29,7 +31,7 @@ class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
   bool _loading = false;
   String? _error;
   int _currentPage = 1;
-  int _pageSize = 20;
+  int _pageSize = PagedQuery.searchPageSize;
   String? _lastSearch;
   String? _lastStrategy;
   bool _isMutating = false;
@@ -46,7 +48,7 @@ class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> load({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     String? search,
     String? strategy,
   }) async {
@@ -81,7 +83,7 @@ class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
         );
       }
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _loading = false;
       notifyListeners();
@@ -365,7 +367,7 @@ class FirewallRuleListProvider extends ChangeNotifier with SafeChangeNotifier {
       await action();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       return false;
     } finally {
       _isMutating = false;
@@ -437,7 +439,7 @@ class FirewallRuleFormProvider extends ChangeNotifier with SafeChangeNotifier {
       await action();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       return false;
     } finally {
       _isSubmitting = false;

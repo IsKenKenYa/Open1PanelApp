@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/app_models.dart';
@@ -73,7 +75,7 @@ class InstalledAppsProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<List<AppInstallInfo>> _loadAllInstalledApps() async {
-    const int pageSize = 100;
+    const int pageSize = PagedQuery.listPageSize;
     final List<AppInstallInfo> allItems = [];
     int page = 1;
     int total = 0;
@@ -120,7 +122,7 @@ class InstalledAppsProvider extends ChangeNotifier with SafeChangeNotifier {
       _calculateStats();
     } catch (e) {
       if (!silent && !isDisposed) {
-        _error = e.toString();
+        _error = ErrorMessageUtils.userFacingMessage(e);
       }
     } finally {
       if (!silent && !isDisposed) {

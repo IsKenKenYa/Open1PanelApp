@@ -15,6 +15,12 @@ class PagedQuery extends Equatable {
   /// The default page size used across all paginated endpoints.
   static const int defaultPageSize = 10;
 
+  /// Domain-specific defaults for modules that need larger pages.
+  static const int listPageSize = 100;
+  static const int searchPageSize = 20;
+  static const int mediumPageSize = 50;
+  static const int logPageSize = 200;
+
   final int page;
   final int pageSize;
 

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/app_config_models.dart';
@@ -92,7 +93,7 @@ class InstalledAppDetailProvider extends ChangeNotifier with SafeChangeNotifier 
           if (isDisposed) return;
         } catch (e) {
           if (!isDisposed) {
-            _storeDetailError = e.toString();
+            _storeDetailError = ErrorMessageUtils.userFacingMessage(e);
           }
           appLogger.wWithPackage(
             'features.apps.providers.installed_app_detail_provider',
@@ -108,7 +109,7 @@ class InstalledAppDetailProvider extends ChangeNotifier with SafeChangeNotifier 
           if (isDisposed) return;
         } catch (e) {
           if (!isDisposed) {
-            _servicesError = e.toString();
+            _servicesError = ErrorMessageUtils.userFacingMessage(e);
             _services = const [];
           }
           appLogger.wWithPackage(
@@ -126,7 +127,7 @@ class InstalledAppDetailProvider extends ChangeNotifier with SafeChangeNotifier 
           if (isDisposed) return;
         } catch (e) {
           if (!isDisposed) {
-            _configError = e.toString();
+            _configError = ErrorMessageUtils.userFacingMessage(e);
             _appConfig = null;
           }
           appLogger.wWithPackage(
@@ -143,7 +144,7 @@ class InstalledAppDetailProvider extends ChangeNotifier with SafeChangeNotifier 
             if (isDisposed) return;
           } catch (e) {
             if (!isDisposed) {
-              _updateVersionsError = e.toString();
+              _updateVersionsError = ErrorMessageUtils.userFacingMessage(e);
               _updateVersions = const [];
             }
             appLogger.wWithPackage(
@@ -158,7 +159,7 @@ class InstalledAppDetailProvider extends ChangeNotifier with SafeChangeNotifier 
       }
     } catch (e) {
       if (!isDisposed) {
-        _error = e.toString();
+        _error = ErrorMessageUtils.userFacingMessage(e);
       }
     } finally {
       if (!isDisposed) {

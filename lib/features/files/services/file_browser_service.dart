@@ -1,4 +1,5 @@
 import '../../../core/config/api_config.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import '../../../data/models/file_models.dart';
 import '../../../data/repositories/files_repository.dart';
 
@@ -16,7 +17,7 @@ class FileBrowserService {
     required String path,
     String? search,
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
     bool? expand,
     String? sortBy,
     String? sortOrder,
@@ -40,7 +41,7 @@ class FileBrowserService {
     required String path,
     String? search,
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
     bool expand = true,
     String? sortBy,
     String? sortOrder,
@@ -285,7 +286,7 @@ class FileBrowserService {
   Future<List<FileInfo>> searchFavoriteFiles({
     required String path,
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
   }) async {
     final api = await _repository.getApi();
     final response = await api.searchFavoriteFiles(

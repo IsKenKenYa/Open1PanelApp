@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/data/models/website_models.dart';
 import 'package:onepanel_client/data/repositories/website_repository.dart';
 
@@ -41,7 +42,7 @@ class WebsiteDetailStore extends ChangeNotifier {
     try {
       _website = await _repository.getWebsiteDetail(_websiteId);
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();

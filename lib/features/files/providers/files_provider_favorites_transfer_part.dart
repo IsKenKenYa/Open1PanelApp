@@ -117,7 +117,7 @@ extension FilesProviderFavoritesTransferMixin on FilesProvider {
     } catch (e, stackTrace) {
       appLogger.eWithPackage('files_provider', 'wgetDownload: 下载异常, error=$e',
           error: e, stackTrace: stackTrace);
-      final errorMsg = e.toString();
+      final errorMsg = ErrorMessageUtils.userFacingMessage(e);
       _data = _data.copyWith(
         wgetStatus: WgetDownloadStatus(
           state: WgetDownloadState.error,
@@ -137,7 +137,7 @@ extension FilesProviderFavoritesTransferMixin on FilesProvider {
 
   Future<List<FileInfo>> searchUploadedFiles({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     String? search,
   }) async {
     appLogger.dWithPackage('files_provider', 'searchUploadedFiles: page=$page');

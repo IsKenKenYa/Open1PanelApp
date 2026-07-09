@@ -1,4 +1,5 @@
 import 'package:onepanel_client/data/models/toolbox_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/repositories/toolbox_repository.dart';
 
 class ToolboxClamSnapshot {
@@ -57,7 +58,7 @@ class ToolboxClamService {
   Future<List<ClamLogInfo>> loadRecords({
     required int clamId,
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) {
     return _repository.searchClamRecords(
       clamId: clamId,

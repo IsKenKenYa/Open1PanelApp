@@ -40,7 +40,7 @@ extension FilesProviderLifecycleMixin on FilesProvider {
         error: e,
         stackTrace: stackTrace,
       );
-      _data = _data.copyWith(isLoading: false, error: e.toString());
+      _data = _data.copyWith(isLoading: false, error: ErrorMessageUtils.userFacingMessage(e));
     }
     _emitChange();
     // Load favorites asynchronously without blocking
@@ -129,7 +129,7 @@ extension FilesProviderLifecycleMixin on FilesProvider {
           error: e,
           stackTrace: stackTrace,
         );
-        _data = _data.copyWith(isLoading: false, error: e.toString());
+        _data = _data.copyWith(isLoading: false, error: ErrorMessageUtils.userFacingMessage(e));
       }
     }
     _emitChange();

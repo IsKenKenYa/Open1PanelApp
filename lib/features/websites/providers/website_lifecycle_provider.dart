@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/runtime_models.dart';
 import '../../../data/models/website_group_models.dart';
 import '../../../data/models/website_models.dart';
 import '../../../data/repositories/website_repository.dart';
+import 'website_detail_store.dart';
 
 enum WebsiteLifecycleMode { create, edit }
 
@@ -112,11 +114,14 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
     required this.mode,
     this.websiteId,
     WebsiteRepository? repository,
-  }) : _repository = repository ?? WebsiteRepository();
+    WebsiteDetailStore? store,
+  })  : _repository = repository ?? WebsiteRepository(),
+        _store = store;
 
   final WebsiteLifecycleMode mode;
   final int? websiteId;
   final WebsiteRepository _repository;
+  final WebsiteDetailStore? _store;
 
   WebsiteLifecycleState _state = const WebsiteLifecycleState();
   WebsiteLifecycleState get state => _state;
@@ -141,7 +146,10 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
       );
 
       if (isEditMode && websiteId != null) {
-        final website = await _repository.getWebsiteDetail(websiteId!);
+        final WebsiteInfo website = _store != null
+            ? (await _store!.load()) ??
+                (await _repository.getWebsiteDetail(websiteId!))
+            : await _repository.getWebsiteDetail(websiteId!);
         nextState = nextState.copyWith(
           website: website,
           type: _resolveType(website.type),
@@ -164,7 +172,7 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
 
       _state = nextState;
     } catch (e) {
-      _state = _state.copyWith(isLoading: false, error: e.toString());
+      _state = _state.copyWith(isLoading: false, error: ErrorMessageUtils.userFacingMessage(e));
     }
     notifyListeners();
   }
@@ -243,7 +251,7 @@ class WebsiteLifecycleProvider extends ChangeNotifier with SafeChangeNotifier {
       }
       return true;
     } catch (e) {
-      _state = _state.copyWith(error: e.toString());
+      _state = _state.copyWith(error: ErrorMessageUtils.userFacingMessage(e));
       notifyListeners();
       return false;
     } finally {

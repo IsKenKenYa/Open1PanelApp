@@ -286,7 +286,7 @@ extension OpenRestyProviderOperations on OpenRestyProvider {
       await task();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _emitChange();
       return false;
     } finally {

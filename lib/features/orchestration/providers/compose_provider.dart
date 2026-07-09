@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/docker_models.dart';
 import '../../../data/models/container_models.dart';
@@ -29,7 +31,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
     }
   }
 
-  Future<void> loadComposes({int page = 1, int pageSize = 10}) async {
+  Future<void> loadComposes({int page = 1, int pageSize = PagedQuery.defaultPageSize}) async {
     final requestId = ++_loadRequestId;
     _isLoading = true;
     _error = null;
@@ -46,7 +48,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       if (requestId != _loadRequestId) {
         return;
       }
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       if (requestId == _loadRequestId) {
         _isLoading = false;
@@ -65,7 +67,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadComposes();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -106,7 +108,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadComposes();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -126,7 +128,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadComposes();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -139,7 +141,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadComposes();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     }
@@ -150,7 +152,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       await _service.testCompose(request);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     }
@@ -161,7 +163,7 @@ class ComposeProvider extends ChangeNotifier with SafeChangeNotifier {
       await _service.cleanComposeLog(request);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     }

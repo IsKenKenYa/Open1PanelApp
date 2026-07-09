@@ -1,4 +1,5 @@
 import '../../../data/models/file_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import '../../../data/repositories/files_repository.dart';
 
 class FileRecycleService {
@@ -20,7 +21,7 @@ class FileRecycleService {
   Future<List<FileInfo>> searchRecycleBin({
     required String path,
     int page = 1,
-    int pageSize = 100,
+    int pageSize = PagedQuery.listPageSize,
   }) async {
     final api = await _repository.getApi();
     final response = await api.searchRecycleBin(

@@ -8,6 +8,7 @@ import 'package:onepanel_client/features/cronjobs/providers/cronjobs_provider.da
 import 'package:onepanel_client/features/cronjobs/widgets/cronjob_card_widget.dart';
 import 'package:onepanel_client/features/group/widgets/group_selector_sheet_widget.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
+import 'package:onepanel_client/shared/mixins/server_aware_page_mixin.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
@@ -20,7 +21,8 @@ class CronjobsPage extends StatefulWidget {
   State<CronjobsPage> createState() => _CronjobsPageState();
 }
 
-class _CronjobsPageState extends State<CronjobsPage> {
+class _CronjobsPageState extends State<CronjobsPage>
+    with ServerAwarePageMixin {
   late final TextEditingController _searchController;
 
   @override
@@ -28,11 +30,13 @@ class _CronjobsPageState extends State<CronjobsPage> {
     super.initState();
     _searchController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !context.read<CurrentServerController>().hasServer) {
-        return;
-      }
-      context.read<CronjobsProvider>().load();
+      checkServerAndLoad();
     });
+  }
+
+  @override
+  void onServerReady() {
+    context.read<CronjobsProvider>().load();
   }
 
   @override

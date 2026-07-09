@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../services/website_config_service.dart';
@@ -51,7 +52,7 @@ class WebsiteRoutingRulesProvider extends ChangeNotifier
       rewriteContent = result[0];
       proxyContent = result[1];
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();

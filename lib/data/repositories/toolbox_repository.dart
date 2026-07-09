@@ -1,4 +1,5 @@
 import 'package:onepanel_client/api/v2/toolbox_v2.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/toolbox_models.dart';
@@ -99,7 +100,7 @@ class ToolboxRepository {
 
   Future<List<ClamBaseInfo>> searchClamTasks({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) async {
     final api = await _ensureApi();
     final response = await api.searchClam(
@@ -111,7 +112,7 @@ class ToolboxRepository {
   Future<List<ClamLogInfo>> searchClamRecords({
     required int clamId,
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) async {
     final api = await _ensureApi();
     final response = await api.searchClamRecords(
@@ -136,7 +137,7 @@ class ToolboxRepository {
 
   Future<List<Fail2banRecord>> searchFail2banRecords({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     String? status,
   }) async {
     final api = await _ensureApi();
@@ -177,7 +178,7 @@ class ToolboxRepository {
 
   Future<List<FtpInfo>> searchFtpUsers({
     int page = 1,
-    int pageSize = 50,
+    int pageSize = PagedQuery.searchPageSize,
     String? keyword,
   }) async {
     final api = await _ensureApi();

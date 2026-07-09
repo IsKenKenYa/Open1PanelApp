@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import 'package:flutter/foundation.dart';
@@ -141,7 +142,7 @@ class ScriptLibraryProvider extends ChangeNotifier with SafeChangeNotifier, Asyn
             error: error,
             stackTrace: stackTrace,
           );
-          _runError = error.toString();
+          _runError = ErrorMessageUtils.userFacingMessage(error);
           _isRunning = false;
           notifyListeners();
         },
@@ -154,7 +155,7 @@ class ScriptLibraryProvider extends ChangeNotifier with SafeChangeNotifier, Asyn
         error: error,
         stackTrace: stackTrace,
       );
-      _runError = error.toString();
+      _runError = ErrorMessageUtils.userFacingMessage(error);
       _isRunning = false;
       notifyListeners();
     }

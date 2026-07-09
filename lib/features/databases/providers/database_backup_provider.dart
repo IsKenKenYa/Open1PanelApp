@@ -1,3 +1,5 @@
+import 'package:onepanel_client/data/models/paged_query.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/backup_account_models.dart'
@@ -36,7 +38,7 @@ class DatabaseBackupProvider extends ChangeNotifier with SafeChangeNotifier {
 
   Future<void> load({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) async {
     _state = DatabaseBackupState(
       page: _state.page,
@@ -57,7 +59,7 @@ class DatabaseBackupProvider extends ChangeNotifier with SafeChangeNotifier {
       _state = DatabaseBackupState(
         page: _state.page,
         isLoading: false,
-        error: e.toString(),
+        error: ErrorMessageUtils.userFacingMessage(e),
       );
     }
     notifyListeners();
@@ -110,7 +112,7 @@ class DatabaseBackupProvider extends ChangeNotifier with SafeChangeNotifier {
       _state = DatabaseBackupState(
         page: _state.page,
         isLoading: false,
-        error: e.toString(),
+        error: ErrorMessageUtils.userFacingMessage(e),
       );
       notifyListeners();
       return false;

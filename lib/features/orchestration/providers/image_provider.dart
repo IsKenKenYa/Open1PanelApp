@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../../../data/models/docker_models.dart';
 import '../../../data/models/container_models.dart'; // For ImagePull
@@ -37,7 +38,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
     try {
       _images = await _service.loadImages();
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -54,7 +55,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadImages();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -71,7 +72,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadImages();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -88,7 +89,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadImages();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -105,7 +106,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadImages();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -121,7 +122,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await _service.saveImage(request);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -138,7 +139,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadImages();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -154,7 +155,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
       await _service.pushImage(request);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -167,7 +168,7 @@ class DockerImageProvider extends ChangeNotifier with SafeChangeNotifier {
         SearchWithPage(info: keyword, page: 1, pageSize: 20),
       );
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return const PageResult(items: [], total: 0);
     }

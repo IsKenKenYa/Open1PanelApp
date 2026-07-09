@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/features/settings/panel_ssl/services/panel_ssl_service.dart';
 import 'package:onepanel_client/shared/security_gateway/models/security_gateway_models.dart';
@@ -161,7 +162,7 @@ class PanelSslProvider extends ChangeNotifier with SafeChangeNotifier {
         );
       }
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -207,7 +208,7 @@ class PanelSslProvider extends ChangeNotifier with SafeChangeNotifier {
       );
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       return false;
     } finally {
       _isSubmitting = false;
@@ -231,7 +232,7 @@ class PanelSslProvider extends ChangeNotifier with SafeChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     }

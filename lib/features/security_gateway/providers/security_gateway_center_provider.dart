@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/ssl_models.dart';
 import 'package:onepanel_client/features/openresty/services/openresty_service.dart';
@@ -106,7 +107,7 @@ class SecurityGatewayCenterProvider extends ChangeNotifier with SafeChangeNotifi
       certificates = results[1] as List<WebsiteSSL>;
       openRestySnapshot = results[2] as OpenRestySnapshot;
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -154,7 +155,7 @@ class SecurityGatewayCenterProvider extends ChangeNotifier with SafeChangeNotifi
       await load();
       return true;
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     }

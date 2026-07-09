@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/website_models.dart';
@@ -25,7 +26,7 @@ class WebsiteDomainProvider extends ChangeNotifier with SafeChangeNotifier {
     try {
       domains = await _service.fetchDomains(websiteId);
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -94,7 +95,7 @@ class WebsiteDomainProvider extends ChangeNotifier with SafeChangeNotifier {
       await action();
       await loadDomains();
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
     }
   }

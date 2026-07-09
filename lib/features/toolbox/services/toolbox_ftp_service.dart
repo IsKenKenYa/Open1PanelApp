@@ -1,4 +1,5 @@
 import 'package:onepanel_client/data/models/toolbox_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/repositories/toolbox_repository.dart';
 
 class ToolboxFtpSnapshot {
@@ -19,7 +20,7 @@ class ToolboxFtpService {
 
   Future<ToolboxFtpSnapshot> loadSnapshot({
     int page = 1,
-    int pageSize = 50,
+    int pageSize = PagedQuery.mediumPageSize,
     String? keyword,
   }) async {
     final results = await Future.wait<dynamic>([

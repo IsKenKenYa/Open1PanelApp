@@ -1,17 +1,22 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/website_models.dart';
 import '../../../data/repositories/website_repository.dart';
+import 'website_detail_store.dart';
 
 class WebsiteDetailProvider extends ChangeNotifier with SafeChangeNotifier {
   final int websiteId;
   final WebsiteRepository _repository;
+  final WebsiteDetailStore? _store;
 
   WebsiteDetailProvider({
     required this.websiteId,
     WebsiteRepository? repository,
-  }) : _repository = repository ?? WebsiteRepository();
+    WebsiteDetailStore? store,
+  })  : _repository = repository ?? WebsiteRepository(),
+        _store = store;
 
   bool isLoading = false;
   String? error;
@@ -25,12 +30,16 @@ class WebsiteDetailProvider extends ChangeNotifier with SafeChangeNotifier {
     notifyListeners();
 
     try {
-      website = await _repository.getWebsiteDetail(websiteId);
+      // When a WebsiteDetailStore is available (SSOT), read from it to
+      // avoid redundant API calls across sibling providers.
+      website = _store != null
+          ? await _store!.load()
+          : await _repository.getWebsiteDetail(websiteId);
       // Guard against notifying a disposed listener after the async gap.
       if (isDisposed) return;
     } catch (e) {
       if (!isDisposed) {
-        error = e.toString();
+        error = ErrorMessageUtils.userFacingMessage(e);
       }
     } finally {
       if (!isDisposed) {

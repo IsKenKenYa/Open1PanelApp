@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/toolbox_models.dart';
@@ -86,7 +87,7 @@ class ToolboxClamProvider extends ChangeNotifier with SafeChangeNotifier {
         error: error,
         stackTrace: stackTrace,
       );
-      _error = error.toString();
+      _error = ErrorMessageUtils.userFacingMessage(error);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -192,7 +193,7 @@ class ToolboxClamProvider extends ChangeNotifier with SafeChangeNotifier {
         error: error,
         stackTrace: stackTrace,
       );
-      _error = error.toString();
+      _error = ErrorMessageUtils.userFacingMessage(error);
       return false;
     } finally {
       _isMutating = false;

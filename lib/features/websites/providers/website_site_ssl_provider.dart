@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/data/models/ssl_models.dart';
 import 'package:onepanel_client/features/websites/services/website_certificate_service.dart';
@@ -60,7 +61,7 @@ class WebsiteSiteSslProvider extends ChangeNotifier with SafeChangeNotifier {
       selectedCertificate = boundCertificate ?? httpsConfig?.ssl;
       rollbackSnapshot = _snapshotStore.read(snapshotScope);
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -158,7 +159,7 @@ class WebsiteSiteSslProvider extends ChangeNotifier with SafeChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
       return false;
     } finally {
       isSaving = false;
@@ -192,7 +193,7 @@ class WebsiteSiteSslProvider extends ChangeNotifier with SafeChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
       return false;
     } finally {
       isSaving = false;

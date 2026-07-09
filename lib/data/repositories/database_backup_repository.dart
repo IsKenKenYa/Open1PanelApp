@@ -2,6 +2,7 @@ import 'package:onepanel_client/api/v2/backup_account_v2.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/data/models/backup_account_models.dart'
     as backup;
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/models/backup_request_models.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
@@ -21,7 +22,7 @@ class DatabaseBackupRepository {
   Future<PageResult<backup.BackupRecord>> loadBackupRecords(
     DatabaseListItem item, {
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) async {
     final api = await _getApi();
     final response = await api.searchBackupRecords(

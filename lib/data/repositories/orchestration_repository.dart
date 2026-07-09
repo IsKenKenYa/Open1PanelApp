@@ -1,4 +1,5 @@
 import 'package:onepanel_client/api/v2/compose_v2.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/api/v2/docker_v2.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
@@ -17,7 +18,7 @@ class OrchestrationRepository {
 
   Future<List<ComposeProject>> loadComposes({
     int page = 1,
-    int pageSize = 10,
+    int pageSize = PagedQuery.defaultPageSize,
   }) async {
     final api = await _getComposeApi();
     final response = await api.listComposes(page: page, pageSize: pageSize);

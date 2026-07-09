@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import 'package:onepanel_client/core/services/app_preferences_service.dart';
 import 'package:onepanel_client/core/services/cache/file_preview_cache_manager.dart';
@@ -267,7 +268,7 @@ class FilePreviewProvider extends ChangeNotifier with SafeChangeNotifier {
     try {
       _content = await _service.getFileContent(filePath);
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -294,7 +295,7 @@ class FilePreviewProvider extends ChangeNotifier with SafeChangeNotifier {
       _highlightLine = initialLine;
       _hasMoreLines = lines.length >= _previewPageSize;
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -330,7 +331,7 @@ class FilePreviewProvider extends ChangeNotifier with SafeChangeNotifier {
 
   void failMediaInitialization(Object error) {
     _awaitingMediaInitialization = false;
-    _error = error.toString();
+    _error = ErrorMessageUtils.userFacingMessage(error);
     _isLoading = false;
     notifyListeners();
   }
@@ -381,7 +382,7 @@ class FilePreviewProvider extends ChangeNotifier with SafeChangeNotifier {
         return;
       }
     } catch (e) {
-      _error = e.toString();
+      _error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       if (!_awaitingMediaInitialization) {
         _isLoading = false;

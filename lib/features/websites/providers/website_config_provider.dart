@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 
 import '../../../data/models/file/file_info.dart';
@@ -6,19 +7,23 @@ import '../../../data/models/openresty_models.dart';
 import '../../../data/models/runtime_models.dart';
 import '../../../data/models/website_models.dart';
 import '../../../data/repositories/website_repository.dart';
+import 'website_detail_store.dart';
 import '../services/website_config_service.dart';
 
 class WebsiteConfigProvider extends ChangeNotifier with SafeChangeNotifier {
   final int websiteId;
   final WebsiteConfigService _service;
   final WebsiteRepository _websiteRepository;
+  final WebsiteDetailStore? _store;
 
   WebsiteConfigProvider({
     required this.websiteId,
     WebsiteConfigService? service,
     WebsiteRepository? websiteRepository,
+    WebsiteDetailStore? store,
   })  : _service = service ?? WebsiteConfigService(),
-        _websiteRepository = websiteRepository ?? WebsiteRepository();
+        _websiteRepository = websiteRepository ?? WebsiteRepository(),
+        _store = store;
 
   bool isLoading = false;
   bool isUpdatingPhpVersion = false;
@@ -42,7 +47,7 @@ class WebsiteConfigProvider extends ChangeNotifier with SafeChangeNotifier {
         loadPhpVersionContext(),
       ]);
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -75,8 +80,11 @@ class WebsiteConfigProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> loadPhpVersionContext() async {
+    final detailFuture = _store != null
+        ? _store!.load()
+        : _websiteRepository.getWebsiteDetail(websiteId);
     final result = await Future.wait<dynamic>([
-      _websiteRepository.getWebsiteDetail(websiteId),
+      detailFuture,
       _websiteRepository.listPhpRuntimes(),
     ]);
     website = result[0] as WebsiteInfo;
@@ -102,7 +110,7 @@ class WebsiteConfigProvider extends ChangeNotifier with SafeChangeNotifier {
       await loadPhpVersionContext();
       return true;
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     } finally {

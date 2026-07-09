@@ -1,4 +1,5 @@
 import 'package:onepanel_client/api/v2/runtime_v2.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/runtime_models.dart';
@@ -77,7 +78,7 @@ class RuntimeRepository {
 
   Future<PageResult<PHPExtensionRecord>> searchPhpExtensionRecords({
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
     bool all = false,
   }) async {
     final api = await _ensureApi();

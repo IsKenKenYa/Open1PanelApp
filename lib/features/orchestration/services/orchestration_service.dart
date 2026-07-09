@@ -1,4 +1,5 @@
 import 'package:onepanel_client/data/models/common_models.dart';
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/data/models/docker_models.dart';
 import 'package:onepanel_client/data/repositories/orchestration_repository.dart';
@@ -11,7 +12,7 @@ class OrchestrationService {
 
   Future<List<ComposeProject>> loadComposes({
     int page = 1,
-    int pageSize = 10,
+    int pageSize = PagedQuery.defaultPageSize,
   }) {
     return _repository.loadComposes(page: page, pageSize: pageSize);
   }

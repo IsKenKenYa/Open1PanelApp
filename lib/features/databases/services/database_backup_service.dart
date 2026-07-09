@@ -1,3 +1,4 @@
+import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/data/models/backup_account_models.dart'
     as backup;
 import 'package:onepanel_client/data/models/common_models.dart';
@@ -13,7 +14,7 @@ class DatabaseBackupService {
   Future<PageResult<backup.BackupRecord>> loadRecords(
     DatabaseListItem item, {
     int page = 1,
-    int pageSize = 20,
+    int pageSize = PagedQuery.searchPageSize,
   }) {
     return _repository.loadBackupRecords(
       item,

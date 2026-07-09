@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
 import 'package:onepanel_client/core/presentation/safe_change_notifier.dart';
 import '../services/website_account_service.dart';
 
@@ -42,7 +43,7 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
       acmeAccounts = results[1];
       certificateAuthorities = results[2];
     } catch (e) {
-      error = e.toString();
+      error = ErrorMessageUtils.userFacingMessage(e);
     } finally {
       isLoading = false;
       notifyListeners();
@@ -208,7 +209,7 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
     try {
       return await _service!.downloadCertificateAuthorityFile(id);
     } catch (e) {
-      operationError = e.toString();
+      operationError = ErrorMessageUtils.userFacingMessage(e);
       return null;
     } finally {
       _operationKeys.remove(key);
@@ -276,7 +277,7 @@ class WebsiteSslAccountsProvider extends ChangeNotifier
       }
       return true;
     } catch (e) {
-      operationError = e.toString();
+      operationError = ErrorMessageUtils.userFacingMessage(e);
       notifyListeners();
       return false;
     } finally {
