@@ -281,10 +281,10 @@ class MonitorV2Api {
 
   /// 获取GPU监控数据
   ///
-  /// POST /hosts/monitor/gpu/search
+  /// POST /ai/gpu/search
   Future<Response<MonitorGPUData>> searchGPU(MonitorGPUSearch request) async {
     final response = await _client.post(
-      ApiConstants.buildApiPath('/hosts/monitor/gpu/search'),
+      ApiConstants.buildApiPath('/ai/gpu/search'),
       data: request.toJson(),
     );
     return Response(
@@ -399,5 +399,47 @@ class MonitorV2Api {
       startTime: startTime,
       endTime: endTime,
     ));
+  }
+
+  // ==================== New monitor endpoints (R5 API adaptation) ====================
+
+  /// Get IO device options for monitor dropdown.
+  Future<Response<List<String>>> getIoOptions() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/hosts/monitor/iooptions'),
+    );
+    final raw = response.data;
+    List<String> items = [];
+    if (raw is Map && raw['data'] is List) {
+      items = (raw['data'] as List).map((e) => e.toString()).toList();
+    } else if (raw is List) {
+      items = raw.map((e) => e.toString()).toList();
+    }
+    return Response<List<String>>(
+      data: items,
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get network interface options for monitor dropdown.
+  Future<Response<List<String>>> getNetworkOptions() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/hosts/monitor/netoptions'),
+    );
+    final raw = response.data;
+    List<String> items = [];
+    if (raw is Map && raw['data'] is List) {
+      items = (raw['data'] as List).map((e) => e.toString()).toList();
+    } else if (raw is List) {
+      items = raw.map((e) => e.toString()).toList();
+    }
+    return Response<List<String>>(
+      data: items,
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
   }
 }

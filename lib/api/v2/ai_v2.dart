@@ -383,7 +383,7 @@ class AIV2Api {
   /// 获取 Agent 支持的模型供应商
   Future<Response<List<ProviderInfo>>> getAgentProviders() async {
     final response = await _client.get(
-      ApiConstants.buildApiPath('/ai/agents/providers'),
+      ApiConstants.buildApiPath('/ai/accounts/providers'),
     );
     return Response(
       data: _unwrapDataList(response.data)
@@ -399,7 +399,7 @@ class AIV2Api {
   /// 创建 Agent 账号
   Future<Response<void>> createAgentAccount(AgentAccountCreateReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts'),
+      ApiConstants.buildApiPath('/ai/accounts'),
       data: request.toJson(),
     );
   }
@@ -407,7 +407,7 @@ class AIV2Api {
   /// 更新 Agent 账号
   Future<Response<void>> updateAgentAccount(AgentAccountUpdateReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts/update'),
+      ApiConstants.buildApiPath('/ai/accounts/update'),
       data: request.toJson(),
     );
   }
@@ -416,7 +416,7 @@ class AIV2Api {
   Future<Response<PageResult<AgentAccountItem>>> pageAgentAccounts(
       AgentAccountSearch request) async {
     final response = await _client.post(
-      ApiConstants.buildApiPath('/ai/agents/accounts/search'),
+      ApiConstants.buildApiPath('/ai/accounts/search'),
       data: request.toJson(),
     );
     return Response(
@@ -435,7 +435,7 @@ class AIV2Api {
   Future<Response<List<AgentAccountModel>>> getAgentAccountModels(
       AgentAccountModelReq request) async {
     final response = await _client.post(
-      ApiConstants.buildApiPath('/ai/agents/accounts/models'),
+      ApiConstants.buildApiPath('/ai/accounts/models'),
       data: request.toJson(),
     );
     return Response(
@@ -453,7 +453,7 @@ class AIV2Api {
   Future<Response<void>> createAgentAccountModel(
       AgentAccountModelCreateReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts/models/create'),
+      ApiConstants.buildApiPath('/ai/accounts/models/create'),
       data: request.toJson(),
     );
   }
@@ -462,7 +462,7 @@ class AIV2Api {
   Future<Response<void>> updateAgentAccountModel(
       AgentAccountModelUpdateReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts/models/update'),
+      ApiConstants.buildApiPath('/ai/accounts/models/update'),
       data: request.toJson(),
     );
   }
@@ -471,7 +471,7 @@ class AIV2Api {
   Future<Response<void>> deleteAgentAccountModel(
       AgentAccountModelDeleteReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts/models/delete'),
+      ApiConstants.buildApiPath('/ai/accounts/models/delete'),
       data: request.toJson(),
     );
   }
@@ -479,7 +479,7 @@ class AIV2Api {
   /// 验证账号配置
   Future<Response<void>> verifyAgentAccount(AgentAccountVerifyReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts/verify'),
+      ApiConstants.buildApiPath('/ai/accounts/verify'),
       data: request.toJson(),
     );
   }
@@ -487,7 +487,7 @@ class AIV2Api {
   /// 删除账号
   Future<Response<void>> deleteAgentAccount(AgentAccountDeleteReq request) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/accounts/delete'),
+      ApiConstants.buildApiPath('/ai/accounts/delete'),
       data: request.toJson(),
     );
   }
@@ -962,6 +962,160 @@ class AIV2Api {
   Future<Response<void>> testAgentModelConnection(Map<String, dynamic> request) async {
     return await _client.post<void>(
       ApiConstants.buildApiPath('/ai/agents/models/test'),
+      data: request,
+    );
+  }
+
+  // ==================== New AI endpoints (R5 API adaptation) ====================
+
+  /// Update AI domain config.
+  Future<void> updateDomain(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/domain/update'),
+      data: request,
+    );
+  }
+
+  /// Get GPU options (CPU type list for monitor chart).
+  Future<Response<List<Map<String, dynamic>>>> getGpuOptions() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/ai/gpu/options'),
+    );
+    final raw = _unwrapDataList(response.data);
+    return Response<List<Map<String, dynamic>>>(
+      data: raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Search GPU monitor data (chart time-series).
+  Future<Response<Map<String, dynamic>>> searchGpu(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/ai/gpu/search'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get AI account counts (summary statistics).
+  Future<Response<Map<String, dynamic>>> getAccountCounts() async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/accounts/counts'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Delete an agent channel.
+  Future<void> deleteAgentChannel(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/agents/channel/delete'),
+      data: request,
+    );
+  }
+
+  /// Get WeChat channel config.
+  Future<Response<Map<String, dynamic>>> getWeixinChannel() async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/agents/channel/weixin/get'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Check if an agent can be safely deleted.
+  Future<Response<Map<String, dynamic>>> checkAgentDelete(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/ai/agents/delete/check'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Unbind a website from an agent.
+  Future<void> unbindAgentWebsite(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/agents/website/unbind'),
+      data: request,
+    );
+  }
+
+  /// Uninstall an agent skill.
+  Future<void> uninstallAgentSkill(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/agents/skills/uninstall'),
+      data: request,
+    );
+  }
+
+  /// Get MCP server detail.
+  Future<Response<Map<String, dynamic>>> getMcpServerDetail(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/ai/mcp/server/detail'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Test MCP server connection.
+  Future<Response<Map<String, dynamic>>> testMcpServerConnection(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/ai/mcp/server/connection/test'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Sync MCP server status.
+  Future<void> syncMcpServerStatus(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/ai/mcp/server/status/sync'),
       data: request,
     );
   }

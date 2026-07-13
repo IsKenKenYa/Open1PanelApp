@@ -514,6 +514,7 @@ enum DatabaseStatus {
 enum DatabaseScope {
   mysql('mysql'),
   postgresql('postgresql'),
+  mongodb('mongodb'),
   redis('redis'),
   remote('remote');
 
@@ -591,6 +592,27 @@ class DatabaseListItem extends Equatable {
       // 'postgresqlName' is the PostgreSQL instance name, distinct from 'name' which is the database name
       targetDatabase: json['postgresqlName'] as String?,
       instanceLabel: json['postgresqlName'] as String?,
+      database: json['database'] as String?,
+      version: json['version'] as String?,
+      username: json['username'] as String?,
+      description: json['description'] as String?,
+      status: json['status'] as String?,
+      address: json['address'] as String?,
+      port: json['port'] as int?,
+      raw: Map<String, dynamic>.from(json),
+    );
+  }
+
+  factory DatabaseListItem.fromMongodbJson(Map<String, dynamic> json) {
+    return DatabaseListItem(
+      scope: DatabaseScope.mongodb,
+      id: json['id'] as int?,
+      name: json['name'] as String? ?? '',
+      engine: json['type'] as String? ?? 'mongodb',
+      source: json['from'] as String? ?? 'local',
+      // 'mongodbName' is the MongoDB instance name, distinct from 'name' which is the database name
+      targetDatabase: json['mongodbName'] as String?,
+      instanceLabel: json['mongodbName'] as String?,
       database: json['database'] as String?,
       version: json['version'] as String?,
       username: json['username'] as String?,

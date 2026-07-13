@@ -1024,4 +1024,238 @@ class FileV2Api {
       requestOptions: response.requestOptions,
     );
   }
+
+  // ==================== New file endpoints (R5 API adaptation) ====================
+
+  /// Create file share link.
+  Future<Response<Map<String, dynamic>>> createShare(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/files/share/create'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Delete file share link.
+  Future<void> deleteShare(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/share/del'),
+      data: request,
+    );
+  }
+
+  /// Search file shares.
+  Future<Response<List<dynamic>>> searchShares(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/share/search'),
+      data: request,
+    );
+    return Response<List<dynamic>>(
+      data: response.data is List
+          ? List<dynamic>.from(response.data as List)
+          : const <dynamic>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get share detail.
+  Future<Response<Map<String, dynamic>>> getShareDetail(String shareId) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/share/detail'),
+      data: {'id': shareId},
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Check share access.
+  Future<Response<Map<String, dynamic>>> checkShare(
+      Map<String, dynamic> request) async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/files/share/check'),
+      queryParameters: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get share info.
+  Future<Response<Map<String, dynamic>>> getShareInfo(String shareId) async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/files/share/info'),
+      queryParameters: {'id': shareId},
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Download shared file.
+  Future<Response<List<int>>> downloadShare(String shareId) async {
+    final response = await _client.get<List<int>>(
+      ApiConstants.buildApiPath('/files/share/download'),
+      queryParameters: {'id': shareId},
+      options: Options(responseType: ResponseType.bytes),
+    );
+    return Response<List<int>>(
+      data: response.data ?? const <int>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get share QR code.
+  Future<Response<Map<String, dynamic>>> getShareQrCode(
+      String shareId) async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/files/share/qrcode'),
+      queryParameters: {'id': shareId},
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Stop ongoing compression.
+  Future<void> stopCompress() async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/compress/stop'),
+    );
+  }
+
+  /// Stop ongoing decompression.
+  Future<void> stopDecompress() async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/decompress/stop'),
+    );
+  }
+
+  /// Search file history (file version history).
+  Future<Response<List<dynamic>>> searchHistory(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/history/search'),
+      data: request,
+    );
+    return Response<List<dynamic>>(
+      data: response.data is List
+          ? List<dynamic>.from(response.data as List)
+          : const <dynamic>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get file history content.
+  Future<Response<String>> getHistoryContent(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/history/content'),
+      data: request,
+    );
+    return Response<String>(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Restore file from history.
+  Future<void> restoreHistory(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/history/restore'),
+      data: request,
+    );
+  }
+
+  /// Delete file history entry.
+  Future<void> deleteHistory(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/files/history/del'),
+      data: request,
+    );
+  }
+
+  /// AI-powered file search.
+  Future<Response<Map<String, dynamic>>> aiSearchFiles(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/files/ai-search'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get wget download process status.
+  Future<Response<Map<String, dynamic>>> getWgetProcess() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/files/wget/process'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Get wget process keys.
+  Future<Response<List<dynamic>>> getWgetProcessKeys() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/files/wget/process/keys'),
+    );
+    return Response<List<dynamic>>(
+      data: response.data is List
+          ? List<dynamic>.from(response.data as List)
+          : const <dynamic>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
 }

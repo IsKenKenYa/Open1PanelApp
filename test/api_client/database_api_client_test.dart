@@ -382,6 +382,70 @@ void main() {
       }
     });
 
+    test('POST /databases/mongodb/search 返回 MongoDB 分页结构', () async {
+      final skipReason = _skipReason();
+      if (skipReason != null) {
+        appLogger.wWithPackage('test.api_client.database', '跳过测试: $skipReason');
+        return;
+      }
+
+      final targets = await api.listDatabases('mongodb');
+      if (targets.data == null || targets.data!.isEmpty) {
+        appLogger.wWithPackage(
+          'test.api_client.database',
+          '跳过 /databases/mongodb/search: 当前环境没有可安全查询的 MongoDB 实例',
+        );
+        return;
+      }
+
+      final target = DatabaseListItem.fromDatabaseOption(
+        targets.data!.first,
+        DatabaseScope.mongodb,
+      );
+      final request = DatabaseSearch(
+        database: target.lookupName,
+        page: 1,
+        pageSize: 10,
+        orderBy: 'createdAt',
+        order: 'descending',
+      );
+      final raw = await _rawPost(
+        client,
+        '/databases/mongodb/search',
+        data: request.toJson(),
+      );
+      _logSection(
+        '✅ Raw /databases/mongodb/search',
+        method: 'POST',
+        path: '/databases/mongodb/search',
+        request: request.toJson(),
+        response: raw.data,
+      );
+
+      final rawPage = _expectPagePayload(
+        _expectSuccessEnvelope(raw.data, path: '/databases/mongodb/search'),
+        path: '/databases/mongodb/search',
+      );
+      final parsed = await api.searchMongodbDatabases(request);
+      _logSection(
+        '✅ Parsed /databases/mongodb/search',
+        response: <String, dynamic>{
+          'total': parsed.data?.total,
+          'items': parsed.data?.items.take(3).toList(),
+        },
+      );
+
+      expect(parsed.statusCode, equals(200));
+      expect(parsed.data, isA<PageResult<Map<String, dynamic>>>());
+      expect(parsed.data!.total, equals(rawPage['total']));
+
+      final rawItems = rawPage['items'] as List?;
+      expect(parsed.data!.items.length, equals(rawItems?.length ?? 0));
+      for (final item in parsed.data!.items) {
+        _expectDatabaseOption(item, path: '/databases/mongodb/search');
+      }
+    });
+
     test('GET /databases/db/list/redis,redis-cluster 返回列表结构', () async {
       final skipReason = _skipReason();
       if (skipReason != null) {
@@ -693,6 +757,40 @@ void main() {
     test('DatabaseStatus.fromString falls back to stopped', () {
       expect(DatabaseStatus.fromString('running'), DatabaseStatus.running);
       expect(DatabaseStatus.fromString('invalid'), DatabaseStatus.stopped);
+    });
+
+    test('DatabaseScope.mongodb is a first-class scope', () {
+      expect(DatabaseScope.mongodb.value, equals('mongodb'));
+      expect(DatabaseScope.values, contains(DatabaseScope.mongodb));
+    });
+
+    test('DatabaseListItem.fromMongodbJson maps instance and database fields',
+        () {
+      final json = <String, dynamic>{
+        'id': 7,
+        'name': 'blog',
+        'type': 'mongodb',
+        'from': 'local',
+        'mongodbName': 'mongodb-local',
+        'database': 'blog',
+        'version': '7.0',
+        'username': 'root',
+        'description': 'blog db',
+        'status': 'Running',
+        'address': '127.0.0.1',
+        'port': 27017,
+      };
+      final item = DatabaseListItem.fromMongodbJson(json);
+      expect(item.scope, equals(DatabaseScope.mongodb));
+      expect(item.name, equals('blog'));
+      expect(item.engine, equals('mongodb'));
+      expect(item.source, equals('local'));
+      // 'mongodbName' is the instance name, distinct from 'name' (the database).
+      expect(item.targetDatabase, equals('mongodb-local'));
+      expect(item.instanceLabel, equals('mongodb-local'));
+      expect(item.lookupName, equals('mongodb-local'));
+      expect(item.address, equals('127.0.0.1'));
+      expect(item.port, equals(27017));
     });
   });
 }

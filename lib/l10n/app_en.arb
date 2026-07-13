@@ -603,6 +603,7 @@
   "databasePostgresqlTab": "PostgreSQL",
   "databaseRedisTab": "Redis",
   "databaseRemoteTab": "Remote",
+  "databaseMongodbTab": "MongoDB",
   "databaseOverviewTitle": "Overview",
   "databaseConfigTitle": "Config File",
   "databaseBaseInfoTitle": "Base Info",

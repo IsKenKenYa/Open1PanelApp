@@ -318,4 +318,238 @@ class AuthV2Api {
       isRedirect: response.isRedirect,
     );
   }
+
+  // ==================== New auth endpoints (R5 API adaptation) ====================
+
+  /// Get welcome page content.
+  Future<Response<String>> getWelcome() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/core/auth/welcome'),
+    );
+    return Response<String>(
+      data: _extractStringData(response.data) ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Load current user info.
+  Future<Response<Map<String, dynamic>>> getCurrentUser() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/core/auth/current'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Update current user info.
+  Future<Response<Map<String, dynamic>>> updateCurrentUser(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/current/update'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Load MFA info (auth-scoped endpoint).
+  Future<Response<Map<String, dynamic>>> loadMfaInfo(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/mfa'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Bind MFA.
+  Future<Response<Map<String, dynamic>>> bindMfa(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/mfa/bind'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Close/unbind MFA.
+  Future<Response<Map<String, dynamic>>> closeMfa(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/mfa/close'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Generate API key.
+  Future<Response<Map<String, dynamic>>> generateApiKey() async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/core/auth/api/generate'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Update API config.
+  Future<Response<Map<String, dynamic>>> updateApiConfig(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/api/update'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Reset expired password.
+  Future<Response<Map<String, dynamic>>> resetExpiredPassword(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/expired/reset'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: _extractDataMap(response.data) ?? const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// List passkeys (auth-scoped endpoint).
+  Future<Response<List<Map<String, dynamic>>>> listPasskeysAuth() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/core/auth/passkey/list'),
+    );
+    final raw = _extractDataRaw(response.data);
+    List<Map<String, dynamic>> items = [];
+    if (raw is List) {
+      items = raw
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+    return Response<List<Map<String, dynamic>>>(
+      data: items,
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Delete passkey (auth-scoped endpoint).
+  Future<void> deletePasskeyAuth(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/core/auth/passkey/del'),
+      data: request,
+    );
+  }
+
+  /// Begin passkey registration (auth-scoped endpoint).
+  Future<Response<PasskeyBeginResponse?>> beginPasskeyRegisterAuth(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/auth/passkey/register/begin'),
+      data: request,
+    );
+    final data = _extractDataMap(response.data);
+    return Response<PasskeyBeginResponse?>(
+      data: data == null ? null : PasskeyBeginResponse.fromJson(data),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+      headers: response.headers,
+      extra: response.extra,
+      redirects: response.redirects,
+      isRedirect: response.isRedirect,
+    );
+  }
+
+  /// Finish passkey registration (auth-scoped endpoint).
+  Future<void> finishPasskeyRegisterAuth({
+    required String sessionId,
+    required Map<String, dynamic> credential,
+  }) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/core/auth/passkey/register/finish'),
+      data: credential,
+      options: Options(headers: <String, dynamic>{
+        'Passkey-Session': sessionId,
+      }),
+    );
+  }
 }

@@ -23,6 +23,7 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
   static const _creatableScopes = <DatabaseScope>[
     DatabaseScope.mysql,
     DatabaseScope.postgresql,
+    DatabaseScope.mongodb,
     DatabaseScope.remote,
   ];
 

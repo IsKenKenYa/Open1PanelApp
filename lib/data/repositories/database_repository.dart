@@ -39,6 +39,7 @@ class DatabaseRepository {
     final type = switch (scope) {
       DatabaseScope.mysql => 'mysql,mariadb',
       DatabaseScope.postgresql => 'postgresql',
+      DatabaseScope.mongodb => 'mongodb',
       DatabaseScope.redis => 'redis,redis-cluster',
       DatabaseScope.remote => _remoteDatabaseTypes,
     };
@@ -125,6 +126,32 @@ class DatabaseRepository {
           page: 1,
           pageSize: items.length,
         );
+      case DatabaseScope.mongodb:
+        if (targetDatabase == null || targetDatabase.isEmpty) {
+          return const PageResult<DatabaseListItem>(
+            items: <DatabaseListItem>[],
+            total: 0,
+            page: 1,
+            pageSize: 20,
+          );
+        }
+        final response = await api.searchMongodbDatabases(
+          DatabaseSearch(
+            info: query,
+            database: targetDatabase,
+            page: page,
+            pageSize: pageSize,
+          ),
+        );
+        return PageResult<DatabaseListItem>(
+          items: response.data?.items
+                  .map(DatabaseListItem.fromMongodbJson)
+                  .toList(growable: false) ??
+              const <DatabaseListItem>[],
+          total: response.data?.total ?? 0,
+          page: page,
+          pageSize: pageSize,
+        );
       case DatabaseScope.remote:
         final response = await api.searchDatabases(
           DatabaseSearch(
@@ -184,6 +211,8 @@ class DatabaseRepository {
       redisPersistence =
           (await api.loadRedisPersistenceConf(type: type, name: lookupName))
               .data;
+    } else if (item.scope == DatabaseScope.mongodb) {
+      status = await api.loadMongodbStatus(type: type, name: lookupName);
     } else if (item.scope == DatabaseScope.remote) {
       final remoteInfo = await api.getRemoteDatabase(lookupName);
       status = remoteInfo.data;
@@ -254,6 +283,12 @@ class DatabaseRepository {
           'superUser': input.superUser ?? true,
         });
         return;
+      case DatabaseScope.mongodb:
+        await api.createMongodbDatabase({
+          ...payload,
+          'superUser': input.superUser ?? true,
+        });
+        return;
       case DatabaseScope.redis:
       case DatabaseScope.remote:
         return;
@@ -266,6 +301,13 @@ class DatabaseRepository {
     if (item.scope == DatabaseScope.postgresql) {
       await api.updatePostgresqlDescription({
         'name': item.name,
+        'description': description,
+      });
+      return;
+    }
+    if (item.scope == DatabaseScope.mongodb) {
+      await api.updateMongodbDescription({
+        'database': item.lookupName,
         'description': description,
       });
       return;
@@ -287,6 +329,14 @@ class DatabaseRepository {
     };
     if (item.scope == DatabaseScope.postgresql) {
       await api.updatePostgresqlPassword(payload);
+      return;
+    }
+    if (item.scope == DatabaseScope.mongodb) {
+      await api.changeMongodbPassword({
+        'type': item.engine,
+        'database': item.lookupName,
+        'value': password,
+      });
       return;
     }
     if (item.scope == DatabaseScope.redis) {
@@ -312,6 +362,14 @@ class DatabaseRepository {
         'username': username,
         'password': password,
         'superUser': false,
+      });
+      return;
+    }
+    if (item.scope == DatabaseScope.mongodb) {
+      await api.bindMongodbUser({
+        'database': item.lookupName,
+        'username': username,
+        'password': password,
       });
       return;
     }
@@ -379,9 +437,56 @@ class DatabaseRepository {
           type: item.engine,
         );
         return;
+      case DatabaseScope.mongodb:
+        await api.loadMongodbDatabaseFromRemote({
+          'from': item.source,
+          'type': item.engine,
+          'database': item.lookupName,
+        });
+        return;
       case DatabaseScope.redis:
       case DatabaseScope.remote:
         throw UnsupportedError('Remote load is not supported for this scope.');
     }
+  }
+
+  Future<void> deleteMongodb(DatabaseListItem item) async {
+    final api = await _getApi();
+    await api.deleteMongodbDatabase({
+      'type': item.engine,
+      'database': item.lookupName,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> checkDeleteMongodb(
+      DatabaseListItem item) async {
+    final api = await _getApi();
+    final response = await api.deleteMongodbDatabaseCheck({
+      'type': item.engine,
+      'database': item.lookupName,
+    });
+    return response.data ?? const <Map<String, dynamic>>[];
+  }
+
+  Future<void> changeMongodbRootPassword(
+    DatabaseListItem item,
+    String password,
+  ) async {
+    final api = await _getApi();
+    await api.changeMongodbRootPassword({
+      'type': item.engine,
+      'database': item.lookupName,
+      'value': password,
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> loadMongodbPrivileges(
+      DatabaseListItem item) async {
+    final api = await _getApi();
+    final response = await api.loadMongodbPrivileges({
+      'type': item.engine,
+      'database': item.lookupName,
+    });
+    return response.data ?? const <Map<String, dynamic>>[];
   }
 }

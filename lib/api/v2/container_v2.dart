@@ -944,4 +944,21 @@ class ContainerV2Api {
       data: request.toJson(),
     );
   }
+
+  // ==================== New container endpoints (R5 API adaptation) ====================
+
+  /// Download container log file.
+  Future<Response<List<int>>> downloadContainerLog(String containerId) async {
+    final response = await _client.get<List<int>>(
+      ApiConstants.buildApiPath('/containers/download/log'),
+      queryParameters: {'container': containerId},
+      options: Options(responseType: ResponseType.bytes),
+    );
+    return Response<List<int>>(
+      data: response.data ?? const <int>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
 }

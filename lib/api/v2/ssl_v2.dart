@@ -300,4 +300,29 @@ class SSLV2Api {
       data: certData,
     );
   }
+
+  // ==================== New SSL endpoints (R5 API adaptation) ====================
+
+  /// Import an SSL certificate from file upload.
+  Future<void> importSslCertificate(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/websites/ssl/import'),
+      data: request,
+    );
+  }
+
+  /// Push an SSL certificate to a specific website.
+  Future<void> pushSslCertificate(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/websites/ssl/push'),
+      data: request,
+    );
+  }
+
+  /// Reload system SSL certificate.
+  Future<void> reloadSystemSsl() async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/core/settings/ssl/reload'),
+    );
+  }
 }

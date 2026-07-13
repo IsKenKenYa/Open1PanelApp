@@ -127,7 +127,7 @@ class MonitorRepository {
       final startTime = now.subtract(const Duration(hours: 1));
 
       final response = await client.post(
-        '/api/v2/hosts/monitor/gpu/search',
+        '/api/v2/ai/gpu/search',
         data: {
           'startTime': startTime.toUtc().toIso8601String(),
           'endTime': now.toUtc().toIso8601String(),

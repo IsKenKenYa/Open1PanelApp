@@ -542,4 +542,29 @@ class AppV2Api {
       data: request,
     );
   }
+
+  // ==================== New app endpoints (R5 API adaptation) ====================
+
+  /// Get app tags.
+  Future<Response<List<dynamic>>> getAppTags() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/apps/tags'),
+    );
+    return Response<List<dynamic>>(
+      data: response.data is List
+          ? List<dynamic>.from(response.data as List)
+          : const <dynamic>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Update installed app sort order.
+  Future<void> updateInstalledAppSort(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/apps/installed/sort/update'),
+      data: request,
+    );
+  }
 }

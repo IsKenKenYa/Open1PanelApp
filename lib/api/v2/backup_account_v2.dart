@@ -361,4 +361,21 @@ class BackupAccountV2Api {
       data: request,
     );
   }
+
+  // ==================== New backup endpoints (R5 API adaptation) ====================
+
+  /// Check backup account by type.
+  Future<Response<Map<String, dynamic>>> checkBackupAccount(String type) async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/backups/check/$type'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
 }

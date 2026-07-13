@@ -883,7 +883,7 @@ class SettingV2Api {
   Future<Response<void>> updateDefaultSSHConnection(
       SSHDefaultUpdate request) async {
     return await _client.post(
-      ApiConstants.buildApiPath('/settings/ssh/conn/default'),
+      ApiConstants.buildApiPath('/settings/ssh/default'),
       data: request.toJson(),
     );
   }
@@ -932,6 +932,94 @@ class SettingV2Api {
     return await _client.post<void>(
       ApiConstants.buildApiPath('/hosts/monitor/setting/update'),
       data: {'key': key, 'value': value},
+    );
+  }
+
+  // ==================== New settings endpoints (R5 API adaptation) ====================
+
+  /// Search file history settings.
+  Future<Response<Map<String, dynamic>>> searchFileHistory() async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/settings/file-history/search'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Update file history settings.
+  Future<void> updateFileHistory(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/settings/file-history/update'),
+      data: request,
+    );
+  }
+
+  /// Search file manage AI settings.
+  Future<Response<Map<String, dynamic>>> searchFilesAi() async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/settings/files/ai/search'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Update file manage AI settings.
+  Future<void> updateFilesAi(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/settings/files/ai/update'),
+      data: request,
+    );
+  }
+
+  /// Search terminal AI settings.
+  Future<Response<Map<String, dynamic>>> searchTerminalAi() async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/settings/terminal/ai/search'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Update terminal AI settings.
+  Future<void> updateTerminalAi(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/settings/terminal/ai/update'),
+      data: request,
+    );
+  }
+
+  /// Check SSH local connection (POST /settings/ssh/check).
+  Future<Response<Map<String, dynamic>>> checkSshConnection(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/settings/ssh/check'),
+      data: request,
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
     );
   }
 }

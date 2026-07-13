@@ -401,6 +401,112 @@ class DatabaseV2Api {
     );
   }
 
+  Future<Response<PageResult<Map<String, dynamic>>>> searchMongodbDatabases(
+    DatabaseSearch request, {
+    String? operateNode,
+  }) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      _withNode('/databases/mongodb/search', operateNode),
+      data: request.toJson(),
+    );
+    return _mapPageResult(response);
+  }
+
+  Future<Response<void>> createMongodbDatabase(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> bindMongodbUser(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/bind'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> deleteMongodbDatabase(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/del'),
+      data: request,
+    );
+  }
+
+  Future<Response<List<Map<String, dynamic>>>> deleteMongodbDatabaseCheck(
+    Map<String, dynamic> request,
+  ) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/databases/mongodb/del/check'),
+      data: request,
+    );
+    return _mapListResponse(response);
+  }
+
+  Future<Response<void>> updateMongodbDescription(
+    Map<String, dynamic> request,
+  ) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/description'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> loadMongodbDatabaseFromRemote(
+    Map<String, dynamic> request,
+  ) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/load'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> changeMongodbPassword(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/password'),
+      data: request,
+    );
+  }
+
+  Future<Response<List<Map<String, dynamic>>>> loadMongodbPrivileges(
+    Map<String, dynamic> request,
+  ) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/databases/mongodb/privileges'),
+      data: request,
+    );
+    return _mapListResponse(response);
+  }
+
+  Future<Response<void>> changeMongodbPrivileges(
+    Map<String, dynamic> request,
+  ) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/privileges/change'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> changeMongodbRootPassword(
+    Map<String, dynamic> request,
+  ) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/mongodb/root/password'),
+      data: request,
+    );
+  }
+
+  Future<Map<String, dynamic>> loadMongodbStatus({
+    required String type,
+    required String name,
+  }) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/databases/status'),
+      data: {'type': type, 'name': name},
+    );
+    return _mapObjectResponse(response).data ?? const <String, dynamic>{};
+  }
+
   Future<Response<Map<String, dynamic>>> loadRedisStatus({
     required String type,
     required String name,

@@ -30,6 +30,7 @@ class _DatabasesPageState extends State<DatabasesPage>
   static const _scopes = <DatabaseScope>[
     DatabaseScope.mysql,
     DatabaseScope.postgresql,
+    DatabaseScope.mongodb,
     DatabaseScope.redis,
     DatabaseScope.remote,
   ];
@@ -58,6 +59,7 @@ class _DatabasesPageState extends State<DatabasesPage>
         tabs: [
           Tab(text: l10n.databaseMysqlTab),
           Tab(text: l10n.databasePostgresqlTab),
+          Tab(text: l10n.databaseMongodbTab),
           Tab(text: l10n.databaseRedisTab),
           Tab(text: l10n.databaseRemoteTab),
         ],
@@ -90,7 +92,9 @@ class _DatabaseScopeTab extends StatelessWidget {
         final provider = DatabasesProvider(scope: scope);
         // MySQL and PostgreSQL require target selection before loading data;
         // Redis and remote load directly without target concept.
-        if (scope == DatabaseScope.mysql || scope == DatabaseScope.postgresql) {
+        if (scope == DatabaseScope.mysql ||
+            scope == DatabaseScope.postgresql ||
+            scope == DatabaseScope.mongodb) {
           provider.loadTargets().then((_) => provider.load());
         } else {
           provider.load();
@@ -540,6 +544,7 @@ class _DatabaseEngineBadge extends StatelessWidget {
         switch (item.scope) {
           DatabaseScope.mysql => Icons.storage_outlined,
           DatabaseScope.postgresql => Icons.dataset_outlined,
+          DatabaseScope.mongodb => Icons.account_tree_outlined,
           DatabaseScope.redis => Icons.memory_outlined,
           DatabaseScope.remote => Icons.cloud_outlined,
         },

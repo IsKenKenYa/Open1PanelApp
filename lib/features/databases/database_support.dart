@@ -11,7 +11,7 @@ bool databaseSupportsUserManagement(DatabaseScope scope) {
 }
 
 bool databaseSupportsPrivilegeManagement(DatabaseScope scope) {
-  return scope == DatabaseScope.postgresql;
+  return scope == DatabaseScope.postgresql || scope == DatabaseScope.mongodb;
 }
 
 String databaseBackupType(DatabaseListItem item) {
@@ -20,6 +20,8 @@ String databaseBackupType(DatabaseListItem item) {
       return 'mysql';
     case DatabaseScope.postgresql:
       return 'postgresql';
+    case DatabaseScope.mongodb:
+      return 'mongodb';
     case DatabaseScope.redis:
       return 'redis';
     case DatabaseScope.remote:
@@ -31,6 +33,7 @@ String databaseBackupName(DatabaseListItem item) {
   switch (item.scope) {
     case DatabaseScope.mysql:
     case DatabaseScope.postgresql:
+    case DatabaseScope.mongodb:
       return item.lookupName;
     case DatabaseScope.redis:
       return item.lookupName;
@@ -43,6 +46,7 @@ String databaseBackupDetailName(DatabaseListItem item) {
   switch (item.scope) {
     case DatabaseScope.mysql:
     case DatabaseScope.postgresql:
+    case DatabaseScope.mongodb:
       return item.name;
     case DatabaseScope.redis:
       // Redis has no database-level naming concept (it's key-value), so return empty.

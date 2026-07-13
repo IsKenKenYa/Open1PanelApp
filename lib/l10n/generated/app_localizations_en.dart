@@ -1327,6 +1327,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get databaseRemoteTab => 'Remote';
 
   @override
+  String get databaseMongodbTab => 'MongoDB';
+
+  @override
   String get databaseOverviewTitle => 'Overview';
 
   @override

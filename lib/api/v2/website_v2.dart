@@ -565,8 +565,7 @@ class WebsiteV2Api {
   Future<List<Map<String, dynamic>>> getWebsiteLoadBalancers(
       int websiteId) async {
     final response = await _client.get<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/websites/lbs'),
-      queryParameters: {'id': websiteId},
+      ApiConstants.buildApiPath('/websites/$websiteId/lbs'),
     );
     final list = _extractListData(response);
     return list.whereType<Map<String, dynamic>>().toList();
@@ -640,7 +639,7 @@ class WebsiteV2Api {
   Future<Map<String, dynamic>> operateWebsiteLog(
       Map<String, dynamic> request) async {
     final response = await _client.post<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/websites/log'),
+      ApiConstants.buildApiPath('/websites/log/operate'),
       data: request,
     );
     final raw = _extractRawData(response);
@@ -795,6 +794,41 @@ class WebsiteV2Api {
         'name': name,
         'content': content,
       },
+    );
+  }
+
+  // ==================== New website endpoints (R5 API adaptation) ====================
+
+  /// Batch set SSL for multiple websites.
+  Future<void> batchSetSsl(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/websites/batch/ssl'),
+      data: request,
+    );
+  }
+
+  /// Change website group.
+  Future<void> changeWebsiteGroup(Map<String, dynamic> request) async {
+    await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/websites/group/change'),
+      data: request,
+    );
+  }
+
+  /// Search website logs.
+  Future<Response<List<dynamic>>> searchWebsiteLogs(
+      Map<String, dynamic> request) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/websites/log/search'),
+      data: request,
+    );
+    return Response<List<dynamic>>(
+      data: response.data is List
+          ? List<dynamic>.from(response.data as List)
+          : const <dynamic>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
     );
   }
 }

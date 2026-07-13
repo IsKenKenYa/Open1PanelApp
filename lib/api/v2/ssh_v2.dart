@@ -184,7 +184,7 @@ class SshV2Api {
     SshDefaultConnectionVisibilityUpdate request,
   ) async {
     return await _client.post<void>(
-      ApiConstants.buildApiPath('/settings/ssh/conn/default'),
+      ApiConstants.buildApiPath('/settings/ssh/default'),
       data: request.toJson(),
     );
   }

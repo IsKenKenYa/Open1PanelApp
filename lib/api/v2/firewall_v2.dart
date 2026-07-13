@@ -147,7 +147,7 @@ class FirewallV2Api {
     FirewallRuleSearch request,
   ) async {
     final response = await _client.post(
-      ApiConstants.buildApiPath('/hosts/firewall/filter/search'),
+      ApiConstants.buildApiPath('/hosts/firewall/filter/rule/search'),
       data: request.toJson(),
     );
     final payload = _extractMapPayload(response.data);

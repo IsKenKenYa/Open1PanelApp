@@ -603,6 +603,7 @@
   "databasePostgresqlTab": "PostgreSQL",
   "databaseRedisTab": "Redis",
   "databaseRemoteTab": "远程",
+  "databaseMongodbTab": "MongoDB",
   "databaseOverviewTitle": "概览",
   "databaseConfigTitle": "配置文件",
   "databaseBaseInfoTitle": "基础信息",

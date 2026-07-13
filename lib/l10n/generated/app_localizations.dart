@@ -2564,6 +2564,12 @@ abstract class AppLocalizations {
   /// **'Remote'**
   String get databaseRemoteTab;
 
+  /// No description provided for @databaseMongodbTab.
+  ///
+  /// In en, this message translates to:
+  /// **'MongoDB'**
+  String get databaseMongodbTab;
+
   /// No description provided for @databaseOverviewTitle.
   ///
   /// In en, this message translates to:

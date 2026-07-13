@@ -16,7 +16,7 @@ class HostToolV2Api {
     HostToolRequest request,
   ) async {
     final response = await _client.post<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/hosts/tool'),
+      ApiConstants.buildApiPath('/hosts/tool/status'),
       data: request.toJson(),
     );
     final rawData = response.data?['data'] as Map<String, dynamic>? ??
@@ -33,7 +33,7 @@ class HostToolV2Api {
     HostToolConfigRequest request,
   ) async {
     final response = await _client.post<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/hosts/tool/config'),
+      ApiConstants.buildApiPath('/hosts/tool/config/get'),
       data: request.toJson(),
     );
     final rawData = response.data?['data'] as Map<String, dynamic>? ??
@@ -109,6 +109,30 @@ class HostToolV2Api {
   ) async {
     final response = await _client.post<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/hosts/tool/supervisor/process/file'),
+      data: request.toJson(),
+    );
+    return Response<String>(
+      data: response.data?['data']?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Set host tool config (POST /hosts/tool/config/set).
+  Future<Response<void>> setToolConfig(HostToolConfigRequest request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/hosts/tool/config/set'),
+      data: request.toJson(),
+    );
+  }
+
+  /// Get supervisor process config file content (POST /hosts/tool/supervisor/process/file/get).
+  Future<Response<String>> getSupervisorProcessFile(
+    HostToolProcessFileRequest request,
+  ) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/hosts/tool/supervisor/process/file/get'),
       data: request.toJson(),
     );
     return Response<String>(

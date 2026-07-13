@@ -1297,6 +1297,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get databaseRemoteTab => '远程';
 
   @override
+  String get databaseMongodbTab => 'MongoDB';
+
+  @override
   String get databaseOverviewTitle => '概览';
 
   @override
