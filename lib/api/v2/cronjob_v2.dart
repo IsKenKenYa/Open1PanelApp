@@ -189,4 +189,19 @@ class CronjobV2Api {
       options: Options(responseType: ResponseType.bytes),
     );
   }
+
+  /// Get alert-related cron job list (POST /alert/cronjob/list).
+  Future<Response<List<dynamic>>> getAlertCronjobList() async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/alert/cronjob/list'),
+    );
+    return Response<List<dynamic>>(
+      data: response.data is List
+          ? List<dynamic>.from(response.data as List)
+          : const <dynamic>[],
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
 }

@@ -1022,6 +1022,34 @@ class SettingV2Api {
       requestOptions: response.requestOptions,
     );
   }
+
+  /// Load base system setting info (POST /core/settings/search/base).
+  Future<Response<Map<String, dynamic>>> searchBaseSettings() async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/settings/search/base'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// Load website dir setting (GET /settings/website/dir).
+  Future<Response<String>> getWebsiteDir() async {
+    final response = await _client.get<dynamic>(
+      ApiConstants.buildApiPath('/settings/website/dir'),
+    );
+    return Response<String>(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
 }
 
 // ==================== 请求模型 ====================

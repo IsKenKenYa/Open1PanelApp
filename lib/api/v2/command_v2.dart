@@ -274,4 +274,22 @@ class CommandV2Api {
       requestOptions: response.requestOptions,
     );
   }
+
+  /// Upload command CSV file (POST /core/commands/upload).
+  Future<Response<Map<String, dynamic>>> uploadCommands(
+      FormData formData) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/core/commands/upload'),
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{},
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
 }

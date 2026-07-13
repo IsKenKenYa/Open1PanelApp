@@ -947,11 +947,11 @@ class ContainerV2Api {
 
   // ==================== New container endpoints (R5 API adaptation) ====================
 
-  /// Download container log file.
+  /// Download container log file (POST /containers/download/log).
   Future<Response<List<int>>> downloadContainerLog(String containerId) async {
-    final response = await _client.get<List<int>>(
+    final response = await _client.post<List<int>>(
       ApiConstants.buildApiPath('/containers/download/log'),
-      queryParameters: {'container': containerId},
+      data: {'container': containerId},
       options: Options(responseType: ResponseType.bytes),
     );
     return Response<List<int>>(

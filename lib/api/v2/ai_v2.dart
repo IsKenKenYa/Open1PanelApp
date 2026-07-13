@@ -516,15 +516,6 @@ class AIV2Api {
     );
   }
 
-  /// 审批飞书通道配对
-  Future<Response<void>> approveAgentFeishuPairing(
-      AgentFeishuPairingApproveReq request) async {
-    return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/channel/feishu/approve'),
-      data: request.toJson(),
-    );
-  }
-
   /// 获取 Telegram 通道配置
   Future<Response<AgentTelegramConfig>> getAgentTelegramConfig(
       AgentTelegramConfigReq request) async {
@@ -740,30 +731,6 @@ class AIV2Api {
     );
   }
 
-  /// 获取 Agent 浏览器配置
-  Future<Response<AgentBrowserConfig>> getAgentBrowserConfig(
-      AgentBrowserConfigReq request) async {
-    final response = await _client.post(
-      ApiConstants.buildApiPath('/ai/agents/browser/get'),
-      data: request.toJson(),
-    );
-    return Response(
-      data: AgentBrowserConfig.fromJson(_unwrapDataMap(response.data)),
-      statusCode: response.statusCode,
-      statusMessage: response.statusMessage,
-      requestOptions: response.requestOptions,
-    );
-  }
-
-  /// 更新 Agent 浏览器配置
-  Future<Response<void>> updateAgentBrowserConfig(
-      AgentBrowserConfigUpdateReq request) async {
-    return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/browser/update'),
-      data: request.toJson(),
-    );
-  }
-
   /// 获取 Agent 配置文件
   Future<Response<AgentConfigFile>> getAgentConfigFile(
       AgentConfigFileReq request) async {
@@ -955,14 +922,6 @@ class AIV2Api {
     return await _client.post<void>(
       ApiConstants.buildApiPath('/ai/mcp/server/update'),
       data: request.toJson(),
-    );
-  }
-
-  /// 测试大模型接口联通性
-  Future<Response<void>> testAgentModelConnection(Map<String, dynamic> request) async {
-    return await _client.post<void>(
-      ApiConstants.buildApiPath('/ai/agents/models/test'),
-      data: request,
     );
   }
 
