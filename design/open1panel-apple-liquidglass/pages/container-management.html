@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1Panel Client - 容器管理</title>
+  <style id="theme-vars">
+    /* ============================================================
+       Open1Panel — Apple Liquid Glass Design Tokens
+       ============================================================ */
+    :root {
+      /* Brand */
+      --op1-brand: #0C9B4B;
+      --op1-brand-light: #4DB87A;
+      --op1-brand-dark: #087A3A;
+      --op1-brand-50: #E8F5EE;
+      --op1-brand-100: #C8E8D4;
+      --op1-brand-500: #0C9B4B;
+      --op1-brand-700: #087A3A;
+      --op1-brand-900: #055A2B;
+
+      /* Semantic */
+      --op1-success: #16A34A;
+      --op1-warning: #F59E0B;
+      --op1-danger: #DC2626;
+      --op1-info: #0EA5E9;
+
+      /* Glass material */
+      --op1-glass-blur: 40px;
+      --op1-glass-saturate: 180%;
+      --op1-glass-alpha: 0.65;
+      --op1-glass-alpha-elevated: 0.85;
+      --op1-glass-border-alpha: 0.20;
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.6);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(31,38,135,0.15);
+
+      /* Surface */
+      --op1-surface: rgba(255,255,255,0.15);
+      --op1-surface-elevated: rgba(255,255,255,0.40);
+      --op1-surface-card: rgba(255,255,255,0.20);
+      --op1-surface-nav: rgba(255,255,255,0.65);
+      --op1-surface-popover: rgba(255,255,255,0.50);
+      --op1-surface-container-low: rgba(255,255,255,0.10);
+      --op1-surface-container: rgba(255,255,255,0.15);
+      --op1-surface-container-high: rgba(255,255,255,0.25);
+
+      /* On-Surface */
+      --op1-on-surface: rgba(0,0,0,0.85);
+      --op1-on-surface-variant: rgba(0,0,0,0.55);
+      --op1-on-surface-nav: rgba(0,0,0,0.75);
+      --op1-on-surface-card: rgba(0,0,0,0.85);
+
+      /* Navigation */
+      --op1-nav-sidebar-width: 260px;
+      --op1-nav-tab-height: 49px;
+
+      /* Typography */
+      --op1-font-family: system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --op1-font-family-mono: 'SF Mono', ui-monospace, Menlo, monospace;
+
+      /* Radius */
+      --op1-radius-sm: 12px;
+      --op1-radius-md: 16px;
+      --op1-radius-lg: 20px;
+      --op1-radius-card: 22px;
+      --op1-radius-button: 9999px;
+      --op1-radius-full: 9999px;
+
+      /* Spacing */
+      --op1-spacing-xs: 4px;
+      --op1-spacing-sm: 8px;
+      --op1-spacing-md: 12px;
+      --op1-spacing-lg: 16px;
+      --op1-spacing-xl: 24px;
+
+      /* Motion */
+      --op1-motion-fast: 200ms;
+      --op1-motion-normal: 350ms;
+      --op1-motion-slow: 500ms;
+      --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      /* Border */
+      --op1-border: rgba(0,0,0,0.08);
+      --op1-border-strong: rgba(0,0,0,0.15);
+
+      /* Error */
+      --op1-error: #FF3B30;
+
+      /* Background gradient */
+      --op1-bg-gradient-start: #667eea;
+      --op1-bg-gradient-end: #764ba2;
+    }
+
+    /* ----- Dark Mode ----- */
+    .dark {
+      --op1-brand-light: #3DA06A;
+      --op1-brand-50: rgba(12,155,75,0.15);
+      --op1-brand-100: rgba(12,155,75,0.25);
+
+      --op1-surface: rgba(30,30,30,0.65);
+      --op1-surface-elevated: rgba(30,30,30,0.75);
+      --op1-surface-card: rgba(30,30,30,0.65);
+      --op1-surface-nav: rgba(30,30,30,0.75);
+      --op1-surface-popover: rgba(30,30,30,0.70);
+      --op1-surface-container-low: rgba(30,30,30,0.50);
+      --op1-surface-container: rgba(30,30,30,0.65);
+      --op1-surface-container-high: rgba(30,30,30,0.75);
+
+      --op1-on-surface: rgba(255,255,255,0.85);
+      --op1-on-surface-variant: rgba(255,255,255,0.60);
+      --op1-on-surface-nav: rgba(255,255,255,0.80);
+      --op1-on-surface-card: rgba(255,255,255,0.85);
+
+      --op1-border: rgba(255,255,255,0.10);
+      --op1-border-strong: rgba(255,255,255,0.20);
+
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.15);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(0,0,0,0.40);
+
+      --op1-bg-gradient-start: #1a1a2e;
+      --op1-bg-gradient-end: #16213e;
+    }
+
+    /* ============================================================
+       Base styles
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--op1-font-family);
+      background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+      min-height: 100vh;
+      color: var(--op1-on-surface);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       Layout: macOS (>= 768px)
+       ============================================================ */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ----- Sidebar ----- */
+    .sidebar {
+      width: var(--op1-nav-sidebar-width);
+      min-width: var(--op1-nav-sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-right: 1px solid var(--op1-glass-border-alpha);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding-bottom: var(--op1-spacing-md);
+      border-bottom: 1px solid var(--op1-border);
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--op1-brand);
+      border-radius: var(--op1-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-server-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .sidebar-server-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--op1-on-surface-nav);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-server-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--op1-on-surface-variant);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.6);
+      flex-shrink: 0;
+    }
+
+    .sidebar-search {
+      position: relative;
+    }
+    .sidebar-search input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--op1-spacing-md) 0 36px;
+      border: none;
+      border-radius: var(--op1-radius-sm);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 13px;
+      font-family: var(--op1-font-family);
+      outline: none;
+    }
+    .sidebar-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .sidebar-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 16px;
+      height: 16px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      margin-top: var(--op1-spacing-sm);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: 10px var(--op1-spacing-md);
+      border-radius: var(--op1-radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--op1-on-surface-nav);
+      cursor: pointer;
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease;
+      text-decoration: none;
+      position: relative;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: var(--op1-surface-container-high);
+    }
+    .nav-item.active {
+      background: rgba(12,155,75,0.85);
+      color: #fff;
+    }
+    .nav-item.active svg {
+      color: #fff;
+    }
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--op1-on-surface-variant);
+      transition: color var(--op1-motion-fast) ease;
+    }
+
+    .sidebar-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--op1-spacing-md);
+      border-top: 1px solid var(--op1-border);
+      gap: var(--op1-spacing-sm);
+    }
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .footer-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .footer-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+    }
+    .footer-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .footer-btn.active-theme svg {
+      color: var(--op1-warning);
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ----- Content area ----- */
+    .content-area {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--op1-spacing-xl);
+    }
+
+    /* Mobile header (visible < 768px) */
+    .mobile-header {
+      display: none;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+      color: var(--op1-on-surface);
+    }
+    .mobile-header .sidebar-server-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--op1-on-surface);
+    }
+
+    /* ============================================================
+       Glass card base
+       ============================================================ */
+    .glass-card {
+      background: var(--op1-surface-card);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.30);
+      box-shadow: var(--op1-glass-highlight-inset);
+      border-radius: var(--op1-radius-card);
+      transition: transform var(--op1-motion-normal) var(--op1-easing-spring),
+                  box-shadow var(--op1-motion-normal) ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--op1-glass-highlight-inset), var(--op1-glass-shadow-outer);
+    }
+
+    /* ============================================================
+       Page header: title + search + view toggle
+       ============================================================ */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface);
+      letter-spacing: -0.5px;
+    }
+    .page-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+    }
+    .page-search {
+      position: relative;
+    }
+    .page-search input {
+      width: 260px;
+      height: 38px;
+      padding: 0 var(--op1-spacing-md) 0 38px;
+      border: 1px solid var(--op1-border);
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 13px;
+      font-family: var(--op1-font-family);
+      outline: none;
+      transition: border-color var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+    }
+    .page-search input:focus {
+      border-color: var(--op1-brand);
+      box-shadow: 0 0 0 3px rgba(12,155,75,0.2);
+    }
+    .page-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .page-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 16px;
+      height: 16px;
+    }
+    .view-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--op1-border);
+      border-radius: var(--op1-radius-button);
+      padding: 3px;
+      gap: 2px;
+    }
+    .view-toggle-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .view-toggle-btn:hover {
+      color: var(--op1-on-surface);
+    }
+    .view-toggle-btn.active {
+      background: var(--op1-brand);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(12,155,75,0.3);
+    }
+    .view-toggle-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ============================================================
+       Segmented Control (sub-navigation tabs)
+       ============================================================ */
+    .segmented-control {
+      display: inline-flex;
+      align-items: center;
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--op1-border);
+      border-radius: var(--op1-radius-button);
+      padding: 3px;
+      gap: 2px;
+      margin-bottom: var(--op1-spacing-lg);
+    }
+    .segment-btn {
+      height: 34px;
+      padding: 0 var(--op1-spacing-lg);
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--op1-font-family);
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+      white-space: nowrap;
+    }
+    .segment-btn:hover {
+      color: var(--op1-on-surface);
+    }
+    .segment-btn.active {
+      background: var(--op1-brand);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(12,155,75,0.3);
+    }
+    .segment-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: var(--op1-radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+      background: rgba(255,255,255,0.25);
+      color: inherit;
+    }
+    .segment-btn.active .segment-badge {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* ============================================================
+       Container list (glass cards)
+       ============================================================ */
+    .container-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--op1-spacing-md);
+    }
+    .container-card {
+      padding: var(--op1-spacing-lg) var(--op1-spacing-xl);
+      position: relative;
+    }
+    .container-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--op1-spacing-md);
+    }
+    .container-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .container-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--op1-on-surface-card);
+      margin-bottom: 2px;
+    }
+    .container-image {
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+      font-family: var(--op1-font-family-mono);
+      margin-bottom: var(--op1-spacing-sm);
+    }
+    .container-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-lg);
+      flex-wrap: wrap;
+    }
+    .container-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .container-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .container-status-dot.running {
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.5);
+    }
+    .container-status-dot.stopped {
+      background: #8E8E93;
+    }
+    .container-status.running {
+      color: var(--op1-success);
+    }
+    .container-status.stopped {
+      color: #8E8E93;
+    }
+    .container-ports {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+    }
+    .container-ports svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+    .container-ports-list {
+      display: flex;
+      gap: var(--op1-spacing-sm);
+      flex-wrap: wrap;
+    }
+    .port-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-surface-container-high);
+      font-size: 12px;
+      font-family: var(--op1-font-family-mono);
+      color: var(--op1-on-surface);
+      white-space: nowrap;
+    }
+
+    /* Resource usage bars */
+    .container-resources {
+      display: flex;
+      gap: var(--op1-spacing-xl);
+      margin-top: var(--op1-spacing-md);
+      flex-wrap: wrap;
+    }
+    .resource-item {
+      flex: 1;
+      min-width: 120px;
+      max-width: 200px;
+    }
+    .resource-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--op1-on-surface-variant);
+      margin-bottom: 6px;
+    }
+    .resource-value {
+      font-weight: 600;
+      font-family: var(--op1-font-family-mono);
+      color: var(--op1-on-surface);
+      font-size: 12px;
+    }
+    .resource-bar-bg {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--op1-surface-container-high);
+      overflow: hidden;
+    }
+    .resource-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width var(--op1-motion-normal) var(--op1-easing-spring);
+    }
+    .resource-bar-fill.cpu {
+      background: var(--op1-info);
+    }
+    .resource-bar-fill.mem {
+      background: var(--op1-brand);
+    }
+    .resource-bar-fill.low {
+      background: var(--op1-success);
+    }
+    .resource-bar-fill.medium {
+      background: var(--op1-warning);
+    }
+    .resource-bar-fill.high {
+      background: var(--op1-danger);
+    }
+
+    /* Stopped resource placeholder */
+    .resource-item.stopped .resource-bar-fill {
+      width: 0 !important;
+    }
+    .resource-item.stopped .resource-value {
+      color: var(--op1-on-surface-variant);
+    }
+
+    /* More actions button */
+    .container-actions-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      flex-shrink: 0;
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .container-actions-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+    }
+    .container-actions-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================================
+       Context menu (macOS right-click style)
+       ============================================================ */
+    .context-menu-wrapper {
+      position: relative;
+    }
+    .context-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: var(--op1-spacing-xs);
+      min-width: 180px;
+      padding: var(--op1-spacing-xs);
+      background: var(--op1-surface-popover);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border: 1px solid rgba(255,255,255,0.30);
+      border-radius: var(--op1-radius-sm);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 50;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.95) translateY(-4px);
+      transform-origin: top right;
+      transition: opacity var(--op1-motion-fast) ease,
+                  visibility var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+    }
+    .context-menu-wrapper:hover .context-menu,
+    .context-menu.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+    .context-menu-item {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding: 8px var(--op1-spacing-md);
+      border-radius: var(--op1-radius-sm);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--op1-on-surface);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: var(--op1-font-family);
+      transition: background var(--op1-motion-fast) ease;
+    }
+    .context-menu-item:hover {
+      background: rgba(12,155,75,0.12);
+    }
+    .context-menu-item svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      color: var(--op1-on-surface-variant);
+    }
+    .context-menu-item.danger {
+      color: var(--op1-error);
+    }
+    .context-menu-item.danger svg {
+      color: var(--op1-error);
+    }
+    .context-menu-item.danger:hover {
+      background: rgba(255,59,48,0.1);
+    }
+    .context-menu-divider {
+      height: 1px;
+      background: var(--op1-border);
+      margin: var(--op1-spacing-xs) var(--op1-spacing-sm);
+    }
+
+    /* ============================================================
+       Bottom Tab Bar (iOS, < 768px)
+       ============================================================ */
+    .bottom-tab-bar {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      height: var(--op1-nav-tab-height);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-radius: var(--op1-radius-lg);
+      border: 1px solid rgba(255,255,255,0.20);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 var(--op1-spacing-sm);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      color: var(--op1-on-surface-variant);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--op1-radius-sm);
+      transition: color var(--op1-motion-fast) ease;
+      background: transparent;
+      border: none;
+      font-family: var(--op1-font-family);
+    }
+    .tab-item.active {
+      color: var(--op1-brand);
+    }
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ============================================================
+       Responsive: iOS (< 768px)
+       ============================================================ */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .bottom-tab-bar {
+        display: flex;
+      }
+      .content-area {
+        padding: var(--op1-spacing-md) var(--op1-spacing-md) calc(var(--op1-nav-tab-height) + 40px);
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .page-title {
+        font-size: 24px;
+      }
+      .page-search input {
+        width: 100%;
+      }
+      .segmented-control {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .container-resources {
+        flex-direction: column;
+        gap: var(--op1-spacing-sm);
+      }
+      .resource-item {
+        max-width: none;
+      }
+    }
+
+    /* ============================================================
+       Scrollbar styling
+       ============================================================ */
+    .content-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content-area::-webkit-scrollbar-thumb {
+      background: var(--op1-surface-container-high);
+      border-radius: 3px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ============================================================
+         macOS Sidebar (>= 768px)
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <!-- Header: Logo + Server -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo">1P</div>
+        <div class="sidebar-server-info">
+          <span class="sidebar-server-name">生产服务器</span>
+          <span class="sidebar-server-status">
+            <span class="status-dot"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="sidebar-search">
+        <i data-lucide="search" class="sidebar-search-icon"></i>
+        <input type="text" placeholder="搜索功能..." />
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>仪表板</span>
+        </button>
+        <button class="nav-item active" data-page="containers">
+          <i data-lucide="box"></i>
+          <span>容器</span>
+        </button>
+        <button class="nav-item" data-page="files">
+          <i data-lucide="folder-open"></i>
+          <span>文件</span>
+        </button>
+        <button class="nav-item" data-page="websites">
+          <i data-lucide="globe"></i>
+          <span>网站</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <i data-lucide="settings"></i>
+          <span>设置</span>
+        </button>
+      </nav>
+
+      <!-- Footer -->
+      <div class="sidebar-footer">
+        <div class="footer-actions">
+          <button class="footer-btn active-theme" id="themeToggleSidebar" onclick="toggleTheme()" title="切换主题">
+            <i data-lucide="sun"></i>
+          </button>
+          <button class="footer-btn" title="切换渲染模式">
+            <i data-lucide="monitor"></i>
+          </button>
+        </div>
+        <div class="user-avatar" title="用户">管</div>
+      </div>
+
+    </aside>
+
+    <!-- ============================================================
+         Content Area
+         ============================================================ -->
+    <main class="content-area">
+
+      <!-- Mobile Header (< 768px) -->
+      <div class="mobile-header">
+        <div class="sidebar-logo" style="width:28px;height:28px;font-size:11px;border-radius:8px;">1P</div>
+        <div>
+          <div class="sidebar-server-name">生产服务器</div>
+          <div class="sidebar-server-status">
+            <span class="status-dot" style="width:6px;height:6px;"></span>
+            在线
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">容器</h1>
+        <div class="page-header-actions">
+          <div class="page-search">
+            <i data-lucide="search" class="page-search-icon"></i>
+            <input type="text" placeholder="搜索容器名称或镜像..." />
+          </div>
+          <div class="view-toggle">
+            <button class="view-toggle-btn active" id="viewList" onclick="switchView('list')" title="列表视图">
+              <i data-lucide="list"></i>
+            </button>
+            <button class="view-toggle-btn" id="viewGrid" onclick="switchView('grid')" title="网格视图">
+              <i data-lucide="grid-2x2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segmented Control -->
+      <div class="segmented-control" id="segmentControl">
+        <button class="segment-btn active" data-filter="all" onclick="filterContainers('all', this)">
+          全部
+          <span class="segment-badge">6</span>
+        </button>
+        <button class="segment-btn" data-filter="running" onclick="filterContainers('running', this)">
+          运行中
+          <span class="segment-badge">4</span>
+        </button>
+        <button class="segment-btn" data-filter="stopped" onclick="filterContainers('stopped', this)">
+          已停止
+          <span class="segment-badge">2</span>
+        </button>
+        <button class="segment-btn" data-filter="images" onclick="filterContainers('images', this)">
+          镜像
+        </button>
+      </div>
+
+      <!-- Container List -->
+      <div class="container-list" id="containerList">
+
+        <!-- Container 1: nginx-proxy (running) -->
+        <div class="glass-card container-card" data-status="running">
+          <div class="container-card-top">
+            <div class="container-info">
+              <div class="container-name">nginx-proxy</div>
+              <div class="container-image">nginx:latest</div>
+              <div class="container-meta">
+                <div class="container-status running">
+                  <span class="container-status-dot running"></span>
+                  运行中
+                </div>
+                <div class="container-ports">
+                  <i data-lucide="arrow-left-right"></i>
+                  <div class="container-ports-list">
+                    <span class="port-tag">80:80</span>
+                    <span class="port-tag">443:443</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="context-menu-wrapper">
+              <button class="container-actions-btn" title="更多操作">
+                <i data-lucide="more-vertical"></i>
+              </button>
+              <div class="context-menu">
+                <button class="context-menu-item">
+                  <i data-lucide="play"></i>
+                  <span>启动</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="square"></i>
+                  <span>停止</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="rotate-ccw"></i>
+                  <span>重启</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item">
+                  <i data-lucide="scroll-text"></i>
+                  <span>日志</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="terminal"></i>
+                  <span>终端</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item danger">
+                  <i data-lucide="trash-2"></i>
+                  <span>删除</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="container-resources">
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>CPU</span>
+                <span class="resource-value">2%</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill cpu low" style="width: 2%"></div>
+              </div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>内存</span>
+                <span class="resource-value">128 MB</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill mem low" style="width: 8%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container 2: mysql-db (running) -->
+        <div class="glass-card container-card" data-status="running">
+          <div class="container-card-top">
+            <div class="container-info">
+              <div class="container-name">mysql-db</div>
+              <div class="container-image">mysql:8.0</div>
+              <div class="container-meta">
+                <div class="container-status running">
+                  <span class="container-status-dot running"></span>
+                  运行中
+                </div>
+                <div class="container-ports">
+                  <i data-lucide="arrow-left-right"></i>
+                  <div class="container-ports-list">
+                    <span class="port-tag">3306:3306</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="context-menu-wrapper">
+              <button class="container-actions-btn" title="更多操作">
+                <i data-lucide="more-vertical"></i>
+              </button>
+              <div class="context-menu">
+                <button class="context-menu-item">
+                  <i data-lucide="play"></i>
+                  <span>启动</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="square"></i>
+                  <span>停止</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="rotate-ccw"></i>
+                  <span>重启</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item">
+                  <i data-lucide="scroll-text"></i>
+                  <span>日志</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="terminal"></i>
+                  <span>终端</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item danger">
+                  <i data-lucide="trash-2"></i>
+                  <span>删除</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="container-resources">
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>CPU</span>
+                <span class="resource-value">5%</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill cpu low" style="width: 5%"></div>
+              </div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>内存</span>
+                <span class="resource-value">512 MB</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill mem medium" style="width: 32%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container 3: redis-cache (running) -->
+        <div class="glass-card container-card" data-status="running">
+          <div class="container-card-top">
+            <div class="container-info">
+              <div class="container-name">redis-cache</div>
+              <div class="container-image">redis:7</div>
+              <div class="container-meta">
+                <div class="container-status running">
+                  <span class="container-status-dot running"></span>
+                  运行中
+                </div>
+                <div class="container-ports">
+                  <i data-lucide="arrow-left-right"></i>
+                  <div class="container-ports-list">
+                    <span class="port-tag">6379:6379</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="context-menu-wrapper">
+              <button class="container-actions-btn" title="更多操作">
+                <i data-lucide="more-vertical"></i>
+              </button>
+              <div class="context-menu">
+                <button class="context-menu-item">
+                  <i data-lucide="play"></i>
+                  <span>启动</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="square"></i>
+                  <span>停止</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="rotate-ccw"></i>
+                  <span>重启</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item">
+                  <i data-lucide="scroll-text"></i>
+                  <span>日志</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="terminal"></i>
+                  <span>终端</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item danger">
+                  <i data-lucide="trash-2"></i>
+                  <span>删除</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="container-resources">
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>CPU</span>
+                <span class="resource-value">1%</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill cpu low" style="width: 1%"></div>
+              </div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>内存</span>
+                <span class="resource-value">64 MB</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill mem low" style="width: 4%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container 4: wordpress-app (running) -->
+        <div class="glass-card container-card" data-status="running">
+          <div class="container-card-top">
+            <div class="container-info">
+              <div class="container-name">wordpress-app</div>
+              <div class="container-image">wordpress:6.4</div>
+              <div class="container-meta">
+                <div class="container-status running">
+                  <span class="container-status-dot running"></span>
+                  运行中
+                </div>
+                <div class="container-ports">
+                  <i data-lucide="arrow-left-right"></i>
+                  <div class="container-ports-list">
+                    <span class="port-tag">8080:80</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="context-menu-wrapper">
+              <button class="container-actions-btn" title="更多操作">
+                <i data-lucide="more-vertical"></i>
+              </button>
+              <div class="context-menu">
+                <button class="context-menu-item">
+                  <i data-lucide="play"></i>
+                  <span>启动</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="square"></i>
+                  <span>停止</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="rotate-ccw"></i>
+                  <span>重启</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item">
+                  <i data-lucide="scroll-text"></i>
+                  <span>日志</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="terminal"></i>
+                  <span>终端</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item danger">
+                  <i data-lucide="trash-2"></i>
+                  <span>删除</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="container-resources">
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>CPU</span>
+                <span class="resource-value">3%</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill cpu low" style="width: 3%"></div>
+              </div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-label">
+                <span>内存</span>
+                <span class="resource-value">256 MB</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill mem low" style="width: 16%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container 5: postgres-main (stopped) -->
+        <div class="glass-card container-card" data-status="stopped">
+          <div class="container-card-top">
+            <div class="container-info">
+              <div class="container-name">postgres-main</div>
+              <div class="container-image">postgres:15</div>
+              <div class="container-meta">
+                <div class="container-status stopped">
+                  <span class="container-status-dot stopped"></span>
+                  已停止
+                </div>
+                <div class="container-ports" style="color: var(--op1-on-surface-variant); opacity: 0.5;">
+                  <i data-lucide="arrow-left-right"></i>
+                  <span style="font-size: 13px;">-</span>
+                </div>
+              </div>
+            </div>
+            <div class="context-menu-wrapper">
+              <button class="container-actions-btn" title="更多操作">
+                <i data-lucide="more-vertical"></i>
+              </button>
+              <div class="context-menu">
+                <button class="context-menu-item">
+                  <i data-lucide="play"></i>
+                  <span>启动</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="square"></i>
+                  <span>停止</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="rotate-ccw"></i>
+                  <span>重启</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item">
+                  <i data-lucide="scroll-text"></i>
+                  <span>日志</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="terminal"></i>
+                  <span>终端</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item danger">
+                  <i data-lucide="trash-2"></i>
+                  <span>删除</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="container-resources">
+            <div class="resource-item stopped">
+              <div class="resource-label">
+                <span>CPU</span>
+                <span class="resource-value">-</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill cpu" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="resource-item stopped">
+              <div class="resource-label">
+                <span>内存</span>
+                <span class="resource-value">-</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill mem" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container 6: mongo-backup (stopped) -->
+        <div class="glass-card container-card" data-status="stopped">
+          <div class="container-card-top">
+            <div class="container-info">
+              <div class="container-name">mongo-backup</div>
+              <div class="container-image">mongo:6</div>
+              <div class="container-meta">
+                <div class="container-status stopped">
+                  <span class="container-status-dot stopped"></span>
+                  已停止
+                </div>
+                <div class="container-ports" style="color: var(--op1-on-surface-variant); opacity: 0.5;">
+                  <i data-lucide="arrow-left-right"></i>
+                  <span style="font-size: 13px;">-</span>
+                </div>
+              </div>
+            </div>
+            <div class="context-menu-wrapper">
+              <button class="container-actions-btn" title="更多操作">
+                <i data-lucide="more-vertical"></i>
+              </button>
+              <div class="context-menu">
+                <button class="context-menu-item">
+                  <i data-lucide="play"></i>
+                  <span>启动</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="square"></i>
+                  <span>停止</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="rotate-ccw"></i>
+                  <span>重启</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item">
+                  <i data-lucide="scroll-text"></i>
+                  <span>日志</span>
+                </button>
+                <button class="context-menu-item">
+                  <i data-lucide="terminal"></i>
+                  <span>终端</span>
+                </button>
+                <div class="context-menu-divider"></div>
+                <button class="context-menu-item danger">
+                  <i data-lucide="trash-2"></i>
+                  <span>删除</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="container-resources">
+            <div class="resource-item stopped">
+              <div class="resource-label">
+                <span>CPU</span>
+                <span class="resource-value">-</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill cpu" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="resource-item stopped">
+              <div class="resource-label">
+                <span>内存</span>
+                <span class="resource-value">-</span>
+              </div>
+              <div class="resource-bar-bg">
+                <div class="resource-bar-fill mem" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       iOS Bottom Tab Bar (< 768px)
+       ============================================================ -->
+  <div class="bottom-tab-bar">
+    <button class="tab-item" data-page="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>仪表板</span>
+    </button>
+    <button class="tab-item active" data-page="containers">
+      <i data-lucide="box"></i>
+      <span>容器</span>
+    </button>
+    <button class="tab-item" data-page="files">
+      <i data-lucide="folder-open"></i>
+      <span>文件</span>
+    </button>
+    <button class="tab-item" data-page="websites">
+      <i data-lucide="globe"></i>
+      <span>网站</span>
+    </button>
+    <button class="tab-item" data-page="settings">
+      <i data-lucide="settings"></i>
+      <span>设置</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       Scripts
+       ============================================================ -->
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      html.classList.toggle('dark', !isDark);
+      html.classList.toggle('light', isDark);
+
+      const icon = document.querySelector('#themeToggleSidebar i');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    // View toggle (list / grid)
+    function switchView(mode) {
+      const listBtn = document.getElementById('viewList');
+      const gridBtn = document.getElementById('viewGrid');
+      const containerList = document.getElementById('containerList');
+
+      listBtn.classList.toggle('active', mode === 'list');
+      gridBtn.classList.toggle('active', mode === 'grid');
+
+      if (mode === 'grid') {
+        containerList.style.display = 'grid';
+        containerList.style.gridTemplateColumns = 'repeat(auto-fill, minmax(340px, 1fr))';
+      } else {
+        containerList.style.display = 'flex';
+        containerList.style.flexDirection = 'column';
+        containerList.style.gridTemplateColumns = '';
+      }
+    }
+
+    // Filter containers by status
+    function filterContainers(filter, btn) {
+      // Update segmented control active state
+      document.querySelectorAll('#segmentControl .segment-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Filter cards
+      const cards = document.querySelectorAll('.container-card');
+      cards.forEach(card => {
+        if (filter === 'all' || filter === 'images') {
+          card.style.display = '';
+        } else {
+          const status = card.getAttribute('data-status');
+          card.style.display = status === filter ? '' : 'none';
+        }
+      });
+    }
+
+    // Navigation active state
+    document.querySelectorAll('.nav-item, .tab-item').forEach(item => {
+      item.addEventListener('click', function () {
+        this.parentElement.querySelectorAll('.nav-item, .tab-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    // Close context menus when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.context-menu-wrapper')) {
+        document.querySelectorAll('.context-menu').forEach(menu => {
+          menu.classList.remove('visible');
+        });
+      }
+    });
+
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

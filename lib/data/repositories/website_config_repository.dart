@@ -172,4 +172,86 @@ class WebsiteConfigRepository {
     final api = await _ensureApi();
     return api.updateWebsiteHttps(websiteId: websiteId, request: request);
   }
+
+  // ==================== New config endpoints (R5 frontend alignment) ====================
+
+  /// Get redirect rules for a website.
+  Future<List<Map<String, dynamic>>> getRedirectRules(int websiteId) async {
+    final api = await _ensureApi();
+    return api.getWebsiteRedirectConfig({'websiteId': websiteId});
+  }
+
+  /// Update redirect rules for a website.
+  Future<void> updateRedirectRules(
+      int websiteId, Map<String, dynamic> request) async {
+    final api = await _ensureApi();
+    await api.updateWebsiteRedirectConfig(request);
+  }
+
+  /// Delete a redirect rule (via update with filtered list).
+  Future<void> deleteRedirectRule({
+    required int websiteId,
+    required int ruleId,
+  }) async {
+    final rules = await getRedirectRules(websiteId);
+    final filtered = rules.where((r) => r['id'] != ruleId).toList();
+    final api = await _ensureApi();
+    await api.updateWebsiteRedirectConfig({
+      'websiteId': websiteId,
+      'redirectRules': filtered,
+    });
+  }
+
+  /// Get CORS config for a website.
+  Future<Map<String, dynamic>> getCorsConfig(int websiteId) async {
+    final api = await _ensureApi();
+    return api.getWebsiteCorsConfig(websiteId);
+  }
+
+  /// Update CORS config.
+  Future<void> updateCorsConfig(Map<String, dynamic> request) async {
+    final api = await _ensureApi();
+    await api.updateWebsiteCorsConfig(request);
+  }
+
+  /// Get anti-leech config for a website.
+  Future<Map<String, dynamic>> getLeechConfig(int websiteId) async {
+    final api = await _ensureApi();
+    return api.getWebsiteLeechConfig({'websiteId': websiteId});
+  }
+
+  /// Update anti-leech config.
+  Future<void> updateLeechConfig(Map<String, dynamic> request) async {
+    final api = await _ensureApi();
+    await api.updateWebsiteLeechConfig(request);
+  }
+
+  /// Get real IP config for a website.
+  Future<Map<String, dynamic>> getRealIpConfig(int websiteId) async {
+    final api = await _ensureApi();
+    return api.getWebsiteRealIpConfig(websiteId);
+  }
+
+  /// Update real IP config.
+  Future<void> updateRealIpConfig(Map<String, dynamic> request) async {
+    final api = await _ensureApi();
+    await api.updateWebsiteRealIpConfig(request);
+  }
+
+  /// Search website logs.
+  Future<List<Map<String, dynamic>>> searchWebsiteLogs(
+      Map<String, dynamic> request) async {
+    final api = await _ensureApi();
+    final response = await api.searchWebsiteLogs(request);
+    return (response.data ?? const <dynamic>[])
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  /// Operate website log (download/clear).
+  Future<void> operateWebsiteLog(Map<String, dynamic> request) async {
+    final api = await _ensureApi();
+    await api.operateWebsiteLog(request);
+  }
 }

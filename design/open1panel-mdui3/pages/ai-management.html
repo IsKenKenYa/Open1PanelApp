@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - AI 管理</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+  --op1-surface: #FAFBFC;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-family-mono: ui-monospace, Menlo, monospace;
+}
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-surface: #121416;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+    <!-- Main scrollable content -->
+    <div style="max-width: 1080px; margin: 0 auto; padding: 24px 16px 100px;">
+
+        <!-- ===== Top Area ===== -->
+        <div style="margin-bottom: 24px;">
+            <h1 style="font: var(--text-headline-small); color: var(--op1-on-surface); margin-bottom: 12px;">AI 管理</h1>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span class="op1-chip op1-chip--primary">模型 3</span>
+                <span class="op1-chip">MCP服务 2</span>
+                <span class="op1-chip">GPU 可用</span>
+            </div>
+        </div>
+
+        <!-- ===== GPU Monitor Card ===== -->
+        <div class="op1-card" style="padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <i data-lucide="gpu" style="width: 20px; height: 20px; color: var(--op1-primary);"></i>
+                <span style="font: var(--text-title-medium); color: var(--op1-on-surface);">GPU 监控</span>
+                <span style="font: var(--text-body-small); color: var(--op1-on-surface-variant); margin-left: auto;">NVIDIA A100 80GB</span>
+            </div>
+
+            <!-- VRAM Progress -->
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                    <span class="gpu-metric-label">显存使用</span>
+                    <span style="font: var(--text-label-medium); color: var(--op1-on-surface-variant);">45.2 GB / 80 GB</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: 56%;"></div>
+                </div>
+                <div style="text-align: right; margin-top: 4px;">
+                    <span style="font: var(--text-label-small); color: var(--op1-muted-foreground);">56%</span>
+                </div>
+            </div>
+
+            <!-- Metrics Row -->
+            <div class="gpu-metrics-row">
+                <div>
+                    <div class="gpu-metric-label">温度</div>
+                    <div class="gpu-metric-value">62°C</div>
+                    <span style="font: var(--text-label-small); color: var(--op1-success);">正常</span>
+                </div>
+                <div>
+                    <div class="gpu-metric-label">负载</div>
+                    <div class="gpu-metric-value">34%</div>
+                </div>
+                <div>
+                    <div class="gpu-metric-label">功耗</div>
+                    <div class="gpu-metric-value">250W <span style="font: var(--text-label-small); color: var(--op1-muted-foreground); font-weight: 400;">/ 400W</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Models Section ===== -->
+        <div style="margin-bottom: 24px;">
+            <h2 class="section-title">模型</h2>
+            <div class="models-grid">
+
+                <!-- Model 1: llama3:8b -->
+                <div class="op1-card model-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                        <span class="model-card-name">llama3:8b</span>
+                        <span class="model-card-size">4.7 GB</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <span class="status-dot status-dot--running"></span>
+                        <span class="model-status-label model-status-label--running">运行中</span>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                            <span style="font: var(--text-label-small); color: var(--op1-on-surface-variant);">GPU 占用</span>
+                            <span style="font: var(--text-label-small); color: var(--op1-muted-foreground);">12.3 GB</span>
+                        </div>
+                        <div class="progress-track" style="height: 6px;">
+                            <div class="progress-fill" style="width: 15.4%;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="op1-text-btn op1-text-btn--tonal">
+                            <i data-lucide="square" style="width: 14px; height: 14px;"></i>
+                            停止
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Model 2: qwen2:7b -->
+                <div class="op1-card model-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                        <span class="model-card-name">qwen2:7b</span>
+                        <span class="model-card-size">4.4 GB</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <span class="status-dot status-dot--running"></span>
+                        <span class="model-status-label model-status-label--running">运行中</span>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                            <span style="font: var(--text-label-small); color: var(--op1-on-surface-variant);">GPU 占用</span>
+                            <span style="font: var(--text-label-small); color: var(--op1-muted-foreground);">8.5 GB</span>
+                        </div>
+                        <div class="progress-track" style="height: 6px;">
+                            <div class="progress-fill" style="width: 10.6%;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="op1-text-btn op1-text-btn--tonal">
+                            <i data-lucide="square" style="width: 14px; height: 14px;"></i>
+                            停止
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Model 3: codellama:13b -->
+                <div class="op1-card model-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                        <span class="model-card-name">codellama:13b</span>
+                        <span class="model-card-size">7.4 GB</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <span class="status-dot status-dot--stopped"></span>
+                        <span class="model-status-label model-status-label--stopped">已停止</span>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                            <span style="font: var(--text-label-small); color: var(--op1-on-surface-variant);">GPU 占用</span>
+                            <span style="font: var(--text-label-small); color: var(--op1-muted-foreground);">--</span>
+                        </div>
+                        <div class="progress-track" style="height: 6px;">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="op1-text-btn op1-text-btn--primary">
+                            <i data-lucide="play" style="width: 14px; height: 14px;"></i>
+                            启动
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== MCP Server Section ===== -->
+        <div style="margin-bottom: 24px;">
+            <h2 class="section-title">MCP 服务</h2>
+            <div class="mcp-grid">
+
+                <!-- MCP 1: filesystem -->
+                <div class="op1-card mcp-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <span class="mcp-card-name">filesystem</span>
+                        <span class="status-dot status-dot--running"></span>
+                    </div>
+                    <p class="mcp-card-desc">文件系统访问</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px;">
+                        <span class="model-status-label model-status-label--running">运行中</span>
+                        <button class="op1-text-btn op1-text-btn--outline">
+                            <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                            配置
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MCP 2: web-search -->
+                <div class="op1-card mcp-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <span class="mcp-card-name">web-search</span>
+                        <span class="status-dot status-dot--running"></span>
+                    </div>
+                    <p class="mcp-card-desc">网络搜索</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px;">
+                        <span class="model-status-label model-status-label--running">运行中</span>
+                        <button class="op1-text-btn op1-text-btn--outline">
+                            <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                            配置
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== Domain Proxy Section ===== -->
+        <div>
+            <h2 class="section-title">域名代理</h2>
+            <div class="op1-card" style="padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="globe" style="width: 18px; height: 18px; color: var(--op1-primary);"></i>
+                        <span style="font: var(--text-title-small); color: var(--op1-on-surface);">域名代理</span>
+                    </div>
+                    <div class="toggle-track toggle-track--active" id="proxyToggle" onclick="this.classList.toggle('toggle-track--active')">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; padding: 12px 16px; background: var(--op1-surface-container-low); border-radius: var(--op1-radius-md);">
+                    <span style="font: var(--text-label-medium); color: var(--op1-on-surface); font-family: var(--font-family-mono);">ai.example.com</span>
+                    <span class="proxy-arrow">
+                        <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
+                    </span>
+                    <span style="font: var(--text-label-medium); color: var(--op1-on-surface-variant); font-family: var(--font-family-mono);">localhost:11434</span>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span style="font: var(--text-label-small); color: var(--op1-success); display: inline-flex; align-items: center; gap: 4px;">
+                        <i data-lucide="check-circle-2" style="width: 12px; height: 12px;"></i>
+                        已启用
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FAB -->
+    <button class="op1-fab">
+        <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+        拉取模型
+    </button>
+
+    <!-- Breakpoint label -->
+    <div class="bp-label"></div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <style>
+        /* === Page-level styles === */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font: var(--text-body-medium);
+            background: var(--op1-background);
+            color: var(--op1-on-surface);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Card base */
+        .op1-card {
+            background: var(--op1-card);
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-card);
+            box-shadow: var(--elevation-1);
+        }
+
+        /* Chip */
+        .op1-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-medium);
+            background: var(--op1-surface-container-high);
+            color: var(--op1-on-surface-variant);
+            white-space: nowrap;
+        }
+        .op1-chip--primary {
+            background: var(--op1-primary-container);
+            color: var(--op1-on-primary-container);
+        }
+
+        /* FAB */
+        .op1-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--op1-radius-full);
+            background: var(--op1-primary-container);
+            color: var(--op1-on-primary-container);
+            font: var(--text-label-large);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--elevation-3);
+            z-index: 100;
+            transition: box-shadow var(--op1-motion-fast);
+        }
+        .op1-fab:hover { box-shadow: 0 6px 16px 4px rgba(0,0,0,0.10); }
+
+        /* Section title */
+        .section-title {
+            font: var(--text-title-medium);
+            color: var(--op1-on-surface);
+            margin-bottom: var(--op1-spacing-lg);
+        }
+
+        /* Progress bar */
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: var(--op1-radius-full);
+            background: var(--op1-surface-container-high);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: var(--op1-radius-full);
+            background: var(--op1-brand);
+            transition: width var(--op1-motion-normal);
+        }
+        .progress-fill--warning {
+            background: var(--op1-warning);
+        }
+
+        /* Status dot */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-dot--running {
+            background: var(--op1-success);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+        }
+        .status-dot--stopped {
+            background: var(--op1-outline);
+        }
+
+        /* Action button (text-button style) */
+        .op1-text-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-large);
+            border: none;
+            cursor: pointer;
+            transition: background var(--op1-motion-fast);
+        }
+        .op1-text-btn--primary {
+            background: var(--op1-primary);
+            color: var(--op1-primary-foreground);
+        }
+        .op1-text-btn--primary:hover { opacity: 0.88; }
+        .op1-text-btn--outline {
+            background: transparent;
+            color: var(--op1-primary);
+            border: 1px solid var(--op1-outline-variant);
+        }
+        .op1-text-btn--outline:hover { background: var(--op1-surface-container); }
+        .op1-text-btn--tonal {
+            background: var(--op1-surface-container-high);
+            color: var(--op1-on-surface-variant);
+        }
+        .op1-text-btn--tonal:hover { background: var(--op1-surface-container-highest); }
+
+        /* Toggle switch */
+        .toggle-track {
+            width: 52px;
+            height: 32px;
+            border-radius: var(--op1-radius-full);
+            background: var(--op1-surface-container-highest);
+            border: 2px solid var(--op1-outline);
+            position: relative;
+            cursor: pointer;
+            transition: all var(--op1-motion-normal);
+            flex-shrink: 0;
+        }
+        .toggle-track--active {
+            background: var(--op1-primary);
+            border-color: var(--op1-primary);
+        }
+        .toggle-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--op1-outline);
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all var(--op1-motion-normal);
+        }
+        .toggle-track--active .toggle-thumb {
+            background: var(--op1-on-primary);
+            left: 22px;
+        }
+
+        /* GPU metric */
+        .gpu-metric-label {
+            font: var(--text-body-small);
+            color: var(--op1-on-surface-variant);
+            margin-bottom: 4px;
+        }
+        .gpu-metric-value {
+            font: var(--text-title-medium);
+            color: var(--op1-on-surface);
+        }
+
+        /* Model card */
+        .model-card { padding: 20px; }
+        .model-card-name {
+            font: var(--text-title-small);
+            color: var(--op1-on-surface);
+            font-family: var(--font-family-mono);
+        }
+        .model-card-size {
+            font: var(--text-label-small);
+            color: var(--op1-on-surface-variant);
+            background: var(--op1-surface-container);
+            padding: 2px 10px;
+            border-radius: var(--op1-radius-full);
+        }
+        .model-status-label {
+            font: var(--text-label-medium);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .model-status-label--running { color: var(--op1-success); }
+        .model-status-label--stopped { color: var(--op1-outline); }
+
+        /* MCP card */
+        .mcp-card { padding: 20px; }
+        .mcp-card-name {
+            font: var(--text-title-small);
+            color: var(--op1-on-surface);
+            font-family: var(--font-family-mono);
+        }
+        .mcp-card-desc {
+            font: var(--text-body-small);
+            color: var(--op1-on-surface-variant);
+            margin-top: 4px;
+        }
+
+        /* Domain proxy */
+        .proxy-arrow {
+            font: var(--text-label-medium);
+            color: var(--op1-muted-foreground);
+            display: inline-flex;
+            align-items: center;
+            padding: 0 8px;
+        }
+
+        /* Responsive grid */
+        .models-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--op1-spacing-lg);
+        }
+        @media (min-width: 600px) {
+            .models-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 905px) {
+            .models-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .mcp-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--op1-spacing-lg);
+        }
+        @media (min-width: 600px) {
+            .mcp-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .gpu-metrics-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--op1-spacing-lg);
+        }
+        @media (min-width: 600px) {
+            .gpu-metrics-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 905px) {
+            .gpu-metrics-row { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* Breakpoint labels */
+        .bp-label {
+            position: fixed;
+            bottom: 80px;
+            right: 24px;
+            font: var(--text-label-small);
+            color: var(--op1-muted-foreground);
+            background: var(--op1-surface-container);
+            padding: 4px 10px;
+            border-radius: var(--op1-radius-full);
+            z-index: 99;
+            pointer-events: none;
+            display: none;
+        }
+        @media (min-width: 0px) and (max-width: 599px) {
+            .bp-label { display: block; }
+            .bp-label::after { content: 'Mobile (< 600px)'; }
+        }
+        @media (min-width: 600px) and (max-width: 904px) {
+            .bp-label { display: block; }
+            .bp-label::after { content: 'Tablet (600-904px)'; }
+        }
+        @media (min-width: 905px) {
+            .bp-label { display: block; }
+            .bp-label::after { content: 'Desktop (>= 905px)'; }
+        }
+    </style>
+</body>
+</html>

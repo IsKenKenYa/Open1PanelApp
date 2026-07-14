@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>日志 - Open1Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+  --brand:#0C9B4B;--brand-light:#E8F5EE;--brand-dark:#09803E;
+  --surface:#F1F3F5;--surface-white:#FFFFFF;
+  --text-primary:#1A1C1E;--text-secondary:#666E78;--text-hint:#9CA3AF;
+  --error:#E84026;--error-bg:#FDEAE7;
+  --success:#0C9B4B;--success-bg:#E8F5EE;
+  --warn:#F59E0B;--warn-bg:#FEF3C7;
+  --info:#3B82F6;--info-bg:#EFF6FF;
+  --border:#E5E7EB;
+  --glow:0 0 20px rgba(12,155,75,0.08);
+  --ripple:rgba(12,155,75,0.12);
+  --card-radius:24px;--btn-radius:24px;
+  --nav-h:56px;--status-h:44px;
+  --font-family:'Noto Sans SC','HarmonyOS Sans',system-ui,sans-serif;
+  --mono:'SF Mono','Menlo','Consolas',monospace;
+  --spring:cubic-bezier(.2,.9,.3,1);
+}
+[data-theme="dark"]{
+  --surface:#1A1C1E;--surface-white:#242628;
+  --text-primary:#E5E7EB;--text-secondary:#9CA3AF;--text-hint:#6B7280;
+  --error:#F87171;--error-bg:rgba(248,113,113,.1);
+  --success:#34D399;--success-bg:rgba(52,211,153,.1);
+  --warn:#FBBF24;--warn-bg:rgba(251,191,36,.1);
+  --info:#60A5FA;--info-bg:rgba(96,165,250,.1);
+  --border:#374151;
+  --glow:0 0 24px rgba(12,155,75,0.12);
+  --ripple:rgba(52,211,153,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-family);background:var(--surface);color:var(--text-primary);
+  transition:background .35s var(--spring),color .35s var(--spring);-webkit-tap-highlight-color:transparent}
+.status-bar{height:var(--status-h);background:var(--surface-white);display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;
+  color:var(--text-secondary);transition:background .35s var(--spring)}
+.page-header{background:var(--surface-white);padding:12px 20px 0;
+  transition:background .35s var(--spring)}
+.page-header h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.toolbar{display:flex;align-items:center;gap:10px;padding:12px 20px 14px;background:var(--surface-white);
+  transition:background .35s var(--spring)}
+.search-box{flex:1;display:flex;align-items:center;gap:8px;background:var(--surface);
+  border-radius:16px;padding:9px 14px;font-size:13px;color:var(--text-secondary);
+  transition:all .25s var(--spring)}
+.search-box input{border:none;background:transparent;outline:none;flex:1;font-size:13px;
+  color:var(--text-primary);font-family:var(--font-family)}
+.search-box input::placeholder{color:var(--text-hint)}
+.btn-outline{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:20px;
+  border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-size:13px;
+  font-weight:500;cursor:pointer;transition:all .25s var(--spring);flex-shrink:0;position:relative;overflow:hidden}
+.btn-outline:active{transform:scale(.95);background:var(--brand-light);color:var(--brand);border-color:var(--brand)}
+.toggle-row{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.toggle-label{font-size:12px;color:var(--text-secondary);white-space:nowrap}
+.toggle{width:44px;height:26px;border-radius:13px;background:var(--border);position:relative;
+  cursor:pointer;transition:background .25s var(--spring);flex-shrink:0}
+.toggle.on{background:var(--brand)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:#fff;transition:transform .25s var(--spring);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(18px)}
+.log-tabs{display:flex;gap:6px;padding:8px 20px 10px;background:var(--surface-white);
+  transition:background .35s var(--spring);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.log-tabs::-webkit-scrollbar{display:none}
+.log-tab{padding:7px 18px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;
+  color:var(--text-secondary);background:var(--surface);border:none;white-space:nowrap;
+  transition:all .25s var(--spring);flex-shrink:0}
+.log-tab.active{background:var(--brand);color:#fff}
+.log-tab:active{transform:scale(.95)}
+.chips{display:flex;gap:8px;padding:4px 20px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;
+  color:var(--text-secondary);background:var(--surface-white);border:1.5px solid var(--border);
+  white-space:nowrap;transition:all .25s var(--spring);flex-shrink:0}
+.chip.active{background:var(--brand-light);color:var(--brand);border-color:var(--brand)}
+[data-theme="dark"] .chip.active{background:rgba(12,155,75,.15);color:#34D399;border-color:rgba(12,155,75,.3)}
+.chip:active{transform:scale(.95)}
+.glow-row{background:var(--surface-white);border-radius:16px;box-shadow:var(--glow);
+  padding:14px 16px;margin:6px 16px;transition:all .35s var(--spring);position:relative;overflow:hidden}
+.log-time{font-size:11px;color:var(--text-hint);font-family:var(--mono);margin-bottom:4px}
+.log-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.log-level{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;
+  font-size:10px;font-weight:600;letter-spacing:.5px;font-family:var(--mono)}
+.log-level.INFO{background:var(--info-bg);color:var(--info)}
+.log-level.WARN{background:var(--warn-bg);color:var(--warn)}
+.log-level.ERROR{background:var(--error-bg);color:var(--error)}
+.log-source{font-size:11px;color:var(--text-hint);font-family:var(--mono)}
+.log-content{font-size:13px;color:var(--text-primary);font-family:var(--mono);line-height:1.5;
+  word-break:break-all;white-space:pre-wrap}
+.tab-bar{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--surface-white);
+  display:flex;align-items:center;justify-content:space-around;border-top:1px solid var(--border);
+  transition:background .35s var(--spring),border-color .35s var(--spring);z-index:50}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;
+  color:var(--text-hint);cursor:pointer;padding:4px 12px;transition:color .25s var(--spring)}
+.tab-item.active{color:var(--brand)}
+.tab-item i{width:22px;height:22px}
+.content-scroll{padding-bottom:calc(var(--nav-h) + 80px)}
+.pagination{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 20px}
+.page-btn{width:36px;height:36px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface-white);
+  color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:13px;font-weight:500;transition:all .25s var(--spring)}
+.page-btn:active{transform:scale(.9)}
+.page-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.page-btn:disabled{opacity:.4;pointer-events:none}
+.page-info{font-size:12px;color:var(--text-hint);padding:0 8px}
+.ripple-host{position:relative;overflow:hidden}
+.ripple-host .ripple-circle{position:absolute;border-radius:50%;background:var(--ripple);
+  transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(3);opacity:0}}
+</style>
+</head>
+<body>
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>09:41</span>
+  <div style="display:flex;align-items:center;gap:6px">
+    <i data-lucide="wifi" style="width:15px;height:15px"></i>
+    <i data-lucide="signal" style="width:15px;height:15px"></i>
+    <i data-lucide="battery-full" style="width:18px;height:18px"></i>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="page-header"><h1>日志</h1></div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="search-box">
+    <i data-lucide="search" style="width:16px;height:16px;flex-shrink:0;color:var(--text-hint)"></i>
+    <input type="text" placeholder="搜索日志内容...">
+  </div>
+  <button class="btn-outline ripple-host" onclick="createRipple(event)">
+    <i data-lucide="download" style="width:15px;height:15px"></i>
+    导出
+  </button>
+  <div class="toggle-row">
+    <span class="toggle-label">实时</span>
+    <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+  </div>
+</div>
+
+<!-- Log Category Tabs -->
+<div class="log-tabs">
+  <button class="log-tab active">系统</button>
+  <button class="log-tab">应用</button>
+  <button class="log-tab">安全</button>
+  <button class="log-tab">自定义</button>
+</div>
+
+<!-- Time Range Chips -->
+<div class="chips">
+  <span class="chip active">1 小时</span>
+  <span class="chip">24 小时</span>
+  <span class="chip">7 天</span>
+</div>
+
+<!-- Log Entries -->
+<div class="content-scroll">
+  <!-- Log 1: INFO -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:32:18.234</div>
+    <div class="log-header">
+      <span class="log-level INFO">INFO</span>
+      <span class="log-source">[systemd]</span>
+    </div>
+    <div class="log-content">Started Session 42 of user admin.</div>
+  </div>
+
+  <!-- Log 2: INFO -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:31:55.012</div>
+    <div class="log-header">
+      <span class="log-level INFO">INFO</span>
+      <span class="log-source">[dockerd]</span>
+    </div>
+    <div class="log-content">Container nginx-proxy health check: healthy</div>
+  </div>
+
+  <!-- Log 3: WARN -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:30:42.891</div>
+    <div class="log-header">
+      <span class="log-level WARN">WARN</span>
+      <span class="log-source">[nginx]</span>
+    </div>
+    <div class="log-content">upstream server temporarily disabled while connecting to upstream</div>
+  </div>
+
+  <!-- Log 4: ERROR -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:29:11.456</div>
+    <div class="log-header">
+      <span class="log-level ERROR">ERROR</span>
+      <span class="log-source">[mysqld]</span>
+    </div>
+    <div class="log-content">InnoDB: Error writing file '/tmp/ibLN8xP' (Errcode: 28 - No space left on device)</div>
+  </div>
+
+  <!-- Log 5: INFO -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:28:03.789</div>
+    <div class="log-header">
+      <span class="log-level INFO">INFO</span>
+      <span class="log-source">[1panel]</span>
+    </div>
+    <div class="log-content">API request: POST /api/v2/backups/create, status 200, duration 1.2s</div>
+  </div>
+
+  <!-- Log 6: WARN -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:25:37.201</div>
+    <div class="log-header">
+      <span class="log-level WARN">WARN</span>
+      <span class="log-source">[systemd]</span>
+    </div>
+    <div class="log-content">System memory usage exceeded 85% threshold</div>
+  </div>
+
+  <!-- Log 7: INFO -->
+  <div class="glow-row">
+    <div class="log-time">2025-01-15 14:22:15.643</div>
+    <div class="log-header">
+      <span class="log-level INFO">INFO</span>
+      <span class="log-source">[dockerd]</span>
+    </div>
+    <div class="log-content">Image pull: library/mysql:8.0 - Pull complete (4 layers)</div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button class="page-btn" disabled>
+      <i data-lucide="chevron-left" style="width:16px;height:16px"></i>
+    </button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <span class="page-info">...</span>
+    <button class="page-btn">12</button>
+    <button class="page-btn">
+      <i data-lucide="chevron-right" style="width:16px;height:16px"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <div class="tab-item"><i data-lucide="layout-dashboard"></i><span>概览</span></div>
+  <div class="tab-item"><i data-lucide="box"></i><span>容器</span></div>
+  <div class="tab-item"><i data-lucide="database"></i><span>数据库</span></div>
+  <div class="tab-item"><i data-lucide="folder-open"></i><span>文件</span></div>
+  <div class="tab-item active"><i data-lucide="hard-drive"></i><span>更多</span></div>
+</div>
+
+<script>
+function toggleTheme(){
+  const d=document.documentElement;
+  d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'light':'dark');
+}
+function createRipple(e){
+  const el=e.currentTarget||e.target.closest('.ripple-host');
+  if(!el)return;
+  const r=document.createElement('span');r.className='ripple-circle';
+  const rect=el.getBoundingClientRect();
+  const sz=Math.max(rect.width,rect.height)*2;
+  r.style.width=r.style.height=sz+'px';
+  r.style.left=(e.clientX||rect.left+rect.width/2)-rect.left-sz/2+'px';
+  r.style.top=(e.clientY||rect.top+rect.height/2)-rect.top-sz/2+'px';
+  el.appendChild(r);setTimeout(()=>r.remove(),600);
+}
+document.querySelectorAll('.log-tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.log-tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',function(){
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.page-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    if(this.disabled)return;
+    document.querySelectorAll('.page-btn').forEach(b=>b.classList.remove('active'));
+    if(!this.querySelector('i'))this.classList.add('active');
+  });
+});
+lucide.createIcons();
+</script>
+</body>
+</html>

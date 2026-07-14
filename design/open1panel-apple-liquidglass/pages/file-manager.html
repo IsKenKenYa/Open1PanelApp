@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 文件管理器</title>
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B;
+  --op1-brand-light:#4DB87A;
+  --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE;
+  --op1-brand-100:#C8E8D4;
+  --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A;
+  --op1-brand-900:#055A2B;
+  --op1-success:#16A34A;
+  --op1-warning:#F59E0B;
+  --op1-danger:#DC2626;
+  --op1-info:#0EA5E9;
+  --op1-glass-blur:40px;
+  --op1-glass-saturate:180%;
+  --op1-glass-alpha:0.65;
+  --op1-glass-alpha-elevated:0.85;
+  --op1-glass-border-alpha:0.20;
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.6);
+  --op1-glass-shadow-outer:0 8px 32px rgba(31,38,135,0.15);
+  --op1-surface:rgba(255,255,255,0.15);
+  --op1-surface-elevated:rgba(255,255,255,0.40);
+  --op1-surface-card:rgba(255,255,255,0.20);
+  --op1-surface-nav:rgba(255,255,255,0.65);
+  --op1-surface-popover:rgba(255,255,255,0.50);
+  --op1-surface-container-low:rgba(255,255,255,0.10);
+  --op1-surface-container:rgba(255,255,255,0.15);
+  --op1-surface-container-high:rgba(255,255,255,0.25);
+  --op1-on-surface:rgba(0,0,0,0.85);
+  --op1-on-surface-variant:rgba(0,0,0,0.55);
+  --op1-on-surface-nav:rgba(0,0,0,0.75);
+  --op1-nav-sidebar-width:260px;
+  --op1-nav-tab-height:49px;
+  --op1-font-family:system-ui,-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --op1-font-family-mono:'SF Mono',ui-monospace,Menlo,monospace;
+  --op1-radius-sm:12px;
+  --op1-radius-md:16px;
+  --op1-radius-lg:20px;
+  --op1-radius-card:22px;
+  --op1-radius-button:9999px;
+  --op1-spacing-xs:4px;
+  --op1-spacing-sm:8px;
+  --op1-spacing-md:12px;
+  --op1-spacing-lg:16px;
+  --op1-spacing-xl:24px;
+  --op1-motion-fast:200ms;
+  --op1-motion-normal:350ms;
+  --op1-easing-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --op1-border:rgba(0,0,0,0.08);
+  --op1-border-strong:rgba(0,0,0,0.15);
+  --op1-error:#FF3B30;
+  --op1-bg-gradient-start:#667eea;
+  --op1-bg-gradient-end:#764ba2;
+}
+
+html.dark {
+  --op1-surface:rgba(30,30,30,0.65);
+  --op1-surface-card:rgba(40,40,40,0.70);
+  --op1-surface-nav:rgba(30,30,30,0.75);
+  --op1-on-surface:rgba(255,255,255,0.85);
+  --op1-on-surface-variant:rgba(255,255,255,0.55);
+  --op1-border:rgba(255,255,255,0.10);
+  --op1-border-strong:rgba(255,255,255,0.18);
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.08);
+  --op1-glass-shadow-outer:0 8px 32px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--op1-font-family);
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+  color: var(--op1-on-surface);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Glass Card --- */
+.glass-card {
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: var(--op1-surface-card);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset);
+  border-radius: var(--op1-radius-card);
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+html.dark .glass-card {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--op1-nav-sidebar-width);
+  height: 100vh;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-right: 1px solid var(--op1-border);
+  box-shadow: var(--op1-glass-shadow-outer);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: var(--op1-spacing-lg);
+  transition: transform var(--op1-motion-normal);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: var(--op1-spacing-md) 0 var(--op1-spacing-xl);
+  border-bottom: 1px solid var(--op1-border);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.sidebar-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--op1-brand);
+  border-radius: var(--op1-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.sidebar-logo span {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: 10px 12px;
+  border-radius: var(--op1-radius-sm);
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.sidebar-nav a:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav a.active {
+  background: var(--op1-brand);
+  color: #fff;
+}
+
+.sidebar-nav a.active:hover {
+  background: var(--op1-brand-dark);
+}
+
+/* --- Main Content --- */
+.main-content {
+  margin-left: var(--op1-nav-sidebar-width);
+  padding: var(--op1-spacing-xl);
+  padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl) + 40px);
+  max-width: 1200px;
+}
+
+/* --- Page Header --- */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--op1-spacing-lg);
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--op1-on-surface);
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast), transform var(--op1-motion-fast);
+}
+
+.icon-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+  transform: scale(1.05);
+}
+
+html.dark .icon-btn {
+  border-color: rgba(255,255,255,0.10);
+}
+
+/* --- Breadcrumb --- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-xs);
+  margin-bottom: var(--op1-spacing-lg);
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.breadcrumb a {
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: var(--op1-radius-sm);
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+  white-space: nowrap;
+}
+
+.breadcrumb a:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.breadcrumb a.current {
+  color: var(--op1-on-surface);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.breadcrumb .separator {
+  color: var(--op1-on-surface-variant);
+  display: flex;
+  align-items: center;
+  opacity: 0.4;
+}
+
+/* --- Toolbar --- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  margin-bottom: var(--op1-spacing-lg);
+  flex-wrap: wrap;
+}
+
+.toolbar .view-group {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--op1-radius-sm);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-container-low);
+  border: 1px solid var(--op1-border);
+}
+
+.toolbar .view-group .icon-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.toolbar .view-group .icon-btn.active {
+  background: var(--op1-surface-elevated);
+  box-shadow: var(--op1-glass-highlight-inset);
+  color: var(--op1-on-surface);
+}
+
+.toolbar .sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--op1-on-surface-variant);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+html.dark .toolbar .sort-btn {
+  border-color: rgba(255,255,255,0.10);
+}
+
+.toolbar .sort-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: var(--op1-radius-button);
+  background: var(--op1-brand);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 12px rgba(12,155,75,0.35);
+  transition: background var(--op1-motion-fast), transform var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+  margin-left: auto;
+}
+
+.upload-btn:hover {
+  background: var(--op1-brand-dark);
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(12,155,75,0.45);
+}
+
+/* --- File List Container --- */
+.file-list-container {
+  border-radius: var(--op1-radius-card);
+  overflow: hidden;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-card);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset), var(--op1-glass-shadow-outer);
+}
+
+html.dark .file-list-container {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* --- File List Header --- */
+.file-list-header {
+  display: grid;
+  grid-template-columns: 1fr 100px 140px 130px;
+  padding: 10px var(--op1-spacing-lg);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--op1-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--op1-border);
+  background: var(--op1-surface-container-low);
+  user-select: none;
+}
+
+.file-list-header .col-name { padding-left: 44px; }
+.file-list-header .col-size,
+.file-list-header .col-time,
+.file-list-header .col-perm { text-align: right; }
+
+/* --- File Row --- */
+.file-row {
+  display: grid;
+  grid-template-columns: 1fr 100px 140px 130px;
+  align-items: center;
+  padding: 0 var(--op1-spacing-lg);
+  height: 52px;
+  border-bottom: 1px solid var(--op1-border);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast);
+  position: relative;
+}
+
+.file-row:last-child {
+  border-bottom: none;
+}
+
+.file-row:hover {
+  background: var(--op1-surface-container-high);
+}
+
+.file-row .cell-name {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  min-width: 0;
+}
+
+.file-row .cell-name .file-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.file-row .cell-name .file-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--op1-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-row .cell-size,
+.file-row .cell-time,
+.file-row .cell-perm {
+  font-size: 13px;
+  color: var(--op1-on-surface-variant);
+  text-align: right;
+  font-family: var(--op1-font-family-mono);
+  white-space: nowrap;
+}
+
+.file-row .cell-perm {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* --- Bottom Info Bar --- */
+.info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+  font-size: 13px;
+  color: var(--op1-on-surface-variant);
+}
+
+/* --- FAB --- */
+.fab {
+  position: fixed;
+  bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  right: var(--op1-spacing-xl);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: var(--op1-glass-highlight-inset), 0 8px 32px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-brand);
+  cursor: pointer;
+  z-index: 40;
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+.fab:hover {
+  transform: scale(1.1);
+  box-shadow: var(--op1-glass-highlight-inset), 0 12px 40px rgba(0,0,0,0.25);
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+html.dark .fab {
+  border-color: rgba(255,255,255,0.15);
+}
+
+/* --- iOS Tab Bar --- */
+.ios-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--op1-nav-tab-height);
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-top: 1px solid var(--op1-border);
+  z-index: 50;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 var(--op1-spacing-sm);
+}
+
+.ios-tab-bar .tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color var(--op1-motion-fast);
+}
+
+.ios-tab-bar .tab-item.active {
+  color: var(--op1-brand);
+}
+
+.ios-tab-bar .tab-item span {
+  font-weight: 500;
+}
+
+/* --- iOS Swipe Actions --- */
+.file-row-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.file-row-wrapper .swipe-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--op1-motion-fast);
+}
+
+.file-row-wrapper .swipe-actions button {
+  height: 100%;
+  padding: 0 20px;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.file-row-wrapper .swipe-actions .share-action {
+  background: var(--op1-info);
+}
+
+.file-row-wrapper .swipe-actions .delete-action {
+  background: var(--op1-error);
+}
+
+/* --- Grid View --- */
+.file-grid {
+  display: none;
+  padding: var(--op1-spacing-lg);
+  gap: var(--op1-spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+}
+
+.file-grid.active { display: grid; }
+.file-list-wrapper.hidden { display: none; }
+
+.file-grid .grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--op1-spacing-xs);
+  padding: var(--op1-spacing-md) var(--op1-spacing-sm);
+  border-radius: var(--op1-radius-md);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast);
+  text-align: center;
+}
+
+.file-grid .grid-item:hover {
+  background: var(--op1-surface-container-high);
+}
+
+.file-grid .grid-item .grid-icon {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.file-grid .grid-item .grid-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--op1-on-surface);
+  word-break: break-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; }
+  .ios-tab-bar { display: flex; }
+
+  .file-list-header { display: none; }
+
+  .file-row {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+    gap: 2px;
+  }
+
+  .file-row .cell-size {
+    display: none;
+  }
+  .file-row .cell-time {
+    text-align: left;
+    font-size: 12px;
+    padding-left: 44px;
+    opacity: 0.7;
+  }
+  .file-row .cell-perm {
+    display: none;
+  }
+  .file-row .cell-name .file-name {
+    font-size: 15px;
+  }
+
+  .fab {
+    bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-lg));
+    right: var(--op1-spacing-lg);
+  }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+<!-- Sidebar (macOS) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">1P</div>
+    <span>1Panel Client</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> 仪表板</a>
+    <a href="#"><i data-lucide="box" style="width:18px;height:18px;"></i> 容器</a>
+    <a href="#"><i data-lucide="database" style="width:18px;height:18px;"></i> 数据库</a>
+    <a href="#" class="active"><i data-lucide="folder-open" style="width:18px;height:18px;"></i> 文件</a>
+    <a href="#"><i data-lucide="globe" style="width:18px;height:18px;"></i> 网站</a>
+    <a href="#"><i data-lucide="shield" style="width:18px;height:18px;"></i> 防火墙</a>
+    <a href="#"><i data-lucide="clock" style="width:18px;height:18px;"></i> 计划任务</a>
+    <a href="#"><i data-lucide="terminal" style="width:18px;height:18px;"></i> 终端</a>
+    <a href="#"><i data-lucide="brain" style="width:18px;height:18px;"></i> AI 管理</a>
+    <a href="#"><i data-lucide="settings" style="width:18px;height:18px;"></i> 设置</a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:12px;color:var(--op1-on-surface-variant);">
+    <i data-lucide="sun" style="width:16px;height:16px;cursor:pointer;" onclick="toggleTheme()"></i>
+    <span style="margin-left:auto;">macOS 26</span>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>文件管理器</h1>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--op1-radius-button);font-size:13px;font-weight:500;backdrop-filter:blur(12px);background:var(--op1-surface-elevated);border:1px solid rgba(255,255,255,0.25);color:var(--op1-on-surface-variant);">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--op1-success);box-shadow:0 0 6px var(--op1-success);"></span>
+        192.168.1.100
+      </div>
+      <button class="icon-btn" onclick="toggleTheme()" aria-label="切换主题">
+        <i data-lucide="sun" style="width:18px;height:18px;" class="theme-icon"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">首页</a>
+    <span class="separator"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
+    <a href="#">/</a>
+    <span class="separator"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
+    <a href="#">www</a>
+    <span class="separator"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
+    <a href="#" class="current">1panel</a>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="view-group">
+      <button class="icon-btn active" id="btn-list" onclick="setView('list')" title="列表视图">
+        <i data-lucide="list" style="width:16px;height:16px;"></i>
+      </button>
+      <button class="icon-btn" id="btn-grid" onclick="setView('grid')" title="网格视图">
+        <i data-lucide="grid-2x2" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+    <button class="sort-btn" onclick="cycleSort()">
+      <i data-lucide="arrow-up-down" style="width:14px;height:14px;"></i>
+      <span id="sort-label">名称</span>
+    </button>
+    <button class="upload-btn">
+      <i data-lucide="upload" style="width:16px;height:16px;"></i>
+      上传文件
+    </button>
+  </div>
+
+  <!-- File List View -->
+  <div class="file-list-wrapper" id="file-list-wrapper">
+    <div class="file-list-container">
+      <div class="file-list-header">
+        <div class="col-name">名称</div>
+        <div class="col-size">大小</div>
+        <div class="col-time">修改时间</div>
+        <div class="col-perm">权限</div>
+      </div>
+
+      <!-- File Rows -->
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128193;</span>
+            <span class="file-name">backups/</span>
+          </div>
+          <div class="cell-size">-</div>
+          <div class="cell-time">-</div>
+          <div class="cell-perm">drwxr-xr-x</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128193;</span>
+            <span class="file-name">configs/</span>
+          </div>
+          <div class="cell-size">-</div>
+          <div class="cell-time">-</div>
+          <div class="cell-perm">drwxr-xr-x</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128193;</span>
+            <span class="file-name">logs/</span>
+          </div>
+          <div class="cell-size">-</div>
+          <div class="cell-time">-</div>
+          <div class="cell-perm">drwxr-xr-x</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128196;</span>
+            <span class="file-name">docker-compose.yml</span>
+          </div>
+          <div class="cell-size">2.4 KB</div>
+          <div class="cell-time">2025-01-15</div>
+          <div class="cell-perm">-rw-r--r--</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128196;</span>
+            <span class="file-name">nginx.conf</span>
+          </div>
+          <div class="cell-size">1.8 KB</div>
+          <div class="cell-time">2025-01-10</div>
+          <div class="cell-perm">-rw-r--r--</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128196;</span>
+            <span class="file-name">1panel.db</span>
+          </div>
+          <div class="cell-size">45.2 MB</div>
+          <div class="cell-time">2025-01-14</div>
+          <div class="cell-perm">-rw-r-----</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128196;</span>
+            <span class="file-name">app.log</span>
+          </div>
+          <div class="cell-size">128 KB</div>
+          <div class="cell-time">2025-01-15</div>
+          <div class="cell-perm">-rw-r--r--</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128193;</span>
+            <span class="file-name">ssl/</span>
+          </div>
+          <div class="cell-size">-</div>
+          <div class="cell-time">-</div>
+          <div class="cell-perm">drwxr-xr-x</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128196;</span>
+            <span class="file-name">README.md</span>
+          </div>
+          <div class="cell-size">4.1 KB</div>
+          <div class="cell-time">2024-12-20</div>
+          <div class="cell-perm">-rw-r--r--</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <div class="file-row-wrapper">
+        <div class="file-row">
+          <div class="cell-name">
+            <span class="file-icon">&#128444;</span>
+            <span class="file-name">screenshot.png</span>
+          </div>
+          <div class="cell-size">2.1 MB</div>
+          <div class="cell-time">2025-01-08</div>
+          <div class="cell-perm">-rw-r--r--</div>
+        </div>
+        <div class="swipe-actions">
+          <button class="share-action"><i data-lucide="share-2" style="width:14px;height:14px;"></i> 分享</button>
+          <button class="delete-action"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 删除</button>
+        </div>
+      </div>
+
+      <!-- Info Bar -->
+      <div class="info-bar">
+        <span>共 10 项, 3 个文件夹, 7 个文件</span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Grid View -->
+  <div class="file-grid" id="file-grid">
+    <div class="grid-item">
+      <span class="grid-icon">&#128193;</span>
+      <span class="grid-name">backups/</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128193;</span>
+      <span class="grid-name">configs/</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128193;</span>
+      <span class="grid-name">logs/</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128196;</span>
+      <span class="grid-name">docker-compose.yml</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128196;</span>
+      <span class="grid-name">nginx.conf</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128196;</span>
+      <span class="grid-name">1panel.db</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128196;</span>
+      <span class="grid-name">app.log</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128193;</span>
+      <span class="grid-name">ssl/</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128196;</span>
+      <span class="grid-name">README.md</span>
+    </div>
+    <div class="grid-item">
+      <span class="grid-icon">&#128444;</span>
+      <span class="grid-name">screenshot.png</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- FAB -->
+<button class="fab" aria-label="新建">
+  <i data-lucide="plus" style="width:24px;height:24px;"></i>
+</button>
+
+<!-- iOS Tab Bar -->
+<nav class="ios-tab-bar">
+  <div class="tab-item"><i data-lucide="layout-dashboard" style="width:20px;height:20px;"></i><span>仪表板</span></div>
+  <div class="tab-item"><i data-lucide="box" style="width:20px;height:20px;"></i><span>容器</span></div>
+  <div class="tab-item"><i data-lucide="database" style="width:20px;height:20px;"></i><span>数据库</span></div>
+  <div class="tab-item active"><i data-lucide="folder-open" style="width:20px;height:20px;"></i><span>文件</span></div>
+  <div class="tab-item"><i data-lucide="settings" style="width:20px;height:20px;"></i><span>设置</span></div>
+</nav>
+
+<script>
+lucide.createIcons();
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.classList.toggle('light');
+  html.classList.toggle('dark');
+}
+
+let currentView = 'list';
+function setView(view) {
+  currentView = view;
+  const listWrapper = document.getElementById('file-list-wrapper');
+  const grid = document.getElementById('file-grid');
+  const btnList = document.getElementById('btn-list');
+  const btnGrid = document.getElementById('btn-grid');
+
+  if (view === 'list') {
+    listWrapper.classList.remove('hidden');
+    grid.classList.remove('active');
+    btnList.classList.add('active');
+    btnGrid.classList.remove('active');
+  } else {
+    listWrapper.classList.add('hidden');
+    grid.classList.add('active');
+    btnList.classList.remove('active');
+    btnGrid.classList.add('active');
+  }
+}
+
+const sortOptions = ['名称', '大小', '时间'];
+let sortIndex = 0;
+function cycleSort() {
+  sortIndex = (sortIndex + 1) % sortOptions.length;
+  document.getElementById('sort-label').textContent = sortOptions[sortIndex];
+}
+
+// iOS swipe-to-reveal
+if ('ontouchstart' in window) {
+  document.querySelectorAll('.file-row-wrapper').forEach(wrapper => {
+    const row = wrapper.querySelector('.file-row');
+    const actions = wrapper.querySelector('.swipe-actions');
+    let startX = 0, currentX = 0, swiped = false;
+
+    row.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      currentX = 0;
+    }, { passive: true });
+
+    row.addEventListener('touchmove', e => {
+      currentX = startX - e.touches[0].clientX;
+      if (currentX > 60) {
+        actions.style.opacity = '1';
+        actions.style.pointerEvents = 'auto';
+        swiped = true;
+      } else if (currentX < -10 && swiped) {
+        actions.style.opacity = '0';
+        actions.style.pointerEvents = 'none';
+        swiped = false;
+      }
+    }, { passive: true });
+
+    row.addEventListener('touchend', () => {
+      if (currentX <= 0 && swiped) {
+        actions.style.opacity = '0';
+        actions.style.pointerEvents = 'none';
+        swiped = false;
+      }
+    });
+  });
+}
+</script>
+</body>
+</html>

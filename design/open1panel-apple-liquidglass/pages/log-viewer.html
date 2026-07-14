@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 日志查看</title>
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B;
+  --op1-brand-light:#4DB87A;
+  --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE;
+  --op1-brand-100:#C8E8D4;
+  --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A;
+  --op1-brand-900:#055A2B;
+  --op1-success:#16A34A;
+  --op1-warning:#F59E0B;
+  --op1-danger:#DC2626;
+  --op1-info:#0EA5E9;
+  --op1-glass-blur:40px;
+  --op1-glass-saturate:180%;
+  --op1-glass-alpha:0.65;
+  --op1-glass-alpha-elevated:0.85;
+  --op1-glass-border-alpha:0.20;
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.6);
+  --op1-glass-shadow-outer:0 8px 32px rgba(31,38,135,0.15);
+  --op1-surface:rgba(255,255,255,0.15);
+  --op1-surface-elevated:rgba(255,255,255,0.40);
+  --op1-surface-card:rgba(255,255,255,0.20);
+  --op1-surface-nav:rgba(255,255,255,0.65);
+  --op1-surface-popover:rgba(255,255,255,0.50);
+  --op1-surface-container-low:rgba(255,255,255,0.10);
+  --op1-surface-container:rgba(255,255,255,0.15);
+  --op1-surface-container-high:rgba(255,255,255,0.25);
+  --op1-on-surface:rgba(0,0,0,0.85);
+  --op1-on-surface-variant:rgba(0,0,0,0.55);
+  --op1-on-surface-nav:rgba(0,0,0,0.75);
+  --op1-nav-sidebar-width:260px;
+  --op1-nav-tab-height:49px;
+  --op1-font-family:system-ui,-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --op1-font-family-mono:'SF Mono',ui-monospace,Menlo,monospace;
+  --op1-radius-sm:12px;
+  --op1-radius-md:16px;
+  --op1-radius-lg:20px;
+  --op1-radius-card:22px;
+  --op1-radius-button:9999px;
+  --op1-spacing-xs:4px;
+  --op1-spacing-sm:8px;
+  --op1-spacing-md:12px;
+  --op1-spacing-lg:16px;
+  --op1-spacing-xl:24px;
+  --op1-motion-fast:200ms;
+  --op1-motion-normal:350ms;
+  --op1-easing-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --op1-border:rgba(0,0,0,0.08);
+  --op1-border-strong:rgba(0,0,0,0.15);
+  --op1-error:#FF3B30;
+  --op1-bg-gradient-start:#667eea;
+  --op1-bg-gradient-end:#764ba2;
+  /* Log level colors */
+  --log-info:#0EA5E9;
+  --log-info-bg:rgba(14,165,233,0.12);
+  --log-warn:#F59E0B;
+  --log-warn-bg:rgba(245,158,11,0.12);
+  --log-error:#FF3B30;
+  --log-error-bg:rgba(255,59,48,0.12);
+  --log-debug:#9CA3AF;
+  --log-debug-bg:rgba(156,163,175,0.10);
+}
+
+html.dark {
+  --op1-surface:rgba(30,30,30,0.65);
+  --op1-surface-card:rgba(40,40,40,0.70);
+  --op1-surface-nav:rgba(30,30,30,0.75);
+  --op1-on-surface:rgba(255,255,255,0.85);
+  --op1-on-surface-variant:rgba(255,255,255,0.55);
+  --op1-border:rgba(255,255,255,0.10);
+  --op1-border-strong:rgba(255,255,255,0.18);
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.08);
+  --op1-glass-shadow-outer:0 8px 32px rgba(0,0,0,0.3);
+  --op1-error:#FF6961;
+  --log-info-bg:rgba(14,165,233,0.18);
+  --log-warn-bg:rgba(245,158,11,0.18);
+  --log-error-bg:rgba(255,59,48,0.18);
+  --log-debug-bg:rgba(156,163,175,0.14);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--op1-font-family);
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+  color: var(--op1-on-surface);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Glass Card --- */
+.glass-card {
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: var(--op1-surface-card);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset);
+  border-radius: var(--op1-radius-card);
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+html.dark .glass-card {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--op1-nav-sidebar-width);
+  height: 100vh;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-right: 1px solid var(--op1-border);
+  box-shadow: var(--op1-glass-shadow-outer);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: var(--op1-spacing-lg);
+  transition: transform var(--op1-motion-normal);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: var(--op1-spacing-md) 0 var(--op1-spacing-xl);
+  border-bottom: 1px solid var(--op1-border);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.sidebar-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--op1-brand);
+  border-radius: var(--op1-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.sidebar-logo span {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: 10px 12px;
+  border-radius: var(--op1-radius-sm);
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.sidebar-nav a:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav a.active {
+  background: var(--op1-brand);
+  color: #fff;
+}
+
+.sidebar-nav a.active:hover {
+  background: var(--op1-brand-dark);
+}
+
+/* --- Main Content --- */
+.main-content {
+  margin-left: var(--op1-nav-sidebar-width);
+  padding: var(--op1-spacing-xl);
+  padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  max-width: 1200px;
+}
+
+/* --- Page Header --- */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--op1-spacing-xl);
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--op1-on-surface);
+}
+
+.page-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+}
+
+/* --- Search & Toolbar --- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  margin-bottom: var(--op1-spacing-lg);
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: 10px 16px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  transition: border-color var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+}
+
+.search-box:focus-within {
+  border-color: var(--op1-brand);
+  box-shadow: 0 0 0 3px rgba(12,155,75,0.15);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--op1-on-surface);
+  font-family: var(--op1-font-family);
+}
+
+.search-box input::placeholder {
+  color: var(--op1-on-surface-variant);
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: 10px 18px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--op1-on-surface);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast), transform var(--op1-motion-fast);
+  white-space: nowrap;
+  font-family: var(--op1-font-family);
+}
+
+.toolbar-btn:hover {
+  background: var(--op1-brand);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.toolbar-btn.active-toggle {
+  background: var(--op1-brand);
+  color: #fff;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.icon-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.theme-btn {
+  position: fixed;
+  top: var(--op1-spacing-lg);
+  right: var(--op1-spacing-lg);
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.theme-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+/* --- Segmented Control --- */
+.segmented-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid var(--op1-border);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.segmented-control button {
+  padding: 7px 18px;
+  border: none;
+  border-radius: var(--op1-radius-button);
+  background: transparent;
+  color: var(--op1-on-surface-variant);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+  font-family: var(--op1-font-family);
+  white-space: nowrap;
+}
+
+.segmented-control button:hover {
+  color: var(--op1-on-surface);
+}
+
+.segmented-control button.active {
+  background: var(--op1-brand);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(12,155,75,0.25);
+}
+
+/* --- Time Range Chips --- */
+.time-range-chips {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  margin-bottom: var(--op1-spacing-lg);
+  flex-wrap: wrap;
+}
+
+.time-chip {
+  padding: 6px 16px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid var(--op1-border);
+  color: var(--op1-on-surface-variant);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast), border-color var(--op1-motion-fast);
+  font-family: var(--op1-font-family);
+  white-space: nowrap;
+}
+
+.time-chip:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.time-chip.active {
+  background: rgba(12,155,75,0.12);
+  border-color: var(--op1-brand);
+  color: var(--op1-brand);
+}
+
+/* --- Filters Row --- */
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-lg);
+  margin-bottom: var(--op1-spacing-lg);
+  flex-wrap: wrap;
+}
+
+/* --- Log List Card --- */
+.log-list-card {
+  padding: var(--op1-spacing-lg);
+  margin-bottom: var(--op1-spacing-lg);
+}
+
+.log-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--op1-spacing-md);
+  padding: 10px var(--op1-spacing-md);
+  border-radius: var(--op1-radius-sm);
+  font-family: var(--op1-font-family-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  transition: background var(--op1-motion-fast);
+  word-break: break-all;
+}
+
+.log-entry:hover {
+  background: var(--op1-surface-container-low);
+}
+
+.log-entry .log-timestamp {
+  color: var(--op1-on-surface-variant);
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+.log-entry .log-level-badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--op1-radius-button);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.log-entry .log-level-badge.info {
+  background: var(--log-info-bg);
+  color: var(--log-info);
+}
+
+.log-entry .log-level-badge.warn {
+  background: var(--log-warn-bg);
+  color: var(--log-warn);
+}
+
+.log-entry .log-level-badge.error {
+  background: var(--log-error-bg);
+  color: var(--log-error);
+}
+
+.log-entry .log-level-badge.debug {
+  background: var(--log-debug-bg);
+  color: var(--log-debug);
+}
+
+.log-entry .log-source {
+  flex-shrink: 0;
+  color: var(--op1-on-surface-variant);
+  font-size: 12px;
+}
+
+.log-entry .log-message {
+  flex: 1;
+  color: var(--op1-on-surface);
+}
+
+.log-entry.log-entry-error {
+  background: var(--log-error-bg);
+}
+
+.log-entry.log-entry-warn {
+  background: var(--log-warn-bg);
+}
+
+/* --- Pagination --- */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+  border-radius: var(--op1-radius-card);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--op1-on-surface-variant);
+}
+
+.pagination-info strong {
+  color: var(--op1-on-surface);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--op1-radius-sm);
+  border: 1px solid var(--op1-border);
+  background: transparent;
+  color: var(--op1-on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+  font-family: var(--op1-font-family);
+}
+
+.pagination-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.pagination-btn.active {
+  background: var(--op1-brand);
+  color: #fff;
+  border-color: var(--op1-brand);
+}
+
+/* --- Live Indicator --- */
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--op1-success);
+  box-shadow: 0 0 6px var(--op1-success);
+  animation: live-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.live-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--op1-success);
+}
+
+/* --- Mobile Bottom Tab Bar --- */
+.bottom-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--op1-nav-tab-height);
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-top: 1px solid var(--op1-border);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  z-index: 50;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 var(--op1-spacing-lg);
+}
+
+.bottom-tab-bar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  transition: color var(--op1-motion-fast);
+}
+
+.bottom-tab-bar a.active { color: var(--op1-brand); }
+
+/* --- Responsive --- */
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+  .bottom-tab-bar { display: flex; }
+  .main-content {
+    margin-left: 0;
+    padding: var(--op1-spacing-lg);
+    padding-top: var(--op1-spacing-lg);
+    padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  }
+  .page-header h1 { font-size: 22px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .search-box { min-width: 100%; }
+  .segmented-control { width: 100%; }
+  .segmented-control button { flex: 1; text-align: center; padding: 7px 10px; font-size: 12px; }
+  .time-range-chips { width: 100%; }
+  .time-chip { flex: 1; text-align: center; }
+  .filters-row { flex-direction: column; align-items: stretch; gap: var(--op1-spacing-md); }
+  .pagination-bar { flex-direction: column; gap: var(--op1-spacing-md); text-align: center; }
+  .theme-btn { top: auto; bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-lg)); right: var(--op1-spacing-lg); }
+  .log-entry { font-size: 11px; flex-wrap: wrap; }
+  .log-entry .log-timestamp { font-size: 11px; }
+  .log-entry .log-source { font-size: 11px; }
+}
+
+@media (min-width: 768px) {
+  .bottom-tab-bar { display: none; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-btn" onclick="toggleTheme()" aria-label="切换主题">
+  <i data-lucide="sun" id="theme-icon-sun" style="width:18px;height:18px;display:none;"></i>
+  <i data-lucide="moon" id="theme-icon-moon" style="width:18px;height:18px;"></i>
+</button>
+
+<!-- Sidebar (macOS >=768px) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">1P</div>
+    <span>1Panel</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#">
+      <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+      仪表板
+    </a>
+    <a href="#">
+      <i data-lucide="container" style="width:18px;height:18px;"></i>
+      容器管理
+    </a>
+    <a href="#">
+      <i data-lucide="database" style="width:18px;height:18px;"></i>
+      数据库
+    </a>
+    <a href="#">
+      <i data-lucide="folder-open" style="width:18px;height:18px;"></i>
+      文件管理
+    </a>
+    <a href="log-viewer.html" class="active">
+      <i data-lucide="scroll-text" style="width:18px;height:18px;"></i>
+      日志
+    </a>
+    <a href="#">
+      <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      设置
+    </a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>日志</h1>
+    <div class="header-right">
+      <div class="live-indicator" id="live-indicator" style="display:none;">
+        <span class="live-dot"></span>
+        <span class="live-text">实时跟踪中</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar: Search + Export + Live Toggle -->
+  <div class="toolbar">
+    <div class="search-box">
+      <i data-lucide="search" style="width:16px;height:16px;color:var(--op1-on-surface-variant);flex-shrink:0;"></i>
+      <input type="text" placeholder="搜索日志内容、来源或级别..." id="log-search">
+    </div>
+    <button class="toolbar-btn" onclick="exportLogs()">
+      <i data-lucide="download" style="width:16px;height:16px;"></i>
+      导出
+    </button>
+    <button class="toolbar-btn" id="live-toggle-btn" onclick="toggleLive()">
+      <i data-lucide="radio" style="width:16px;height:16px;"></i>
+      实时跟踪
+    </button>
+  </div>
+
+  <!-- Segmented Control: Log Type -->
+  <div class="filters-row">
+    <div class="segmented-control" id="log-type-segment">
+      <button class="active" onclick="switchSegment(this)">系统</button>
+      <button onclick="switchSegment(this)">应用</button>
+      <button onclick="switchSegment(this)">安全</button>
+      <button onclick="switchSegment(this)">自定义</button>
+    </div>
+  </div>
+
+  <!-- Time Range Chips -->
+  <div class="time-range-chips" id="time-range-chips">
+    <span class="time-chip active" onclick="switchTimeRange(this)">最近1小时</span>
+    <span class="time-chip" onclick="switchTimeRange(this)">最近24小时</span>
+    <span class="time-chip" onclick="switchTimeRange(this)">最近7天</span>
+  </div>
+
+  <!-- Log List -->
+  <div class="glass-card log-list-card">
+    <div class="log-entries" id="log-entries">
+
+      <!-- INFO - system -->
+      <div class="log-entry">
+        <span class="log-timestamp">[2025-01-15 15:32:01]</span>
+        <span class="log-level-badge info">INFO</span>
+        <span class="log-source">[system]</span>
+        <span class="log-message">系统启动完成, 耗时 2.3s</span>
+      </div>
+
+      <!-- WARN - database -->
+      <div class="log-entry log-entry-warn">
+        <span class="log-timestamp">[2025-01-15 15:32:05]</span>
+        <span class="log-level-badge warn">WARN</span>
+        <span class="log-source">[database]</span>
+        <span class="log-message">MySQL 连接池接近上限 (23/25)</span>
+      </div>
+
+      <!-- INFO - app -->
+      <div class="log-entry">
+        <span class="log-timestamp">[2025-01-15 15:33:12]</span>
+        <span class="log-level-badge info">INFO</span>
+        <span class="log-source">[app]</span>
+        <span class="log-message">用户 admin 登录成功</span>
+      </div>
+
+      <!-- ERROR - ssl -->
+      <div class="log-entry log-entry-error">
+        <span class="log-timestamp">[2025-01-15 15:35:44]</span>
+        <span class="log-level-badge error">ERROR</span>
+        <span class="log-source">[ssl]</span>
+        <span class="log-message">SSL 证书即将过期 (剩余 7 天)</span>
+      </div>
+
+      <!-- INFO - container -->
+      <div class="log-entry">
+        <span class="log-timestamp">[2025-01-15 15:36:01]</span>
+        <span class="log-level-badge info">INFO</span>
+        <span class="log-source">[container]</span>
+        <span class="log-message">nginx-proxy 健康检查通过</span>
+      </div>
+
+      <!-- DEBUG - api -->
+      <div class="log-entry">
+        <span class="log-timestamp">[2025-01-15 15:38:22]</span>
+        <span class="log-level-badge debug">DEBUG</span>
+        <span class="log-source">[api]</span>
+        <span class="log-message">API 请求 /api/v2/dashboard, 耗时 45ms</span>
+      </div>
+
+      <!-- WARN - backup -->
+      <div class="log-entry log-entry-warn">
+        <span class="log-timestamp">[2025-01-15 15:40:15]</span>
+        <span class="log-level-badge warn">WARN</span>
+        <span class="log-source">[backup]</span>
+        <span class="log-message">备份空间不足 (剩余 5 GB)</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-bar">
+    <div class="pagination-info">
+      显示 <strong>1-7</strong> 条，共 <strong>1,234</strong> 条
+    </div>
+    <div class="pagination-controls">
+      <button class="pagination-btn" aria-label="上一页" style="opacity:0.4;pointer-events:none;">
+        <i data-lucide="chevron-left" style="width:16px;height:16px;"></i>
+      </button>
+      <button class="pagination-btn active">1</button>
+      <button class="pagination-btn">2</button>
+      <button class="pagination-btn">3</button>
+      <button class="pagination-btn" style="pointer-events:none;opacity:0.4;">...</button>
+      <button class="pagination-btn">176</button>
+      <button class="pagination-btn" aria-label="下一页">
+        <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Bottom Tab Bar (iOS <768px) -->
+<nav class="bottom-tab-bar">
+  <a href="#">
+    <i data-lucide="layout-dashboard" style="width:22px;height:22px;"></i>
+    仪表板
+  </a>
+  <a href="#">
+    <i data-lucide="container" style="width:22px;height:22px;"></i>
+    容器
+  </a>
+  <a href="#">
+    <i data-lucide="database" style="width:22px;height:22px;"></i>
+    数据库
+  </a>
+  <a href="#">
+    <i data-lucide="folder-open" style="width:22px;height:22px;"></i>
+    文件
+  </a>
+  <a href="log-viewer.html" class="active">
+    <i data-lucide="scroll-text" style="width:22px;height:22px;"></i>
+    日志
+  </a>
+</nav>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+    html.classList.toggle('dark', !isDark);
+    html.classList.toggle('light', isDark);
+    document.getElementById('theme-icon-sun').style.display = isDark ? 'none' : 'block';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  }
+
+  function switchSegment(el) {
+    el.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function switchTimeRange(el) {
+    document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleLive() {
+    const btn = document.getElementById('live-toggle-btn');
+    const indicator = document.getElementById('live-indicator');
+    const isActive = btn.classList.contains('active-toggle');
+    btn.classList.toggle('active-toggle', !isActive);
+    indicator.style.display = isActive ? 'none' : 'flex';
+  }
+
+  function exportLogs() {
+    // placeholder
+  }
+</script>
+</body>
+</html>

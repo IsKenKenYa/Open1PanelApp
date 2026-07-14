@@ -1,0 +1,138 @@
+/* ============================================================
+   Open1Panel — Windows WinUI3 Fluent Design CSS Tokens
+   Version: 1.0.0
+   Platform: Windows (Fluent Design / WinUI3)
+   ============================================================ */
+
+/* ── Light Mode ─────────────────────────────────────────────── */
+:root {
+
+  /* Brand (shared across platforms) */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Error */
+  --op1-error: #C42B1C;
+  --op1-error-container: #FDE7E9;
+
+  /* Acrylic Material */
+  --op1-acrylic-blur: 30px;
+  --op1-acrylic-noise-opacity: 0.03;
+  --op1-acrylic-tint-opacity: 0.80;
+  --op1-acrylic-luminosity: 0.95;
+
+  /* Mica Material */
+  --op1-mica-opacity: 0.85;
+  --op1-mica-blur: 60px;
+
+  /* Reveal Highlight */
+  --op1-reveal-hover: rgba(255, 255, 255, 0.08);
+  --op1-reveal-pressed: rgba(255, 255, 255, 0.04);
+  --op1-reveal-border: rgba(255, 255, 255, 0.12);
+
+  /* Surface */
+  --op1-surface: #F3F3F3;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-popover: #FCFCFC;
+  --op1-surface-nav: rgba(243, 243, 243, 0.80);
+  --op1-surface-nav-top: rgba(243, 243, 243, 0.70);
+  --op1-surface-container-low: #F9F9F9;
+  --op1-surface-container: #F3F3F3;
+  --op1-surface-container-high: #EDEDED;
+
+  /* On-Surface */
+  --op1-on-surface: #1A1A1A;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1A1A;
+  --op1-on-surface-card: #1A1A1A;
+
+  /* Background */
+  --op1-bg-mica: #F3F3F3;
+
+  /* Border */
+  --op1-border: #E5E5E5;
+  --op1-border-strong: #D1D1D1;
+  --op1-card-stroke: #E5E5E5;
+
+  /* Navigation Layout */
+  --op1-nav-pane-expanded: 320px;
+  --op1-nav-pane-compact: 48px;
+  --op1-nav-pane-toggle-width: 48px;
+  --op1-nav-top-height: 48px;
+  --op1-nav-reveal-edge: 1px;
+
+  /* Typography */
+  --op1-font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --op1-font-family-mono: 'Cascadia Code', 'Consolas', monospace;
+
+  /* Radius (WinUI3 — compact) */
+  --op1-radius-sm: 4px;
+  --op1-radius-md: 8px;
+  --op1-radius-lg: 8px;
+  --op1-radius-card: 8px;
+  --op1-radius-full: 9999px;
+
+  /* Spacing */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion (Fluent — reduced) */
+  --op1-motion-fast: 167ms;
+  --op1-motion-normal: 250ms;
+  --op1-motion-slow: 333ms;
+  --op1-easing-decelerate: cubic-bezier(0, 0, 0, 1);
+  --op1-easing-accelerate: cubic-bezier(1, 0, 1, 1);
+  --op1-easing-standard: cubic-bezier(0.8, 0, 0.2, 1);
+}
+
+/* ── Dark Mode ─────────────────────────────────────────────── */
+.dark {
+
+  /* Surface */
+  --op1-surface: #202020;
+  --op1-surface-card: #2D2D2D;
+  --op1-surface-popover: #2D2D2D;
+  --op1-surface-nav: rgba(32, 32, 32, 0.80);
+  --op1-surface-nav-top: rgba(32, 32, 32, 0.70);
+  --op1-surface-container-low: #2A2A2A;
+  --op1-surface-container: #2D2D2D;
+  --op1-surface-container-high: #383838;
+
+  /* On-Surface */
+  --op1-on-surface: #FFFFFF;
+  --op1-on-surface-variant: #C8C8C8;
+  --op1-on-surface-nav: #FFFFFF;
+  --op1-on-surface-card: #FFFFFF;
+
+  /* Background */
+  --op1-bg-mica: #202020;
+
+  /* Border */
+  --op1-border: #3D3D3D;
+  --op1-border-strong: #4A4A4A;
+  --op1-card-stroke: #3D3D3D;
+
+  /* Error */
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+
+  /* Reveal Highlight */
+  --op1-reveal-hover: rgba(255, 255, 255, 0.06);
+  --op1-reveal-pressed: rgba(255, 255, 255, 0.03);
+  --op1-reveal-border: rgba(255, 255, 255, 0.08);
+}

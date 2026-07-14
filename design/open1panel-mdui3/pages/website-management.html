@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站管理 - 1Panel Client</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>网站管理</h1>
+    <p class="subtitle">5 个网站</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <span class="stat-chip running"><span class="dot"></span>运行中 4</span>
+    <span class="stat-chip stopped"><span class="dot"></span>已停止 1</span>
+    <span class="stat-chip ssl"><span class="dot"></span>SSL 有效 3</span>
+  </div>
+
+  <!-- Breakpoint indicator -->
+  <div class="breakpoint-labels" id="bpLabels">
+    <span id="bpMobile" class="active">Mobile &lt;600px</span>
+    <span id="bpTablet">Tablet 600-1023px</span>
+    <span id="bpDesktop">Desktop &ge;1024px</span>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid">
+
+    <!-- Card 1: example.com -->
+    <div class="card">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="ssl-icon valid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="card-text">
+            <h3>example.com</h3>
+            <span class="domain">example.com</span>
+          </div>
+        </div>
+        <div class="visits"><span class="num">1.2K</span>/日</div>
+      </div>
+      <div class="chips">
+        <span class="ssl-status valid">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          SSL 有效
+        </span>
+        <span class="chip chip-wordpress">WordPress</span>
+        <span class="status-badge running"><span class="pulse"></span>运行中</span>
+      </div>
+      <div class="card-actions">
+        <button>设置</button>
+        <button>SSL</button>
+        <button class="danger">删除</button>
+      </div>
+    </div>
+
+    <!-- Card 2: blog.example.com -->
+    <div class="card">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="ssl-icon valid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="card-text">
+            <h3>blog.example.com</h3>
+            <span class="domain">blog.example.com</span>
+          </div>
+        </div>
+        <div class="visits"><span class="num">350</span>/日</div>
+      </div>
+      <div class="chips">
+        <span class="ssl-status valid">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          SSL 有效
+        </span>
+        <span class="chip chip-static">静态网站</span>
+        <span class="status-badge running"><span class="pulse"></span>运行中</span>
+      </div>
+      <div class="card-actions">
+        <button>设置</button>
+        <button>SSL</button>
+        <button class="danger">删除</button>
+      </div>
+    </div>
+
+    <!-- Card 3: api.example.com -->
+    <div class="card">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="ssl-icon expired">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          </div>
+          <div class="card-text">
+            <h3>api.example.com</h3>
+            <span class="domain">api.example.com</span>
+          </div>
+        </div>
+        <div class="visits"><span class="num">5.8K</span>/日</div>
+      </div>
+      <div class="chips">
+        <span class="ssl-status expired">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          SSL 过期
+        </span>
+        <span class="chip chip-proxy">反向代理</span>
+        <span class="status-badge running"><span class="pulse"></span>运行中</span>
+      </div>
+      <div class="card-actions">
+        <button>设置</button>
+        <button>SSL</button>
+        <button class="danger">删除</button>
+      </div>
+    </div>
+
+    <!-- Card 4: shop.example.com -->
+    <div class="card">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="ssl-icon none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="card-text">
+            <h3>shop.example.com</h3>
+            <span class="domain">shop.example.com</span>
+          </div>
+        </div>
+        <div class="visits"><span class="num">0</span>/日</div>
+      </div>
+      <div class="chips">
+        <span class="ssl-status none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          未配置
+        </span>
+        <span class="chip chip-woocommerce">WooCommerce</span>
+        <span class="status-badge stopped"><span class="pulse"></span>已停止</span>
+      </div>
+      <div class="card-actions">
+        <button>设置</button>
+        <button>SSL</button>
+        <button class="danger">删除</button>
+      </div>
+    </div>
+
+    <!-- Card 5: docs.example.com -->
+    <div class="card">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="ssl-icon valid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="card-text">
+            <h3>docs.example.com</h3>
+            <span class="domain">docs.example.com</span>
+          </div>
+        </div>
+        <div class="visits"><span class="num">200</span>/日</div>
+      </div>
+      <div class="chips">
+        <span class="ssl-status valid">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          SSL 有效
+        </span>
+        <span class="chip chip-static">静态网站</span>
+        <span class="status-badge running"><span class="pulse"></span>运行中</span>
+      </div>
+      <div class="card-actions">
+        <button>设置</button>
+        <button>SSL</button>
+        <button class="danger">删除</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Breakpoint label indicator
+  function updateBP() {
+    var w = window.innerWidth;
+    var m = document.getElementById('bpMobile');
+    var t = document.getElementById('bpTablet');
+    var d = document.getElementById('bpDesktop');
+    m.classList.toggle('active', w < 600);
+    t.classList.toggle('active', w >= 600 && w < 1024);
+    d.classList.toggle('active', w >= 1024);
+  }
+  updateBP();
+  window.addEventListener('resize', updateBP);
+</script>
+
+    <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --md-primary: #0C9B4B;
+    --md-primary-container: #C8E8D4;
+    --md-on-primary: #FFFFFF;
+    --md-card-bg: #FFFFFF;
+    --md-border: #C4C7CF;
+    --md-on-surface: #1A1C1E;
+    --md-on-surface-variant: #44474E;
+    --md-error: #DC2626;
+    --md-warning: #F59E0B;
+    --md-surface: #F5F5F7;
+    --md-outline-variant: #C4C7CF;
+    --md-radius: 16px;
+    --md-radius-sm: 8px;
+    --md-radius-full: 9999px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  /* ── Header ── */
+  .header { margin-bottom: 24px; }
+  .header h1 {
+    font-size: 28px; font-weight: 600; color: var(--md-on-surface);
+    letter-spacing: -0.2px;
+  }
+  .header .subtitle {
+    font-size: 14px; color: var(--md-on-surface-variant); margin-top: 4px;
+  }
+
+  /* ── Stats Row ── */
+  .stats {
+    display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .stat-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: var(--md-radius-full);
+    font-size: 13px; font-weight: 500;
+    background: var(--md-primary-container); color: var(--md-primary);
+  }
+  .stat-chip .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .stat-chip.running .dot { background: #16A34A; }
+  .stat-chip.stopped .dot { background: #9CA3AF; }
+  .stat-chip.ssl .dot { background: var(--md-primary); }
+  .stat-chip.stopped { background: #F3F4F6; color: var(--md-on-surface-variant); }
+
+  /* ── Responsive Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 600px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .page { padding: 32px 24px 48px; }
+    .header h1 { font-size: 32px; }
+  }
+  @media (min-width: 1024px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+    .page { padding: 40px 32px 64px; }
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--md-card-bg);
+    border: 1px solid var(--md-border);
+    border-radius: var(--md-radius);
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
+    transition: box-shadow .2s;
+  }
+  .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+
+  /* Card Top Row */
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-info { display: flex; align-items: flex-start; gap: 12px; flex: 1; min-width: 0; }
+
+  /* SSL Icon */
+  .ssl-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 20px;
+  }
+  .ssl-icon.valid   { background: #DCFCE7; color: #16A34A; }
+  .ssl-icon.expired  { background: #FEF2F2; color: var(--md-error); }
+  .ssl-icon.none     { background: #F3F4F6; color: #9CA3AF; }
+  .ssl-icon svg { width: 20px; height: 20px; }
+
+  .card-text { min-width: 0; flex: 1; }
+  .card-text h3 {
+    font-size: 15px; font-weight: 600; color: var(--md-on-surface);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-text .domain {
+    font-size: 12px; color: var(--md-on-surface-variant); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Visits (right of top row) */
+  .visits {
+    text-align: right; flex-shrink: 0;
+    font-size: 12px; color: var(--md-on-surface-variant);
+    white-space: nowrap;
+  }
+  .visits .num { font-size: 16px; font-weight: 600; color: var(--md-on-surface); display: block; }
+
+  /* SSL Status Row */
+  .ssl-status {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 500; padding: 3px 10px;
+    border-radius: var(--md-radius-full);
+  }
+  .ssl-status.valid   { background: #DCFCE7; color: #16A34A; }
+  .ssl-status.expired  { background: #FEF2F2; color: var(--md-error); }
+  .ssl-status.none     { background: #F3F4F6; color: #9CA3AF; }
+  .ssl-status svg { width: 14px; height: 14px; }
+
+  /* Chips Row */
+  .chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    display: inline-flex; align-items: center; padding: 4px 12px;
+    border-radius: var(--md-radius-full); font-size: 12px; font-weight: 500;
+    border: 1px solid transparent;
+  }
+  .chip-wordpress   { background: #EFF6FF; color: #2563EB; border-color: #BFDBFE; }
+  .chip-static      { background: #F0FDFA; color: #0D9488; border-color: #99F6E4; }
+  .chip-proxy       { background: #F5F3FF; color: #7C3AED; border-color: #DDD6FE; }
+  .chip-woocommerce  { background: #F5F3FF; color: #7C3AED; border-color: #DDD6FE; }
+
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 500; padding: 4px 12px;
+    border-radius: var(--md-radius-full);
+  }
+  .status-badge.running { background: #DCFCE7; color: #16A34A; }
+  .status-badge.stopped { background: #F3F4F6; color: #9CA3AF; }
+  .status-badge .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .status-badge.running .pulse { background: #16A34A; animation: pulse 2s infinite; }
+  .status-badge.stopped .pulse  { background: #9CA3AF; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: .4; }
+  }
+
+  /* Card Actions */
+  .card-actions {
+    display: flex; gap: 8px; padding-top: 10px;
+    border-top: 1px solid #F0F0F2;
+  }
+  .card-actions button {
+    flex: 1; padding: 8px 0; border: none; border-radius: var(--md-radius-full);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    background: transparent; color: var(--md-on-surface-variant);
+    transition: background .15s, color .15s;
+  }
+  .card-actions button:hover { background: #F0F0F2; }
+  .card-actions button.danger:hover { background: #FEF2F2; color: var(--md-error); }
+
+  /* ── Breakpoint Labels ── */
+  .breakpoint-labels {
+    display: none; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap;
+  }
+  .breakpoint-labels span {
+    font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: var(--md-radius-full); border: 1px solid var(--md-border);
+    color: var(--md-on-surface-variant); background: var(--md-card-bg);
+    transition: all .2s;
+  }
+  .breakpoint-labels span.active {
+    background: var(--md-primary); color: var(--md-on-primary); border-color: var(--md-primary);
+  }
+  @media (min-width: 600px)  { .breakpoint-labels { display: flex; } }
+  @media (min-width: 1024px) { .breakpoint-labels { display: flex; } }
+</style>
+</body>
+</html>

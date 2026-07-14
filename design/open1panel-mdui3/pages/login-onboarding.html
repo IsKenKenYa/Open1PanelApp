@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 登录与引导</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-inner">
+
+    <!-- ============================= -->
+    <!-- SECTION: Login Page           -->
+    <!-- ============================= -->
+    <div class="section">
+      <div class="section-label">LOGIN PAGE</div>
+      <div class="section-title">登录页面</div>
+      <div class="section-desc">移动端、平板、桌面端登录表单，支持服务器地址、API 密钥和验证码输入</div>
+
+      <!-- --- Breakpoint: Mobile --- -->
+      <div class="breakpoint">
+        <div class="breakpoint-header">
+          <div class="dot"></div>
+          <span>Mobile -- 375px</span>
+        </div>
+
+        <div class="mobile-frame">
+          <div class="mobile-frame-content">
+            <div class="login-form login-mobile">
+              <!-- Logo -->
+              <div class="logo-area">
+                <div class="logo-circle">
+                  <span>1P</span>
+                </div>
+                <div class="app-name">1Panel Client</div>
+                <div class="app-subtitle">连接到您的服务器</div>
+              </div>
+
+              <!-- Input: Server Address -->
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  </div>
+                  <input type="text" class="input-field" placeholder="https://192.168.1.100:9999">
+                </div>
+              </div>
+
+              <!-- Input: API Key -->
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                  </div>
+                  <input type="password" class="input-field" placeholder="请输入 API 密钥">
+                </div>
+              </div>
+
+              <!-- Input: Captcha (mobile only) -->
+              <div class="input-group">
+                <div class="mobile-only-badge">仅移动端</div>
+                <div class="captcha-row">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <input type="text" class="captcha-input" placeholder="请输入验证码">
+                  <div class="captcha-image">
+                    <div class="captcha-lines"></div>
+                    <span class="captcha-text">A7Kx</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="btn-stack">
+                <button class="btn-filled">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  连接
+                </button>
+                <button class="btn-outlined">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>
+                  使用 Passkey 登录
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- --- Breakpoint: Tablet/Desktop --- -->
+      <div class="breakpoint">
+        <div class="breakpoint-header">
+          <div class="dot"></div>
+          <span>Tablet / Desktop -- Card</span>
+        </div>
+
+        <div class="desktop-frame">
+          <div class="login-form">
+            <div class="login-card">
+              <!-- Logo -->
+              <div class="logo-area">
+                <div class="logo-circle">
+                  <span>1P</span>
+                </div>
+                <div class="app-name">1Panel Client</div>
+                <div class="app-subtitle">连接到您的服务器</div>
+              </div>
+
+              <!-- Input: Server Address -->
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  </div>
+                  <input type="text" class="input-field" placeholder="https://192.168.1.100:9999">
+                </div>
+              </div>
+
+              <!-- Input: API Key -->
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                  </div>
+                  <input type="password" class="input-field" placeholder="请输入 API 密钥">
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="btn-stack">
+                <button class="btn-filled">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  连接
+                </button>
+                <div class="divider">或</div>
+                <button class="btn-outlined">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>
+                  使用 Passkey 登录
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- --- Breakpoint: Error State --- -->
+      <div class="breakpoint">
+        <div class="breakpoint-header">
+          <div class="dot" style="background: var(--error-color)"></div>
+          <span>Error State</span>
+        </div>
+
+        <div class="desktop-frame">
+          <div class="login-form">
+            <div class="login-card">
+              <!-- Logo -->
+              <div class="logo-area">
+                <div class="logo-circle">
+                  <span>1P</span>
+                </div>
+                <div class="app-name">1Panel Client</div>
+                <div class="app-subtitle">连接到您的服务器</div>
+              </div>
+
+              <!-- Error Banner -->
+              <div class="error-banner">
+                <div class="error-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="error-text">连接失败，请检查服务器地址和密钥</div>
+              </div>
+
+              <!-- Input: Server Address -->
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  </div>
+                  <input type="text" class="input-field" value="https://192.168.1.100:9999">
+                </div>
+              </div>
+
+              <!-- Input: API Key -->
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <div class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                  </div>
+                  <input type="password" class="input-field" value="********************">
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="btn-stack">
+                <button class="btn-filled">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  连接
+                </button>
+                <div class="divider">或</div>
+                <button class="btn-outlined">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg>
+                  使用 Passkey 登录
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================= -->
+    <!-- SECTION: Onboarding Page      -->
+    <!-- ============================= -->
+    <div class="section">
+      <div class="section-label">ONBOARDING PAGE</div>
+      <div class="section-title">引导页</div>
+      <div class="section-desc">首次启动时的引导页，展示 3 张功能介绍幻灯片</div>
+
+      <div class="onboarding-slides">
+
+        <!-- Slide 1: Connect Server -->
+        <div class="onboarding-slide">
+          <div class="slide-label">Slide 1/3</div>
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <div class="slide-title">连接服务器</div>
+          <div class="slide-desc">支持管理多台 1Panel 服务器，随时随地监控运行状态</div>
+        </div>
+
+        <!-- Slide 2: Security -->
+        <div class="onboarding-slide">
+          <div class="slide-label">Slide 2/3</div>
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="slide-title">安全可靠</div>
+          <div class="slide-desc">API 密钥认证，支持多因素认证，保障服务器安全</div>
+        </div>
+
+        <!-- Slide 3: Full Management -->
+        <div class="onboarding-slide">
+          <div class="slide-label">Slide 3/3</div>
+          <div class="slide-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="slide-title">全面管理</div>
+          <div class="slide-desc">容器、数据库、网站、文件一站管理，触手可及</div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="onboarding-bottom">
+        <div class="page-dots">
+          <div class="page-dot active"></div>
+          <div class="page-dot"></div>
+          <div class="page-dot"></div>
+        </div>
+        <div class="onboarding-actions">
+          <button class="btn-text">跳过</button>
+          <button class="btn-filled-sm">
+            开始使用
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dot States Preview -->
+      <div style="margin-top: 32px;">
+        <div style="font-size: 0.6875rem; color: var(--on-surface-variant); margin-bottom: 8px; font-weight: 600;">页面指示器状态</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.6875rem; color: var(--on-surface-variant); width: 60px;">第 1 页</span>
+            <div class="page-dots">
+              <div class="page-dot active"></div>
+              <div class="page-dot"></div>
+              <div class="page-dot"></div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.6875rem; color: var(--on-surface-variant); width: 60px;">第 2 页</span>
+            <div class="page-dots">
+              <div class="page-dot"></div>
+              <div class="page-dot active"></div>
+              <div class="page-dot"></div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.6875rem; color: var(--on-surface-variant); width: 60px;">第 3 页</span>
+            <div class="page-dots">
+              <div class="page-dot"></div>
+              <div class="page-dot"></div>
+              <div class="page-dot active"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+    <style>
+  /* ===== Brand Tokens ===== */
+  :root {
+    --op1-primary: #0C9B4B;
+    --op1-primary-container: #C8E8D4;
+    --op1-on-primary: #FFFFFF;
+    --bg: #FAFBFC;
+    --card: #FFFFFF;
+    --on-surface: #1A1C1E;
+    --on-surface-variant: #44474E;
+    --outline-variant: #C4C7CF;
+    --error-bg: #FEF2F2;
+    --error-color: #DC2626;
+    --radius-card: 16px;
+    --radius-input: 14px;
+    --radius-btn: 9999px;
+    --radius-sm: 8px;
+  }
+
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--on-surface);
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Section Labels ===== */
+  .section-label {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--op1-primary);
+    background: var(--op1-primary-container);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .section { margin-bottom: 48px; }
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--on-surface);
+  }
+  .section-desc {
+    font-size: 0.8125rem;
+    color: var(--on-surface-variant);
+    margin-top: -14px;
+    margin-bottom: 20px;
+  }
+
+  /* ===== Page Layout ===== */
+  .page {
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 32px 16px;
+  }
+  .page-inner {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ===== Breakpoint Layouts ===== */
+  .breakpoint {
+    margin-bottom: 56px;
+  }
+  .breakpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .breakpoint-header .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--op1-primary);
+  }
+  .breakpoint-header span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* ===== Login Form Container ===== */
+  .login-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  .login-form {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Tablet/Desktop: Card wrapper */
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-card);
+    padding: 32px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* Mobile: No card, direct on background */
+  .login-mobile {
+    padding: 24px 0;
+  }
+
+  /* ===== Logo Area ===== */
+  .logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--op1-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .logo-circle span {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--op1-on-primary);
+    letter-spacing: -0.02em;
+  }
+  .app-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    letter-spacing: -0.01em;
+  }
+  .app-subtitle {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+    margin-top: 4px;
+    margin-bottom: 24px;
+  }
+
+  /* ===== Input Fields ===== */
+  .input-group {
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-input);
+    background: transparent;
+    padding: 0 12px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .input-wrapper:focus-within {
+    border-color: var(--op1-primary);
+    border-width: 2px;
+    padding: 0 11px;
+    background: var(--op1-primary-container);
+    box-shadow: 0 0 0 1px var(--op1-primary);
+  }
+  .input-prefix {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 12px;
+    color: var(--on-surface-variant);
+  }
+  .input-prefix svg {
+    width: 20px;
+    height: 20px;
+  }
+  .input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: var(--on-surface);
+    font-family: inherit;
+    height: 100%;
+  }
+  .input-field::placeholder {
+    color: var(--on-surface-variant);
+    opacity: 0.6;
+  }
+
+  /* ===== Captcha Row ===== */
+  .captcha-row {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-input);
+    background: transparent;
+    padding: 0 12px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .captcha-row:focus-within {
+    border-color: var(--op1-primary);
+    border-width: 2px;
+    padding: 0 11px;
+    background: var(--op1-primary-container);
+    box-shadow: 0 0 0 1px var(--op1-primary);
+  }
+  .captcha-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.875rem;
+    color: var(--on-surface);
+    font-family: inherit;
+    height: 100%;
+  }
+  .captcha-input::placeholder {
+    color: var(--on-surface-variant);
+    opacity: 0.6;
+  }
+  .captcha-image {
+    width: 100px;
+    height: 36px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #A5D6A7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+  }
+  .captcha-text {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--op1-primary);
+    letter-spacing: 0.15em;
+    font-style: italic;
+    transform: skewX(-8deg);
+    user-select: none;
+  }
+  .captcha-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .captcha-lines::before {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--op1-primary);
+    opacity: 0.3;
+    transform: rotate(-3deg);
+  }
+  .captcha-lines::after {
+    content: '';
+    position: absolute;
+    top: 60%;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: var(--op1-primary);
+    opacity: 0.3;
+    transform: rotate(2deg);
+  }
+
+  /* ===== Buttons ===== */
+  .btn-filled {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: var(--radius-btn);
+    background: var(--op1-primary);
+    color: var(--op1-on-primary);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-filled:hover {
+    opacity: 0.9;
+    box-shadow: 0 1px 3px rgba(12, 155, 75, 0.3);
+  }
+  .btn-filled svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .btn-outlined {
+    width: 100%;
+    height: 44px;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-btn);
+    background: transparent;
+    color: var(--op1-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-outlined:hover {
+    background: rgba(12, 155, 75, 0.06);
+  }
+  .btn-outlined svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .btn-text {
+    border: none;
+    background: transparent;
+    color: var(--op1-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+  .btn-text:hover {
+    background: rgba(12, 155, 75, 0.08);
+  }
+
+  .btn-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  /* ===== Error State ===== */
+  .error-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--error-bg);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+  }
+  .error-banner .error-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--error-color);
+  }
+  .error-banner .error-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .error-banner .error-text {
+    font-size: 0.8125rem;
+    color: var(--error-color);
+    line-height: 1.45;
+  }
+
+  /* ===== Divider ===== */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--on-surface-variant);
+    font-size: 0.75rem;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--outline-variant);
+  }
+
+  /* ===== Onboarding Slides ===== */
+  .onboarding-slides {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .onboarding-slide {
+    background: var(--card);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-card);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 280px;
+    justify-content: center;
+  }
+  .slide-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--op1-primary-container);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--op1-primary);
+  }
+  .slide-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+  .slide-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .slide-desc {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+    max-width: 280px;
+    line-height: 1.6;
+  }
+
+  /* Slide labels */
+  .slide-label {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--op1-primary);
+    background: var(--op1-primary-container);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .onboarding-slide {
+    position: relative;
+  }
+
+  /* ===== Onboarding Bottom Bar ===== */
+  .onboarding-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    max-width: 400px;
+    margin: 8px auto 0;
+  }
+  .page-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .page-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--outline-variant);
+    transition: background 0.2s;
+  }
+  .page-dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: var(--op1-primary);
+  }
+  .onboarding-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-filled-sm {
+    height: 36px;
+    padding: 0 20px;
+    border: none;
+    border-radius: var(--radius-btn);
+    background: var(--op1-primary);
+    color: var(--op1-on-primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+  }
+  .btn-filled-sm:hover {
+    opacity: 0.9;
+  }
+
+  /* ===== Responsive Preview Frames ===== */
+  .mobile-frame {
+    width: 375px;
+    margin: 0 auto;
+    border: 1px solid var(--outline-variant);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .mobile-frame-content {
+    padding: 24px 20px;
+  }
+  .desktop-frame {
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--bg);
+    padding: 48px 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ===== Mobile-only badge ===== */
+  .mobile-only-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--on-surface-variant);
+    background: var(--surface-container-low, #F4F6F8);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== Surface Container Low ===== */
+  :root {
+    --surface-container-low: #F4F6F8;
+  }
+
+  /* ===== Misc ===== */
+  .spacer-24 { height: 24px; }
+  .spacer-32 { height: 32px; }
+  .spacer-16 { height: 16px; }
+</style>
+</body>
+</html>

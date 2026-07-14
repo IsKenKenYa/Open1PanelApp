@@ -1,0 +1,121 @@
+/* ============================================================
+   1Panel Client - HarmonyOS 光场设计 Token CSS
+   Brand: #0C9B4B | Glow / Light-field aesthetic
+   ============================================================ */
+
+:root {
+  /* ── Brand Primary ── */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* ── Semantic ── */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* ── Light-field (光场) ── */
+  --op1-glow-color: rgba(12, 155, 75, 0.08);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.16);
+  --op1-glow-spread: 20px;
+  --op1-glow-spread-intense: 40px;
+  --op1-glow-blur: 20px;
+  --op1-refresh-glow: radial-gradient(circle, rgba(12, 155, 75, 0.15) 0%, transparent 70%);
+
+  /* ── Surface ── */
+  --op1-surface: #F1F3F5;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(241, 243, 245, 0.92);
+  --op1-surface-popover: rgba(255, 255, 255, 0.95);
+  --op1-surface-container-low: #F7F8FA;
+  --op1-surface-container: #F1F3F5;
+  --op1-surface-container-high: #E8EAED;
+
+  /* ── On Surface ── */
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1C1E;
+
+  /* ── Navigation ── */
+  --op1-nav-tab-height: 56px;
+  --op1-nav-tab-icon-size: 24px;
+  --op1-nav-sidebar-width: 280px;
+  --op1-nav-statusbar-height: 44px;
+
+  /* ── Ripple ── */
+  --op1-ripple-color: rgba(12, 155, 75, 0.12);
+  --op1-ripple-duration: 400ms;
+
+  /* ── Font ── */
+  --op1-font-family: 'HarmonyOS Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --op1-font-family-mono: 'HarmonyOS Sans Mono', 'Noto Sans Mono', monospace;
+
+  /* ── Radius ── */
+  --op1-radius-sm: 8px;
+  --op1-radius-md: 16px;
+  --op1-radius-lg: 24px;
+  --op1-radius-card: 24px;
+  --op1-radius-full: 9999px;
+
+  /* ── Spacing ── */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* ── Motion ── */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-motion-gravity: cubic-bezier(0.2, 0, 0, 1);
+  --op1-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Border ── */
+  --op1-border: #E5E7EB;
+  --op1-border-strong: #D1D5DB;
+
+  /* ── Error ── */
+  --op1-error: #E84026;
+  --op1-error-container: #FDECEB;
+}
+
+/* ============================================================
+   Dark Mode
+   ============================================================ */
+.dark {
+  /* ── Surface ── */
+  --op1-surface: #1A1C1E;
+  --op1-surface-card: #242628;
+  --op1-surface-nav: rgba(26, 28, 30, 0.92);
+  --op1-surface-popover: rgba(36, 38, 40, 0.95);
+  --op1-surface-container-low: #1E2022;
+  --op1-surface-container: #242628;
+  --op1-surface-container-high: #2E3032;
+
+  /* ── On Surface ── */
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #9CA3AF;
+  --op1-on-surface-nav: #E2E5E8;
+
+  /* ── Border ── */
+  --op1-border: #3A3D42;
+  --op1-border-strong: #4A4D52;
+
+  /* ── Glow ── */
+  --op1-glow-color: rgba(12, 155, 75, 0.12);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.20);
+
+  /* ── Error ── */
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+
+  /* ── Refresh Glow ── */
+  --op1-refresh-glow: radial-gradient(circle, rgba(12, 155, 75, 0.25) 0%, transparent 70%);
+}

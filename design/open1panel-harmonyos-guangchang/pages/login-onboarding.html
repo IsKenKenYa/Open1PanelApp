@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 连接服务器</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-glow-color: rgba(12, 155, 75, 0.08);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.16);
+  --op1-glow-spread: 20px;
+  --op1-glow-spread-intense: 40px;
+  --op1-glow-blur: 20px;
+  --op1-surface: #F1F3F5;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(241, 243, 245, 0.92);
+  --op1-surface-popover: rgba(255, 255, 255, 0.95);
+  --op1-surface-container-low: #F7F8FA;
+  --op1-surface-container: #F1F3F5;
+  --op1-surface-container-high: #E8EAED;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1C1E;
+  --op1-nav-tab-height: 56px;
+  --op1-nav-tab-icon-size: 24px;
+  --op1-nav-sidebar-width: 280px;
+  --op1-nav-statusbar-height: 44px;
+  --op1-ripple-color: rgba(12, 155, 75, 0.12);
+  --op1-ripple-duration: 400ms;
+  --op1-font-family: 'HarmonyOS Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --op1-font-family-mono: 'HarmonyOS Sans Mono', 'Noto Sans Mono', monospace;
+  --op1-radius-sm: 8px;
+  --op1-radius-md: 16px;
+  --op1-radius-lg: 24px;
+  --op1-radius-card: 24px;
+  --op1-radius-full: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-motion-gravity: cubic-bezier(0.2, 0, 0, 1);
+  --op1-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --op1-border: #E5E7EB;
+  --op1-border-strong: #D1D5DB;
+  --op1-error: #E84026;
+  --op1-error-container: #FDECEB;
+}
+.dark {
+  --op1-surface: #1A1C1E;
+  --op1-surface-card: #242628;
+  --op1-surface-nav: rgba(26, 28, 30, 0.92);
+  --op1-surface-popover: rgba(36, 38, 40, 0.95);
+  --op1-surface-container-low: #1E2022;
+  --op1-surface-container: #242628;
+  --op1-surface-container-high: #2E3032;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #9CA3AF;
+  --op1-on-surface-nav: #E2E5E8;
+  --op1-border: #3A3D42;
+  --op1-border-strong: #4A4D52;
+  --op1-glow-color: rgba(12, 155, 75, 0.12);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.20);
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-op1-surface: var(--op1-surface);
+    --color-op1-surface-card: var(--op1-surface-card);
+    --color-op1-surface-nav: var(--op1-surface-nav);
+    --color-op1-surface-container-low: var(--op1-surface-container-low);
+    --color-op1-surface-container: var(--op1-surface-container);
+    --color-op1-on-surface: var(--op1-on-surface);
+    --color-op1-on-surface-variant: var(--op1-on-surface-variant);
+    --color-op1-brand: var(--op1-brand);
+    --color-op1-border: var(--op1-border);
+    --color-op1-ripple: var(--op1-ripple-color);
+    --radius-card: var(--op1-radius-card);
+    --radius-md: var(--op1-radius-md);
+    --radius-full: var(--op1-radius-full);
+  }
+  @layer base {
+    body { background: var(--op1-surface); color: var(--op1-on-surface); }
+  }
+    </style>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: var(--op1-font-family);
+        color: var(--op1-on-surface);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+      }
+      .page-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--op1-on-surface);
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+        margin-bottom: 32px;
+      }
+      .preview-frame {
+        border: 1px solid var(--op1-border);
+        border-radius: var(--op1-radius-card);
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .mobile-shell {
+        display: flex;
+        flex-direction: column;
+        height: 720px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Gradient Background - light-field style */
+      .light .mobile-shell {
+        background: linear-gradient(165deg, #E8F5EE 0%, #F1F3F5 35%, #E0F0E8 70%, #F1F3F5 100%);
+      }
+      .dark .mobile-shell {
+        background: linear-gradient(165deg, #1A1C1E 0%, #0D2E1A 35%, #1A1C1E 70%, #111314 100%);
+      }
+
+      /* Status Bar */
+      .status-bar {
+        height: var(--op1-nav-statusbar-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--op1-spacing-lg);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--op1-on-surface-nav);
+        flex-shrink: 0;
+        z-index: 10;
+      }
+      .status-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .status-bar-right svg { width: 16px; height: 16px; color: var(--op1-on-surface-nav); }
+
+      /* Center Content */
+      .login-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--op1-spacing-xl);
+      }
+
+      /* Logo */
+      .login-logo {
+        width: 64px;
+        height: 64px;
+        border-radius: var(--op1-radius-md);
+        background: var(--op1-brand);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(12, 155, 75, 0.3);
+        margin-bottom: var(--op1-spacing-lg);
+      }
+      .login-logo svg { width: 32px; height: 32px; color: #FFFFFF; }
+
+      /* Login Title */
+      .login-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+        margin-bottom: var(--op1-spacing-xs);
+      }
+      .login-subtitle {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+        margin-bottom: var(--op1-spacing-xl);
+      }
+
+      /* Glow Card */
+      .glow-card {
+        width: 100%;
+        background: var(--op1-surface-card);
+        border-radius: var(--op1-radius-card);
+        padding: var(--op1-spacing-xl);
+        box-shadow: 0 0 var(--op1-glow-spread-intense) var(--op1-glow-color);
+        transition: box-shadow var(--op1-motion-normal) var(--op1-motion-gravity);
+      }
+      .glow-card:hover {
+        box-shadow: 0 0 48px var(--op1-glow-color-intense);
+      }
+
+      /* Input */
+      .input-group {
+        margin-bottom: var(--op1-spacing-lg);
+      }
+      .input-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--op1-on-surface);
+        margin-bottom: var(--op1-spacing-sm);
+        display: block;
+      }
+      .input-field {
+        width: 100%;
+        padding: 12px var(--op1-spacing-lg);
+        border-radius: var(--op1-radius-md);
+        border: 1.5px solid var(--op1-border);
+        background: var(--op1-surface-container-low);
+        font-size: 15px;
+        color: var(--op1-on-surface);
+        font-family: var(--op1-font-family);
+        outline: none;
+        transition: border-color var(--op1-motion-fast) ease, box-shadow var(--op1-motion-fast) ease;
+      }
+      .input-field::placeholder {
+        color: var(--op1-on-surface-variant);
+      }
+      .input-field:focus {
+        border-color: var(--op1-brand);
+        box-shadow: 0 0 16px var(--op1-glow-color);
+      }
+      .input-field-wrapper {
+        position: relative;
+      }
+      .input-field-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--op1-on-surface-variant);
+        cursor: pointer;
+        transition: color var(--op1-motion-fast) ease;
+      }
+      .input-field-icon:hover { color: var(--op1-brand); }
+      .input-field-icon svg { width: 18px; height: 18px; }
+
+      /* Remember + Test Row */
+      .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--op1-spacing-xl);
+      }
+      .remember-row {
+        display: flex;
+        align-items: center;
+        gap: var(--op1-spacing-sm);
+      }
+
+      /* Toggle Switch */
+      .toggle-switch {
+        width: 40px;
+        height: 22px;
+        border-radius: var(--op1-radius-full);
+        background: var(--op1-border-strong);
+        position: relative;
+        cursor: pointer;
+        transition: background var(--op1-motion-normal) ease;
+        flex-shrink: 0;
+      }
+      .toggle-switch.active { background: var(--op1-brand); }
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        top: 2px;
+        left: 2px;
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .toggle-switch.active::after { transform: translateX(18px); }
+
+      .test-link {
+        font-size: 13px;
+        color: var(--op1-brand);
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: opacity var(--op1-motion-fast) ease;
+      }
+      .test-link:hover { opacity: 0.8; }
+      .test-link svg { width: 14px; height: 14px; }
+
+      /* Connect Button - HarmonyOS style (24px radius, NOT pill) */
+      .btn-connect {
+        width: 100%;
+        padding: 14px var(--op1-spacing-xl);
+        border-radius: var(--op1-radius-card);
+        background: var(--op1-brand);
+        color: #FFFFFF;
+        font-size: 16px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        font-family: var(--op1-font-family);
+        box-shadow: 0 4px 20px rgba(12, 155, 75, 0.3);
+        transition: transform var(--op1-motion-fast) var(--op1-motion-spring), box-shadow var(--op1-motion-normal) ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-connect:hover {
+        box-shadow: 0 6px 28px rgba(12, 155, 75, 0.4);
+      }
+      .btn-connect:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 12px rgba(12, 155, 75, 0.25);
+      }
+
+      /* Ripple Effect */
+      .ripple-container { position: relative; overflow: hidden; }
+      .ripple-container::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), var(--op1-ripple-color) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity var(--op1-ripple-duration) ease;
+        pointer-events: none;
+      }
+      .ripple-container:active::after { opacity: 1; }
+
+      /* Connection Status */
+      .connect-status {
+        margin-top: var(--op1-spacing-lg);
+        text-align: center;
+        font-size: 13px;
+        min-height: 20px;
+      }
+      .status-success { color: var(--op1-success); display: flex; align-items: center; justify-content: center; gap: 4px; }
+      .status-fail { color: var(--op1-error); display: flex; align-items: center; justify-content: center; gap: 4px; }
+      .status-loading { color: var(--op1-on-surface-variant); }
+      .status-loading::before {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid var(--op1-border);
+        border-top-color: var(--op1-brand);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: absolute;
+        top: var(--op1-spacing-lg);
+        right: var(--op1-spacing-lg);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--op1-surface-card);
+        border: 1px solid var(--op1-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: background var(--op1-motion-fast) ease, transform var(--op1-motion-fast) var(--op1-motion-spring);
+      }
+      .theme-toggle:hover { transform: scale(1.1); }
+      .theme-toggle:active { transform: scale(0.9); }
+      .theme-toggle svg { width: 18px; height: 18px; color: var(--op1-on-surface); }
+
+      .remember-label {
+        font-size: 14px;
+        color: var(--op1-on-surface);
+      }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <div>
+                <h1 class="page-title">登录引导</h1>
+                <p class="page-subtitle">全屏居中中轴对称布局，渐变背景光晕卡片</p>
+            </div>
+            <button class="theme-toggle ripple-container" onclick="toggleTheme()">
+                <i data-lucide="sun" class="light-icon"></i>
+                <i data-lucide="moon" class="dark-icon" style="display:none;"></i>
+            </button>
+        </div>
+
+        <div class="preview-frame">
+            <div class="mobile-shell">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span>09:41</span>
+                    <div class="status-bar-right">
+                        <i data-lucide="signal"></i>
+                        <i data-lucide="wifi"></i>
+                        <i data-lucide="battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Login Content - Centered -->
+                <div class="login-content">
+                    <!-- Logo -->
+                    <div class="login-logo">
+                        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="6" width="24" height="20" rx="3" stroke="white" stroke-width="2" fill="none"/>
+                            <line x1="4" y1="12" x2="28" y2="12" stroke="white" stroke-width="2"/>
+                            <circle cx="9" cy="9" r="1.5" fill="white"/>
+                            <circle cx="14" cy="9" r="1.5" fill="white"/>
+                            <rect x="8" y="15" width="7" height="3" rx="1" fill="white" opacity="0.7"/>
+                            <rect x="8" y="20" width="16" height="3" rx="1" fill="white" opacity="0.5"/>
+                        </svg>
+                    </div>
+
+                    <!-- Title -->
+                    <div class="login-title">1Panel</div>
+                    <div class="login-subtitle">连接你的服务器</div>
+
+                    <!-- Glow Card -->
+                    <div class="glow-card">
+                        <!-- Server Address -->
+                        <div class="input-group">
+                            <label class="input-label">服务器地址</label>
+                            <div class="input-field-wrapper">
+                                <input type="text" class="input-field" placeholder="https://192.168.1.100:8888" value="https://192.168.1.100:8888">
+                            </div>
+                        </div>
+
+                        <!-- API Key -->
+                        <div class="input-group">
+                            <label class="input-label">API Key</label>
+                            <div class="input-field-wrapper">
+                                <input type="password" class="input-field" placeholder="输入 API 密钥" value="xxxxxxxxxxxxxx" id="apiKeyInput">
+                                <div class="input-field-icon" onclick="togglePassword()">
+                                    <i data-lucide="eye" id="eyeIcon"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Remember + Test -->
+                        <div class="input-row">
+                            <div class="remember-row">
+                                <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                                <span class="remember-label">记住密码</span>
+                            </div>
+                            <div class="test-link" onclick="testConnection()">
+                                <i data-lucide="zap"></i>
+                                <span>连接测试</span>
+                            </div>
+                        </div>
+
+                        <!-- Connect Button -->
+                        <button class="btn-connect ripple-container" onclick="connectServer()">
+                            连接
+                        </button>
+
+                        <!-- Status -->
+                        <div class="connect-status" id="connectStatus"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    let passwordVisible = false;
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.classList.toggle('dark');
+        html.classList.toggle('light');
+        document.querySelectorAll('.light-icon').forEach(el => el.style.display = html.classList.contains('dark') ? 'none' : '');
+        document.querySelectorAll('.dark-icon').forEach(el => el.style.display = html.classList.contains('dark') ? '' : 'none');
+    }
+    function toggleSwitch(el) {
+        el.classList.toggle('active');
+    }
+    function togglePassword() {
+        const input = document.getElementById('apiKeyInput');
+        const icon = document.getElementById('eyeIcon');
+        passwordVisible = !passwordVisible;
+        input.type = passwordVisible ? 'text' : 'password';
+        icon.setAttribute('data-lucide', passwordVisible ? 'eye-off' : 'eye');
+        lucide.createIcons();
+    }
+    function testConnection() {
+        const status = document.getElementById('connectStatus');
+        status.className = 'connect-status status-loading';
+        status.innerHTML = '正在测试连接...';
+        setTimeout(() => {
+            status.className = 'connect-status status-success';
+            status.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 连接成功，延迟 12ms';
+        }, 1500);
+    }
+    function connectServer() {
+        const btn = document.querySelector('.btn-connect');
+        const status = document.getElementById('connectStatus');
+        btn.textContent = '连接中...';
+        btn.style.opacity = '0.7';
+        btn.style.pointerEvents = 'none';
+        status.className = 'connect-status status-loading';
+        status.innerHTML = '正在连接服务器...';
+        setTimeout(() => {
+            btn.textContent = '连接';
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+            status.className = 'connect-status status-success';
+            status.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 连接成功';
+        }, 2000);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        document.querySelectorAll('.ripple-container').forEach(el => {
+            el.addEventListener('pointerdown', e => {
+                const rect = el.getBoundingClientRect();
+                el.style.setProperty('--ripple-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+                el.style.setProperty('--ripple-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+            });
+        });
+    });
+    </script>
+</body>
+</html>

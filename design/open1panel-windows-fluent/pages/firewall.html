@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 防火墙</title>
+<script src="https://cdn.jsdelivr.net/npm/tailwindcss@4"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root {
+  --op1-brand: #0C9B4B; --op1-brand-hover: #0A8540; --op1-brand-pressed: #087036;
+  --op1-success: #0C9B4B; --op1-warning: #9B6F0C; --op1-danger: #C42B1C; --op1-info: #0078D4;
+  --op1-acrylic-noise-opacity: 0.03; --op1-acrylic-tint-opacity: 0.80;
+  --op1-mica-opacity: 0.85; --op1-mica-blur: 60px;
+  --op1-reveal-hover: rgba(255,255,255,0.08); --op1-reveal-pressed: rgba(255,255,255,0.04);
+  --reveal-x: 50%; --reveal-y: 50%;
+  --op1-surface: #F3F3F3; --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(243,243,243,0.80); --op1-surface-container-low: #F9F9F9;
+  --op1-surface-container: #F3F3F3; --op1-surface-container-high: #EDEDED;
+  --op1-on-surface: #1A1A1A; --op1-on-surface-variant: #616161;
+  --op1-nav-pane-expanded: 320px; --op1-nav-pane-compact: 48px; --op1-nav-top-height: 48px;
+  --op1-font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --op1-font-family-mono: 'Cascadia Code', 'Consolas', monospace;
+  --op1-radius-sm: 4px; --op1-radius-md: 8px; --op1-radius-card: 8px; --op1-radius-full: 9999px;
+  --op1-motion-fast: 167ms; --op1-motion-normal: 250ms;
+  --op1-motion-easing-decelerate: cubic-bezier(0,0,0,1);
+  --op1-motion-easing-standard: cubic-bezier(0.8,0,0.2,1);
+  --op1-border: #E5E5E5; --op1-card-stroke: #E5E5E5; --op1-error: #C42B1C; --op1-divider: #E5E5E5;
+}
+html.dark {
+  --op1-surface: #202020; --op1-surface-card: #2D2D2D;
+  --op1-surface-nav: rgba(32,32,32,0.80); --op1-surface-container-low: #2A2A2A;
+  --op1-surface-container: #202020; --op1-surface-container-high: #1A1A1A;
+  --op1-on-surface: #FFFFFF; --op1-on-surface-variant: #A0A0A0;
+  --op1-border: #3D3D3D; --op1-card-stroke: #3D3D3D; --op1-divider: #3D3D3D;
+  --op1-reveal-hover: rgba(255,255,255,0.06); --op1-reveal-pressed: rgba(255,255,255,0.03);
+  --op1-acrylic-tint-opacity: 0.60; --op1-mica-opacity: 0.80;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--op1-font-family); color:var(--op1-on-surface); background:var(--op1-surface); overflow:hidden; height:100vh; -webkit-font-smoothing:antialiased; }
+.op1-acrylic { position:relative; }
+.op1-acrylic::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"); opacity:var(--op1-acrylic-noise-opacity); pointer-events:none; border-radius:inherit; z-index:1; }
+.nav-view { display:flex; height:100vh; width:100vw; }
+.nav-pane { width:var(--op1-nav-pane-expanded); min-width:var(--op1-nav-pane-expanded); height:100vh; display:flex; flex-direction:column; background:rgba(243,243,243,0.85); backdrop-filter:blur(60px); -webkit-backdrop-filter:blur(60px); border-right:1px solid var(--op1-border); transition:width var(--op1-motion-normal) var(--op1-motion-easing-standard), min-width var(--op1-motion-normal) var(--op1-motion-easing-standard); overflow:hidden; z-index:10; }
+html.dark .nav-pane { background:var(--op1-surface-nav); }
+@media (max-width:1279px) and (min-width:768px),(max-width:767px) { .nav-pane{width:var(--op1-nav-pane-compact);min-width:var(--op1-nav-pane-compact);} .nav-pane .nav-label,.nav-pane .nav-search-wrap,.nav-pane .nav-footer-info,.nav-pane .nav-footer-server-name{display:none;} .nav-pane .nav-search{display:none;} .nav-pane .nav-item{justify-content:center;padding:12px 0;} .nav-pane .nav-header{justify-content:center;padding:12px 0;} .nav-pane .nav-header-title{display:none;} .nav-pane .nav-footer{justify-content:center;padding:12px 0;} }
+.nav-header { display:flex; align-items:center; gap:10px; padding:16px 16px 12px; flex-shrink:0; }
+.nav-header-brand { color:var(--op1-brand); }
+.nav-header-title { font-size:16px; font-weight:600; color:var(--op1-on-surface); white-space:nowrap; }
+.nav-search-wrap { padding:0 16px 12px; flex-shrink:0; }
+.nav-search { position:relative; }
+.nav-search input { width:100%; height:36px; padding:0 12px 0 36px; font-size:13px; font-family:var(--op1-font-family); color:var(--op1-on-surface); background:var(--op1-surface-container-low); border:none; border-bottom:1px solid var(--op1-border); border-radius:var(--op1-radius-sm); outline:none; transition:border-color var(--op1-motion-fast); }
+html.dark .nav-search input { background:rgba(255,255,255,0.06); }
+.nav-search input::placeholder { color:var(--op1-on-surface-variant); }
+.nav-search input:focus { border-bottom:2px solid var(--op1-brand); background:var(--op1-surface-card); }
+.nav-search .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--op1-on-surface-variant); pointer-events:none; }
+.nav-items { flex:1; overflow-y:auto; padding:4px 8px; }
+.nav-item { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:var(--op1-radius-sm); cursor:pointer; font-size:14px; color:var(--op1-on-surface); position:relative; user-select:none; white-space:nowrap; transition:background var(--op1-motion-fast); border-left:3px solid transparent; }
+.nav-item:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+.nav-item:active { background:var(--op1-reveal-pressed); }
+.nav-item .nav-icon { flex-shrink:0; color:var(--op1-on-surface); }
+.nav-item.active { border-left-color:var(--op1-brand); background:rgba(12,155,75,0.08); color:var(--op1-brand); font-weight:600; }
+.nav-item.active .nav-icon { color:var(--op1-brand); }
+html.dark .nav-item.active { background:rgba(12,155,75,0.15); }
+@media (max-width:1279px) and (min-width:768px),(max-width:767px) { .nav-item .nav-tooltip{display:none;position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:var(--op1-surface-card);color:var(--op1-on-surface);padding:6px 12px;border-radius:var(--op1-radius-sm);font-size:13px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.14);border:1px solid var(--op1-border);z-index:100;pointer-events:none;} .nav-item:hover .nav-tooltip{display:block;} }
+.nav-footer { display:flex; align-items:center; gap:10px; padding:12px 16px; border-top:1px solid var(--op1-divider); flex-shrink:0; }
+.nav-footer-info { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+.nav-footer-server-name { font-size:13px; color:var(--op1-on-surface); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.nav-footer-online-dot { width:8px; height:8px; border-radius:50%; background:var(--op1-success); flex-shrink:0; }
+.nav-footer-settings-btn { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:var(--op1-radius-sm); cursor:pointer; color:var(--op1-on-surface-variant); transition:background var(--op1-motion-fast); flex-shrink:0; }
+.nav-footer-settings-btn:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+.nav-content { flex:1; display:flex; flex-direction:column; min-width:0; background:var(--op1-surface); overflow:hidden; }
+.command-bar { display:flex; align-items:center; gap:4px; padding:8px 16px; height:var(--op1-nav-top-height); background:var(--op1-surface); border-bottom:1px solid var(--op1-border); flex-shrink:0; }
+.command-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; height:32px; font-size:13px; font-family:var(--op1-font-family); color:var(--op1-on-surface); background:transparent; border:1px solid transparent; border-radius:var(--op1-radius-sm); cursor:pointer; white-space:nowrap; position:relative; overflow:hidden; transition:background var(--op1-motion-fast), border-color var(--op1-motion-fast); }
+.command-btn:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); border-color:var(--op1-border); }
+.command-btn:active { background:var(--op1-reveal-pressed); border-color:var(--op1-border); }
+.command-separator { width:1px; height:24px; background:var(--op1-divider); margin:0 4px; }
+.content-body { flex:1; overflow-y:auto; padding:24px; }
+.theme-toggle-btn { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:var(--op1-radius-sm); cursor:pointer; color:var(--op1-on-surface-variant); background:transparent; border:none; transition:background var(--op1-motion-fast); flex-shrink:0; }
+.theme-toggle-btn:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+html.dark .icon-sun{display:block;} html.dark .icon-moon{display:none;} html.light .icon-sun{display:none;} html.light .icon-moon{display:block;}
+@media (max-width:1279px) and (min-width:768px),(max-width:767px) { .command-btn-label{display:none;} .command-btn{padding:6px;width:32px;justify-content:center;} }
+::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-thumb { background:var(--op1-on-surface-variant); border-radius:3px; opacity:0.5; }
+
+/* Page header with toggle */
+.page-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px;
+}
+.page-title { font-size:24px; font-weight:700; color:var(--op1-on-surface); }
+
+/* AccentButton */
+.accent-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 16px; height:32px; font-size:13px; font-weight:600;
+  font-family:var(--op1-font-family); color:#FFFFFF;
+  background:var(--op1-brand); border:none;
+  border-radius:var(--op1-radius-sm); cursor:pointer; white-space:nowrap;
+  transition:background var(--op1-motion-fast);
+}
+.accent-btn:hover { background:var(--op1-brand-hover); }
+.accent-btn:active { background:var(--op1-brand-pressed); }
+
+/* Fluent ToggleSwitch */
+.fluent-toggle { position:relative; width:40px; height:20px; cursor:pointer; }
+.fluent-toggle input { opacity:0; width:0; height:0; position:absolute; }
+.fluent-toggle-track { position:absolute; inset:0; border-radius:10px; background:var(--op1-border); transition:background var(--op1-motion-fast); }
+.fluent-toggle input:checked + .fluent-toggle-track { background:var(--op1-brand); }
+.fluent-toggle-thumb { position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:#FFFFFF; transition:transform var(--op1-motion-fast); box-shadow:0 1px 2px rgba(0,0,0,0.2); }
+.fluent-toggle input:checked ~ .fluent-toggle-thumb { transform:translateX(20px); }
+
+/* Toggle row */
+.fw-toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--op1-surface-card); border:1px solid var(--op1-card-stroke);
+  border-radius:var(--op1-radius-card); padding:14px 20px;
+  margin-bottom:20px;
+}
+.fw-toggle-label { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:500; color:var(--op1-on-surface); }
+
+/* Pivot tabs */
+.pivot-tabs {
+  display:flex; align-items:center; gap:0;
+  border-bottom:1px solid var(--op1-border);
+  margin-bottom:20px;
+}
+.pivot-tab {
+  padding:10px 20px; font-size:13px; font-weight:500;
+  color:var(--op1-on-surface-variant); cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:color var(--op1-motion-fast), border-color var(--op1-motion-fast);
+  user-select:none;
+}
+.pivot-tab:hover { color:var(--op1-on-surface); }
+.pivot-tab.active { color:var(--op1-brand); border-bottom-color:var(--op1-brand); }
+
+/* Rules table card */
+.rules-card {
+  background:var(--op1-surface-card);
+  border:1px solid var(--op1-card-stroke);
+  border-radius:var(--op1-radius-card);
+  overflow:hidden;
+}
+
+/* Rule row header */
+.rule-header {
+  display:grid;
+  grid-template-columns: 80px 70px 80px 1fr 60px;
+  align-items:center; gap:12px;
+  padding:10px 20px; font-size:12px; font-weight:600;
+  color:var(--op1-on-surface-variant);
+  background:var(--op1-surface-container-low);
+  border-bottom:1px solid var(--op1-divider);
+  text-transform:uppercase; letter-spacing:0.3px;
+}
+
+/* Rule row */
+.rule-row {
+  display:grid;
+  grid-template-columns: 80px 70px 80px 1fr 60px;
+  align-items:center; gap:12px;
+  padding:12px 20px; font-size:13px; color:var(--op1-on-surface);
+  border-bottom:1px solid var(--op1-divider);
+  position:relative; overflow:hidden; cursor:pointer;
+  transition:background var(--op1-motion-fast);
+}
+.rule-row:last-child { border-bottom:none; }
+.rule-row:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+
+.rule-port { font-family:var(--op1-font-family-mono); font-weight:600; font-size:14px; }
+.rule-protocol { color:var(--op1-on-surface-variant); font-size:12px; text-transform:uppercase; }
+
+/* Action badges */
+.action-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 10px; border-radius:var(--op1-radius-full);
+  font-size:12px; font-weight:600;
+}
+.action-allow { background:rgba(12,155,75,0.12); color:var(--op1-success); }
+.action-deny { background:rgba(196,43,28,0.12); color:var(--op1-danger); }
+
+.rule-remark { color:var(--op1-on-surface-variant); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ContentDialog overlay */
+.dialog-overlay {
+  position:fixed; inset:0; z-index:100;
+  background:rgba(0,0,0,0.4);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity var(--op1-motion-normal) var(--op1-motion-easing-standard);
+}
+.dialog-overlay.visible { opacity:1; pointer-events:auto; }
+.dialog-box {
+  width:400px; max-width:90vw;
+  background:var(--op1-surface-card);
+  border:1px solid var(--op1-card-stroke);
+  border-radius:var(--op1-radius-card);
+  box-shadow:0 16px 64px rgba(0,0,0,0.14);
+  padding:24px;
+  transform:translateY(20px); opacity:0;
+  transition:transform var(--op1-motion-normal) var(--op1-motion-easing-standard),
+              opacity var(--op1-motion-normal) var(--op1-motion-easing-standard);
+}
+.dialog-overlay.visible .dialog-box { transform:translateY(0); opacity:1; }
+.dialog-title { font-size:18px; font-weight:600; color:var(--op1-on-surface); margin-bottom:12px; }
+.dialog-body { font-size:13px; color:var(--op1-on-surface-variant); line-height:1.5; margin-bottom:24px; }
+.dialog-actions { display:flex; justify-content:flex-end; gap:8px; }
+.dialog-btn-secondary {
+  padding:6px 16px; height:32px; font-size:13px; font-weight:500;
+  font-family:var(--op1-font-family); color:var(--op1-on-surface);
+  background:var(--op1-surface-container-low); border:1px solid var(--op1-border);
+  border-radius:var(--op1-radius-sm); cursor:pointer;
+  transition:background var(--op1-motion-fast), border-color var(--op1-motion-fast);
+}
+.dialog-btn-secondary:hover { background:var(--op1-surface-container-high); border-color:var(--op1-on-surface-variant); }
+.dialog-btn-danger {
+  padding:6px 16px; height:32px; font-size:13px; font-weight:600;
+  font-family:var(--op1-font-family); color:#FFFFFF;
+  background:var(--op1-danger); border:none;
+  border-radius:var(--op1-radius-sm); cursor:pointer;
+  transition:opacity var(--op1-motion-fast);
+}
+.dialog-btn-danger:hover { opacity:0.9; }
+</style>
+</head>
+<body>
+<div class="nav-view">
+
+  <nav class="nav-pane op1-acrylic" id="navPane">
+    <div class="nav-header">
+      <div class="nav-header-brand"><i data-lucide="server" style="width:20px;height:20px;"></i></div>
+      <span class="nav-header-title">1Panel</span>
+    </div>
+    <div class="nav-search-wrap">
+      <div class="nav-search">
+        <i data-lucide="search" class="search-icon" style="width:14px;height:14px;"></i>
+        <input type="text" placeholder="搜索模块...">
+      </div>
+    </div>
+    <div class="nav-items">
+      <div class="nav-item" data-reveal data-nav="dashboard"><i data-lucide="layout-dashboard" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">仪表板</span><span class="nav-tooltip">仪表板</span></div>
+      <div class="nav-item" data-reveal data-nav="containers"><i data-lucide="box" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">容器</span><span class="nav-tooltip">容器</span></div>
+      <div class="nav-item" data-reveal data-nav="files"><i data-lucide="folder-open" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">文件</span><span class="nav-tooltip">文件</span></div>
+      <div class="nav-item" data-reveal data-nav="websites"><i data-lucide="globe" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">网站</span><span class="nav-tooltip">网站</span></div>
+      <div class="nav-item" data-reveal data-nav="terminal"><i data-lucide="terminal" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">终端</span><span class="nav-tooltip">终端</span></div>
+      <div class="nav-item active" data-reveal data-nav="firewall"><i data-lucide="shield" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">防火墙</span><span class="nav-tooltip">防火墙</span></div>
+      <div class="nav-item" data-reveal data-nav="settings"><i data-lucide="settings" class="nav-icon" style="width:20px;height:20px;"></i><span class="nav-label">设置</span><span class="nav-tooltip">设置</span></div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-footer-info"><span class="nav-footer-online-dot"></span><span class="nav-footer-server-name">生产服务器</span></div>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换主题"><i data-lucide="sun" class="icon-sun" style="width:16px;height:16px;"></i><i data-lucide="moon" class="icon-moon" style="width:16px;height:16px;"></i></button>
+      <div class="nav-footer-settings-btn" data-reveal title="设置"><i data-lucide="settings" style="width:16px;height:16px;"></i></div>
+    </div>
+  </nav>
+
+  <div class="nav-content">
+    <!-- CommandBar -->
+    <div class="command-bar">
+      <button class="command-btn" data-reveal title="刷新"><i data-lucide="refresh-cw" style="width:16px;height:16px;"></i><span class="command-btn-label">刷新</span></button>
+      <div style="flex:1;"></div>
+      <button class="command-btn" data-reveal title="导入规则"><i data-lucide="upload" style="width:16px;height:16px;"></i><span class="command-btn-label">导入</span></button>
+      <button class="command-btn" data-reveal title="导出规则"><i data-lucide="download" style="width:16px;height:16px;"></i><span class="command-btn-label">导出</span></button>
+    </div>
+
+    <div class="content-body">
+      <!-- Header with master toggle -->
+      <div class="page-header">
+        <h1 class="page-title">防火墙</h1>
+        <button class="accent-btn" data-reveal id="addRuleBtn"><i data-lucide="plus" style="width:16px;height:16px;"></i> 添加规则</button>
+      </div>
+
+      <!-- Master toggle -->
+      <div class="fw-toggle-row" data-reveal>
+        <div class="fw-toggle-label">
+          <i data-lucide="shield-check" style="width:20px;height:20px;color:var(--op1-brand);"></i>
+          防火墙总开关
+        </div>
+        <label class="fluent-toggle"><input type="checkbox" checked><span class="fluent-toggle-track"></span><span class="fluent-toggle-thumb"></span></label>
+      </div>
+
+      <!-- Pivot -->
+      <div class="pivot-tabs">
+        <div class="pivot-tab active">端口规则</div>
+        <div class="pivot-tab">IP 规则</div>
+        <div class="pivot-tab">服务标签</div>
+      </div>
+
+      <!-- Rules table -->
+      <div class="rules-card">
+        <!-- Header -->
+        <div class="rule-header">
+          <span>端口</span>
+          <span>协议</span>
+          <span>动作</span>
+          <span>备注</span>
+          <span>启用</span>
+        </div>
+
+        <!-- Rule 1: 80 -->
+        <div class="rule-row" data-reveal>
+          <span class="rule-port">80</span>
+          <span class="rule-protocol">TCP</span>
+          <span class="action-badge action-allow"><i data-lucide="check" style="width:12px;height:12px;"></i> 允许</span>
+          <span class="rule-remark">HTTP 网站访问</span>
+          <label class="fluent-toggle"><input type="checkbox" checked><span class="fluent-toggle-track"></span><span class="fluent-toggle-thumb"></span></label>
+        </div>
+
+        <!-- Rule 2: 443 -->
+        <div class="rule-row" data-reveal>
+          <span class="rule-port">443</span>
+          <span class="rule-protocol">TCP</span>
+          <span class="action-badge action-allow"><i data-lucide="check" style="width:12px;height:12px;"></i> 允许</span>
+          <span class="rule-remark">HTTPS 网站访问</span>
+          <label class="fluent-toggle"><input type="checkbox" checked><span class="fluent-toggle-track"></span><span class="fluent-toggle-thumb"></span></label>
+        </div>
+
+        <!-- Rule 3: 22 -->
+        <div class="rule-row" data-reveal>
+          <span class="rule-port">22</span>
+          <span class="rule-protocol">TCP</span>
+          <span class="action-badge action-allow"><i data-lucide="check" style="width:12px;height:12px;"></i> 允许</span>
+          <span class="rule-remark">SSH 远程登录</span>
+          <label class="fluent-toggle"><input type="checkbox" checked><span class="fluent-toggle-track"></span><span class="fluent-toggle-thumb"></span></label>
+        </div>
+
+        <!-- Rule 4: 3306 - deny -->
+        <div class="rule-row" data-reveal>
+          <span class="rule-port">3306</span>
+          <span class="rule-protocol">TCP</span>
+          <span class="action-badge action-deny"><i data-lucide="x" style="width:12px;height:12px;"></i> 拒绝</span>
+          <span class="rule-remark">MySQL 禁止外网访问</span>
+          <label class="fluent-toggle"><input type="checkbox" checked><span class="fluent-toggle-track"></span><span class="fluent-toggle-thumb"></span></label>
+        </div>
+
+        <!-- Rule 5: 8888 -->
+        <div class="rule-row" data-reveal>
+          <span class="rule-port">8888</span>
+          <span class="rule-protocol">TCP</span>
+          <span class="action-badge action-allow"><i data-lucide="check" style="width:12px;height:12px;"></i> 允许</span>
+          <span class="rule-remark">1Panel 管理面板</span>
+          <label class="fluent-toggle"><input type="checkbox" checked><span class="fluent-toggle-track"></span><span class="fluent-toggle-thumb"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ContentDialog: Delete confirmation -->
+<div class="dialog-overlay" id="dialogOverlay">
+  <div class="dialog-box">
+    <div class="dialog-title">删除规则</div>
+    <div class="dialog-body">确定要删除端口 <strong>8888</strong> 的防火墙规则吗？此操作不可撤销。</div>
+    <div class="dialog-actions">
+      <button class="dialog-btn-secondary" id="dialogCancel">取消</button>
+      <button class="dialog-btn-danger" id="dialogConfirm">删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    el.addEventListener('mousemove', e => { const r = el.getBoundingClientRect(); el.style.setProperty('--reveal-x', (e.clientX - r.left) + 'px'); el.style.setProperty('--reveal-y', (e.clientY - r.top) + 'px'); });
+    el.addEventListener('mouseleave', () => { el.style.removeProperty('--reveal-x'); el.style.removeProperty('--reveal-y'); });
+  });
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); item.classList.add('active'); });
+  });
+  function toggleTheme() { const h = document.documentElement; if (h.classList.contains('light')) { h.classList.remove('light'); h.classList.add('dark'); } else { h.classList.remove('dark'); h.classList.add('light'); } }
+  document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+  // Pivot tab switching
+  document.querySelectorAll('.pivot-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.pivot-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // ContentDialog demo
+  const overlay = document.getElementById('dialogOverlay');
+  document.getElementById('addRuleBtn').addEventListener('click', () => { overlay.classList.add('visible'); });
+  document.getElementById('dialogCancel').addEventListener('click', () => { overlay.classList.remove('visible'); });
+  document.getElementById('dialogConfirm').addEventListener('click', () => { overlay.classList.remove('visible'); });
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('visible'); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - AI 管理</title>
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B;
+  --op1-brand-light:#4DB87A;
+  --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE;
+  --op1-brand-100:#C8E8D4;
+  --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A;
+  --op1-brand-900:#055A2B;
+  --op1-success:#16A34A;
+  --op1-warning:#F59E0B;
+  --op1-danger:#DC2626;
+  --op1-info:#0EA5E9;
+  --op1-glass-blur:40px;
+  --op1-glass-saturate:180%;
+  --op1-glass-alpha:0.65;
+  --op1-glass-alpha-elevated:0.85;
+  --op1-glass-border-alpha:0.20;
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.6);
+  --op1-glass-shadow-outer:0 8px 32px rgba(31,38,135,0.15);
+  --op1-surface:rgba(255,255,255,0.15);
+  --op1-surface-elevated:rgba(255,255,255,0.40);
+  --op1-surface-card:rgba(255,255,255,0.20);
+  --op1-surface-nav:rgba(255,255,255,0.65);
+  --op1-surface-popover:rgba(255,255,255,0.50);
+  --op1-surface-container-low:rgba(255,255,255,0.10);
+  --op1-surface-container:rgba(255,255,255,0.15);
+  --op1-surface-container-high:rgba(255,255,255,0.25);
+  --op1-on-surface:rgba(0,0,0,0.85);
+  --op1-on-surface-variant:rgba(0,0,0,0.55);
+  --op1-on-surface-nav:rgba(0,0,0,0.75);
+  --op1-nav-sidebar-width:260px;
+  --op1-nav-tab-height:49px;
+  --op1-font-family:system-ui,-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --op1-font-family-mono:'SF Mono',ui-monospace,Menlo,monospace;
+  --op1-radius-sm:12px;
+  --op1-radius-md:16px;
+  --op1-radius-lg:20px;
+  --op1-radius-card:22px;
+  --op1-radius-button:9999px;
+  --op1-spacing-xs:4px;
+  --op1-spacing-sm:8px;
+  --op1-spacing-md:12px;
+  --op1-spacing-lg:16px;
+  --op1-spacing-xl:24px;
+  --op1-motion-fast:200ms;
+  --op1-motion-normal:350ms;
+  --op1-easing-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --op1-border:rgba(0,0,0,0.08);
+  --op1-border-strong:rgba(0,0,0,0.15);
+  --op1-error:#FF3B30;
+  --op1-bg-gradient-start:#667eea;
+  --op1-bg-gradient-end:#764ba2;
+}
+
+html.dark {
+  --op1-surface:rgba(30,30,30,0.65);
+  --op1-surface-card:rgba(40,40,40,0.70);
+  --op1-surface-nav:rgba(30,30,30,0.75);
+  --op1-on-surface:rgba(255,255,255,0.85);
+  --op1-on-surface-variant:rgba(255,255,255,0.55);
+  --op1-border:rgba(255,255,255,0.10);
+  --op1-border-strong:rgba(255,255,255,0.18);
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.08);
+  --op1-glass-shadow-outer:0 8px 32px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--op1-font-family);
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+  color: var(--op1-on-surface);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Glass Card --- */
+.glass-card {
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: var(--op1-surface-card);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset);
+  border-radius: var(--op1-radius-card);
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+html.dark .glass-card {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--op1-nav-sidebar-width);
+  height: 100vh;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-right: 1px solid var(--op1-border);
+  box-shadow: var(--op1-glass-shadow-outer);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: var(--op1-spacing-lg);
+  transition: transform var(--op1-motion-normal);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: var(--op1-spacing-md) 0 var(--op1-spacing-xl);
+  border-bottom: 1px solid var(--op1-border);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.sidebar-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--op1-brand);
+  border-radius: var(--op1-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.sidebar-logo span {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: 10px 12px;
+  border-radius: var(--op1-radius-sm);
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.sidebar-nav a:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav a.active {
+  background: var(--op1-brand);
+  color: #fff;
+}
+
+.sidebar-nav a.active:hover {
+  background: var(--op1-brand-dark);
+}
+
+/* --- Main Content --- */
+.main-content {
+  margin-left: var(--op1-nav-sidebar-width);
+  padding: var(--op1-spacing-xl);
+  padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  max-width: 1200px;
+}
+
+/* --- Page Header --- */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--op1-spacing-xl);
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--op1-on-surface);
+}
+
+.page-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.icon-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.theme-btn {
+  position: fixed;
+  top: var(--op1-spacing-lg);
+  right: var(--op1-spacing-lg);
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.theme-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+/* --- Primary Button --- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: 10px 22px;
+  border-radius: var(--op1-radius-button);
+  background: var(--op1-brand);
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--op1-font-family);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), transform var(--op1-motion-fast);
+  box-shadow: 0 2px 12px rgba(12,155,75,0.3);
+}
+
+.btn-primary:hover {
+  background: var(--op1-brand-dark);
+  transform: translateY(-1px);
+}
+
+/* --- Section Title --- */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+/* --- GPU Monitor Stats --- */
+.gpu-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--op1-spacing-lg);
+  margin-bottom: var(--op1-spacing-xl);
+}
+
+.gpu-stat-card {
+  padding: var(--op1-spacing-lg);
+}
+
+.gpu-stat-card .stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--op1-spacing-sm);
+}
+
+.gpu-stat-card .stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+}
+
+.gpu-stat-card .stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--op1-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gpu-stat-card .stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--op1-on-surface);
+  margin-bottom: var(--op1-spacing-sm);
+}
+
+.gpu-stat-card .stat-value .stat-unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+  margin-left: 2px;
+}
+
+.gpu-stat-card .stat-bar {
+  height: 6px;
+  border-radius: var(--op1-radius-button);
+  background: var(--op1-surface-container-high);
+  overflow: hidden;
+}
+
+.gpu-stat-card .stat-bar-fill {
+  height: 100%;
+  border-radius: var(--op1-radius-button);
+  transition: width 1s var(--op1-easing-spring);
+}
+
+.gpu-stat-card .stat-detail {
+  margin-top: var(--op1-spacing-xs);
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+}
+
+/* --- Model List --- */
+.model-card { padding: var(--op1-spacing-lg); margin-bottom: var(--op1-spacing-xl); }
+
+.model-list { display: flex; flex-direction: column; gap: var(--op1-spacing-sm); }
+
+.model-item {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+  border-radius: var(--op1-radius-md);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-container-low);
+  border: 1px solid var(--op1-border);
+  transition: background var(--op1-motion-fast);
+}
+
+.model-item:hover {
+  background: var(--op1-surface-container);
+}
+
+.model-item .model-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.model-item .model-status-dot.running {
+  background: var(--op1-success);
+  box-shadow: 0 0 8px rgba(22,163,74,0.5);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.model-item .model-status-dot.stopped {
+  background: #9CA3AF;
+}
+
+.model-item .model-status-dot.not-installed {
+  background: var(--op1-on-surface-variant);
+  opacity: 0.4;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(22,163,74,0.4); }
+  50% { box-shadow: 0 0 14px rgba(22,163,74,0.7); }
+}
+
+.model-item .model-info { flex: 1; min-width: 0; }
+
+.model-item .model-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  font-family: var(--op1-font-family-mono);
+}
+
+.model-item .model-meta {
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+}
+
+.model-item .model-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.model-item .model-gpu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--op1-radius-button);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--op1-font-family-mono);
+}
+
+.model-item .model-gpu-badge.active {
+  background: rgba(22,163,74,0.12);
+  color: var(--op1-success);
+}
+
+.model-item .model-gpu-badge.idle {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface-variant);
+}
+
+.model-item .model-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  flex-shrink: 0;
+}
+
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: var(--op1-radius-button);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--op1-font-family);
+  cursor: pointer;
+  border: none;
+  transition: background var(--op1-motion-fast), transform var(--op1-motion-fast), opacity var(--op1-motion-fast);
+}
+
+.btn-sm:active { transform: scale(0.96); }
+
+.btn-stop {
+  background: rgba(220,38,38,0.10);
+  color: var(--op1-danger);
+}
+
+.btn-stop:hover { background: rgba(220,38,38,0.20); }
+
+.btn-start {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.btn-start:hover { background: var(--op1-surface-elevated); }
+
+.btn-install {
+  background: var(--op1-brand);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(12,155,75,0.25);
+}
+
+.btn-install:hover {
+  background: var(--op1-brand-dark);
+}
+
+/* --- MCP Config --- */
+.mcp-card { padding: var(--op1-spacing-lg); margin-bottom: var(--op1-spacing-xl); }
+
+.mcp-list { display: flex; flex-direction: column; gap: var(--op1-spacing-sm); }
+
+.mcp-item {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+  border-radius: var(--op1-radius-md);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-container-low);
+  border: 1px solid var(--op1-border);
+  transition: background var(--op1-motion-fast);
+}
+
+.mcp-item:hover {
+  background: var(--op1-surface-container);
+}
+
+.mcp-item .mcp-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--op1-radius-sm);
+  background: var(--op1-surface-container-high);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  flex-shrink: 0;
+}
+
+.mcp-item .mcp-info { flex: 1; min-width: 0; }
+
+.mcp-item .mcp-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+}
+
+.mcp-item .mcp-url {
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+  font-family: var(--op1-font-family-mono);
+  margin-top: 2px;
+}
+
+.mcp-item .mcp-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--op1-radius-button);
+  background: rgba(22,163,74,0.10);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--op1-success);
+  flex-shrink: 0;
+}
+
+.mcp-item .mcp-status .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--op1-success);
+  box-shadow: 0 0 6px rgba(22,163,74,0.5);
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: 10px 22px;
+  border-radius: var(--op1-radius-button);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: var(--op1-on-surface);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--op1-font-family);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), transform var(--op1-motion-fast);
+  margin-top: var(--op1-spacing-md);
+}
+
+.btn-add:hover {
+  background: var(--op1-brand);
+  color: #fff;
+  border-color: var(--op1-brand);
+  transform: translateY(-1px);
+}
+
+/* --- Domain Proxy Config --- */
+.domain-card { padding: var(--op1-spacing-lg); margin-bottom: var(--op1-spacing-xl); }
+
+.domain-list { display: flex; flex-direction: column; gap: var(--op1-spacing-sm); }
+
+.domain-item {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+  border-radius: var(--op1-radius-md);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-container-low);
+  border: 1px solid var(--op1-border);
+  transition: background var(--op1-motion-fast);
+}
+
+.domain-item:hover {
+  background: var(--op1-surface-container);
+}
+
+.domain-item .domain-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--op1-radius-sm);
+  background: rgba(102,126,234,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-info);
+  flex-shrink: 0;
+}
+
+.domain-item .domain-info { flex: 1; min-width: 0; }
+
+.domain-item .domain-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  font-family: var(--op1-font-family-mono);
+}
+
+.domain-item .domain-target {
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.domain-item .domain-arrow {
+  color: var(--op1-on-surface-variant);
+  margin: 0 2px;
+}
+
+.domain-item .domain-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--op1-radius-button);
+  background: rgba(22,163,74,0.10);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--op1-success);
+  flex-shrink: 0;
+}
+
+/* --- Mobile Bottom Tab Bar --- */
+.bottom-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--op1-nav-tab-height);
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-top: 1px solid var(--op1-border);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  z-index: 50;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 var(--op1-spacing-lg);
+}
+
+.bottom-tab-bar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  transition: color var(--op1-motion-fast);
+}
+
+.bottom-tab-bar a.active { color: var(--op1-brand); }
+
+/* --- Responsive --- */
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+  .bottom-tab-bar { display: flex; }
+  .main-content {
+    margin-left: 0;
+    padding: var(--op1-spacing-lg);
+    padding-top: var(--op1-spacing-lg);
+    padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  }
+  .gpu-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .page-header h1 { font-size: 22px; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: var(--op1-spacing-md); }
+  .theme-btn { top: auto; bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-lg)); right: var(--op1-spacing-lg); }
+}
+
+@media (min-width: 768px) {
+  .bottom-tab-bar { display: none; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-btn" onclick="toggleTheme()" aria-label="切换主题">
+  <i data-lucide="sun" id="theme-icon-sun" style="width:18px;height:18px;display:none;"></i>
+  <i data-lucide="moon" id="theme-icon-moon" style="width:18px;height:18px;"></i>
+</button>
+
+<!-- Sidebar (macOS >=768px) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">1P</div>
+    <span>1Panel</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#">
+      <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+      仪表板
+    </a>
+    <a href="#">
+      <i data-lucide="container" style="width:18px;height:18px;"></i>
+      容器管理
+    </a>
+    <a href="#">
+      <i data-lucide="database" style="width:18px;height:18px;"></i>
+      数据库
+    </a>
+    <a href="#">
+      <i data-lucide="folder-open" style="width:18px;height:18px;"></i>
+      文件管理
+    </a>
+    <a href="#">
+      <i data-lucide="globe" style="width:18px;height:18px;"></i>
+      网站
+    </a>
+    <a href="#" class="active">
+      <i data-lucide="brain" style="width:18px;height:18px;"></i>
+      AI 管理
+    </a>
+    <a href="#">
+      <i data-lucide="shield" style="width:18px;height:18px;"></i>
+      防火墙
+    </a>
+    <a href="#">
+      <i data-lucide="terminal" style="width:18px;height:18px;"></i>
+      终端
+    </a>
+    <a href="#">
+      <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      设置
+    </a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>AI 管理</h1>
+    <div class="header-right">
+      <button class="btn-primary">
+        <i data-lucide="download" style="width:16px;height:16px;"></i>
+        拉取模型
+      </button>
+    </div>
+  </div>
+
+  <!-- GPU Monitor -->
+  <div class="section-title">GPU 监控</div>
+  <div class="gpu-stats-grid">
+    <!-- GPU Temperature -->
+    <div class="glass-card gpu-stat-card">
+      <div class="stat-header">
+        <span class="stat-label">GPU 温度</span>
+        <div class="stat-icon" style="background:#FEF3C7;color:var(--op1-warning);">
+          <i data-lucide="thermometer" style="width:18px;height:18px;"></i>
+        </div>
+      </div>
+      <div class="stat-value">62<span class="stat-unit">&deg;C</span></div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill" style="width:62%;background:var(--op1-warning);"></div>
+      </div>
+      <div class="stat-detail">正常范围 30-85&deg;C</div>
+    </div>
+
+    <!-- VRAM -->
+    <div class="glass-card gpu-stat-card">
+      <div class="stat-header">
+        <span class="stat-label">显存使用</span>
+        <div class="stat-icon" style="background:var(--op1-brand-50);color:var(--op1-brand);">
+          <i data-lucide="memory-stick" style="width:18px;height:18px;"></i>
+        </div>
+      </div>
+      <div class="stat-value">8.2<span class="stat-unit"> GB</span></div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill" style="width:34.2%;background:var(--op1-brand);"></div>
+      </div>
+      <div class="stat-detail">8.2 GB / 24 GB</div>
+    </div>
+
+    <!-- Compute Utilization -->
+    <div class="glass-card gpu-stat-card">
+      <div class="stat-header">
+        <span class="stat-label">计算利用率</span>
+        <div class="stat-icon" style="background:#E0F2FE;color:var(--op1-info);">
+          <i data-lucide="activity" style="width:18px;height:18px;"></i>
+        </div>
+      </div>
+      <div class="stat-value">45<span class="stat-unit">%</span></div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill" style="width:45%;background:var(--op1-info);"></div>
+      </div>
+      <div class="stat-detail">NVIDIA RTX 4090</div>
+    </div>
+
+    <!-- Fan Speed -->
+    <div class="glass-card gpu-stat-card">
+      <div class="stat-header">
+        <span class="stat-label">风扇转速</span>
+        <div class="stat-icon" style="background:var(--op1-brand-50);color:var(--op1-brand);">
+          <i data-lucide="fan" style="width:18px;height:18px;"></i>
+        </div>
+      </div>
+      <div class="stat-value">1200<span class="stat-unit"> RPM</span></div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill" style="width:40%;background:var(--op1-brand-light);"></div>
+      </div>
+      <div class="stat-detail">自动调速</div>
+    </div>
+  </div>
+
+  <!-- Ollama Models -->
+  <div class="section-title">Ollama 模型</div>
+  <div class="glass-card model-card">
+    <div class="model-list">
+      <!-- llama3.1:8b - Running -->
+      <div class="model-item">
+        <span class="model-status-dot running"></span>
+        <div class="model-info">
+          <div class="model-name">llama3.1:8b</div>
+          <div class="model-meta">
+            <span>4.7 GB</span>
+            <span class="model-gpu-badge active">
+              <i data-lucide="cpu" style="width:10px;height:10px;"></i>
+              GPU 45%
+            </span>
+            <span style="color:var(--op1-success);font-weight:600;">运行中</span>
+          </div>
+        </div>
+        <div class="model-actions">
+          <button class="btn-sm btn-stop">
+            <i data-lucide="square" style="width:12px;height:12px;"></i>
+            停止
+          </button>
+        </div>
+      </div>
+
+      <!-- qwen2.5:7b - Stopped -->
+      <div class="model-item">
+        <span class="model-status-dot stopped"></span>
+        <div class="model-info">
+          <div class="model-name">qwen2.5:7b</div>
+          <div class="model-meta">
+            <span>4.4 GB</span>
+            <span class="model-gpu-badge idle">
+              <i data-lucide="cpu" style="width:10px;height:10px;"></i>
+              GPU 0%
+            </span>
+            <span style="color:var(--op1-on-surface-variant);">已停止</span>
+          </div>
+        </div>
+        <div class="model-actions">
+          <button class="btn-sm btn-start">
+            <i data-lucide="play" style="width:12px;height:12px;"></i>
+            启动
+          </button>
+        </div>
+      </div>
+
+      <!-- codellama:13b - Not Installed -->
+      <div class="model-item">
+        <span class="model-status-dot not-installed"></span>
+        <div class="model-info">
+          <div class="model-name">codellama:13b</div>
+          <div class="model-meta">
+            <span>7.4 GB</span>
+            <span style="color:var(--op1-on-surface-variant);">未安装</span>
+          </div>
+        </div>
+        <div class="model-actions">
+          <button class="btn-sm btn-install">
+            <i data-lucide="download" style="width:12px;height:12px;"></i>
+            安装
+          </button>
+        </div>
+      </div>
+
+      <!-- nomic-embed-text - Stopped -->
+      <div class="model-item">
+        <span class="model-status-dot stopped"></span>
+        <div class="model-info">
+          <div class="model-name">nomic-embed-text</div>
+          <div class="model-meta">
+            <span>274 MB</span>
+            <span class="model-gpu-badge idle">
+              <i data-lucide="cpu" style="width:10px;height:10px;"></i>
+              GPU 0%
+            </span>
+            <span style="color:var(--op1-on-surface-variant);">已停止</span>
+          </div>
+        </div>
+        <div class="model-actions">
+          <button class="btn-sm btn-start">
+            <i data-lucide="play" style="width:12px;height:12px;"></i>
+            启动
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MCP Configuration -->
+  <div class="section-title">MCP 配置</div>
+  <div class="glass-card mcp-card">
+    <div class="mcp-list">
+      <!-- mcp-server-filesystem -->
+      <div class="mcp-item">
+        <div class="mcp-icon">
+          <i data-lucide="folder-cog" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="mcp-info">
+          <div class="mcp-name">mcp-server-filesystem</div>
+          <div class="mcp-url">http://localhost:3001</div>
+        </div>
+        <div class="mcp-status">
+          <span class="status-dot"></span>
+          已连接
+        </div>
+      </div>
+
+      <!-- mcp-server-web -->
+      <div class="mcp-item">
+        <div class="mcp-icon">
+          <i data-lucide="globe-cog" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="mcp-info">
+          <div class="mcp-name">mcp-server-web</div>
+          <div class="mcp-url">http://localhost:3002</div>
+        </div>
+        <div class="mcp-status">
+          <span class="status-dot"></span>
+          已连接
+        </div>
+      </div>
+    </div>
+    <button class="btn-add">
+      <i data-lucide="plus" style="width:16px;height:16px;"></i>
+      添加 MCP 服务器
+    </button>
+  </div>
+
+  <!-- Domain Proxy Configuration -->
+  <div class="section-title">域名代理配置</div>
+  <div class="glass-card domain-card">
+    <div class="domain-list">
+      <!-- ai.example.com -->
+      <div class="domain-item">
+        <div class="domain-icon">
+          <i data-lucide="link" style="width:18px;height:18px;"></i>
+        </div>
+        <div class="domain-info">
+          <div class="domain-name">ai.example.com</div>
+          <div class="domain-target">
+            <i data-lucide="arrow-right" style="width:12px;height:12px;"></i>
+            localhost:11434
+          </div>
+        </div>
+        <div class="domain-status">
+          <i data-lucide="check" style="width:14px;height:14px;"></i>
+          已启用
+        </div>
+      </div>
+    </div>
+    <button class="btn-add">
+      <i data-lucide="plus" style="width:16px;height:16px;"></i>
+      添加域名
+    </button>
+  </div>
+
+</main>
+
+<!-- Bottom Tab Bar (iOS <768px) -->
+<nav class="bottom-tab-bar">
+  <a href="#">
+    <i data-lucide="layout-dashboard" style="width:22px;height:22px;"></i>
+    仪表板
+  </a>
+  <a href="#">
+    <i data-lucide="container" style="width:22px;height:22px;"></i>
+    容器
+  </a>
+  <a href="#">
+    <i data-lucide="database" style="width:22px;height:22px;"></i>
+    数据库
+  </a>
+  <a href="#">
+    <i data-lucide="folder-open" style="width:22px;height:22px;"></i>
+    文件
+  </a>
+  <a href="#" class="active">
+    <i data-lucide="brain" style="width:22px;height:22px;"></i>
+    AI
+  </a>
+</nav>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+    html.classList.toggle('dark', !isDark);
+    html.classList.toggle('light', isDark);
+    document.getElementById('theme-icon-sun').style.display = isDark ? 'none' : 'block';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

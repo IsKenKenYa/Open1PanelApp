@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 登录与引导</title>
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B;
+  --op1-brand-light:#4DB87A;
+  --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE;
+  --op1-brand-100:#C8E8D4;
+  --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A;
+  --op1-brand-900:#055A2B;
+  --op1-success:#16A34A;
+  --op1-warning:#F59E0B;
+  --op1-danger:#DC2626;
+  --op1-info:#0EA5E9;
+  --op1-glass-blur:40px;
+  --op1-glass-saturate:180%;
+  --op1-glass-alpha:0.65;
+  --op1-glass-alpha-elevated:0.85;
+  --op1-glass-border-alpha:0.20;
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.6);
+  --op1-glass-shadow-outer:0 8px 32px rgba(31,38,135,0.15);
+  --op1-surface:rgba(255,255,255,0.15);
+  --op1-surface-elevated:rgba(255,255,255,0.40);
+  --op1-surface-card:rgba(255,255,255,0.20);
+  --op1-surface-nav:rgba(255,255,255,0.65);
+  --op1-surface-popover:rgba(255,255,255,0.50);
+  --op1-surface-container-low:rgba(255,255,255,0.10);
+  --op1-surface-container:rgba(255,255,255,0.15);
+  --op1-surface-container-high:rgba(255,255,255,0.25);
+  --op1-on-surface:rgba(0,0,0,0.85);
+  --op1-on-surface-variant:rgba(0,0,0,0.55);
+  --op1-on-surface-nav:rgba(0,0,0,0.75);
+  --op1-nav-sidebar-width:260px;
+  --op1-nav-tab-height:49px;
+  --op1-font-family:system-ui,-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --op1-font-family-mono:'SF Mono',ui-monospace,Menlo,monospace;
+  --op1-radius-sm:12px;
+  --op1-radius-md:16px;
+  --op1-radius-lg:20px;
+  --op1-radius-card:22px;
+  --op1-radius-button:9999px;
+  --op1-spacing-xs:4px;
+  --op1-spacing-sm:8px;
+  --op1-spacing-md:12px;
+  --op1-spacing-lg:16px;
+  --op1-spacing-xl:24px;
+  --op1-motion-fast:200ms;
+  --op1-motion-normal:350ms;
+  --op1-easing-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --op1-border:rgba(0,0,0,0.08);
+  --op1-border-strong:rgba(0,0,0,0.15);
+  --op1-error:#FF3B30;
+  --op1-bg-gradient-start:#667eea;
+  --op1-bg-gradient-end:#764ba2;
+}
+
+html.dark {
+  --op1-surface:rgba(30,30,30,0.65);
+  --op1-surface-card:rgba(40,40,40,0.70);
+  --op1-surface-nav:rgba(30,30,30,0.75);
+  --op1-on-surface:rgba(255,255,255,0.85);
+  --op1-on-surface-variant:rgba(255,255,255,0.55);
+  --op1-border:rgba(255,255,255,0.10);
+  --op1-border-strong:rgba(255,255,255,0.18);
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.08);
+  --op1-glass-shadow-outer:0 8px 32px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--op1-font-family);
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+  color: var(--op1-on-surface);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Full-screen gradient background --- */
+.login-bg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: -1;
+}
+
+html.dark .login-bg {
+  background: linear-gradient(135deg, #4338ca 0%, #581c87 100%);
+}
+
+/* --- Glass Card (centered) --- */
+.glass-card {
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: rgba(255, 255, 255, 0.20);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow: var(--op1-glass-highlight-inset), var(--op1-glass-shadow-outer);
+  border-radius: var(--op1-radius-card);
+  width: 420px;
+  max-width: calc(100vw - 48px);
+  padding: 40px 36px 32px;
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+html.dark .glass-card {
+  background: rgba(40, 40, 40, 0.70);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--op1-glass-highlight-inset), 0 12px 40px rgba(31,38,135,0.20);
+}
+
+/* --- Logo area --- */
+.login-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.login-logo-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(12, 155, 75, 0.30);
+}
+
+.login-logo-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.login-logo h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--op1-on-surface);
+  letter-spacing: -0.3px;
+}
+
+.login-logo p {
+  font-size: 14px;
+  color: var(--op1-on-surface-variant);
+  margin-top: 4px;
+}
+
+/* --- Glass Input --- */
+.glass-input-group {
+  margin-bottom: 16px;
+}
+
+.glass-input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  margin-bottom: 6px;
+}
+
+.glass-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--op1-radius-sm);
+  border: 1px solid var(--op1-border-strong);
+  background: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--op1-on-surface);
+  font-size: 14px;
+  font-family: var(--op1-font-family);
+  outline: none;
+  transition: border-color var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+}
+
+html.dark .glass-input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-input::placeholder {
+  color: var(--op1-on-surface-variant);
+}
+
+.glass-input:focus {
+  border-color: var(--op1-brand);
+  box-shadow: 0 0 0 3px rgba(12, 155, 75, 0.20);
+}
+
+/* --- Toggle Switch --- */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 24px;
+}
+
+.toggle-row span {
+  font-size: 14px;
+  color: var(--op1-on-surface);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  transition: background var(--op1-motion-fast), border-color var(--op1-motion-fast);
+}
+
+html.dark .toggle-track {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.toggle-switch input:checked + .toggle-track {
+  background: var(--op1-brand);
+  border-color: var(--op1-brand);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: transform var(--op1-motion-fast) var(--op1-easing-spring);
+}
+
+.toggle-switch input:checked ~ .toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* --- Primary Button (capsule) --- */
+.btn-primary {
+  width: 100%;
+  padding: 14px 0;
+  border-radius: var(--op1-radius-button);
+  border: none;
+  background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-dark));
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--op1-font-family);
+  cursor: pointer;
+  transition: transform var(--op1-motion-fast) var(--op1-easing-spring), box-shadow var(--op1-motion-fast);
+  box-shadow: 0 2px 12px rgba(12, 155, 75, 0.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(12, 155, 75, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- Status text --- */
+.status-text {
+  text-align: center;
+  font-size: 13px;
+  color: var(--op1-on-surface-variant);
+  margin-top: 16px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.status-text .spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--op1-brand);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Link text --- */
+.link-text {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.link-text a {
+  color: var(--op1-on-surface-variant);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color var(--op1-motion-fast);
+}
+
+.link-text a:hover {
+  color: var(--op1-brand);
+  text-decoration: underline;
+}
+
+/* --- Footer --- */
+.login-footer {
+  position: fixed;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.login-footer a {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  text-decoration: none;
+  transition: color var(--op1-motion-fast);
+}
+
+html.dark .login-footer a {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.login-footer a:hover {
+  color: rgba(255, 255, 255, 0.90);
+  text-decoration: underline;
+}
+
+/* --- Theme toggle (top-right) --- */
+.theme-toggle-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--op1-motion-fast), transform var(--op1-motion-fast);
+}
+
+html.dark .theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .glass-card {
+    padding: 32px 24px 24px;
+    border-radius: var(--op1-radius-lg);
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="login-bg"></div>
+
+<button class="theme-toggle-btn" onclick="toggleTheme()" title="切换主题">
+  <i data-lucide="sun" style="width:18px;height:18px;"></i>
+</button>
+
+<main class="glass-card">
+  <!-- Logo & Title -->
+  <div class="login-logo">
+    <div class="login-logo-icon">
+      <i data-lucide="server"></i>
+    </div>
+    <h1>1Panel</h1>
+    <p>连接你的服务器</p>
+  </div>
+
+  <!-- Server Address -->
+  <div class="glass-input-group">
+    <label>服务器地址</label>
+    <input type="text" class="glass-input" placeholder="https://your-server.com:8888" />
+  </div>
+
+  <!-- API Key -->
+  <div class="glass-input-group">
+    <label>API Key</label>
+    <input type="password" class="glass-input" placeholder="输入 API Key" />
+  </div>
+
+  <!-- Remember password toggle -->
+  <div class="toggle-row">
+    <span>记住密码</span>
+    <label class="toggle-switch">
+      <input type="checkbox" checked />
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb"></div>
+    </label>
+  </div>
+
+  <!-- Connect button -->
+  <button class="btn-primary" id="connectBtn" onclick="handleConnect()">连接</button>
+
+  <!-- Status -->
+  <div class="status-text" id="statusText">
+    <span>准备就绪</span>
+  </div>
+
+  <!-- Help link -->
+  <div class="link-text">
+    <a href="#" onclick="return false">无法连接?</a>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="login-footer">
+  <a href="#" onclick="return false">还没有服务器? 了解 1Panel &rarr;</a>
+</footer>
+
+<!-- Tailwind 4.x -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+  lucide.createIcons();
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+    html.classList.toggle('dark', !isDark);
+    html.classList.toggle('light', isDark);
+    lucide.createIcons();
+  }
+
+  function handleConnect() {
+    const btn = document.getElementById('connectBtn');
+    const status = document.getElementById('statusText');
+    btn.disabled = true;
+    btn.textContent = '连接中...';
+    status.innerHTML = '<div class="spinner"></div><span>测试连接中...</span>';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '连接';
+      status.innerHTML = '<span>连接失败，请检查地址和密钥</span>';
+      status.style.color = 'var(--op1-error)';
+      setTimeout(() => { status.style.color = ''; }, 3000);
+    }, 2500);
+  }
+</script>
+</body>
+</html>

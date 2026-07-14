@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 网站管理</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-glow-color: rgba(12, 155, 75, 0.08);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.16);
+  --op1-glow-spread: 20px;
+  --op1-glow-spread-intense: 40px;
+  --op1-glow-blur: 20px;
+  --op1-surface: #F1F3F5;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(241, 243, 245, 0.92);
+  --op1-surface-popover: rgba(255, 255, 255, 0.95);
+  --op1-surface-container-low: #F7F8FA;
+  --op1-surface-container: #F1F3F5;
+  --op1-surface-container-high: #E8EAED;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1C1E;
+  --op1-nav-tab-height: 56px;
+  --op1-nav-tab-icon-size: 24px;
+  --op1-nav-sidebar-width: 280px;
+  --op1-nav-statusbar-height: 44px;
+  --op1-ripple-color: rgba(12, 155, 75, 0.12);
+  --op1-ripple-duration: 400ms;
+  --op1-font-family: 'HarmonyOS Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --op1-font-family-mono: 'HarmonyOS Sans Mono', 'Noto Sans Mono', monospace;
+  --op1-radius-sm: 8px;
+  --op1-radius-md: 16px;
+  --op1-radius-lg: 24px;
+  --op1-radius-card: 24px;
+  --op1-radius-full: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-motion-gravity: cubic-bezier(0.2, 0, 0, 1);
+  --op1-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --op1-border: #E5E7EB;
+  --op1-border-strong: #D1D5DB;
+  --op1-error: #E84026;
+  --op1-error-container: #FDECEB;
+}
+.dark {
+  --op1-surface: #1A1C1E;
+  --op1-surface-card: #242628;
+  --op1-surface-nav: rgba(26, 28, 30, 0.92);
+  --op1-surface-popover: rgba(36, 38, 40, 0.95);
+  --op1-surface-container-low: #1E2022;
+  --op1-surface-container: #242628;
+  --op1-surface-container-high: #2E3032;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #9CA3AF;
+  --op1-on-surface-nav: #E2E5E8;
+  --op1-border: #3A3D42;
+  --op1-border-strong: #4A4D52;
+  --op1-glow-color: rgba(12, 155, 75, 0.12);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.20);
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-op1-surface: var(--op1-surface);
+    --color-op1-surface-card: var(--op1-surface-card);
+    --color-op1-surface-nav: var(--op1-surface-nav);
+    --color-op1-surface-container-low: var(--op1-surface-container-low);
+    --color-op1-surface-container: var(--op1-surface-container);
+    --color-op1-on-surface: var(--op1-on-surface);
+    --color-op1-on-surface-variant: var(--op1-on-surface-variant);
+    --color-op1-brand: var(--op1-brand);
+    --color-op1-border: var(--op1-border);
+    --color-op1-ripple: var(--op1-ripple-color);
+    --radius-card: var(--op1-radius-card);
+    --radius-md: var(--op1-radius-md);
+    --radius-full: var(--op1-radius-full);
+  }
+  @layer base {
+    body { background: var(--op1-surface); color: var(--op1-on-surface); }
+  }
+    </style>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: var(--op1-font-family);
+        background: #E8EAED;
+        color: var(--op1-on-surface);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--op1-on-surface);
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+        margin-bottom: 32px;
+      }
+      .preview-frame {
+        border: 1px solid var(--op1-border);
+        border-radius: var(--op1-radius-card);
+        overflow: hidden;
+        background: var(--op1-surface);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .mobile-shell {
+        display: flex;
+        flex-direction: column;
+        height: 720px;
+        background: var(--op1-surface);
+        position: relative;
+        overflow: hidden;
+      }
+      .status-bar {
+        height: var(--op1-nav-statusbar-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--op1-spacing-lg);
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--op1-on-surface-nav);
+        flex-shrink: 0;
+        z-index: 10;
+      }
+      .status-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .status-bar-right svg {
+        width: 16px;
+        height: 16px;
+        color: var(--op1-on-surface-nav);
+      }
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--op1-spacing-lg);
+      }
+      .content-area::-webkit-scrollbar { width: 0; display: none; }
+
+      /* Glow Card */
+      .glow-card {
+        background: var(--op1-surface-card);
+        border-radius: var(--op1-radius-card);
+        padding: var(--op1-spacing-xl);
+        margin-bottom: var(--op1-spacing-md);
+        box-shadow: 0 0 var(--op1-glow-spread) var(--op1-glow-color);
+        transition: box-shadow var(--op1-motion-normal) var(--op1-motion-gravity), transform var(--op1-motion-normal) var(--op1-motion-spring);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .glow-card:hover {
+        box-shadow: 0 0 var(--op1-glow-spread-intense) var(--op1-glow-color-intense);
+        transform: translateY(-1px);
+      }
+
+      /* Ripple Effect */
+      .ripple-container { position: relative; overflow: hidden; }
+      .ripple-container::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), var(--op1-ripple-color) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity var(--op1-ripple-duration) ease;
+        pointer-events: none;
+      }
+      .ripple-container:active::after { opacity: 1; }
+
+      /* Search Bar */
+      .search-bar {
+        display: flex;
+        align-items: center;
+        background: var(--op1-surface-container-low);
+        border-radius: var(--op1-radius-md);
+        padding: 10px var(--op1-spacing-lg);
+        gap: var(--op1-spacing-sm);
+        margin-bottom: var(--op1-spacing-md);
+        border: 1px solid transparent;
+        transition: all var(--op1-motion-fast) ease;
+      }
+      .search-bar:focus-within {
+        border-color: var(--op1-brand);
+        box-shadow: 0 0 12px var(--op1-glow-color);
+      }
+      .search-bar input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        color: var(--op1-on-surface);
+        font-family: var(--op1-font-family);
+        outline: none;
+      }
+      .search-bar input::placeholder {
+        color: var(--op1-on-surface-variant);
+      }
+      .search-bar svg { width: 18px; height: 18px; color: var(--op1-on-surface-variant); flex-shrink: 0; }
+
+      /* Stats Row */
+      .stats-row {
+        display: flex;
+        gap: var(--op1-spacing-sm);
+        margin-bottom: var(--op1-spacing-md);
+        overflow-x: auto;
+      }
+      .stats-row::-webkit-scrollbar { display: none; }
+      .stat-chip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--op1-surface-card);
+        border-radius: var(--op1-radius-md);
+        padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+        min-width: 80px;
+        box-shadow: 0 0 12px var(--op1-glow-color);
+        flex-shrink: 0;
+      }
+      .stat-chip-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--op1-brand);
+      }
+      .stat-chip-label {
+        font-size: 11px;
+        color: var(--op1-on-surface-variant);
+        margin-top: 2px;
+      }
+
+      /* Website Card */
+      .website-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: var(--op1-spacing-md);
+      }
+      .website-domain {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .website-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--op1-spacing-sm);
+        margin-bottom: var(--op1-spacing-md);
+      }
+      .website-tag {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: var(--op1-radius-full);
+        font-weight: 500;
+      }
+      .tag-type {
+        background: var(--op1-brand-50);
+        color: var(--op1-brand);
+      }
+      .dark .tag-type {
+        background: rgba(12, 155, 75, 0.15);
+      }
+      .tag-ssl {
+        background: #ECFDF5;
+        color: #059669;
+      }
+      .dark .tag-ssl {
+        background: rgba(5, 150, 105, 0.15);
+        color: #34D399;
+      }
+      .tag-no-ssl {
+        background: #FEF3C7;
+        color: #D97706;
+      }
+      .dark .tag-no-ssl {
+        background: rgba(217, 119, 6, 0.15);
+        color: #FBBF24;
+      }
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+      .status-dot.running { background: var(--op1-success); box-shadow: 0 0 6px rgba(22, 163, 74, 0.4); }
+      .status-dot.stopped { background: var(--op1-danger); }
+      .website-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: var(--op1-spacing-md);
+        border-top: 1px solid var(--op1-border);
+      }
+      .website-visits {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--op1-on-surface-variant);
+      }
+      .website-visits svg { width: 14px; height: 14px; }
+
+      /* FAB Button */
+      .fab-button {
+        position: absolute;
+        bottom: 80px;
+        right: 20px;
+        width: 52px;
+        height: 52px;
+        border-radius: var(--op1-radius-md);
+        background: var(--op1-brand);
+        color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(12, 155, 75, 0.3);
+        border: none;
+        cursor: pointer;
+        z-index: 5;
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring), box-shadow var(--op1-motion-normal) ease;
+      }
+      .fab-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 24px rgba(12, 155, 75, 0.4);
+      }
+      .fab-button:active { transform: scale(0.96); }
+      .fab-button svg { width: 24px; height: 24px; }
+
+      /* Tab Bar */
+      .tab-bar {
+        height: var(--op1-nav-tab-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--op1-border);
+        flex-shrink: 0;
+        z-index: 10;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        color: var(--op1-on-surface-variant);
+        font-size: 11px;
+        cursor: pointer;
+        padding: 4px 12px;
+        border-radius: var(--op1-radius-md);
+        transition: color var(--op1-motion-fast) ease;
+      }
+      .tab-item.active { color: var(--op1-brand); }
+      .tab-item svg { width: 22px; height: 22px; }
+
+      /* Section Header */
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--op1-spacing-md);
+      }
+      .section-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+      }
+      .btn-create {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 14px;
+        border-radius: var(--op1-radius-md);
+        background: var(--op1-brand);
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        font-family: var(--op1-font-family);
+        box-shadow: 0 2px 8px rgba(12, 155, 75, 0.2);
+        transition: transform var(--op1-motion-fast) var(--op1-motion-spring);
+      }
+      .btn-create:hover { transform: scale(1.03); }
+      .btn-create:active { transform: scale(0.97); }
+      .btn-create svg { width: 16px; height: 16px; }
+
+      /* Toggle */
+      .toggle-switch {
+        width: 44px;
+        height: 24px;
+        border-radius: var(--op1-radius-full);
+        background: var(--op1-border-strong);
+        position: relative;
+        cursor: pointer;
+        transition: background var(--op1-motion-normal) ease;
+        flex-shrink: 0;
+      }
+      .toggle-switch.active { background: var(--op1-brand); }
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        top: 2px;
+        left: 2px;
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .toggle-switch.active::after { transform: translateX(20px); }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: absolute;
+        top: var(--op1-spacing-lg);
+        right: var(--op1-spacing-lg);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--op1-surface-card);
+        border: 1px solid var(--op1-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: background var(--op1-motion-fast) ease, transform var(--op1-motion-fast) var(--op1-motion-spring);
+      }
+      .theme-toggle:hover { transform: scale(1.1); }
+      .theme-toggle:active { transform: scale(0.9); }
+      .theme-toggle svg { width: 18px; height: 18px; color: var(--op1-on-surface); }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <div>
+                <h1 class="page-title">网站管理</h1>
+                <p class="page-subtitle">管理你的所有网站，查看运行状态与访问数据</p>
+            </div>
+            <button class="theme-toggle ripple-container" onclick="toggleTheme()">
+                <i data-lucide="sun" class="light-icon"></i>
+                <i data-lucide="moon" class="dark-icon" style="display:none;"></i>
+            </button>
+        </div>
+
+        <div class="preview-frame">
+            <div class="mobile-shell">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span>09:41</span>
+                    <div class="status-bar-right">
+                        <i data-lucide="signal"></i>
+                        <i data-lucide="wifi"></i>
+                        <i data-lucide="battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="content-area">
+                    <!-- Section Header -->
+                    <div class="section-header">
+                        <h2 class="section-title">网站</h2>
+                        <button class="btn-create ripple-container">
+                            <i data-lucide="plus"></i>
+                            <span>创建网站</span>
+                        </button>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="搜索网站域名...">
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-row">
+                        <div class="stat-chip">
+                            <span class="stat-chip-value">4</span>
+                            <span class="stat-chip-label">全部网站</span>
+                        </div>
+                        <div class="stat-chip">
+                            <span class="stat-chip-value">3</span>
+                            <span class="stat-chip-label">运行中</span>
+                        </div>
+                        <div class="stat-chip">
+                            <span class="stat-chip-value">1</span>
+                            <span class="stat-chip-label">已停止</span>
+                        </div>
+                        <div class="stat-chip">
+                            <span class="stat-chip-value">3</span>
+                            <span class="stat-chip-label">SSL证书</span>
+                        </div>
+                    </div>
+
+                    <!-- Website Card 1: Blog -->
+                    <div class="glow-card ripple-container">
+                        <div class="website-card-header">
+                            <div class="website-domain">
+                                <span class="status-dot running"></span>
+                                blog.example.com
+                            </div>
+                            <i data-lucide="more-horizontal" style="width:18px;height:18px;color:var(--op1-on-surface-variant);cursor:pointer;"></i>
+                        </div>
+                        <div class="website-meta">
+                            <span class="website-tag tag-type">WordPress</span>
+                            <span class="website-tag tag-ssl"><i data-lucide="shield-check" style="width:11px;height:11px;margin-right:2px;"></i>SSL</span>
+                        </div>
+                        <div class="website-footer">
+                            <div class="website-visits">
+                                <i data-lucide="eye"></i>
+                                <span>1,284 今日访问</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:2px;color:var(--op1-success);font-size:12px;font-weight:500;">
+                                <i data-lucide="trending-up" style="width:14px;height:14px;"></i>
+                                +12%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Website Card 2: API -->
+                    <div class="glow-card ripple-container">
+                        <div class="website-card-header">
+                            <div class="website-domain">
+                                <span class="status-dot running"></span>
+                                api.example.com
+                            </div>
+                            <i data-lucide="more-horizontal" style="width:18px;height:18px;color:var(--op1-on-surface-variant);cursor:pointer;"></i>
+                        </div>
+                        <div class="website-meta">
+                            <span class="website-tag tag-type">Node.js</span>
+                            <span class="website-tag tag-ssl"><i data-lucide="shield-check" style="width:11px;height:11px;margin-right:2px;"></i>SSL</span>
+                        </div>
+                        <div class="website-footer">
+                            <div class="website-visits">
+                                <i data-lucide="eye"></i>
+                                <span>52,419 今日访问</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:2px;color:var(--op1-success);font-size:12px;font-weight:500;">
+                                <i data-lucide="trending-up" style="width:14px;height:14px;"></i>
+                                +8%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Website Card 3: Shop -->
+                    <div class="glow-card ripple-container">
+                        <div class="website-card-header">
+                            <div class="website-domain">
+                                <span class="status-dot running"></span>
+                                shop.example.com
+                            </div>
+                            <i data-lucide="more-horizontal" style="width:18px;height:18px;color:var(--op1-on-surface-variant);cursor:pointer;"></i>
+                        </div>
+                        <div class="website-meta">
+                            <span class="website-tag tag-type">Magento</span>
+                            <span class="website-tag tag-ssl"><i data-lucide="shield-check" style="width:11px;height:11px;margin-right:2px;"></i>SSL</span>
+                        </div>
+                        <div class="website-footer">
+                            <div class="website-visits">
+                                <i data-lucide="eye"></i>
+                                <span>8,931 今日访问</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:2px;color:var(--op1-warning);font-size:12px;font-weight:500;">
+                                <i data-lucide="minus" style="width:14px;height:14px;"></i>
+                                -2%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Website Card 4: Docs -->
+                    <div class="glow-card ripple-container">
+                        <div class="website-card-header">
+                            <div class="website-domain">
+                                <span class="status-dot stopped"></span>
+                                docs.example.com
+                            </div>
+                            <i data-lucide="more-horizontal" style="width:18px;height:18px;color:var(--op1-on-surface-variant);cursor:pointer;"></i>
+                        </div>
+                        <div class="website-meta">
+                            <span class="website-tag tag-type">静态网站</span>
+                            <span class="website-tag tag-no-ssl"><i data-lucide="shield-off" style="width:11px;height:11px;margin-right:2px;"></i>无SSL</span>
+                        </div>
+                        <div class="website-footer">
+                            <div class="website-visits">
+                                <i data-lucide="eye"></i>
+                                <span>0 今日访问</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--op1-danger);font-weight:500;">已停止</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAB -->
+                <button class="fab-button ripple-container">
+                    <i data-lucide="plus"></i>
+                </button>
+
+                <!-- Tab Bar -->
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>概览</span>
+                    </div>
+                    <div class="tab-item active">
+                        <i data-lucide="globe"></i>
+                        <span>网站</span>
+                    </div>
+                    <div class="tab-item">
+                        <i data-lucide="database"></i>
+                        <span>数据库</span>
+                    </div>
+                    <div class="tab-item">
+                        <i data-lucide="container"></i>
+                        <span>容器</span>
+                    </div>
+                    <div class="tab-item">
+                        <i data-lucide="settings"></i>
+                        <span>设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.classList.toggle('dark');
+        html.classList.toggle('light');
+        document.querySelectorAll('.light-icon').forEach(el => el.style.display = html.classList.contains('dark') ? 'none' : '');
+        document.querySelectorAll('.dark-icon').forEach(el => el.style.display = html.classList.contains('dark') ? '' : 'none');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        document.querySelectorAll('.ripple-container').forEach(el => {
+            el.addEventListener('pointerdown', e => {
+                const rect = el.getBoundingClientRect();
+                el.style.setProperty('--ripple-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+                el.style.setProperty('--ripple-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+            });
+        });
+    });
+    </script>
+</body>
+</html>

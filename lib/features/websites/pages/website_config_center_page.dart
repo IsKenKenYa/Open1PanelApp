@@ -8,6 +8,11 @@ import '../widgets/website_async_state_view.dart';
 import '../widgets/website_section_card.dart';
 import '../website_config_page.dart';
 import 'website_basic_config_page.dart';
+import 'website_cors_page.dart';
+import 'website_https_page.dart';
+import 'website_leech_page.dart';
+import 'website_log_page.dart';
+import 'website_redirect_page.dart';
 import 'website_routing_rules_page.dart';
 import 'website_security_access_page.dart';
 
@@ -130,6 +135,71 @@ class _WebsiteConfigCenterBody extends StatelessWidget {
                       builder: (_) => WebsiteConfigPage(
                         websiteId: websiteId,
                         displayName: displayName,
+                      ),
+                    ),
+                  ),
+                ),
+                WebsiteSectionCard(
+                  title: 'HTTPS',
+                  subtitle: 'SSL/TLS configuration',
+                  icon: Icons.lock_outline,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => WebsiteHttpsPage(
+                        websiteId: websiteId,
+                        displayName: displayName ?? '',
+                      ),
+                    ),
+                  ),
+                ),
+                WebsiteSectionCard(
+                  title: 'Redirect',
+                  subtitle: 'URL redirect rules',
+                  icon: Icons.shuffle,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => WebsiteRedirectPage(
+                        websiteId: websiteId,
+                        displayName: displayName ?? '',
+                      ),
+                    ),
+                  ),
+                ),
+                WebsiteSectionCard(
+                  title: 'CORS',
+                  subtitle: 'Cross-origin resource sharing',
+                  icon: Icons.sync_alt,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => WebsiteCorsPage(
+                        websiteId: websiteId,
+                        displayName: displayName ?? '',
+                      ),
+                    ),
+                  ),
+                ),
+                WebsiteSectionCard(
+                  title: 'Anti-Leech',
+                  subtitle: 'Hotlink protection',
+                  icon: Icons.block,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => WebsiteLeechPage(
+                        websiteId: websiteId,
+                        displayName: displayName ?? '',
+                      ),
+                    ),
+                  ),
+                ),
+                WebsiteSectionCard(
+                  title: 'Logs',
+                  subtitle: 'Access & error logs',
+                  icon: Icons.article_outlined,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => WebsiteLogPage(
+                        websiteId: websiteId,
+                        displayName: displayName ?? '',
                       ),
                     ),
                   ),

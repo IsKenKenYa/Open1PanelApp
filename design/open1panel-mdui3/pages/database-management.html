@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库管理 - 1Panel Client</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <h1>数据库管理</h1>
+    <div class="summary-chips">
+      <div class="summary-chip mysql">
+        <span class="db-icon">M</span>
+        MySQL 3
+      </div>
+      <div class="summary-chip pgsql">
+        <span class="db-icon">P</span>
+        PostgreSQL 2
+      </div>
+      <div class="summary-chip mongo">
+        <span class="db-icon">M</span>
+        MongoDB 2
+      </div>
+      <div class="summary-chip redis">
+        <span class="db-icon">R</span>
+        Redis 1
+      </div>
+    </div>
+    <div class="tab-bar" id="tabBar">
+      <div class="tab-item active" data-tab="mysql">MySQL<span class="tab-count">3</span></div>
+      <div class="tab-item" data-tab="pgsql">PostgreSQL<span class="tab-count">2</span></div>
+      <div class="tab-item" data-tab="mongo">MongoDB<span class="tab-count">2</span></div>
+      <div class="tab-item" data-tab="redis">Redis<span class="tab-count">1</span></div>
+      <div class="tab-item" data-tab="remote">远程数据库<span class="tab-count">0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+  <!-- Breakpoint Labels -->
+  <div class="bp-labels" id="bpLabels">
+    <div class="bp-label" id="bpMobile">Mobile &lt;600px</div>
+    <div class="bp-label" id="bpTablet">Tablet 600-1023px</div>
+    <div class="bp-label" id="bpDesktop">Desktop &ge;1024px</div>
+  </div>
+
+  <!-- MySQL Tab -->
+  <div class="tab-panel active" id="panel-mysql">
+    <div class="card-grid">
+
+      <!-- Card 1: production_db -->
+      <div class="db-card">
+        <div class="db-card-stripe mysql"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">production_db</div>
+              <div class="card-meta">MySQL 8.0 &middot; utf8mb4</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status running">
+              <span class="db-status-dot"></span>
+              运行中
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">2.4 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: analytics_db -->
+      <div class="db-card">
+        <div class="db-card-stripe mysql"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">analytics_db</div>
+              <div class="card-meta">MySQL 8.0 &middot; utf8mb4</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status running">
+              <span class="db-status-dot"></span>
+              运行中
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">8.1 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: test_db -->
+      <div class="db-card">
+        <div class="db-card-stripe mysql"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">test_db</div>
+              <div class="card-meta">MySQL 8.0 &middot; utf8mb4</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status stopped">
+              <span class="db-status-dot"></span>
+              已停止
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">128 MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PostgreSQL Tab -->
+  <div class="tab-panel" id="panel-pgsql">
+    <div class="card-grid">
+      <div class="db-card">
+        <div class="db-card-stripe pgsql"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">app_db</div>
+              <div class="card-meta">PostgreSQL 16 &middot; UTF8</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status running">
+              <span class="db-status-dot"></span>
+              运行中
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">1.2 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="db-card">
+        <div class="db-card-stripe pgsql"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">staging_db</div>
+              <div class="card-meta">PostgreSQL 16 &middot; UTF8</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status running">
+              <span class="db-status-dot"></span>
+              运行中
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">256 MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MongoDB Tab -->
+  <div class="tab-panel" id="panel-mongo">
+    <div class="card-grid">
+      <div class="db-card">
+        <div class="db-card-stripe mongo"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">user_profiles</div>
+              <div class="card-meta">MongoDB 7.0</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status running">
+              <span class="db-status-dot"></span>
+              运行中
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">3.7 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="db-card">
+        <div class="db-card-stripe mongo"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">logs_archive</div>
+              <div class="card-meta">MongoDB 7.0</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status stopped">
+              <span class="db-status-dot"></span>
+              已停止
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">12.3 GB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Redis Tab -->
+  <div class="tab-panel" id="panel-redis">
+    <div class="card-grid">
+      <div class="db-card">
+        <div class="db-card-stripe redis"></div>
+        <div class="db-card-body">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-name">cache_session</div>
+              <div class="card-meta">Redis 7.2</div>
+            </div>
+            <div class="db-card-actions">
+              <button class="action-btn" title="备份">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </button>
+              <button class="action-btn" title="远程">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </button>
+              <button class="action-btn danger" title="删除">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="db-info-row">
+            <div class="db-status running">
+              <span class="db-status-dot"></span>
+              运行中
+            </div>
+            <div class="db-info-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="db-size">512 MB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remote Tab -->
+  <div class="tab-panel" id="panel-remote">
+    <div class="empty-state">
+      <div class="empty-state-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <h3>暂无远程数据库</h3>
+      <p>点击右上角添加远程数据库连接</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Tab switching
+const tabs = document.querySelectorAll('.tab-item');
+const panels = document.querySelectorAll('.tab-panel');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.getAttribute('data-tab');
+    document.getElementById('panel-' + target).classList.add('active');
+  });
+});
+
+// Breakpoint indicator
+function updateBP() {
+  const w = window.innerWidth;
+  const m = document.getElementById('bpMobile');
+  const t = document.getElementById('bpTablet');
+  const d = document.getElementById('bpDesktop');
+  m.classList.toggle('current', w < 600);
+  t.classList.toggle('current', w >= 600 && w < 1024);
+  d.classList.toggle('current', w >= 1024);
+}
+updateBP();
+window.addEventListener('resize', updateBP);
+</script>
+
+    <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #0C9B4B;
+  --primary-container: #C8E8D4;
+  --on-primary-container: #055A2B;
+  --card-bg: #FFFFFF;
+  --border: #C4C7CF;
+  --on-surface: #1A1C1E;
+  --on-surface-variant: #44474E;
+  --surface: #FAFBFC;
+  --surface-container: #EEF0F3;
+  --outline-variant: #C4C7CF;
+  --error: #DC2626;
+  --radius: 16px;
+  --radius-full: 9999px;
+  --font: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Menlo', monospace;
+
+  /* DB type colors */
+  --mysql-color: #336791;
+  --pgsql-color: #336791;
+  --mongo-color: #47A248;
+  --redis-color: #DC382D;
+
+  /* Status */
+  --status-running: #16A34A;
+  --status-stopped: #9CA3AF;
+  --status-error: #DC2626;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--surface);
+  color: var(--on-surface);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Top App Bar ---- */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px 0;
+}
+.top-bar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.top-bar h1 {
+  font: 500 22px/28px var(--font);
+  color: var(--on-surface);
+}
+
+/* ---- Summary Chips ---- */
+.summary-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font: 500 13px/18px var(--font);
+  white-space: nowrap;
+}
+.summary-chip.mysql   { background: #E8EEF5; color: var(--mysql-color); }
+.summary-chip.pgsql   { background: #E8EEF5; color: var(--pgsql-color); }
+.summary-chip.mongo   { background: #E8F5EE; color: var(--mongo-color); }
+.summary-chip.redis   { background: #FDE8E8; color: var(--redis-color); }
+.summary-chip.remote  { background: var(--surface-container); color: var(--on-surface-variant); }
+
+.summary-chip .db-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 9px/1 var(--mono);
+  color: #fff;
+}
+.summary-chip.mysql .db-icon  { background: var(--mysql-color); }
+.summary-chip.pgsql .db-icon  { background: var(--pgsql-color); }
+.summary-chip.mongo .db-icon  { background: var(--mongo-color); }
+.summary-chip.redis .db-icon  { background: var(--redis-color); }
+.summary-chip.remote .db-icon { background: var(--on-surface-variant); }
+
+/* ---- Tab Bar ---- */
+.tab-bar {
+  margin-top: 12px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--outline-variant);
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab-item {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  font: 500 14px/20px var(--font);
+  color: var(--on-surface-variant);
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+  transition: color 180ms, border-color 180ms;
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+}
+.tab-item:hover {
+  color: var(--on-surface);
+  background: rgba(0,0,0,0.02);
+}
+.tab-item.active {
+  color: var(--primary);
+  font-weight: 600;
+  border-bottom-color: var(--primary);
+}
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-full);
+  font: 500 11px/1 var(--font);
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+}
+.tab-item.active .tab-count {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+/* ---- Content Area ---- */
+.content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 24px 100px;
+}
+
+/* ---- Breakpoint Labels ---- */
+.bp-labels {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.bp-label {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font: 500 11px/14px var(--mono);
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+}
+.bp-label.current {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+/* ---- Responsive Grid ---- */
+.card-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 600px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---- Database Card ---- */
+.db-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 200ms;
+  position: relative;
+  overflow: hidden;
+}
+.db-card:hover {
+  box-shadow: 0 2px 6px 2px rgba(0,0,0,0.06);
+}
+
+/* Color stripe at top */
+.db-card-stripe {
+  height: 4px;
+  width: 100%;
+}
+.db-card-stripe.mysql  { background: var(--mysql-color); }
+.db-card-stripe.pgsql  { background: var(--pgsql-color); }
+.db-card-stripe.mongo  { background: var(--mongo-color); }
+.db-card-stripe.redis  { background: var(--redis-color); }
+.db-card-stripe.remote { background: var(--on-surface-variant); }
+
+.db-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.db-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.db-icon-badge.mysql  { background: rgba(51,103,145,0.1); color: var(--mysql-color); }
+.db-icon-badge.pgsql  { background: rgba(51,103,145,0.1); color: var(--pgsql-color); }
+.db-icon-badge.mongo  { background: rgba(71,162,72,0.1); color: var(--mongo-color); }
+.db-icon-badge.redis  { background: rgba(220,56,45,0.1); color: var(--redis-color); }
+
+.db-icon-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+.card-name {
+  font: 600 16px/22px var(--font);
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-meta {
+  font: 400 13px/18px var(--font);
+  color: var(--on-surface-variant);
+}
+
+/* Card Info Row */
+.db-info-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.db-info-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 400 13px/18px var(--font);
+  color: var(--on-surface-variant);
+}
+.db-info-item svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+.db-size {
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+/* Status */
+.db-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 500 12px/16px var(--font);
+}
+.db-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.db-status.running .db-status-dot  { background: var(--status-running); }
+.db-status.stopped .db-status-dot  { background: var(--status-stopped); }
+.db-status.error   .db-status-dot  { background: var(--status-error); }
+.db-status.running { color: #055A2B; }
+.db-status.stopped { color: #44474E; }
+.db-status.error   { color: var(--error); }
+
+/* Card Actions */
+.db-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 150ms, color 150ms;
+}
+.action-btn:hover {
+  background: var(--surface-container);
+  color: var(--on-surface);
+}
+.action-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.action-btn.danger:hover {
+  background: #FEE2E2;
+  color: var(--error);
+}
+
+/* ---- Empty State (for other tabs) ---- */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--on-surface-variant);
+}
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--surface-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.empty-state-icon svg {
+  width: 32px;
+  height: 32px;
+  opacity: 0.4;
+}
+.empty-state h3 {
+  font: 500 16px/22px var(--font);
+  color: var(--on-surface);
+  margin-bottom: 4px;
+}
+.empty-state p {
+  font: 400 14px/20px var(--font);
+  color: var(--on-surface-variant);
+}
+
+/* ---- Breakpoint indicator JS-driven ---- */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .tab-bar {
+    overflow-x: hidden;
+  }
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+}
+</style>
+</body>
+</html>

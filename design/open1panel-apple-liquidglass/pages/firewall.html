@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1Panel Client - 防火墙管理</title>
+  <style id="theme-vars">
+    /* ============================================================
+       Open1Panel — Apple Liquid Glass Design Tokens
+       ============================================================ */
+    :root {
+      /* Brand */
+      --op1-brand: #0C9B4B;
+      --op1-brand-light: #4DB87A;
+      --op1-brand-dark: #087A3A;
+      --op1-brand-50: #E8F5EE;
+      --op1-brand-100: #C8E8D4;
+      --op1-brand-500: #0C9B4B;
+      --op1-brand-700: #087A3A;
+      --op1-brand-900: #055A2B;
+
+      /* Semantic */
+      --op1-success: #16A34A;
+      --op1-warning: #F59E0B;
+      --op1-danger: #DC2626;
+      --op1-info: #0EA5E9;
+
+      /* Glass material */
+      --op1-glass-blur: 40px;
+      --op1-glass-saturate: 180%;
+      --op1-glass-alpha: 0.65;
+      --op1-glass-alpha-elevated: 0.85;
+      --op1-glass-border-alpha: 0.20;
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.6);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(31,38,135,0.15);
+
+      /* Surface */
+      --op1-surface: rgba(255,255,255,0.15);
+      --op1-surface-elevated: rgba(255,255,255,0.40);
+      --op1-surface-card: rgba(255,255,255,0.20);
+      --op1-surface-nav: rgba(255,255,255,0.65);
+      --op1-surface-popover: rgba(255,255,255,0.50);
+      --op1-surface-container-low: rgba(255,255,255,0.10);
+      --op1-surface-container: rgba(255,255,255,0.15);
+      --op1-surface-container-high: rgba(255,255,255,0.25);
+
+      /* On-Surface */
+      --op1-on-surface: rgba(0,0,0,0.85);
+      --op1-on-surface-variant: rgba(0,0,0,0.55);
+      --op1-on-surface-nav: rgba(0,0,0,0.75);
+      --op1-on-surface-card: rgba(0,0,0,0.85);
+
+      /* Navigation */
+      --op1-nav-sidebar-width: 260px;
+      --op1-nav-tab-height: 49px;
+
+      /* Typography */
+      --op1-font-family: system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --op1-font-family-mono: 'SF Mono', ui-monospace, Menlo, monospace;
+
+      /* Radius */
+      --op1-radius-sm: 12px;
+      --op1-radius-md: 16px;
+      --op1-radius-lg: 20px;
+      --op1-radius-card: 22px;
+      --op1-radius-button: 9999px;
+      --op1-radius-full: 9999px;
+
+      /* Spacing */
+      --op1-spacing-xs: 4px;
+      --op1-spacing-sm: 8px;
+      --op1-spacing-md: 12px;
+      --op1-spacing-lg: 16px;
+      --op1-spacing-xl: 24px;
+
+      /* Motion */
+      --op1-motion-fast: 200ms;
+      --op1-motion-normal: 350ms;
+      --op1-motion-slow: 500ms;
+      --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      /* Border */
+      --op1-border: rgba(0,0,0,0.08);
+      --op1-border-strong: rgba(0,0,0,0.15);
+
+      /* Error */
+      --op1-error: #FF3B30;
+
+      /* Background gradient */
+      --op1-bg-gradient-start: #667eea;
+      --op1-bg-gradient-end: #764ba2;
+    }
+
+    /* ----- Dark Mode ----- */
+    .dark {
+      --op1-brand-light: #3DA06A;
+      --op1-brand-50: rgba(12,155,75,0.15);
+      --op1-brand-100: rgba(12,155,75,0.25);
+
+      --op1-surface: rgba(30,30,30,0.65);
+      --op1-surface-elevated: rgba(30,30,30,0.75);
+      --op1-surface-card: rgba(30,30,30,0.65);
+      --op1-surface-nav: rgba(30,30,30,0.75);
+      --op1-surface-popover: rgba(30,30,30,0.70);
+      --op1-surface-container-low: rgba(30,30,30,0.50);
+      --op1-surface-container: rgba(30,30,30,0.65);
+      --op1-surface-container-high: rgba(30,30,30,0.75);
+
+      --op1-on-surface: rgba(255,255,255,0.85);
+      --op1-on-surface-variant: rgba(255,255,255,0.60);
+      --op1-on-surface-nav: rgba(255,255,255,0.80);
+      --op1-on-surface-card: rgba(255,255,255,0.85);
+
+      --op1-border: rgba(255,255,255,0.10);
+      --op1-border-strong: rgba(255,255,255,0.20);
+
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.15);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(0,0,0,0.40);
+
+      --op1-bg-gradient-start: #1a1a2e;
+      --op1-bg-gradient-end: #16213e;
+    }
+
+    /* ============================================================
+       Base styles
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--op1-font-family);
+      background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+      min-height: 100vh;
+      color: var(--op1-on-surface);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       Layout: macOS (>= 768px)
+       ============================================================ */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ----- Sidebar ----- */
+    .sidebar {
+      width: var(--op1-nav-sidebar-width);
+      min-width: var(--op1-nav-sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-right: 1px solid var(--op1-glass-border-alpha);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding-bottom: var(--op1-spacing-md);
+      border-bottom: 1px solid var(--op1-border);
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--op1-brand);
+      border-radius: var(--op1-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-server-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .sidebar-server-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--op1-on-surface-nav);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-server-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--op1-on-surface-variant);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.6);
+      flex-shrink: 0;
+    }
+
+    .sidebar-search {
+      position: relative;
+    }
+    .sidebar-search input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--op1-spacing-md) 0 36px;
+      border: none;
+      border-radius: var(--op1-radius-sm);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 13px;
+      font-family: var(--op1-font-family);
+      outline: none;
+    }
+    .sidebar-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .sidebar-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 16px;
+      height: 16px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      margin-top: var(--op1-spacing-sm);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: 10px var(--op1-spacing-md);
+      border-radius: var(--op1-radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--op1-on-surface-nav);
+      cursor: pointer;
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease;
+      text-decoration: none;
+      position: relative;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: var(--op1-surface-container-high);
+    }
+    .nav-item.active {
+      background: rgba(12,155,75,0.85);
+      color: #fff;
+    }
+    .nav-item.active svg {
+      color: #fff;
+    }
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--op1-on-surface-variant);
+      transition: color var(--op1-motion-fast) ease;
+    }
+
+    .sidebar-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--op1-spacing-md);
+      border-top: 1px solid var(--op1-border);
+      gap: var(--op1-spacing-sm);
+    }
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .footer-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .footer-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+    }
+    .footer-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .footer-btn.active-theme svg {
+      color: var(--op1-warning);
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ----- Content area ----- */
+    .content-area {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--op1-spacing-xl);
+    }
+
+    /* Mobile header (visible < 768px) */
+    .mobile-header {
+      display: none;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+      color: var(--op1-on-surface);
+    }
+    .mobile-header .sidebar-server-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--op1-on-surface);
+    }
+
+    /* ============================================================
+       Glass card base
+       ============================================================ */
+    .glass-card {
+      background: var(--op1-surface-card);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.30);
+      box-shadow: var(--op1-glass-highlight-inset);
+      border-radius: var(--op1-radius-card);
+      transition: transform var(--op1-motion-normal) var(--op1-easing-spring),
+                  box-shadow var(--op1-motion-normal) ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--op1-glass-highlight-inset), var(--op1-glass-shadow-outer);
+    }
+
+    /* ============================================================
+       Page header
+       ============================================================ */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      flex-wrap: wrap;
+    }
+    .page-title-group {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-lg);
+    }
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface);
+      letter-spacing: -0.5px;
+    }
+
+    /* ============================================================
+       Toggle Switch (Apple iOS style)
+       ============================================================ */
+    .toggle-switch {
+      position: relative;
+      width: 51px;
+      height: 31px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 31px;
+      background: #e5e5ea;
+      transition: background var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+    }
+    .toggle-switch input:checked + .toggle-track {
+      background: var(--op1-brand);
+      box-shadow: 0 0 0 1px rgba(12,155,75,0.3), 0 2px 8px rgba(12,155,75,0.25);
+    }
+    .dark .toggle-track {
+      background: #39393d;
+    }
+    .dark .toggle-switch input:checked + .toggle-track {
+      background: var(--op1-brand);
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.10);
+      transition: transform var(--op1-motion-fast) var(--op1-easing-spring);
+      pointer-events: none;
+    }
+    .toggle-switch input:checked ~ .toggle-thumb {
+      transform: translateX(20px);
+    }
+    /* Small variant for rule rows */
+    .toggle-switch.small {
+      width: 42px;
+      height: 26px;
+    }
+    .toggle-switch.small .toggle-thumb {
+      width: 22px;
+      height: 22px;
+      top: 2px;
+      left: 2px;
+    }
+    .toggle-switch.small input:checked ~ .toggle-thumb {
+      transform: translateX(16px);
+    }
+
+    /* ============================================================
+       Segmented Control
+       ============================================================ */
+    .segmented-control {
+      display: inline-flex;
+      align-items: center;
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--op1-border);
+      border-radius: var(--op1-radius-button);
+      padding: 3px;
+      gap: 2px;
+      margin-bottom: var(--op1-spacing-lg);
+    }
+    .segment-btn {
+      height: 34px;
+      padding: 0 var(--op1-spacing-lg);
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--op1-font-family);
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+      white-space: nowrap;
+    }
+    .segment-btn:hover {
+      color: var(--op1-on-surface);
+    }
+    .segment-btn.active {
+      background: var(--op1-brand);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(12,155,75,0.3);
+    }
+
+    /* ============================================================
+       Firewall master card
+       ============================================================ */
+    .firewall-master {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--op1-spacing-lg) var(--op1-spacing-xl);
+      margin-bottom: var(--op1-spacing-lg);
+    }
+    .firewall-master-info {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+    }
+    .firewall-master-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--op1-radius-md);
+      background: rgba(12,155,75,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--op1-brand);
+      flex-shrink: 0;
+    }
+    .dark .firewall-master-icon {
+      background: rgba(12,155,75,0.20);
+    }
+    .firewall-master-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+    .firewall-master-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--op1-on-surface);
+    }
+    .firewall-master-desc {
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       Firewall rules list (glass card rows)
+       ============================================================ */
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--op1-spacing-sm);
+      margin-bottom: var(--op1-spacing-lg);
+    }
+    .rule-card {
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+    }
+    .rule-card:hover {
+      transform: none;
+      box-shadow: var(--op1-glass-highlight-inset);
+    }
+    .rule-row {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+    }
+    .rule-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--op1-radius-sm);
+      background: var(--op1-surface-container-high);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--op1-on-surface-variant);
+      flex-shrink: 0;
+    }
+    .rule-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+    .rule-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      flex-wrap: wrap;
+    }
+    .rule-port {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: var(--op1-font-family-mono);
+      color: var(--op1-on-surface-card);
+      flex-shrink: 0;
+    }
+    .rule-protocol {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-surface-container-high);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--op1-on-surface-variant);
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .rule-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: var(--op1-radius-button);
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .rule-action.allow {
+      background: rgba(22,163,74,0.12);
+      color: var(--op1-success);
+    }
+    .dark .rule-action.allow {
+      background: rgba(22,163,74,0.20);
+    }
+    .rule-action.deny {
+      background: rgba(220,38,38,0.10);
+      color: var(--op1-danger);
+    }
+    .dark .rule-action.deny {
+      background: rgba(220,38,38,0.20);
+    }
+    .rule-action svg {
+      width: 13px;
+      height: 13px;
+    }
+    .rule-remark {
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+      flex: 1;
+      min-width: 60px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ============================================================
+       Add rule button
+       ============================================================ */
+    .add-rule-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      height: 40px;
+      padding: 0 var(--op1-spacing-xl);
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-brand);
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--op1-font-family);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(12,155,75,0.3);
+      transition: background var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+      margin-bottom: var(--op1-spacing-lg);
+    }
+    .add-rule-btn:hover {
+      background: var(--op1-brand-dark);
+      box-shadow: 0 4px 12px rgba(12,155,75,0.40);
+      transform: translateY(-1px);
+    }
+    .add-rule-btn:active {
+      transform: scale(0.97);
+    }
+    .add-rule-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================================
+       Stats bar
+       ============================================================ */
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xl);
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+    }
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .stat-dot.total {
+      background: var(--op1-info);
+    }
+    .stat-dot.allow {
+      background: var(--op1-success);
+      box-shadow: 0 0 4px rgba(22,163,74,0.4);
+    }
+    .stat-dot.deny {
+      background: var(--op1-danger);
+      box-shadow: 0 0 4px rgba(220,38,38,0.4);
+    }
+    .stat-value {
+      font-weight: 700;
+      font-family: var(--op1-font-family-mono);
+      color: var(--op1-on-surface);
+    }
+
+    /* ============================================================
+       Bottom Tab Bar (iOS, < 768px)
+       ============================================================ */
+    .bottom-tab-bar {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      height: var(--op1-nav-tab-height);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-radius: var(--op1-radius-lg);
+      border: 1px solid rgba(255,255,255,0.20);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 var(--op1-spacing-sm);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      color: var(--op1-on-surface-variant);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--op1-radius-sm);
+      transition: color var(--op1-motion-fast) ease;
+      background: transparent;
+      border: none;
+      font-family: var(--op1-font-family);
+    }
+    .tab-item.active {
+      color: var(--op1-brand);
+    }
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ============================================================
+       Responsive: iOS (< 768px)
+       ============================================================ */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .bottom-tab-bar {
+        display: flex;
+      }
+      .content-area {
+        padding: var(--op1-spacing-md) var(--op1-spacing-md) calc(var(--op1-nav-tab-height) + 40px);
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .page-title {
+        font-size: 24px;
+      }
+      .segmented-control {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .rule-info {
+        gap: var(--op1-spacing-sm);
+      }
+      .rule-remark {
+        display: none;
+      }
+      .stats-bar {
+        gap: var(--op1-spacing-md);
+        flex-wrap: wrap;
+      }
+    }
+
+    /* ============================================================
+       Scrollbar styling
+       ============================================================ */
+    .content-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content-area::-webkit-scrollbar-thumb {
+      background: var(--op1-surface-container-high);
+      border-radius: 3px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ============================================================
+         macOS Sidebar (>= 768px)
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <!-- Header: Logo + Server -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo">1P</div>
+        <div class="sidebar-server-info">
+          <span class="sidebar-server-name">生产服务器</span>
+          <span class="sidebar-server-status">
+            <span class="status-dot"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="sidebar-search">
+        <i data-lucide="search" class="sidebar-search-icon"></i>
+        <input type="text" placeholder="搜索功能..." />
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>仪表板</span>
+        </button>
+        <button class="nav-item" data-page="containers">
+          <i data-lucide="box"></i>
+          <span>容器</span>
+        </button>
+        <button class="nav-item" data-page="websites">
+          <i data-lucide="globe"></i>
+          <span>网站</span>
+        </button>
+        <button class="nav-item" data-page="databases">
+          <i data-lucide="database"></i>
+          <span>数据库</span>
+        </button>
+        <button class="nav-item" data-page="files">
+          <i data-lucide="folder-open"></i>
+          <span>文件</span>
+        </button>
+        <button class="nav-item active" data-page="firewall">
+          <i data-lucide="shield"></i>
+          <span>防火墙</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <i data-lucide="settings"></i>
+          <span>设置</span>
+        </button>
+      </nav>
+
+      <!-- Footer -->
+      <div class="sidebar-footer">
+        <div class="footer-actions">
+          <button class="footer-btn active-theme" id="themeToggleSidebar" onclick="toggleTheme()" title="切换主题">
+            <i data-lucide="sun"></i>
+          </button>
+          <button class="footer-btn" title="切换渲染模式">
+            <i data-lucide="monitor"></i>
+          </button>
+        </div>
+        <div class="user-avatar" title="用户">管</div>
+      </div>
+
+    </aside>
+
+    <!-- ============================================================
+         Content Area
+         ============================================================ -->
+    <main class="content-area">
+
+      <!-- Mobile Header (< 768px) -->
+      <div class="mobile-header">
+        <div class="sidebar-logo" style="width:28px;height:28px;font-size:11px;border-radius:8px;">1P</div>
+        <div>
+          <div class="sidebar-server-name">生产服务器</div>
+          <div class="sidebar-server-status">
+            <span class="status-dot" style="width:6px;height:6px;"></span>
+            在线
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Header: Title + Master Toggle -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <h1 class="page-title">防火墙</h1>
+        </div>
+        <label class="toggle-switch" title="防火墙总开关">
+          <input type="checkbox" checked>
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
+
+      <!-- Segmented Control -->
+      <div class="segmented-control" id="segmentControl">
+        <button class="segment-btn active" data-tab="ports" onclick="switchTab('ports', this)">
+          端口规则
+        </button>
+        <button class="segment-btn" data-tab="ips" onclick="switchTab('ips', this)">
+          IP 规则
+        </button>
+        <button class="segment-btn" data-tab="services" onclick="switchTab('services', this)">
+          服务标签
+        </button>
+      </div>
+
+      <!-- Firewall Rules List -->
+      <div class="rules-list" id="rulesList">
+
+        <!-- Rule 1: Port 80 -->
+        <div class="glass-card rule-card">
+          <div class="rule-row">
+            <div class="rule-icon">
+              <i data-lucide="globe"></i>
+            </div>
+            <div class="rule-info">
+              <span class="rule-port">80</span>
+              <span class="rule-protocol">TCP</span>
+              <span class="rule-action allow">
+                <i data-lucide="check-circle"></i>
+                允许
+              </span>
+              <span class="rule-remark">HTTP</span>
+            </div>
+            <label class="toggle-switch small">
+              <input type="checkbox" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Rule 2: Port 443 -->
+        <div class="glass-card rule-card">
+          <div class="rule-row">
+            <div class="rule-icon">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <div class="rule-info">
+              <span class="rule-port">443</span>
+              <span class="rule-protocol">TCP</span>
+              <span class="rule-action allow">
+                <i data-lucide="check-circle"></i>
+                允许
+              </span>
+              <span class="rule-remark">HTTPS</span>
+            </div>
+            <label class="toggle-switch small">
+              <input type="checkbox" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Rule 3: Port 22 -->
+        <div class="glass-card rule-card">
+          <div class="rule-row">
+            <div class="rule-icon">
+              <i data-lucide="terminal"></i>
+            </div>
+            <div class="rule-info">
+              <span class="rule-port">22</span>
+              <span class="rule-protocol">TCP</span>
+              <span class="rule-action allow">
+                <i data-lucide="check-circle"></i>
+                允许
+              </span>
+              <span class="rule-remark">SSH</span>
+            </div>
+            <label class="toggle-switch small">
+              <input type="checkbox" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Rule 4: Port 3306 (Deny) -->
+        <div class="glass-card rule-card">
+          <div class="rule-row">
+            <div class="rule-icon">
+              <i data-lucide="database"></i>
+            </div>
+            <div class="rule-info">
+              <span class="rule-port">3306</span>
+              <span class="rule-protocol">TCP</span>
+              <span class="rule-action deny">
+                <i data-lucide="x-circle"></i>
+                拒绝
+              </span>
+              <span class="rule-remark">MySQL远程</span>
+            </div>
+            <label class="toggle-switch small">
+              <input type="checkbox">
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Rule 5: Port 8888 -->
+        <div class="glass-card rule-card">
+          <div class="rule-row">
+            <div class="rule-icon">
+              <i data-lucide="server"></i>
+            </div>
+            <div class="rule-info">
+              <span class="rule-port">8888</span>
+              <span class="rule-protocol">TCP</span>
+              <span class="rule-action allow">
+                <i data-lucide="check-circle"></i>
+                允许
+              </span>
+              <span class="rule-remark">1Panel管理</span>
+            </div>
+            <label class="toggle-switch small">
+              <input type="checkbox" checked>
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Add Rule Button -->
+      <button class="add-rule-btn" onclick="void(0)">
+        <i data-lucide="plus"></i>
+        添加规则
+      </button>
+
+      <!-- Stats Bar -->
+      <div class="glass-card stats-bar">
+        <div class="stat-item">
+          <span class="stat-dot total"></span>
+          总 <span class="stat-value">5</span> 条规则
+        </div>
+        <div class="stat-item">
+          <span class="stat-dot allow"></span>
+          允许 <span class="stat-value">4</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-dot deny"></span>
+          拒绝 <span class="stat-value">1</span>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       iOS Bottom Tab Bar (< 768px)
+       ============================================================ -->
+  <div class="bottom-tab-bar">
+    <button class="tab-item" data-page="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>仪表板</span>
+    </button>
+    <button class="tab-item" data-page="containers">
+      <i data-lucide="box"></i>
+      <span>容器</span>
+    </button>
+    <button class="tab-item" data-page="websites">
+      <i data-lucide="globe"></i>
+      <span>网站</span>
+    </button>
+    <button class="tab-item active" data-page="firewall">
+      <i data-lucide="shield"></i>
+      <span>防火墙</span>
+    </button>
+    <button class="tab-item" data-page="settings">
+      <i data-lucide="settings"></i>
+      <span>设置</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       Scripts
+       ============================================================ -->
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      html.classList.toggle('dark', !isDark);
+      html.classList.toggle('light', isDark);
+
+      const icon = document.querySelector('#themeToggleSidebar i');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    // Segmented Control tab switching
+    function switchTab(tab, btn) {
+      document.querySelectorAll('#segmentControl .segment-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // Navigation active state
+    document.querySelectorAll('.nav-item, .tab-item').forEach(item => {
+      item.addEventListener('click', function () {
+        this.parentElement.querySelectorAll('.nav-item, .tab-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

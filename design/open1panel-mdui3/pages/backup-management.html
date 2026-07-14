@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 备份管理</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+  --op1-surface: #FAFBFC;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-family-mono: ui-monospace, Menlo, monospace;
+}
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-surface: #121416;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="op1-page">
+
+    <!-- Page Header -->
+    <div class="op1-page-header">
+        <div>
+            <h1>备份管理</h1>
+            <p class="subtitle">2 个备份账户</p>
+        </div>
+        <button class="op1-fab">
+            <i data-lucide="plus"></i>
+            新建备份
+        </button>
+    </div>
+
+    <!-- Backup Accounts Section -->
+    <h2 class="op1-section-title">备份账户</h2>
+
+    <div class="op1-accounts-grid">
+
+        <!-- Account 1: 本地备份 -->
+        <div class="op1-account-card">
+            <div class="card-top">
+                <div class="card-icon local">
+                    <i data-lucide="hard-drive"></i>
+                </div>
+                <div class="card-info">
+                    <div class="name-row">
+                        <h3>本地备份</h3>
+                        <span class="status-dot ok"></span>
+                        <span class="status-label ok">正常</span>
+                    </div>
+                    <span class="type-chip">本地存储</span>
+                </div>
+            </div>
+            <div class="card-meta">
+                <div class="meta-item">路径: <span>/opt/1panel/backup</span></div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span class="label-text">已用存储</span>
+                    <span class="label-value">12.5 GB / 50 GB</span>
+                </div>
+                <div class="op1-progress-track">
+                    <div class="op1-progress-fill" style="width: 25%;"></div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="op1-btn-text">
+                    <i data-lucide="play"></i>
+                    立即备份
+                </button>
+                <button class="op1-btn-text">
+                    <i data-lucide="settings"></i>
+                    设置
+                </button>
+            </div>
+        </div>
+
+        <!-- Account 2: 阿里云OSS -->
+        <div class="op1-account-card">
+            <div class="card-top">
+                <div class="card-icon cloud">
+                    <i data-lucide="cloud"></i>
+                </div>
+                <div class="card-info">
+                    <div class="name-row">
+                        <h3>阿里云OSS</h3>
+                        <span class="status-dot ok"></span>
+                        <span class="status-label ok">正常</span>
+                    </div>
+                    <span class="type-chip">S3兼容</span>
+                </div>
+            </div>
+            <div class="card-meta">
+                <div class="meta-item">Bucket: <span>my-backup</span></div>
+            </div>
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span class="label-text">已用存储</span>
+                    <span class="label-value">8.2 GB</span>
+                </div>
+                <div class="op1-progress-track">
+                    <div class="op1-progress-fill" style="width: 16.4%;"></div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="op1-btn-text">
+                    <i data-lucide="play"></i>
+                    立即备份
+                </button>
+                <button class="op1-btn-text">
+                    <i data-lucide="settings"></i>
+                    设置
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Backups Section -->
+    <h2 class="op1-section-title">最近备份</h2>
+
+    <div class="op1-backups-table-wrapper">
+        <table class="op1-backups-table">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>来源</th>
+                    <th>大小</th>
+                    <th>时间</th>
+                    <th>状态</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 -->
+                <tr>
+                    <td><span class="backup-name">completedb_daily</span></td>
+                    <td>
+                        <span class="backup-source-chip">
+                            <i data-lucide="hard-drive"></i>
+                            本地备份
+                        </span>
+                    </td>
+                    <td>2.4 GB</td>
+                    <td>2024-01-15 03:00</td>
+                    <td>
+                        <span class="status-badge success">
+                            <span class="dot"></span>
+                            成功
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="更多操作">
+                            <i data-lucide="more-horizontal"></i>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Row 2 -->
+                <tr>
+                    <td><span class="backup-name">website_files</span></td>
+                    <td>
+                        <span class="backup-source-chip">
+                            <i data-lucide="hard-drive"></i>
+                            本地备份
+                        </span>
+                    </td>
+                    <td>856 MB</td>
+                    <td>2024-01-14 03:00</td>
+                    <td>
+                        <span class="status-badge success">
+                            <span class="dot"></span>
+                            成功
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="更多操作">
+                            <i data-lucide="more-horizontal"></i>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Row 3 -->
+                <tr>
+                    <td><span class="backup-name">mysql_snapshot</span></td>
+                    <td>
+                        <span class="backup-source-chip cloud">
+                            <i data-lucide="cloud"></i>
+                            阿里云OSS
+                        </span>
+                    </td>
+                    <td>1.8 GB</td>
+                    <td>2024-01-13 15:30</td>
+                    <td>
+                        <span class="status-badge success">
+                            <span class="dot"></span>
+                            成功
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="更多操作">
+                            <i data-lucide="more-horizontal"></i>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Row 4: Failed -->
+                <tr>
+                    <td><span class="backup-name">config_backup</span></td>
+                    <td>
+                        <span class="backup-source-chip">
+                            <i data-lucide="hard-drive"></i>
+                            本地备份
+                        </span>
+                    </td>
+                    <td>12 MB</td>
+                    <td>2024-01-12 03:00</td>
+                    <td>
+                        <span class="status-badge fail">
+                            <span class="dot"></span>
+                            失败
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-btn" title="更多操作">
+                            <i data-lucide="more-horizontal"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Responsive breakpoint labels -->
+<span class="op1-responsive-label mobile">Mobile (&lt;600px)</span>
+<span class="op1-responsive-label tablet">Tablet (600-959px)</span>
+<span class="op1-responsive-label desktop">Desktop (960px+)</span>
+
+<script>
+    lucide.createIcons({ attrs: { strokeWidth: 1.5 } });
+</script>
+
+
+    <style>
+        /* ========== Page-specific inline styles ========== */
+
+        body {
+            font: var(--text-body-large);
+            background: var(--op1-background);
+            color: var(--op1-on-surface);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        /* Page container */
+        .op1-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--op1-spacing-xl);
+        }
+
+        /* Page header */
+        .op1-page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: var(--op1-spacing-xl);
+        }
+
+        .op1-page-header h1 {
+            font: var(--text-headline-small);
+            color: var(--op1-on-surface);
+            margin: 0 0 var(--op1-spacing-xs);
+        }
+
+        .op1-page-header .subtitle {
+            font: var(--text-body-medium);
+            color: var(--op1-on-surface-variant);
+            margin: 0;
+        }
+
+        /* FAB Button */
+        .op1-fab {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--op1-spacing-sm);
+            padding: 10px 24px;
+            background: var(--op1-primary);
+            color: var(--op1-primary-foreground);
+            border: none;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-large);
+            cursor: pointer;
+            box-shadow: var(--elevation-2);
+            transition: box-shadow var(--op1-motion-fast) ease;
+            white-space: nowrap;
+        }
+
+        .op1-fab:hover {
+            box-shadow: var(--elevation-3);
+        }
+
+        .op1-fab i {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Section title */
+        .op1-section-title {
+            font: var(--text-title-medium);
+            color: var(--op1-on-surface);
+            margin: 0 0 var(--op1-spacing-lg);
+        }
+
+        /* Account cards grid */
+        .op1-accounts-grid {
+            display: grid;
+            gap: var(--op1-spacing-lg);
+            grid-template-columns: 1fr;
+            margin-bottom: 40px;
+        }
+
+        /* Account card */
+        .op1-account-card {
+            background: var(--op1-card);
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-card);
+            padding: var(--op1-spacing-lg);
+            box-shadow: var(--elevation-1);
+            transition: box-shadow var(--op1-motion-fast) ease;
+        }
+
+        .op1-account-card:hover {
+            box-shadow: var(--elevation-2);
+        }
+
+        .op1-account-card .card-top {
+            display: flex;
+            align-items: center;
+            gap: var(--op1-spacing-md);
+            margin-bottom: var(--op1-spacing-md);
+        }
+
+        .op1-account-card .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--op1-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .op1-account-card .card-icon.local {
+            background: var(--op1-primary-container);
+            color: var(--op1-on-primary-container);
+        }
+
+        .op1-account-card .card-icon.cloud {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .op1-account-card .card-icon i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .op1-account-card .card-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .op1-account-card .card-info .name-row {
+            display: flex;
+            align-items: center;
+            gap: var(--op1-spacing-sm);
+            margin-bottom: 2px;
+        }
+
+        .op1-account-card .card-info .name-row h3 {
+            font: var(--text-title-small);
+            color: var(--op1-on-surface);
+            margin: 0;
+        }
+
+        .op1-account-card .card-info .name-row .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .op1-account-card .card-info .name-row .status-dot.ok {
+            background: var(--op1-success);
+            box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+        }
+
+        .op1-account-card .card-info .name-row .status-dot.error {
+            background: var(--op1-error);
+            box-shadow: 0 0 0 2px rgba(218, 38, 38, 0.2);
+        }
+
+        .op1-account-card .card-info .name-row .status-label {
+            font: var(--text-label-small);
+            margin-left: 2px;
+        }
+
+        .op1-account-card .card-info .name-row .status-label.ok {
+            color: var(--op1-success);
+        }
+
+        .op1-account-card .card-info .name-row .status-label.error {
+            color: var(--op1-error);
+        }
+
+        .op1-account-card .card-info .type-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-small);
+            background: var(--op1-muted);
+            color: var(--op1-on-surface-variant);
+        }
+
+        /* Card meta */
+        .op1-account-card .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--op1-spacing-lg);
+            margin-bottom: var(--op1-spacing-md);
+        }
+
+        .op1-account-card .card-meta .meta-item {
+            font: var(--text-body-small);
+            color: var(--op1-on-surface-variant);
+        }
+
+        .op1-account-card .card-meta .meta-item span {
+            color: var(--op1-on-surface);
+            font-weight: 500;
+        }
+
+        /* Progress bar */
+        .op1-account-card .progress-section {
+            margin-bottom: var(--op1-spacing-md);
+        }
+
+        .op1-account-card .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--op1-spacing-xs);
+        }
+
+        .op1-account-card .progress-label .label-text {
+            font: var(--text-label-small);
+            color: var(--op1-on-surface-variant);
+        }
+
+        .op1-account-card .progress-label .label-value {
+            font: var(--text-label-small);
+            color: var(--op1-on-surface);
+            font-weight: 500;
+        }
+
+        .op1-progress-track {
+            width: 100%;
+            height: 6px;
+            background: var(--op1-surface-container-highest);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .op1-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--op1-primary);
+            transition: width var(--op1-motion-normal) ease;
+        }
+
+        .op1-progress-fill.warn {
+            background: var(--op1-warning);
+        }
+
+        /* Card actions */
+        .op1-account-card .card-actions {
+            display: flex;
+            gap: var(--op1-spacing-sm);
+            padding-top: var(--op1-spacing-md);
+            border-top: 1px solid var(--op1-outline-variant);
+        }
+
+        .op1-btn-text {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--op1-spacing-xs);
+            padding: 6px 12px;
+            border-radius: var(--op1-radius-full);
+            border: none;
+            background: transparent;
+            color: var(--op1-primary);
+            font: var(--text-label-large);
+            cursor: pointer;
+            transition: background var(--op1-motion-fast);
+        }
+
+        .op1-btn-text:hover {
+            background: rgba(12, 155, 75, 0.08);
+        }
+
+        .op1-btn-text i {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Recent backups table */
+        .op1-backups-table-wrapper {
+            background: var(--op1-card);
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-card);
+            box-shadow: var(--elevation-1);
+            overflow: hidden;
+        }
+
+        .op1-backups-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .op1-backups-table thead th {
+            font: var(--text-label-medium);
+            color: var(--op1-on-surface-variant);
+            text-align: left;
+            padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+            background: var(--op1-surface-container-low);
+            border-bottom: 1px solid var(--op1-outline-variant);
+            white-space: nowrap;
+        }
+
+        .op1-backups-table tbody td {
+            font: var(--text-body-medium);
+            color: var(--op1-on-surface);
+            padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+            border-bottom: 1px solid var(--op1-outline-variant);
+            vertical-align: middle;
+        }
+
+        .op1-backups-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .op1-backups-table tbody tr:hover {
+            background: var(--op1-surface-container-low);
+        }
+
+        .op1-backups-table .backup-name {
+            font-weight: 500;
+            color: var(--op1-on-surface);
+        }
+
+        .op1-backups-table .backup-source-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-small);
+            background: var(--op1-primary-container);
+            color: var(--op1-on-primary-container);
+        }
+
+        .op1-backups-table .backup-source-chip i {
+            width: 12px;
+            height: 12px;
+        }
+
+        .op1-backups-table .backup-source-chip.cloud {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .op1-backups-table .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-medium);
+            font-weight: 500;
+        }
+
+        .op1-backups-table .status-badge.success {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .op1-backups-table .status-badge.fail {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .op1-backups-table .status-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .op1-backups-table .status-badge.success .dot {
+            background: #16A34A;
+        }
+
+        .op1-backups-table .status-badge.fail .dot {
+            background: #DC2626;
+        }
+
+        .op1-backups-table .action-btn {
+            background: none;
+            border: none;
+            color: var(--op1-on-surface-variant);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: var(--op1-radius-sm);
+            display: inline-flex;
+            align-items: center;
+            transition: background var(--op1-motion-fast);
+        }
+
+        .op1-backups-table .action-btn:hover {
+            background: var(--op1-surface-container-high);
+        }
+
+        .op1-backups-table .action-btn i {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Responsive - Tablet: 2 columns for accounts */
+        @media (min-width: 600px) {
+            .op1-accounts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Responsive - Desktop: 3 columns for accounts */
+        @media (min-width: 960px) {
+            .op1-accounts-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Mobile: table scrolls horizontally */
+        @media (max-width: 599px) {
+            .op1-backups-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .op1-page {
+                padding: var(--op1-spacing-lg);
+            }
+        }
+
+        /* Responsive labels (for design review) */
+        .op1-responsive-label {
+            display: none;
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            padding: 4px 12px;
+            background: var(--op1-inverse-surface);
+            color: var(--op1-inverse-on-surface);
+            font: var(--text-label-small);
+            border-radius: var(--op1-radius-full);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @media (max-width: 599px) {
+            .op1-responsive-label.mobile { display: block; }
+        }
+        @media (min-width: 600px) and (max-width: 959px) {
+            .op1-responsive-label.tablet { display: block; }
+        }
+        @media (min-width: 960px) {
+            .op1-responsive-label.desktop { display: block; }
+        }
+    </style>
+</body>
+</html>

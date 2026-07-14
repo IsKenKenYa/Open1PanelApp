@@ -1,0 +1,249 @@
+{
+  "data": [
+    {
+      "id": "hmos-page-shell-navigation",
+      "title": "导航壳",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/shell-navigation.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-dashboard",
+      "title": "仪表板",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 433,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/dashboard.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-server-list",
+      "title": "服务器列表",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 866,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/server-list.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-container-management",
+      "title": "容器管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 1299,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/container-management.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-file-manager",
+      "title": "文件管理器",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 1732,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/file-manager.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-database-management",
+      "title": "数据库管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 2165,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/database-management.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-website-management",
+      "title": "网站管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 2598,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/website-management.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-settings",
+      "title": "设置",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 3031,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-login-onboarding",
+      "title": "登录与引导",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 3464,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/login-onboarding.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-terminal",
+      "title": "终端",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 3897,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/terminal.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-firewall",
+      "title": "防火墙管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 4330,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/firewall.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-backup-management",
+      "title": "备份管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 4763,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/backup-management.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-process-monitor",
+      "title": "进程管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 5196,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/process-monitor.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-log-viewer",
+      "title": "日志查看",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 5629,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/log-viewer.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "hmos-page-ai-management",
+      "title": "AI 管理",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752393600000,
+      "canvasData": {
+        "x": 6062,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/ai-management.html",
+        "interactions": []
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": false,
+    "deviceType": "freeSize",
+    "projectName": "1Panel 客户端 HarmonyOS 光场设计"
+  }
+}

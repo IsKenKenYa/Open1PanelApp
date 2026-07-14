@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - HarmonyOS 光场设计导航壳</title>
+    <style id="theme-vars">
+:root {
+  /* ── Brand Primary ── */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* ── Semantic ── */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* ── Light-field (光场) ── */
+  --op1-glow-color: rgba(12, 155, 75, 0.08);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.16);
+  --op1-glow-spread: 20px;
+  --op1-glow-spread-intense: 40px;
+  --op1-glow-blur: 20px;
+  --op1-refresh-glow: radial-gradient(circle, rgba(12, 155, 75, 0.15) 0%, transparent 70%);
+
+  /* ── Surface ── */
+  --op1-surface: #F1F3F5;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(241, 243, 245, 0.92);
+  --op1-surface-popover: rgba(255, 255, 255, 0.95);
+  --op1-surface-container-low: #F7F8FA;
+  --op1-surface-container: #F1F3F5;
+  --op1-surface-container-high: #E8EAED;
+
+  /* ── On Surface ── */
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1C1E;
+
+  /* ── Navigation ── */
+  --op1-nav-tab-height: 56px;
+  --op1-nav-tab-icon-size: 24px;
+  --op1-nav-sidebar-width: 280px;
+  --op1-nav-statusbar-height: 44px;
+
+  /* ── Ripple ── */
+  --op1-ripple-color: rgba(12, 155, 75, 0.12);
+  --op1-ripple-duration: 400ms;
+
+  /* ── Font ── */
+  --op1-font-family: 'HarmonyOS Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --op1-font-family-mono: 'HarmonyOS Sans Mono', 'Noto Sans Mono', monospace;
+
+  /* ── Radius ── */
+  --op1-radius-sm: 8px;
+  --op1-radius-md: 16px;
+  --op1-radius-lg: 24px;
+  --op1-radius-card: 24px;
+  --op1-radius-full: 9999px;
+
+  /* ── Spacing ── */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* ── Motion ── */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-motion-gravity: cubic-bezier(0.2, 0, 0, 1);
+  --op1-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Border ── */
+  --op1-border: #E5E7EB;
+  --op1-border-strong: #D1D5DB;
+
+  /* ── Error ── */
+  --op1-error: #E84026;
+  --op1-error-container: #FDECEB;
+}
+
+/* ── Dark Mode ── */
+.dark {
+  --op1-surface: #1A1C1E;
+  --op1-surface-card: #242628;
+  --op1-surface-nav: rgba(26, 28, 30, 0.92);
+  --op1-surface-popover: rgba(36, 38, 40, 0.95);
+  --op1-surface-container-low: #1E2022;
+  --op1-surface-container: #242628;
+  --op1-surface-container-high: #2E3032;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #9CA3AF;
+  --op1-on-surface-nav: #E2E5E8;
+  --op1-border: #3A3D42;
+  --op1-border-strong: #4A4D52;
+  --op1-glow-color: rgba(12, 155, 75, 0.12);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.20);
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+  --op1-refresh-glow: radial-gradient(circle, rgba(12, 155, 75, 0.25) 0%, transparent 70%);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-op1-surface: var(--op1-surface);
+    --color-op1-surface-card: var(--op1-surface-card);
+    --color-op1-surface-nav: var(--op1-surface-nav);
+    --color-op1-surface-container-low: var(--op1-surface-container-low);
+    --color-op1-surface-container: var(--op1-surface-container);
+    --color-op1-on-surface: var(--op1-on-surface);
+    --color-op1-on-surface-variant: var(--op1-on-surface-variant);
+    --color-op1-brand: var(--op1-brand);
+    --color-op1-border: var(--op1-border);
+    --color-op1-ripple: var(--op1-ripple-color);
+    --radius-card: var(--op1-radius-card);
+    --radius-md: var(--op1-radius-md);
+    --radius-full: var(--op1-radius-full);
+  }
+  @layer base {
+    body { background: var(--op1-surface); color: var(--op1-on-surface); }
+  }
+    </style>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: var(--op1-font-family);
+        background: #E8EAED;
+        color: var(--op1-on-surface);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ===== Page wrapper ===== */
+      .page-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--op1-on-surface);
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+        margin-bottom: 32px;
+      }
+
+      /* ===== Preview Frame ===== */
+      .preview-frame {
+        border: 1px solid var(--op1-border);
+        border-radius: var(--op1-radius-card);
+        overflow: hidden;
+        background: var(--op1-surface);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      /* ===== Mobile Shell ===== */
+      .mobile-shell {
+        display: flex;
+        flex-direction: column;
+        height: 720px;
+        background: var(--op1-surface);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* ===== Status Bar ===== */
+      .status-bar {
+        height: var(--op1-nav-statusbar-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--op1-spacing-lg);
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--op1-on-surface-nav);
+        flex-shrink: 0;
+        z-index: 10;
+      }
+      .status-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .status-bar-right svg {
+        width: 16px;
+        height: 16px;
+        color: var(--op1-on-surface-nav);
+      }
+
+      /* ===== Content Area ===== */
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--op1-spacing-lg);
+      }
+      .content-area::-webkit-scrollbar { width: 0; display: none; }
+
+      /* Dashboard preview cards */
+      .dash-card {
+        background: var(--op1-surface-card);
+        border-radius: var(--op1-radius-card);
+        padding: var(--op1-spacing-xl);
+        margin-bottom: var(--op1-spacing-md);
+        box-shadow: 0 0 var(--op1-glow-spread) var(--op1-glow-color);
+        transition: box-shadow var(--op1-motion-normal) var(--op1-motion-gravity);
+      }
+      .dash-card:hover {
+        box-shadow: 0 0 var(--op1-glow-spread-intense) var(--op1-glow-color-intense);
+      }
+      .dash-card-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+        margin-bottom: var(--op1-spacing-md);
+      }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--op1-spacing-md);
+      }
+      .stat-item {
+        background: var(--op1-surface-container-low);
+        border-radius: var(--op1-radius-md);
+        padding: var(--op1-spacing-md);
+        text-align: center;
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring);
+      }
+      .stat-item:active {
+        transform: scale(0.96);
+      }
+      .stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--op1-brand);
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--op1-on-surface-variant);
+        margin-top: 2px;
+      }
+      .activity-list {
+        font-size: 13px;
+        color: var(--op1-on-surface-variant);
+        line-height: 2.2;
+      }
+
+      /* ===== Bottom Tab Bar ===== */
+      .bottom-tabbar {
+        height: var(--op1-nav-tab-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--op1-border);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        flex-shrink: 0;
+        z-index: 10;
+        box-shadow: 0 -1px 20px rgba(12, 155, 75, 0.08);
+      }
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        cursor: pointer;
+        padding: 4px 0;
+        position: relative;
+        overflow: hidden;
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .tab-item:active {
+        transform: scale(0.88);
+      }
+      .tab-item svg {
+        width: var(--op1-nav-tab-icon-size);
+        height: var(--op1-nav-tab-icon-size);
+        color: #999;
+        transition: color var(--op1-motion-normal) var(--op1-motion-spring);
+        position: relative;
+        z-index: 1;
+      }
+      .tab-item .tab-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: #999;
+        transition: color var(--op1-motion-normal) var(--op1-motion-spring);
+        position: relative;
+        z-index: 1;
+      }
+      .tab-item.active svg {
+        color: var(--op1-brand);
+      }
+      .tab-item.active .tab-label {
+        color: var(--op1-brand);
+        font-weight: 600;
+      }
+      /* Active indicator glow */
+      .tab-item.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 48px;
+        height: 36px;
+        background: var(--op1-glow-color-intense);
+        border-radius: var(--op1-radius-full);
+        z-index: 0;
+      }
+
+      /* ===== Ripple Effect ===== */
+      .ripple-host {
+        position: relative;
+        overflow: hidden;
+      }
+      .ripple-host::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--op1-ripple-color);
+        border-radius: inherit;
+        opacity: 0;
+        transition: opacity var(--op1-motion-fast) var(--op1-motion-gravity);
+        pointer-events: none;
+      }
+      .ripple-host:hover::after {
+        opacity: 1;
+      }
+      .ripple-host:active::after {
+        opacity: 0.6;
+        transition: opacity 0ms;
+      }
+
+      /* ===== Side Panel (侧滑面板) ===== */
+      .side-panel-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 20;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--op1-motion-normal) var(--op1-motion-gravity);
+      }
+      .side-panel-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .side-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: var(--op1-nav-sidebar-width);
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        z-index: 30;
+        transform: translateX(-100%);
+        transition: transform var(--op1-motion-slow) var(--op1-motion-gravity);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 4px 0 20px rgba(12, 155, 75, 0.08);
+      }
+      .side-panel.open {
+        transform: translateX(0);
+      }
+
+      /* Side panel - user area */
+      .panel-user-area {
+        padding: var(--op1-spacing-xl);
+        padding-top: calc(var(--op1-nav-statusbar-height) + var(--op1-spacing-xl));
+        display: flex;
+        align-items: center;
+        gap: var(--op1-spacing-md);
+      }
+      .panel-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--op1-radius-full);
+        background: var(--op1-brand-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 0 var(--op1-glow-spread) var(--op1-glow-color);
+      }
+      .panel-avatar svg {
+        width: 24px;
+        height: 24px;
+        color: var(--op1-brand-dark);
+      }
+      .panel-user-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .panel-username {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+      }
+      .panel-server-name {
+        font-size: 12px;
+        color: var(--op1-on-surface-variant);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Side panel - server list */
+      .panel-section-title {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--op1-on-surface-variant);
+        padding: var(--op1-spacing-md) var(--op1-spacing-xl) var(--op1-spacing-sm);
+      }
+      .server-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 var(--op1-spacing-sm);
+      }
+      .server-item {
+        display: flex;
+        align-items: center;
+        gap: var(--op1-spacing-md);
+        padding: var(--op1-spacing-md) var(--op1-spacing-md);
+        border-radius: var(--op1-radius-md);
+        cursor: pointer;
+        transition: background var(--op1-motion-fast) var(--op1-motion-gravity),
+                    transform var(--op1-motion-normal) var(--op1-motion-spring);
+      }
+      .server-item:active {
+        transform: scale(0.97);
+      }
+      .server-item:hover {
+        background: var(--op1-glow-color);
+      }
+      .server-item.current {
+        background: var(--op1-glow-color-intense);
+      }
+      .server-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .server-dot.online {
+        background: var(--op1-brand);
+        box-shadow: 0 0 8px rgba(12, 155, 75, 0.4);
+      }
+      .server-dot.offline {
+        background: #999;
+      }
+      .server-item-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .server-item-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--op1-on-surface);
+      }
+      .server-item-addr {
+        font-size: 11px;
+        color: var(--op1-on-surface-variant);
+        margin-top: 1px;
+      }
+      .server-item-status {
+        font-size: 11px;
+        color: var(--op1-on-surface-variant);
+        flex-shrink: 0;
+      }
+
+      /* Side panel - bottom */
+      .panel-bottom {
+        padding: var(--op1-spacing-md);
+        border-top: 1px solid var(--op1-border);
+      }
+      .panel-bottom-item {
+        display: flex;
+        align-items: center;
+        gap: var(--op1-spacing-md);
+        padding: var(--op1-spacing-md);
+        border-radius: var(--op1-radius-md);
+        cursor: pointer;
+        transition: background var(--op1-motion-fast) var(--op1-motion-gravity),
+                    transform var(--op1-motion-normal) var(--op1-motion-spring);
+      }
+      .panel-bottom-item:active {
+        transform: scale(0.97);
+      }
+      .panel-bottom-item:hover {
+        background: var(--op1-glow-color);
+      }
+      .panel-bottom-item svg {
+        width: 20px;
+        height: 20px;
+        color: var(--op1-on-surface-variant);
+      }
+      .panel-bottom-item span {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+      }
+
+      /* ===== Toggle theme button ===== */
+      .theme-toggle-btn {
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--op1-radius-full);
+        background: var(--op1-surface-card);
+        border: 1px solid var(--op1-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring),
+                    box-shadow var(--op1-motion-normal);
+      }
+      .theme-toggle-btn:hover {
+        box-shadow: 0 0 var(--op1-glow-spread-intense) var(--op1-glow-color-intense);
+        transform: scale(1.05);
+      }
+      .theme-toggle-btn:active {
+        transform: scale(0.92);
+      }
+      .theme-toggle-btn svg {
+        width: 18px;
+        height: 18px;
+        color: var(--op1-on-surface);
+      }
+
+      /* ===== Scrollbar ===== */
+      .server-list::-webkit-scrollbar { width: 3px; }
+      .server-list::-webkit-scrollbar-track { background: transparent; }
+      .server-list::-webkit-scrollbar-thumb { background: var(--op1-border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="theme-toggle-btn ripple-host" onclick="toggleTheme()" title="切换深浅色">
+  <i data-lucide="sun" id="theme-icon-sun"></i>
+  <i data-lucide="moon" id="theme-icon-moon" style="display:none"></i>
+</div>
+
+<div class="page-wrapper">
+  <h1 class="page-title">1Panel Client - HarmonyOS 光场设计导航壳</h1>
+  <p class="page-subtitle">HarmonyOS 光场设计语言：底部 TabBar + 侧滑服务器面板，光晕边缘与弹性动效。</p>
+
+  <div class="preview-frame">
+    <div class="mobile-shell" id="mobileShell">
+
+      <!-- ===== Status Bar ===== -->
+      <div class="status-bar">
+        <span>15:32</span>
+        <div class="status-bar-right">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full"></i>
+        </div>
+      </div>
+
+      <!-- ===== Side Panel Overlay ===== -->
+      <div class="side-panel-overlay" id="panelOverlay" onclick="closeSidePanel()"></div>
+
+      <!-- ===== Side Panel (侧滑面板) ===== -->
+      <div class="side-panel" id="sidePanel">
+        <!-- User area -->
+        <div class="panel-user-area ripple-host" onclick="closeSidePanel()">
+          <div class="panel-avatar">
+            <i data-lucide="server"></i>
+          </div>
+          <div class="panel-user-info">
+            <div class="panel-username">管理员</div>
+            <div class="panel-server-name">生产服务器 - 192.168.1.100</div>
+          </div>
+          <i data-lucide="chevron-left" style="width:20px;height:20px;color:var(--op1-on-surface-variant)"></i>
+        </div>
+
+        <!-- Server list -->
+        <div class="panel-section-title">服务器列表</div>
+        <div class="server-list">
+          <div class="server-item current ripple-host">
+            <div class="server-dot online"></div>
+            <div class="server-item-info">
+              <div class="server-item-name">生产服务器</div>
+              <div class="server-item-addr">192.168.1.100</div>
+            </div>
+            <div class="server-item-status">在线</div>
+          </div>
+          <div class="server-item ripple-host">
+            <div class="server-dot online"></div>
+            <div class="server-item-info">
+              <div class="server-item-name">测试服务器</div>
+              <div class="server-item-addr">10.0.0.50</div>
+            </div>
+            <div class="server-item-status">在线</div>
+          </div>
+          <div class="server-item ripple-host">
+            <div class="server-dot offline"></div>
+            <div class="server-item-info">
+              <div class="server-item-name">开发服务器</div>
+              <div class="server-item-addr">172.16.0.10</div>
+            </div>
+            <div class="server-item-status" style="color:#999">离线</div>
+          </div>
+        </div>
+
+        <!-- Bottom: settings entry -->
+        <div class="panel-bottom">
+          <div class="panel-bottom-item ripple-host">
+            <i data-lucide="settings"></i>
+            <span>设置</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Content Area (仪表板预览) ===== -->
+      <div class="content-area" id="contentArea">
+        <!-- Swipe hint bar -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:var(--op1-spacing-md);cursor:pointer" onclick="openSidePanel()" class="ripple-host" style="border-radius:var(--op1-radius-md)">
+          <i data-lucide="menu" style="width:20px;height:20px;color:var(--op1-on-surface-variant)"></i>
+          <span style="font-size:13px;color:var(--op1-on-surface-variant)">生产服务器</span>
+          <i data-lucide="chevron-right" style="width:16px;height:16px;color:var(--op1-on-surface-variant)"></i>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-title">系统概览</div>
+          <div class="stat-grid">
+            <div class="stat-item ripple-host">
+              <div class="stat-value">5</div>
+              <div class="stat-label">运行容器</div>
+            </div>
+            <div class="stat-item ripple-host">
+              <div class="stat-value">45%</div>
+              <div class="stat-label">CPU 使用</div>
+            </div>
+            <div class="stat-item ripple-host">
+              <div class="stat-value">4.2G</div>
+              <div class="stat-label">内存占用</div>
+            </div>
+            <div class="stat-item ripple-host">
+              <div class="stat-value">2</div>
+              <div class="stat-label">网站数</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-card-title">最近操作</div>
+          <div class="activity-list">
+            &bull; Nginx 容器重启完成<br>
+            &bull; 数据库备份已创建<br>
+            &bull; SSL 证书已更新
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Bottom Tab Bar ===== -->
+      <div class="bottom-tabbar">
+        <div class="tab-item active ripple-host" data-tab="dashboard" onclick="switchTab(this)">
+          <i data-lucide="layout-dashboard"></i>
+          <span class="tab-label">仪表板</span>
+        </div>
+        <div class="tab-item ripple-host" data-tab="container" onclick="switchTab(this)">
+          <i data-lucide="box"></i>
+          <span class="tab-label">容器</span>
+        </div>
+        <div class="tab-item ripple-host" data-tab="files" onclick="switchTab(this)">
+          <i data-lucide="folder-open"></i>
+          <span class="tab-label">文件</span>
+        </div>
+        <div class="tab-item ripple-host" data-tab="terminal" onclick="switchTab(this)">
+          <i data-lucide="terminal-square"></i>
+          <span class="tab-label">终端</span>
+        </div>
+        <div class="tab-item ripple-host" data-tab="settings" onclick="switchTab(this)">
+          <i data-lucide="settings"></i>
+          <span class="tab-label">设置</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // ── Tab switching with spring animation ──
+  function switchTab(el) {
+    document.querySelectorAll('.tab-item').forEach(t => {
+      t.classList.remove('active');
+      t.style.transition = 'transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)';
+    });
+    el.classList.add('active');
+    // Spring bounce
+    el.style.transform = 'scale(0.85)';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transform = 'scale(1)';
+      });
+    });
+  }
+
+  // ── Side panel open/close ──
+  function openSidePanel() {
+    document.getElementById('sidePanel').classList.add('open');
+    document.getElementById('panelOverlay').classList.add('open');
+  }
+  function closeSidePanel() {
+    document.getElementById('sidePanel').classList.remove('open');
+    document.getElementById('panelOverlay').classList.remove('open');
+  }
+
+  // ── Theme toggle ──
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    document.getElementById('theme-icon-sun').style.display = isDark ? 'none' : 'block';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

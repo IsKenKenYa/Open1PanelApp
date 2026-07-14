@@ -1,0 +1,79 @@
+import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/features/files/services/file_transfer_service.dart';
+
+/// File share management page.
+/// Mirrors frontend's file share list: create/delete/search shared links.
+class FileSharePage extends StatefulWidget {
+  const FileSharePage({super.key});
+
+  @override
+  State<FileSharePage> createState() => _FileSharePageState();
+}
+
+class _FileSharePageState extends State<FileSharePage> {
+  final FileTransferService _service = FileTransferService();
+  List<Map<String, dynamic>> _shares = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadShares();
+  }
+
+  Future<void> _loadShares() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final result = await _service.searchShares();
+      if (mounted) setState(() { _shares = result; _isLoading = false; });
+    } catch (e) {
+      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+    }
+  }
+
+  Future<void> _deleteShare(String shareId) async {
+    try {
+      await _service.deleteShare(shareId);
+      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      _loadShares();
+    } catch (e) {
+      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('File Shares'),
+        actions: [
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadShares),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(child: Text(_error!))
+              : _shares.isEmpty
+                  ? const Center(child: Text('No shares'))
+                  : ListView.builder(
+                      itemCount: _shares.length,
+                      itemBuilder: (context, index) {
+                        final share = _shares[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(share['name']?.toString() ?? ''),
+                            subtitle: Text(share['path']?.toString() ?? ''),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete_outline),
+                              onPressed: () => _deleteShare(share['id']?.toString() ?? ''),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+    );
+  }
+}

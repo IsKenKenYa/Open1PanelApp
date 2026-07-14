@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 进程管理</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+  --op1-surface: #FAFBFC;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-family-mono: ui-monospace, Menlo, monospace;
+}
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-surface: #121416;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <!-- Header -->
+        <div class="page-header">
+            <h1>进程管理</h1>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-row">
+            <div class="summary-chip">
+                <span class="chip-dot blue"></span>
+                总进程数 <span class="chip-value">156</span>
+            </div>
+            <div class="summary-chip">
+                <span class="chip-dot green"></span>
+                运行中 <span class="chip-value">152</span>
+            </div>
+            <div class="summary-chip">
+                <span class="chip-dot gray"></span>
+                休眠 <span class="chip-value">4</span>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="sort-group">
+                <button class="sort-btn" onclick="activateSort(this)">
+                    CPU排序
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <button class="sort-btn active" onclick="activateSort(this)">
+                    内存排序
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <button class="sort-btn" onclick="activateSort(this)">
+                    PID排序
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+            </div>
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" placeholder="搜索进程..." />
+            </div>
+        </div>
+
+        <!-- Table Header (Desktop) -->
+        <div class="table-header">
+            <span>PID</span>
+            <span>进程名称</span>
+            <span>用户</span>
+            <span>CPU</span>
+            <span>内存</span>
+            <span>操作</span>
+        </div>
+
+        <!-- Process List -->
+        <div class="process-list">
+
+            <!-- 1. systemd -->
+            <div class="process-card">
+                <div class="m-top">
+                    <span class="proc-name">systemd</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">1</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">root</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value">0.1%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:0.5%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">3.2 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:0.2%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('systemd')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <!-- Desktop grid children -->
+                <span class="d-row pid">1</span>
+                <span class="d-row proc-name">systemd</span>
+                <span class="d-row proc-user">root</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value">0.1%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:0.5%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">3.2 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:0.2%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('systemd')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 2. nginx: master -->
+            <div class="process-card">
+                <div class="m-top">
+                    <span class="proc-name">nginx: master</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">456</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">www-data</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value">0.5%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:2.5%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">12 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:0.8%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('nginx: master')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">456</span>
+                <span class="d-row proc-name">nginx: master</span>
+                <span class="d-row proc-user">www-data</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value">0.5%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:2.5%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">12 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:0.8%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('nginx: master')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 3. nginx: worker -->
+            <div class="process-card">
+                <div class="m-top">
+                    <span class="proc-name">nginx: worker</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">789</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">www-data</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value">2.3%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:11.5%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">18 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:1.2%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('nginx: worker')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">789</span>
+                <span class="d-row proc-name">nginx: worker</span>
+                <span class="d-row proc-user">www-data</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value">2.3%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:11.5%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">18 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:1.2%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('nginx: worker')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 4. mysqld (CPU 8.7% - warning) -->
+            <div class="process-card warning">
+                <div class="m-top">
+                    <span class="proc-name">mysqld</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">1024</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">mysql</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value warn">8.7%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill warn" style="width:43.5%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">1.2 GB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:75%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('mysqld')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">1024</span>
+                <span class="d-row proc-name">mysqld</span>
+                <span class="d-row proc-user">mysql</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value warn">8.7%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill warn" style="width:43.5%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">1.2 GB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:75%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('mysqld')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 5. redis-server -->
+            <div class="process-card">
+                <div class="m-top">
+                    <span class="proc-name">redis-server</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">2048</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">redis</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value">1.2%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:6%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">64 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:4%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('redis-server')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">2048</span>
+                <span class="d-row proc-name">redis-server</span>
+                <span class="d-row proc-user">redis</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value">1.2%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:6%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">64 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:4%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('redis-server')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 6. node (CPU 5.3% - warning) -->
+            <div class="process-card warning">
+                <div class="m-top">
+                    <span class="proc-name">node</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">3072</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">www-data</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value warn">5.3%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill warn" style="width:26.5%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">256 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:16%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('node')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">3072</span>
+                <span class="d-row proc-name">node</span>
+                <span class="d-row proc-user">www-data</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value warn">5.3%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill warn" style="width:26.5%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">256 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:16%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('node')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 7. php-fpm -->
+            <div class="process-card">
+                <div class="m-top">
+                    <span class="proc-name">php-fpm</span>
+                    <span class="status-badge running"><span class="status-dot"></span>运行中</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">4096</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">www-data</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value">3.1%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:15.5%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">512 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:32%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('php-fpm')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">4096</span>
+                <span class="d-row proc-name">php-fpm</span>
+                <span class="d-row proc-user">www-data</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value">3.1%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:15.5%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">512 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:32%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('php-fpm')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- 8. python3 (sleeping) -->
+            <div class="process-card">
+                <div class="m-top">
+                    <span class="proc-name">python3</span>
+                    <span class="status-badge sleeping"><span class="status-dot"></span>休眠</span>
+                </div>
+                <div class="m-bottom">
+                    <span class="m-hide"><span class="inline-label">PID</span><span class="pid">5120</span></span>
+                    <span class="m-hide"><span class="inline-label">用户</span><span class="proc-user">root</span></span>
+                    <div class="cpu-cell">
+                        <span class="inline-label">CPU</span><span class="cpu-value">0.0%</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="mem-cell">
+                        <span class="mem-value">8 MB</span>
+                        <div class="mini-bar"><div class="mini-bar-fill" style="width:0.5%"></div></div>
+                    </div>
+                    <div style="flex:1"></div>
+                    <button class="kill-btn" title="终止进程" onclick="killProcess('python3')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <span class="d-row pid">5120</span>
+                <span class="d-row proc-name">python3</span>
+                <span class="d-row proc-user">root</span>
+                <div class="d-row cpu-cell">
+                    <span class="cpu-value">0.0%</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:0%"></div></div>
+                </div>
+                <div class="d-row mem-cell">
+                    <span class="mem-value">8 MB</span>
+                    <div class="mini-bar"><div class="mini-bar-fill" style="width:0.5%"></div></div>
+                </div>
+                <button class="d-row kill-btn" title="终止进程" onclick="killProcess('python3')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+        </div><!-- /process-list -->
+
+        <!-- Breakpoint Label -->
+        <div class="bp-label"></div>
+
+    </div><!-- /page -->
+
+    <script>
+    function activateSort(btn) {
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    function killProcess(name) {
+        if (confirm('确定要终止进程 ' + name + ' 吗？此操作不可撤销。')) {
+            alert('已发送终止信号到进程 ' + name);
+        }
+    }
+    </script>
+
+    <style>
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font: var(--text-body-medium);
+            color: var(--op1-on-surface);
+            background: var(--op1-surface);
+            font-family: var(--font-family);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        /* ===== Page Container ===== */
+        .page { width: 100%; max-width: 1200px; }
+
+        /* ===== Header ===== */
+        .page-header { margin-bottom: 20px; }
+        .page-header h1 {
+            font: var(--text-headline-small);
+            color: var(--op1-on-surface);
+        }
+
+        /* ===== Summary Chips ===== */
+        .summary-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .summary-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: var(--op1-radius-full);
+            font: var(--text-label-large);
+            border: 1px solid var(--op1-outline-variant);
+            background: var(--op1-surface-container-low);
+            color: var(--op1-on-surface-variant);
+        }
+        .summary-chip .chip-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .summary-chip .chip-dot.green { background: var(--op1-brand); }
+        .summary-chip .chip-dot.blue { background: var(--op1-info); }
+        .summary-chip .chip-dot.gray { background: var(--op1-outline); }
+        .summary-chip .chip-value { font-weight: 600; color: var(--op1-on-surface); }
+
+        /* ===== Toolbar ===== */
+        .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .sort-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .sort-btn {
+            padding: 7px 16px; border-radius: var(--op1-radius-full);
+            border: 1px solid var(--op1-outline-variant);
+            background: var(--op1-surface-container-low);
+            color: var(--op1-on-surface-variant);
+            font: var(--text-label-large); cursor: pointer;
+            transition: background var(--op1-motion-fast), color var(--op1-motion-fast), border-color var(--op1-motion-fast);
+            white-space: nowrap;
+        }
+        .sort-btn:hover { background: var(--op1-surface-container-high); }
+        .sort-btn.active {
+            background: var(--op1-primary); color: var(--op1-primary-foreground);
+            border-color: var(--op1-primary);
+        }
+        .sort-btn svg { width: 16px; height: 16px; vertical-align: -3px; margin-left: 4px; }
+        .search-box { flex: 1 1 200px; min-width: 180px; position: relative; }
+        .search-box input {
+            width: 100%; padding: 10px 14px 10px 40px;
+            border: 1px solid var(--op1-outline-variant); border-radius: var(--op1-radius-md);
+            background: var(--op1-surface-container-low); color: var(--op1-on-surface);
+            font: var(--text-body-medium); outline: none;
+            transition: border-color var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+        }
+        .search-box input::placeholder { color: var(--op1-muted-foreground); }
+        .search-box input:focus { border-color: var(--op1-primary); box-shadow: 0 0 0 2px rgba(12,155,75,0.18); }
+        .search-box .search-icon {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            width: 18px; height: 18px; color: var(--op1-on-surface-variant); pointer-events: none;
+        }
+
+        /* ===== Dual-track: Mobile/Tablet cards vs Desktop table rows ===== */
+
+        /* --- Shared process-card container --- */
+        .process-list { display: flex; flex-direction: column; gap: 8px; }
+        .process-card {
+            background: var(--op1-card);
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-card);
+            padding: 14px 16px;
+            transition: box-shadow var(--op1-motion-fast), background var(--op1-motion-fast);
+            position: relative; overflow: hidden;
+        }
+        .process-card:hover {
+            box-shadow: var(--elevation-2);
+            background: var(--op1-surface-container-lowest);
+        }
+
+        /* --- Desktop grid row (hidden by default) --- */
+        .d-row { display: none; }
+
+        /* --- Mobile card rows (visible by default) --- */
+        .m-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .m-bottom { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* ===== PID ===== */
+        .pid { font: var(--text-body-small); font-family: var(--font-family-mono); color: var(--op1-on-surface-variant); white-space: nowrap; }
+
+        /* ===== Process Name ===== */
+        .proc-name {
+            font: var(--text-title-medium); color: var(--op1-on-surface);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* ===== User ===== */
+        .proc-user { font: var(--text-body-small); color: var(--op1-on-surface-variant); white-space: nowrap; }
+
+        /* ===== CPU ===== */
+        .cpu-cell { display: flex; align-items: center; gap: 8px; }
+        .cpu-value {
+            font: var(--text-label-medium); font-family: var(--font-family-mono);
+            min-width: 40px; color: var(--op1-on-surface);
+        }
+        .cpu-value.warn { color: var(--op1-warning); font-weight: 600; }
+        .cpu-value.error { color: var(--op1-danger); font-weight: 600; }
+        .mini-bar { width: 60px; height: 6px; border-radius: 3px; background: var(--op1-surface-container-high); overflow: hidden; flex-shrink: 0; }
+        .mini-bar-fill { height: 100%; border-radius: 3px; background: var(--op1-brand); transition: width var(--op1-motion-normal); }
+        .mini-bar-fill.warn { background: var(--op1-warning); }
+        .mini-bar-fill.error { background: var(--op1-danger); }
+
+        /* ===== Memory ===== */
+        .mem-cell { display: flex; align-items: center; gap: 8px; }
+        .mem-value { font: var(--text-body-small); font-family: var(--font-family-mono); color: var(--op1-on-surface); white-space: nowrap; }
+
+        /* ===== Status Badge ===== */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 10px; border-radius: var(--op1-radius-full);
+            font: var(--text-label-small); font-weight: 500;
+        }
+        .status-badge.running { background: rgba(12,155,75,0.1); color: var(--op1-brand); }
+        .status-badge.sleeping { background: var(--op1-surface-container-high); color: var(--op1-on-surface-variant); }
+        .status-badge .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .status-badge.running .status-dot { background: var(--op1-brand); }
+        .status-badge.sleeping .status-dot { background: var(--op1-on-surface-variant); }
+
+        /* ===== Kill Button ===== */
+        .kill-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 34px; height: 34px; border-radius: var(--op1-radius-full);
+            border: none; background: transparent; color: var(--op1-on-surface-variant);
+            cursor: pointer; transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+        }
+        .kill-btn:hover { background: rgba(220,38,38,0.08); color: var(--op1-danger); }
+        .kill-btn svg { width: 18px; height: 18px; }
+
+        /* ===== Inline label ===== */
+        .inline-label { font: var(--text-label-small); color: var(--op1-muted-foreground); margin-right: 2px; }
+
+        /* ===== Warning left border ===== */
+        .process-card.warning { border-left: 3px solid var(--op1-warning); }
+
+        /* ===== Desktop Table Header (hidden by default) ===== */
+        .table-header {
+            display: none;
+            grid-template-columns: 70px 2fr 1fr 90px 130px 80px;
+            align-items: center; gap: 12px; padding: 8px 16px;
+            font: var(--text-label-medium); color: var(--op1-on-surface-variant);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--op1-outline-variant);
+        }
+
+        /* ========================================================
+           RESPONSIVE BREAKPOINTS
+           ======================================================== */
+
+        /* --- Mobile: <=600px --- Hide PID/User columns in cards --- */
+        @media (max-width: 600px) {
+            .m-hide { display: none !important; }
+            .m-top { flex-wrap: wrap; }
+            .process-card { padding: 12px 14px; }
+        }
+
+        /* --- Tablet: 601-899px --- Show all fields in card layout --- */
+        @media (min-width: 601px) and (max-width: 899px) {
+            .m-hide { display: inline-flex !important; }
+        }
+
+        /* --- Desktop: >=900px --- Switch to table layout --- */
+        @media (min-width: 900px) {
+            .process-list { gap: 0; }
+            .table-header { display: grid; }
+
+            /* Card becomes table row */
+            .process-card {
+                display: grid;
+                grid-template-columns: 70px 2fr 1fr 90px 130px 80px;
+                align-items: center; gap: 12px;
+                border-radius: 0; border-left: none; border-right: none; border-top: none;
+                padding: 12px 16px;
+            }
+
+            /* Warning via pseudo-element */
+            .process-card.warning { border-left: none; }
+            .process-card.warning::before {
+                content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+                width: 3px; background: var(--op1-warning);
+            }
+
+            /* Show desktop row, hide mobile layout */
+            .d-row { display: contents; }
+            .m-top, .m-bottom { display: none !important; }
+        }
+
+        /* ===== Breakpoint Label ===== */
+        .bp-label {
+            position: fixed; bottom: 8px; right: 12px;
+            padding: 4px 10px; border-radius: var(--op1-radius-full);
+            font: var(--text-label-small); font-family: var(--font-family-mono);
+            background: var(--op1-inverse-surface); color: var(--op1-inverse-on-surface);
+            pointer-events: none; z-index: 999;
+        }
+        @media (max-width: 600px) { .bp-label::after { content: ' Mobile'; } }
+        @media (min-width: 601px) and (max-width: 899px) { .bp-label::after { content: ' Tablet'; } }
+        @media (min-width: 900px) { .bp-label::after { content: ' Desktop'; } }
+    </style>
+</body>
+</html>

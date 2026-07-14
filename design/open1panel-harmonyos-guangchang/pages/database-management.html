@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 数据库</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-glow-color: rgba(12, 155, 75, 0.08);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.16);
+  --op1-glow-spread: 20px;
+  --op1-glow-spread-intense: 40px;
+  --op1-glow-blur: 20px;
+  --op1-surface: #F1F3F5;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(241, 243, 245, 0.92);
+  --op1-surface-popover: rgba(255, 255, 255, 0.95);
+  --op1-surface-container-low: #F7F8FA;
+  --op1-surface-container: #F1F3F5;
+  --op1-surface-container-high: #E8EAED;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1C1E;
+  --op1-nav-tab-height: 56px;
+  --op1-nav-tab-icon-size: 24px;
+  --op1-nav-sidebar-width: 280px;
+  --op1-nav-statusbar-height: 44px;
+  --op1-ripple-color: rgba(12, 155, 75, 0.12);
+  --op1-ripple-duration: 400ms;
+  --op1-font-family: 'HarmonyOS Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --op1-font-family-mono: 'HarmonyOS Sans Mono', 'Noto Sans Mono', monospace;
+  --op1-radius-sm: 8px;
+  --op1-radius-md: 16px;
+  --op1-radius-lg: 24px;
+  --op1-radius-card: 24px;
+  --op1-radius-full: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-motion-gravity: cubic-bezier(0.2, 0, 0, 1);
+  --op1-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --op1-border: #E5E7EB;
+  --op1-border-strong: #D1D5DB;
+  --op1-error: #E84026;
+  --op1-error-container: #FDECEB;
+}
+.dark {
+  --op1-surface: #1A1C1E;
+  --op1-surface-card: #242628;
+  --op1-surface-nav: rgba(26, 28, 30, 0.92);
+  --op1-surface-popover: rgba(36, 38, 40, 0.95);
+  --op1-surface-container-low: #1E2022;
+  --op1-surface-container: #242628;
+  --op1-surface-container-high: #2E3032;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #9CA3AF;
+  --op1-on-surface-nav: #E2E5E8;
+  --op1-border: #3A3D42;
+  --op1-border-strong: #4A4D52;
+  --op1-glow-color: rgba(12, 155, 75, 0.12);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.20);
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-op1-surface: var(--op1-surface);
+    --color-op1-surface-card: var(--op1-surface-card);
+    --color-op1-surface-nav: var(--op1-surface-nav);
+    --color-op1-surface-container-low: var(--op1-surface-container-low);
+    --color-op1-surface-container: var(--op1-surface-container);
+    --color-op1-on-surface: var(--op1-on-surface);
+    --color-op1-on-surface-variant: var(--op1-on-surface-variant);
+    --color-op1-brand: var(--op1-brand);
+    --color-op1-border: var(--op1-border);
+    --radius-card: var(--op1-radius-card);
+    --radius-md: var(--op1-radius-md);
+    --radius-full: var(--op1-radius-full);
+  }
+  @layer base { body { background: var(--op1-surface); color: var(--op1-on-surface); } }
+    </style>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: var(--op1-font-family); background: #E8EAED; color: var(--op1-on-surface); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+      .page-wrapper { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+      .page-title { font-size: 28px; font-weight: 500; margin-bottom: 8px; color: var(--op1-on-surface); }
+      .page-subtitle { font-size: 14px; color: var(--op1-on-surface-variant); margin-bottom: 32px; }
+      .preview-frame { border: 1px solid var(--op1-border); border-radius: var(--op1-radius-card); overflow: hidden; background: var(--op1-surface); box-shadow: 0 2px 8px rgba(0,0,0,0.06); max-width: 400px; margin: 0 auto; }
+      .mobile-shell { display: flex; flex-direction: column; height: 780px; background: var(--op1-surface); position: relative; overflow: hidden; }
+      .status-bar { height: var(--op1-nav-statusbar-height); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--op1-spacing-lg); background: var(--op1-surface-nav); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); font-size: 14px; font-weight: 600; color: var(--op1-on-surface-nav); flex-shrink: 0; z-index: 10; }
+      .status-bar-right { display: flex; align-items: center; gap: 6px; }
+      .status-bar-right svg { width: 16px; height: 16px; color: var(--op1-on-surface-nav); }
+      .content-area { flex: 1; overflow-y: auto; padding: var(--op1-spacing-lg); }
+      .content-area::-webkit-scrollbar { width: 0; display: none; }
+      .search-box { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--op1-surface-card); border-radius: var(--op1-radius-full); border: 1px solid var(--op1-border); margin-bottom: var(--op1-spacing-md); box-shadow: 0 0 20px rgba(12, 155, 75, 0.08); }
+      .search-box svg { width: 18px; height: 18px; color: var(--op1-on-surface-variant); flex-shrink: 0; }
+      .search-box input { flex: 1; border: none; outline: none; background: transparent; font-size: 14px; color: var(--op1-on-surface); font-family: var(--op1-font-family); }
+      .search-box input::placeholder { color: var(--op1-on-surface-variant); }
+      .filter-tabs { display: flex; gap: var(--op1-spacing-sm); margin-bottom: var(--op1-spacing-lg); overflow-x: auto; }
+      .filter-tabs::-webkit-scrollbar { display: none; }
+      .filter-tab { padding: 8px 20px; border-radius: var(--op1-radius-full); font-size: 13px; font-weight: 500; color: var(--op1-on-surface-variant); cursor: pointer; white-space: nowrap; background: var(--op1-surface-card); border: 1px solid var(--op1-border); transition: all var(--op1-motion-normal) var(--op1-motion-spring); position: relative; overflow: hidden; }
+      .filter-tab:active { transform: scale(0.94); }
+      .filter-tab.active { background: var(--op1-brand); color: #fff; border-color: var(--op1-brand); box-shadow: 0 0 20px rgba(12, 155, 75, 0.2); }
+      .db-card {
+        background: var(--op1-surface-card); border-radius: var(--op1-radius-card);
+        padding: var(--op1-spacing-lg); margin-bottom: var(--op1-spacing-md);
+        box-shadow: 0 0 20px rgba(12, 155, 75, 0.08);
+        transition: box-shadow var(--op1-motion-normal) var(--op1-motion-gravity),
+                    transform var(--op1-motion-normal) var(--op1-motion-spring);
+        cursor: pointer; position: relative; overflow: hidden;
+      }
+      .db-card:hover { box-shadow: 0 0 40px rgba(12, 155, 75, 0.16); }
+      .db-card:active { transform: scale(0.98); }
+      .db-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+      .db-name { display: flex; align-items: center; gap: 10px; }
+      .db-name .icon-box {
+        width: 40px; height: 40px; border-radius: var(--op1-radius-md);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      }
+      .db-name .icon-box svg { width: 20px; height: 20px; color: #fff; }
+      .db-name .icon-box.mysql { background: #00758F; }
+      .db-name .icon-box.pg { background: #336791; }
+      .db-name .icon-box.mongo { background: #47A248; }
+      .db-name .icon-box.redis { background: #DC382D; }
+      .db-name-text { font-size: 15px; font-weight: 600; color: var(--op1-on-surface); }
+      .db-type-tag {
+        display: inline-block; padding: 2px 10px; border-radius: var(--op1-radius-full);
+        font-size: 11px; font-weight: 500; background: var(--op1-surface-container-high);
+        color: var(--op1-on-surface-variant);
+      }
+      .db-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .db-meta-item { display: flex; flex-direction: column; gap: 2px; }
+      .db-meta-label { font-size: 11px; color: var(--op1-on-surface-variant); }
+      .db-meta-value { font-size: 13px; color: var(--op1-on-surface); font-weight: 500; font-family: var(--op1-font-family-mono); }
+      .add-db-btn {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%; padding: 14px; border-radius: var(--op1-radius-card);
+        border: 2px dashed var(--op1-border-strong); cursor: pointer;
+        color: var(--op1-on-surface-variant); font-size: 14px; font-weight: 500;
+        background: transparent; transition: all var(--op1-motion-normal) var(--op1-motion-spring);
+        position: relative; overflow: hidden;
+      }
+      .add-db-btn svg { width: 20px; height: 20px; }
+      .add-db-btn:hover { border-color: var(--op1-brand); color: var(--op1-brand); background: rgba(12,155,75,0.04); }
+      .add-db-btn:active { transform: scale(0.97); }
+      .bottom-tabbar { height: var(--op1-nav-tab-height); display: flex; align-items: center; justify-content: space-around; background: var(--op1-surface-nav); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--op1-border); padding-bottom: env(safe-area-inset-bottom, 0px); flex-shrink: 0; z-index: 10; box-shadow: 0 -1px 20px rgba(12, 155, 75, 0.08); }
+      .tab-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; position: relative; overflow: hidden; transition: transform var(--op1-motion-normal) var(--op1-motion-spring); -webkit-tap-highlight-color: transparent; }
+      .tab-item:active { transform: scale(0.88); }
+      .tab-item svg { width: var(--op1-nav-tab-icon-size); height: var(--op1-nav-tab-icon-size); color: #999; transition: color var(--op1-motion-normal) var(--op1-motion-spring); position: relative; z-index: 1; }
+      .tab-item .tab-label { font-size: 11px; font-weight: 500; color: #999; transition: color var(--op1-motion-normal) var(--op1-motion-spring); position: relative; z-index: 1; }
+      .tab-item.active svg { color: var(--op1-brand); }
+      .tab-item.active .tab-label { color: var(--op1-brand); font-weight: 600; }
+      .tab-item.active::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 48px; height: 36px; background: var(--op1-glow-color-intense); border-radius: var(--op1-radius-full); z-index: 0; }
+      .ripple-host { position: relative; overflow: hidden; }
+      .ripple-host::after { content: ''; position: absolute; inset: 0; background: var(--op1-ripple-color); border-radius: inherit; opacity: 0; transition: opacity var(--op1-motion-fast) var(--op1-motion-gravity); pointer-events: none; }
+      .ripple-host:hover::after { opacity: 1; }
+      .ripple-host:active::after { opacity: 0.6; transition: opacity 0ms; }
+      .side-panel-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); z-index: 20; opacity: 0; pointer-events: none; transition: opacity var(--op1-motion-normal) var(--op1-motion-gravity); }
+      .side-panel-overlay.open { opacity: 1; pointer-events: auto; }
+      .side-panel { position: absolute; top: 0; left: 0; bottom: 0; width: var(--op1-nav-sidebar-width); background: var(--op1-surface-nav); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 30; transform: translateX(-100%); transition: transform var(--op1-motion-slow) var(--op1-motion-gravity); display: flex; flex-direction: column; box-shadow: 4px 0 20px rgba(12, 155, 75, 0.08); }
+      .side-panel.open { transform: translateX(0); }
+      .panel-user-area { padding: var(--op1-spacing-xl); padding-top: calc(var(--op1-nav-statusbar-height) + var(--op1-spacing-xl)); display: flex; align-items: center; gap: var(--op1-spacing-md); }
+      .panel-avatar { width: 48px; height: 48px; border-radius: var(--op1-radius-full); background: var(--op1-brand-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 20px rgba(12,155,75,0.08); }
+      .panel-avatar svg { width: 24px; height: 24px; color: var(--op1-brand-dark); }
+      .panel-user-info { flex: 1; min-width: 0; }
+      .panel-username { font-size: 16px; font-weight: 600; color: var(--op1-on-surface); }
+      .panel-server-name { font-size: 12px; color: var(--op1-on-surface-variant); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .panel-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--op1-on-surface-variant); padding: var(--op1-spacing-md) var(--op1-spacing-xl) var(--op1-spacing-sm); }
+      .server-list { flex: 1; overflow-y: auto; padding: 0 var(--op1-spacing-sm); }
+      .server-item { display: flex; align-items: center; gap: var(--op1-spacing-md); padding: var(--op1-spacing-md); border-radius: var(--op1-radius-md); cursor: pointer; transition: background var(--op1-motion-fast) var(--op1-motion-gravity), transform var(--op1-motion-normal) var(--op1-motion-spring); }
+      .server-item:active { transform: scale(0.97); }
+      .server-item:hover { background: var(--op1-glow-color); }
+      .server-item.current { background: var(--op1-glow-color-intense); }
+      .server-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+      .server-dot.online { background: var(--op1-brand); box-shadow: 0 0 8px rgba(12,155,75,0.4); }
+      .server-dot.offline { background: #999; }
+      .server-item-info { flex: 1; min-width: 0; }
+      .server-item-name { font-size: 14px; font-weight: 500; color: var(--op1-on-surface); }
+      .server-item-addr { font-size: 11px; color: var(--op1-on-surface-variant); margin-top: 1px; }
+      .server-item-status { font-size: 11px; color: var(--op1-on-surface-variant); flex-shrink: 0; }
+      .panel-bottom { padding: var(--op1-spacing-md); border-top: 1px solid var(--op1-border); }
+      .panel-bottom-item { display: flex; align-items: center; gap: var(--op1-spacing-md); padding: var(--op1-spacing-md); border-radius: var(--op1-radius-md); cursor: pointer; transition: background var(--op1-motion-fast) var(--op1-motion-gravity), transform var(--op1-motion-normal) var(--op1-motion-spring); }
+      .panel-bottom-item:active { transform: scale(0.97); }
+      .panel-bottom-item:hover { background: var(--op1-glow-color); }
+      .panel-bottom-item svg { width: 20px; height: 20px; color: var(--op1-on-surface-variant); }
+      .panel-bottom-item span { font-size: 14px; color: var(--op1-on-surface-variant); }
+      .theme-toggle-btn { position: fixed; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: var(--op1-radius-full); background: var(--op1-surface-card); border: 1px solid var(--op1-border); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform var(--op1-motion-normal) var(--op1-motion-spring), box-shadow var(--op1-motion-normal); }
+      .theme-toggle-btn:hover { box-shadow: 0 0 40px rgba(12,155,75,0.16); transform: scale(1.05); }
+      .theme-toggle-btn:active { transform: scale(0.92); }
+      .theme-toggle-btn svg { width: 18px; height: 18px; color: var(--op1-on-surface); }
+      .server-list::-webkit-scrollbar { width: 3px; }
+      .server-list::-webkit-scrollbar-track { background: transparent; }
+      .server-list::-webkit-scrollbar-thumb { background: var(--op1-border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<div class="theme-toggle-btn ripple-host" onclick="toggleTheme()" title="切换深浅色">
+  <i data-lucide="sun" id="theme-icon-sun"></i>
+  <i data-lucide="moon" id="theme-icon-moon" style="display:none"></i>
+</div>
+
+<div class="page-wrapper">
+  <h1 class="page-title">数据库</h1>
+  <p class="page-subtitle">HarmonyOS 光场设计 -- 数据库管理，支持 MySQL/PostgreSQL/MongoDB/Redis 多类型切换。</p>
+
+  <div class="preview-frame">
+    <div class="mobile-shell" id="mobileShell">
+
+      <div class="status-bar">
+        <span>15:32</span>
+        <div class="status-bar-right">
+          <i data-lucide="signal"></i>
+          <i data-lucide="wifi"></i>
+          <i data-lucide="battery-full"></i>
+        </div>
+      </div>
+
+      <div class="side-panel-overlay" id="panelOverlay" onclick="closeSidePanel()"></div>
+      <div class="side-panel" id="sidePanel">
+        <div class="panel-user-area ripple-host" onclick="closeSidePanel()">
+          <div class="panel-avatar"><i data-lucide="server"></i></div>
+          <div class="panel-user-info">
+            <div class="panel-username">管理员</div>
+            <div class="panel-server-name">生产服务器 - 192.168.1.100</div>
+          </div>
+          <i data-lucide="chevron-left" style="width:20px;height:20px;color:var(--op1-on-surface-variant)"></i>
+        </div>
+        <div class="panel-section-title">服务器列表</div>
+        <div class="server-list">
+          <div class="server-item current ripple-host"><div class="server-dot online"></div><div class="server-item-info"><div class="server-item-name">生产服务器</div><div class="server-item-addr">192.168.1.100</div></div><div class="server-item-status">在线</div></div>
+          <div class="server-item ripple-host"><div class="server-dot online"></div><div class="server-item-info"><div class="server-item-name">测试服务器</div><div class="server-item-addr">10.0.0.50</div></div><div class="server-item-status">在线</div></div>
+          <div class="server-item ripple-host"><div class="server-dot offline"></div><div class="server-item-info"><div class="server-item-name">开发服务器</div><div class="server-item-addr">172.16.0.10</div></div><div class="server-item-status" style="color:#999">离线</div></div>
+        </div>
+        <div class="panel-bottom"><div class="panel-bottom-item ripple-host"><i data-lucide="settings"></i><span>设置</span></div></div>
+      </div>
+
+      <div class="content-area" id="contentArea">
+        <!-- Search -->
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="text" placeholder="搜索数据库名称...">
+        </div>
+
+        <!-- Type Tabs -->
+        <div class="filter-tabs">
+          <div class="filter-tab active ripple-host" onclick="filterDb(this)">MySQL</div>
+          <div class="filter-tab ripple-host" onclick="filterDb(this)">PostgreSQL</div>
+          <div class="filter-tab ripple-host" onclick="filterDb(this)">MongoDB</div>
+          <div class="filter-tab ripple-host" onclick="filterDb(this)">Redis</div>
+        </div>
+
+        <!-- DB Cards -->
+        <div class="db-card ripple-host">
+          <div class="db-card-header">
+            <div class="db-name">
+              <div class="icon-box mysql"><i data-lucide="database"></i></div>
+              <div>
+                <div class="db-name-text">1panel_app</div>
+                <span class="db-type-tag">MySQL 8.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="db-meta">
+            <div class="db-meta-item">
+              <span class="db-meta-label">大小</span>
+              <span class="db-meta-value">245.8 MB</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">字符集</span>
+              <span class="db-meta-value">utf8mb4</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">连接数</span>
+              <span class="db-meta-value">23 / 151</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">表数量</span>
+              <span class="db-meta-value">42</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="db-card ripple-host">
+          <div class="db-card-header">
+            <div class="db-name">
+              <div class="icon-box mysql"><i data-lucide="database"></i></div>
+              <div>
+                <div class="db-name-text">wordpress_db</div>
+                <span class="db-type-tag">MySQL 8.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="db-meta">
+            <div class="db-meta-item">
+              <span class="db-meta-label">大小</span>
+              <span class="db-meta-value">128.3 MB</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">字符集</span>
+              <span class="db-meta-value">utf8mb4</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">连接数</span>
+              <span class="db-meta-value">8 / 151</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">表数量</span>
+              <span class="db-meta-value">12</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="db-card ripple-host">
+          <div class="db-card-header">
+            <div class="db-name">
+              <div class="icon-box pg"><i data-lucide="database"></i></div>
+              <div>
+                <div class="db-name-text">monitoring</div>
+                <span class="db-type-tag">PostgreSQL 16</span>
+              </div>
+            </div>
+          </div>
+          <div class="db-meta">
+            <div class="db-meta-item">
+              <span class="db-meta-label">大小</span>
+              <span class="db-meta-value">1.2 GB</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">字符集</span>
+              <span class="db-meta-value">UTF8</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">连接数</span>
+              <span class="db-meta-value">15 / 100</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">表数量</span>
+              <span class="db-meta-value">86</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="db-card ripple-host">
+          <div class="db-card-header">
+            <div class="db-name">
+              <div class="icon-box mongo"><i data-lucide="database"></i></div>
+              <div>
+                <div class="db-name-text">test_db</div>
+                <span class="db-type-tag">MongoDB 7.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="db-meta">
+            <div class="db-meta-item">
+              <span class="db-meta-label">大小</span>
+              <span class="db-meta-value">56.7 MB</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">字符集</span>
+              <span class="db-meta-value">UTF-8</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">连接数</span>
+              <span class="db-meta-value">3 / 50</span>
+            </div>
+            <div class="db-meta-item">
+              <span class="db-meta-label">集合数</span>
+              <span class="db-meta-value">8</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Button -->
+        <div class="add-db-btn ripple-host">
+          <i data-lucide="plus"></i>
+          <span>添加数据库</span>
+        </div>
+      </div>
+
+      <!-- Bottom Tab Bar -->
+      <div class="bottom-tabbar">
+        <div class="tab-item ripple-host" onclick="switchTab(this)"><i data-lucide="layout-dashboard"></i><span class="tab-label">仪表板</span></div>
+        <div class="tab-item ripple-host" onclick="switchTab(this)"><i data-lucide="box"></i><span class="tab-label">容器</span></div>
+        <div class="tab-item ripple-host" onclick="switchTab(this)"><i data-lucide="folder-open"></i><span class="tab-label">文件</span></div>
+        <div class="tab-item active ripple-host" onclick="switchTab(this)"><i data-lucide="database"></i><span class="tab-label">数据库</span></div>
+        <div class="tab-item ripple-host" onclick="switchTab(this)"><i data-lucide="settings"></i><span class="tab-label">设置</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+  function switchTab(el) {
+    document.querySelectorAll('.tab-item').forEach(t => { t.classList.remove('active'); t.style.transition = 'transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)'; });
+    el.classList.add('active');
+    el.style.transform = 'scale(0.85)';
+    requestAnimationFrame(() => { requestAnimationFrame(() => { el.style.transform = 'scale(1)'; }); });
+  }
+  function openSidePanel() { document.getElementById('sidePanel').classList.add('open'); document.getElementById('panelOverlay').classList.add('open'); }
+  function closeSidePanel() { document.getElementById('sidePanel').classList.remove('open'); document.getElementById('panelOverlay').classList.remove('open'); }
+  function toggleTheme() {
+    const html = document.documentElement; const isDark = html.classList.toggle('dark');
+    document.getElementById('theme-icon-sun').style.display = isDark ? 'none' : 'block';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  }
+  function filterDb(el) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

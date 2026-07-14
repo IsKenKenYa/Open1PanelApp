@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>AI 管理 - Open1Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+  --brand:#0C9B4B;--brand-light:#E8F5EE;--brand-dark:#09803E;
+  --surface:#F1F3F5;--surface-white:#FFFFFF;
+  --text-primary:#1A1C1E;--text-secondary:#666E78;--text-hint:#9CA3AF;
+  --error:#E84026;--error-bg:#FDEAE7;
+  --success:#0C9B4B;--success-bg:#E8F5EE;
+  --warn:#F59E0B;--warn-bg:#FEF3C7;
+  --info:#3B82F6;--info-bg:#EFF6FF;
+  --border:#E5E7EB;
+  --glow:0 0 20px rgba(12,155,75,0.08);
+  --ripple:rgba(12,155,75,0.12);
+  --card-radius:24px;--btn-radius:24px;
+  --nav-h:56px;--status-h:44px;
+  --font-family:'Noto Sans SC','HarmonyOS Sans',system-ui,sans-serif;
+  --spring:cubic-bezier(.2,.9,.3,1);
+}
+[data-theme="dark"]{
+  --surface:#1A1C1E;--surface-white:#242628;
+  --text-primary:#E5E7EB;--text-secondary:#9CA3AF;--text-hint:#6B7280;
+  --error:#F87171;--error-bg:rgba(248,113,113,.1);
+  --success:#34D399;--success-bg:rgba(52,211,153,.1);
+  --warn:#FBBF24;--warn-bg:rgba(251,191,36,.1);
+  --info:#60A5FA;--info-bg:rgba(96,165,250,.1);
+  --border:#374151;
+  --glow:0 0 24px rgba(12,155,75,0.12);
+  --ripple:rgba(52,211,153,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-family);background:var(--surface);color:var(--text-primary);
+  transition:background .35s var(--spring),color .35s var(--spring);-webkit-tap-highlight-color:transparent}
+.status-bar{height:var(--status-h);background:var(--surface-white);display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;
+  color:var(--text-secondary);transition:background .35s var(--spring)}
+.page-header{background:var(--surface-white);padding:12px 20px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .35s var(--spring)}
+.page-header h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.btn-brand{background:var(--brand);color:#fff;border:none;border-radius:var(--btn-radius);
+  padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;
+  align-items:center;gap:6px;transition:all .25s var(--spring);position:relative;overflow:hidden}
+.btn-brand:active{transform:scale(.95);opacity:.88}
+.btn-sm{padding:8px 16px;font-size:12px;border-radius:16px}
+.btn-outline{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:16px;
+  border:1.5px solid var(--border);background:transparent;color:var(--text-secondary);font-size:12px;
+  font-weight:500;cursor:pointer;transition:all .25s var(--spring);flex-shrink:0;position:relative;overflow:hidden}
+.btn-outline:active{transform:scale(.95);background:var(--brand-light);color:var(--brand);border-color:var(--brand)}
+.glow-card{background:var(--surface-white);border-radius:var(--card-radius);
+  box-shadow:var(--glow);padding:20px;margin:12px 16px;transition:all .35s var(--spring)}
+.section-title{font-size:16px;font-weight:600;padding:20px 20px 8px;display:flex;align-items:center;gap:8px}
+.progress-track{height:8px;background:var(--surface);border-radius:4px;overflow:hidden;flex:1}
+.progress-fill{height:100%;border-radius:4px;transition:width .6s var(--spring)}
+.progress-fill.brand{background:linear-gradient(90deg,var(--brand),var(--brand-dark))}
+.progress-fill.info{background:linear-gradient(90deg,var(--info),#2563EB)}
+.progress-fill.warn{background:linear-gradient(90deg,var(--warn),#D97706)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.stat-item{background:var(--surface);border-radius:14px;padding:12px 14px}
+.stat-item .stat-label{font-size:11px;color:var(--text-hint);margin-bottom:4px}
+.stat-item .stat-value{font-size:18px;font-weight:700;color:var(--text-primary)}
+.stat-item .stat-value.accent{color:var(--brand)}
+.stat-item .stat-value.warn{color:var(--warn)}
+.model-card{background:var(--surface-white);border-radius:var(--card-radius);
+  box-shadow:var(--glow);padding:18px 20px;margin:8px 16px;display:flex;align-items:center;gap:14px;
+  transition:all .35s var(--spring);position:relative;overflow:hidden;cursor:pointer}
+.model-card:active{transform:scale(.985);opacity:.92}
+.model-icon{width:44px;height:44px;border-radius:16px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
+.model-icon.running{background:var(--success-bg);color:var(--success)}
+.model-icon.stopped{background:var(--surface);color:var(--text-hint)}
+.model-icon.install{background:var(--brand-light);color:var(--brand)}
+[data-theme="dark"] .model-icon.running{background:rgba(52,211,153,.12);color:#34D399}
+[data-theme="dark"] .model-icon.install{background:rgba(12,155,75,.15);color:#34D399}
+.model-info{flex:1;min-width:0}
+.model-name{font-size:14px;font-weight:600}
+.model-meta{font-size:12px;color:var(--text-hint);margin-top:2px}
+.model-status{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;
+  font-size:11px;font-weight:500;flex-shrink:0}
+.model-status.running{background:var(--success-bg);color:var(--success)}
+.model-status.stopped{background:var(--surface);color:var(--text-hint)}
+.model-status.install{background:var(--brand-light);color:var(--brand)}
+[data-theme="dark"] .model-status.running{background:rgba(52,211,153,.1);color:#34D399}
+[data-theme="dark"] .model-status.install{background:rgba(12,155,75,.15);color:#34D399}
+.mcp-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;
+  border-bottom:1px solid var(--border)}
+.mcp-row:last-child{border-bottom:none}
+.mcp-row .mcp-name{font-size:14px;font-weight:500}
+.mcp-row .mcp-url{font-size:12px;color:var(--text-hint)}
+.mcp-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--success)}
+.domain-row{display:flex;align-items:center;gap:12px;padding:10px 0}
+.domain-url{font-size:13px;font-weight:500;flex:1}
+.tab-bar{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--surface-white);
+  display:flex;align-items:center;justify-content:space-around;border-top:1px solid var(--border);
+  transition:background .35s var(--spring),border-color .35s var(--spring);z-index:50}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;
+  color:var(--text-hint);cursor:pointer;padding:4px 12px;transition:color .25s var(--spring)}
+.tab-item.active{color:var(--brand)}
+.tab-item i{width:22px;height:22px}
+.content-scroll{padding-bottom:calc(var(--nav-h) + 16px)}
+.ripple-host{position:relative;overflow:hidden}
+.ripple-host .ripple-circle{position:absolute;border-radius:50%;background:var(--ripple);
+  transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(3);opacity:0}}
+</style>
+</head>
+<body>
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>09:41</span>
+  <div style="display:flex;align-items:center;gap:6px">
+    <i data-lucide="wifi" style="width:15px;height:15px"></i>
+    <i data-lucide="signal" style="width:15px;height:15px"></i>
+    <i data-lucide="battery-full" style="width:18px;height:18px"></i>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="page-header">
+  <h1>AI 管理</h1>
+  <button class="btn-brand ripple-host" onclick="createRipple(event)">
+    <i data-lucide="download" style="width:18px;height:18px"></i>
+    拉取模型
+  </button>
+</div>
+
+<div class="content-scroll">
+
+  <!-- GPU Monitor Card -->
+  <div class="glow-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:40px;height:40px;border-radius:14px;background:var(--brand-light);display:flex;align-items:center;justify-content:center">
+        <i data-lucide="cpu" style="width:20px;height:20px;color:var(--brand)"></i>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:600">GPU 监控</div>
+        <div style="font-size:12px;color:var(--text-hint);margin-top:1px">NVIDIA RTX 4090</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-item">
+        <div class="stat-label">温度</div>
+        <div class="stat-value warn">62°C</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">计算利用率</div>
+        <div class="stat-value accent">45%</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">风扇转速</div>
+        <div class="stat-value">1200 RPM</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">功耗</div>
+        <div class="stat-value">185W</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:13px;color:var(--text-secondary)">显存使用</span>
+        <span style="font-size:13px;font-weight:600;color:var(--brand)">8.2 GB <span style="color:var(--text-hint);font-weight:400">/ 24 GB</span></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill brand" style="width:34.2%"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text-hint);margin-top:6px;text-align:right">34.2% 已使用</div>
+    </div>
+  </div>
+
+  <!-- Ollama Models -->
+  <div class="section-title">
+    <i data-lucide="brain" style="width:20px;height:20px;color:var(--brand)"></i>
+    Ollama 模型
+  </div>
+
+  <!-- Model 1: llama3.1:8b - Running -->
+  <div class="model-card ripple-host" onclick="createRipple(event)">
+    <div class="model-icon running">
+      <i data-lucide="play" style="width:22px;height:22px"></i>
+    </div>
+    <div class="model-info">
+      <div class="model-name">llama3.1:8b</div>
+      <div class="model-meta">4.7 GB · 参数 8B · 上次运行 2 分钟前</div>
+    </div>
+    <span class="model-status running">
+      <span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>
+      运行中
+    </span>
+  </div>
+
+  <!-- Model 2: qwen2.5:7b - Stopped -->
+  <div class="model-card ripple-host" onclick="createRipple(event)">
+    <div class="model-icon stopped">
+      <i data-lucide="square" style="width:22px;height:22px"></i>
+    </div>
+    <div class="model-info">
+      <div class="model-name">qwen2.5:7b</div>
+      <div class="model-meta">4.4 GB · 参数 7B · 上次运行 1 小时前</div>
+    </div>
+    <span class="model-status stopped">已停止</span>
+  </div>
+
+  <!-- Model 3: codellama:13b - Not installed -->
+  <div class="model-card ripple-host" onclick="createRipple(event)">
+    <div class="model-icon install">
+      <i data-lucide="download" style="width:22px;height:22px"></i>
+    </div>
+    <div class="model-info">
+      <div class="model-name">codellama:13b</div>
+      <div class="model-meta">7.3 GB · 参数 13B</div>
+    </div>
+    <span class="model-status install">安装</span>
+  </div>
+
+  <!-- Model 4: nomic-embed-text - Stopped -->
+  <div class="model-card ripple-host" onclick="createRipple(event)">
+    <div class="model-icon stopped">
+      <i data-lucide="square" style="width:22px;height:22px"></i>
+    </div>
+    <div class="model-info">
+      <div class="model-name">nomic-embed-text</div>
+      <div class="model-meta">274 MB · 嵌入模型 · 上次运行 3 小时前</div>
+    </div>
+    <span class="model-status stopped">已停止</span>
+  </div>
+
+  <!-- MCP Configuration -->
+  <div class="section-title">
+    <i data-lucide="plug" style="width:20px;height:20px;color:var(--brand)"></i>
+    MCP 配置
+  </div>
+  <div class="glow-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13px;color:var(--text-secondary)">已连接服务器</span>
+      <span class="model-status running" style="font-size:12px">
+        <span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>
+        2 台已连接
+      </span>
+    </div>
+    <div class="mcp-row">
+      <div>
+        <div style="font-size:14px;font-weight:500">filesystem-server</div>
+        <div style="font-size:12px;color:var(--text-hint)">本地文件系统访问</div>
+      </div>
+      <i data-lucide="check-circle" style="width:18px;height:18px;color:var(--success);flex-shrink:0"></i>
+    </div>
+    <div class="mcp-row">
+      <div>
+        <div style="font-size:14px;font-weight:500">docker-server</div>
+        <div style="font-size:12px;color:var(--text-hint)">Docker 容器管理</div>
+      </div>
+      <i data-lucide="check-circle" style="width:18px;height:18px;color:var(--success);flex-shrink:0"></i>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn-outline ripple-host" onclick="createRipple(event)" style="width:100%;justify-content:center">
+        <i data-lucide="plus" style="width:14px;height:14px"></i>
+        添加 MCP 服务器
+      </button>
+    </div>
+  </div>
+
+  <!-- Domain Proxy -->
+  <div class="section-title">
+    <i data-lucide="globe" style="width:20px;height:20px;color:var(--brand)"></i>
+    域名代理
+  </div>
+  <div class="glow-card">
+    <div class="domain-row">
+      <div style="width:36px;height:36px;border-radius:12px;background:var(--info-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i data-lucide="link" style="width:18px;height:18px;color:var(--info)"></i>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500">ai.example.com</div>
+        <div style="font-size:12px;color:var(--text-hint)">https://ai.example.com → localhost:11434</div>
+      </div>
+      <span class="model-status running" style="font-size:11px">
+        <span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>
+        正常
+      </span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+      <span style="font-size:12px;color:var(--text-hint)">共 1 条代理记录</span>
+      <button class="btn-outline ripple-host" onclick="createRipple(event)" style="font-size:11px;padding:6px 12px">
+        <i data-lucide="plus" style="width:13px;height:13px"></i>
+        新增
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <div class="tab-item"><i data-lucide="layout-dashboard"></i><span>概览</span></div>
+  <div class="tab-item"><i data-lucide="box"></i><span>容器</span></div>
+  <div class="tab-item"><i data-lucide="database"></i><span>数据库</span></div>
+  <div class="tab-item"><i data-lucide="folder-open"></i><span>文件</span></div>
+  <div class="tab-item active"><i data-lucide="hard-drive"></i><span>更多</span></div>
+</div>
+
+<script>
+function toggleTheme(){
+  const d=document.documentElement;
+  d.setAttribute('data-theme',d.getAttribute('data-theme')==='dark'?'light':'dark');
+}
+function createRipple(e){
+  const el=e.currentTarget||e.target.closest('.ripple-host');
+  if(!el)return;
+  const r=document.createElement('span');r.className='ripple-circle';
+  const rect=el.getBoundingClientRect();
+  const sz=Math.max(rect.width,rect.height)*2;
+  r.style.width=r.style.height=sz+'px';
+  r.style.left=(e.clientX||rect.left+rect.width/2)-rect.left-sz/2+'px';
+  r.style.top=(e.clientY||rect.top+rect.height/2)-rect.top-sz/2+'px';
+  el.appendChild(r);setTimeout(()=>r.remove(),600);
+}
+lucide.createIcons();
+</script>
+</body>
+</html>

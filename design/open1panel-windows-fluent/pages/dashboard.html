@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 仪表板</title>
+
+<!-- Tailwind 4.x -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style id="theme-vars">
+/* ===== Windows Fluent Design Tokens ===== */
+:root {
+  /* Brand */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Acrylic */
+  --op1-acrylic-blur: 30px;
+  --op1-acrylic-noise-opacity: 0.03;
+  --op1-acrylic-tint-opacity: 0.80;
+
+  /* Mica */
+  --op1-mica-opacity: 0.85;
+  --op1-mica-blur: 60px;
+
+  /* Reveal */
+  --op1-reveal-hover: rgba(255, 255, 255, 0.08);
+  --op1-reveal-pressed: rgba(255, 255, 255, 0.04);
+  --reveal-x: 50%;
+  --reveal-y: 50%;
+
+  /* Surface - Light */
+  --op1-surface: #F3F3F3;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-popover: #FCFCFC;
+  --op1-surface-nav: rgba(243, 243, 243, 0.80);
+  --op1-surface-nav-top: rgba(243, 243, 243, 0.70);
+  --op1-surface-container-low: #F9F9F9;
+  --op1-surface-container: #F3F3F3;
+  --op1-surface-container-high: #EDEDED;
+
+  /* On-Surface - Light */
+  --op1-on-surface: #1A1A1A;
+  --op1-on-surface-variant: #616161;
+
+  /* Navigation */
+  --op1-nav-pane-expanded: 320px;
+  --op1-nav-pane-compact: 48px;
+  --op1-nav-top-height: 48px;
+
+  /* Font */
+  --op1-font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --op1-font-family-mono: 'Cascadia Code', 'Consolas', monospace;
+
+  /* Radius */
+  --op1-radius-sm: 4px;
+  --op1-radius-md: 8px;
+  --op1-radius-lg: 8px;
+  --op1-radius-card: 8px;
+  --op1-radius-full: 9999px;
+
+  /* Motion */
+  --op1-motion-fast: 167ms;
+  --op1-motion-normal: 250ms;
+  --op1-motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
+  --op1-motion-easing-standard: cubic-bezier(0.8, 0, 0.2, 1);
+
+  /* Border */
+  --op1-border: #E5E5E5;
+  --op1-card-stroke: #E5E5E5;
+
+  /* Error */
+  --op1-error: #C42B1C;
+
+  /* Divider */
+  --op1-divider: #E5E5E5;
+}
+
+/* Dark theme tokens */
+html.dark {
+  --op1-surface: #202020;
+  --op1-surface-card: #2D2D2D;
+  --op1-surface-popover: #383838;
+  --op1-surface-nav: rgba(32, 32, 32, 0.80);
+  --op1-surface-nav-top: rgba(32, 32, 32, 0.70);
+  --op1-surface-container-low: #2A2A2A;
+  --op1-surface-container: #202020;
+  --op1-surface-container-high: #1A1A1A;
+  --op1-on-surface: #FFFFFF;
+  --op1-on-surface-variant: #A0A0A0;
+  --op1-border: #3D3D3D;
+  --op1-card-stroke: #3D3D3D;
+  --op1-divider: #3D3D3D;
+  --op1-reveal-hover: rgba(255, 255, 255, 0.06);
+  --op1-reveal-pressed: rgba(255, 255, 255, 0.03);
+  --op1-acrylic-tint-opacity: 0.60;
+  --op1-mica-opacity: 0.80;
+}
+
+/* ===== Base ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--op1-font-family);
+  color: var(--op1-on-surface);
+  background: var(--op1-surface);
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Acrylic noise texture ===== */
+.op1-acrylic { position: relative; }
+.op1-acrylic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  opacity: var(--op1-acrylic-noise-opacity);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* ===== NavigationView Layout ===== */
+.nav-view { display: flex; height: 100vh; width: 100vw; }
+
+/* ===== Navigation Pane ===== */
+.nav-pane {
+  width: var(--op1-nav-pane-expanded);
+  min-width: var(--op1-nav-pane-expanded);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(243, 243, 243, 0.85);
+  backdrop-filter: blur(60px);
+  -webkit-backdrop-filter: blur(60px);
+  border-right: 1px solid var(--op1-border);
+  transition: width var(--op1-motion-normal) var(--op1-motion-easing-standard),
+              min-width var(--op1-motion-normal) var(--op1-motion-easing-standard);
+  overflow: hidden;
+  z-index: 10;
+}
+html.dark .nav-pane { background: var(--op1-surface-nav); }
+
+/* ===== Navigation Pane - Compact ===== */
+@media (max-width: 1279px) and (min-width: 768px),
+       (max-width: 767px) {
+  .nav-pane {
+    width: var(--op1-nav-pane-compact);
+    min-width: var(--op1-nav-pane-compact);
+  }
+  .nav-pane .nav-label,
+  .nav-pane .nav-search-wrap,
+  .nav-pane .nav-footer-info,
+  .nav-pane .nav-footer-server-name { display: none; }
+  .nav-pane .nav-search { display: none; }
+  .nav-pane .nav-item { justify-content: center; padding: 12px 0; }
+  .nav-pane .nav-header { justify-content: center; padding: 12px 0; }
+  .nav-pane .nav-header-title { display: none; }
+  .nav-pane .nav-footer { justify-content: center; padding: 12px 0; }
+}
+
+.nav-header { display: flex; align-items: center; gap: 10px; padding: 16px 16px 12px; height: auto; flex-shrink: 0; }
+.nav-header-brand { color: var(--op1-brand); }
+.nav-header-title { font-size: 16px; font-weight: 600; color: var(--op1-on-surface); white-space: nowrap; }
+
+.nav-search-wrap { padding: 0 16px 12px; flex-shrink: 0; }
+.nav-search { position: relative; }
+.nav-search input {
+  width: 100%; height: 36px; padding: 0 12px 0 36px;
+  font-size: 13px; font-family: var(--op1-font-family);
+  color: var(--op1-on-surface); background: var(--op1-surface-container-low);
+  border: none; border-bottom: 1px solid var(--op1-border);
+  border-radius: var(--op1-radius-sm); outline: none;
+  transition: border-color var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              background var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+html.dark .nav-search input { background: rgba(255,255,255,0.06); }
+.nav-search input::placeholder { color: var(--op1-on-surface-variant); }
+.nav-search input:focus { border-bottom: 2px solid var(--op1-brand); background: var(--op1-surface-card); }
+.nav-search .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--op1-on-surface-variant); pointer-events: none; }
+
+.nav-items { flex: 1; overflow-y: auto; padding: 4px 8px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  border-radius: var(--op1-radius-sm); cursor: pointer; font-size: 14px;
+  color: var(--op1-on-surface); position: relative; user-select: none;
+  white-space: nowrap; transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard);
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+.nav-item:active { background: var(--op1-reveal-pressed); }
+.nav-item .nav-icon { flex-shrink: 0; color: var(--op1-on-surface); }
+.nav-item.active { border-left-color: var(--op1-brand); background: rgba(12,155,75,0.08); color: var(--op1-brand); font-weight: 600; }
+.nav-item.active .nav-icon { color: var(--op1-brand); }
+html.dark .nav-item.active { background: rgba(12,155,75,0.15); }
+
+@media (max-width: 1279px) and (min-width: 768px), (max-width: 767px) {
+  .nav-item .nav-tooltip { display: none; position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%); background: var(--op1-surface-card); color: var(--op1-on-surface); padding: 6px 12px; border-radius: var(--op1-radius-sm); font-size: 13px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.14); border: 1px solid var(--op1-border); z-index: 100; pointer-events: none; }
+  .nav-item:hover .nav-tooltip { display: block; }
+}
+
+.nav-footer { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--op1-divider); flex-shrink: 0; }
+.nav-footer-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.nav-footer-server-name { font-size: 13px; color: var(--op1-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-footer-online-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--op1-success); flex-shrink: 0; }
+
+.nav-footer-settings-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: var(--op1-radius-sm);
+  cursor: pointer; color: var(--op1-on-surface-variant); transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard); flex-shrink: 0;
+}
+.nav-footer-settings-btn:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+
+/* ===== Content Area ===== */
+.nav-content { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--op1-surface); overflow: hidden; }
+
+/* CommandBar */
+.command-bar { display: flex; align-items: center; gap: 4px; padding: 8px 16px; height: var(--op1-nav-top-height); background: var(--op1-surface); border-bottom: 1px solid var(--op1-border); flex-shrink: 0; }
+
+.command-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; height: 32px;
+  font-size: 13px; font-family: var(--op1-font-family); color: var(--op1-on-surface);
+  background: transparent; border: 1px solid transparent; border-radius: var(--op1-radius-sm);
+  cursor: pointer; white-space: nowrap; position: relative; overflow: hidden;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.command-btn:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); border-color: var(--op1-border); }
+.command-btn:active { background: var(--op1-reveal-pressed); border-color: var(--op1-border); }
+.command-btn-label { display: inline; }
+
+.command-separator { width: 1px; height: 24px; background: var(--op1-divider); margin: 0 4px; }
+
+.content-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* Compact: CommandBar labels hide */
+@media (max-width: 1279px) and (min-width: 768px), (max-width: 767px) {
+  .command-btn-label { display: none; }
+  .command-btn { padding: 6px; width: 32px; justify-content: center; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--op1-on-surface-variant); border-radius: 3px; opacity: 0.5; }
+::-webkit-scrollbar-thumb:hover { background: var(--op1-on-surface); }
+
+/* Theme toggle */
+.theme-toggle-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: var(--op1-radius-sm);
+  cursor: pointer; color: var(--op1-on-surface-variant); background: transparent; border: none;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard); flex-shrink: 0;
+}
+.theme-toggle-btn:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+html.dark .icon-sun { display: block; }
+html.dark .icon-moon { display: none; }
+html.light .icon-sun { display: none; }
+html.light .icon-moon { display: block; }
+
+/* ===== Dashboard Specific ===== */
+.dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 1200px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.dash-card {
+  background: var(--op1-surface-card); border: 1px solid var(--op1-card-stroke);
+  border-radius: var(--op1-radius-card); padding: 20px; position: relative;
+  overflow: hidden; transition: box-shadow var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.dash-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+html.dark .dash-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.20); }
+
+.dash-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.dash-card-title { font-size: 13px; font-weight: 600; color: var(--op1-on-surface-variant); }
+.dash-card-icon { color: var(--op1-on-surface-variant); }
+.dash-card-value { font-size: 28px; font-weight: 700; color: var(--op1-on-surface); margin-bottom: 4px; }
+.dash-card-subtitle { font-size: 12px; color: var(--op1-on-surface-variant); }
+
+/* Progress bar for stats */
+.dash-progress { height: 4px; background: var(--op1-surface-container-high); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+.dash-progress-bar { height: 100%; border-radius: 2px; transition: width var(--op1-motion-normal) var(--op1-motion-easing-standard); }
+
+/* Section card */
+.section-card {
+  background: var(--op1-surface-card); border: 1px solid var(--op1-card-stroke);
+  border-radius: var(--op1-radius-card); overflow: hidden; margin-bottom: 16px;
+}
+.section-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--op1-border);
+}
+.section-card-title { font-size: 14px; font-weight: 600; color: var(--op1-on-surface); }
+.section-card-body { padding: 0; }
+
+/* Status chip */
+.status-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--op1-radius-full); font-size: 11px; font-weight: 600; }
+.status-chip-success { background: rgba(22,163,74,0.12); color: var(--op1-success); }
+.status-chip-warning { background: rgba(245,158,11,0.12); color: var(--op1-warning); }
+.status-chip-danger { background: rgba(220,38,38,0.12); color: var(--op1-danger); }
+
+/* Activity log */
+.log-row { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--op1-border); transition: background var(--op1-motion-fast); }
+.log-row:last-child { border-bottom: none; }
+.log-row:hover { background: var(--op1-surface-container-low); }
+.log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.log-text { flex: 1; font-size: 13px; color: var(--op1-on-surface); }
+.log-time { font-size: 12px; color: var(--op1-on-surface-variant); white-space: nowrap; }
+
+/* Process table */
+.proc-table { width: 100%; border-collapse: collapse; }
+.proc-table th { text-align: left; padding: 10px 20px; font-size: 12px; font-weight: 600; color: var(--op1-on-surface-variant); border-bottom: 1px solid var(--op1-border); background: var(--op1-surface-container-low); }
+.proc-table td { padding: 10px 20px; font-size: 13px; color: var(--op1-on-surface); border-bottom: 1px solid var(--op1-border); }
+.proc-table tr:last-child td { border-bottom: none; }
+.proc-table tr:hover td { background: var(--op1-surface-container-low); }
+
+/* Two-column layout for bottom sections */
+.bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 1000px) { .bottom-grid { grid-template-columns: 1fr; } }
+
+/* Container summary mini card */
+.container-summary { display: flex; gap: 16px; padding: 16px 20px; }
+.container-stat { display: flex; align-items: center; gap: 8px; }
+.container-stat-num { font-size: 24px; font-weight: 700; color: var(--op1-on-surface); }
+.container-stat-label { font-size: 12px; color: var(--op1-on-surface-variant); }
+</style>
+</head>
+
+<body>
+<div class="nav-view">
+
+  <!-- ===== Navigation Pane ===== -->
+  <nav class="nav-pane op1-acrylic" id="navPane">
+    <div class="nav-header">
+      <div class="nav-header-brand"><i data-lucide="server" style="width:20px;height:20px;"></i></div>
+      <span class="nav-header-title">1Panel</span>
+    </div>
+    <div class="nav-search-wrap">
+      <div class="nav-search">
+        <i data-lucide="search" class="search-icon" style="width:14px;height:14px;"></i>
+        <input type="text" placeholder="搜索模块...">
+      </div>
+    </div>
+    <div class="nav-items">
+      <div class="nav-item active" data-reveal>
+        <i data-lucide="layout-dashboard" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">仪表板</span><span class="nav-tooltip">仪表板</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="server" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">服务器</span><span class="nav-tooltip">服务器</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="box" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">容器</span><span class="nav-tooltip">容器</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="database" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">数据库</span><span class="nav-tooltip">数据库</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="settings" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">设置</span><span class="nav-tooltip">设置</span>
+      </div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-footer-info">
+        <span class="nav-footer-online-dot"></span>
+        <span class="nav-footer-server-name">生产服务器</span>
+      </div>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换主题">
+        <i data-lucide="sun" class="icon-sun" style="width:16px;height:16px;"></i>
+        <i data-lucide="moon" class="icon-moon" style="width:16px;height:16px;"></i>
+      </button>
+      <div class="nav-footer-settings-btn" data-reveal title="设置">
+        <i data-lucide="settings" style="width:16px;height:16px;"></i>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Content Area ===== -->
+  <div class="nav-content">
+    <!-- CommandBar -->
+    <div class="command-bar">
+      <span style="font-size:14px;font-weight:600;color:var(--op1-on-surface);margin-right:8px;">仪表板</span>
+      <div class="command-separator"></div>
+      <button class="command-btn" data-reveal title="刷新数据">
+        <i data-lucide="refresh-cw" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">刷新</span>
+      </button>
+      <button class="command-btn" data-reveal title="终端">
+        <i data-lucide="terminal" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">终端</span>
+      </button>
+      <button class="command-btn" data-reveal title="监控">
+        <i data-lucide="activity" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">监控</span>
+      </button>
+      <div style="flex:1;"></div>
+      <button class="command-btn" data-reveal title="通知">
+        <i data-lucide="bell" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">通知</span>
+      </button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="content-body">
+      <!-- 4 Stat Cards -->
+      <div class="dash-grid">
+        <!-- CPU -->
+        <div class="dash-card" data-reveal>
+          <div class="dash-card-header">
+            <span class="dash-card-title">CPU 使用率</span>
+            <i data-lucide="cpu" class="dash-card-icon" style="width:18px;height:18px;"></i>
+          </div>
+          <div class="dash-card-value">42%</div>
+          <div class="dash-card-subtitle">4 核 / Intel Xeon E5-2680 v4</div>
+          <div class="dash-progress"><div class="dash-progress-bar" style="width:42%;background:var(--op1-brand);"></div></div>
+        </div>
+        <!-- Memory -->
+        <div class="dash-card" data-reveal>
+          <div class="dash-card-header">
+            <span class="dash-card-title">内存使用</span>
+            <i data-lucide="memory-stick" class="dash-card-icon" style="width:18px;height:18px;"></i>
+          </div>
+          <div class="dash-card-value">68%</div>
+          <div class="dash-card-subtitle">10.9 GB / 16 GB</div>
+          <div class="dash-progress"><div class="dash-progress-bar" style="width:68%;background:var(--op1-info);"></div></div>
+        </div>
+        <!-- Disk -->
+        <div class="dash-card" data-reveal>
+          <div class="dash-card-header">
+            <span class="dash-card-title">磁盘使用</span>
+            <i data-lucide="hard-drive" class="dash-card-icon" style="width:18px;height:18px;"></i>
+          </div>
+          <div class="dash-card-value">55%</div>
+          <div class="dash-card-subtitle">275 GB / 500 GB</div>
+          <div class="dash-progress"><div class="dash-progress-bar" style="width:55%;background:var(--op1-warning);"></div></div>
+        </div>
+        <!-- Network -->
+        <div class="dash-card" data-reveal>
+          <div class="dash-card-header">
+            <span class="dash-card-title">网络流量</span>
+            <i data-lucide="network" class="dash-card-icon" style="width:18px;height:18px;"></i>
+          </div>
+          <div class="dash-card-value" style="font-size:22px;">12.5 / 3.2</div>
+          <div class="dash-card-subtitle">下行 MB/s / 上行 MB/s</div>
+          <div class="dash-progress"><div class="dash-progress-bar" style="width:30%;background:var(--op1-brand-light);"></div></div>
+        </div>
+      </div>
+
+      <!-- Container Overview -->
+      <div class="section-card" style="margin-bottom:16px;">
+        <div class="section-card-header">
+          <span class="section-card-title">容器概览</span>
+          <button class="command-btn" data-reveal title="查看全部">
+            <span class="command-btn-label">查看全部</span>
+            <i data-lucide="chevron-right" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+        <div class="container-summary">
+          <div class="container-stat">
+            <div>
+              <div class="container-stat-num">12</div>
+              <div class="container-stat-label">运行中</div>
+            </div>
+          </div>
+          <div style="width:1px;background:var(--op1-divider);"></div>
+          <div class="container-stat">
+            <div>
+              <div class="container-stat-num" style="color:var(--op1-on-surface-variant);">3</div>
+              <div class="container-stat-label">已停止</div>
+            </div>
+          </div>
+          <div style="width:1px;background:var(--op1-divider);"></div>
+          <div class="container-stat">
+            <div>
+              <div class="container-stat-num">15</div>
+              <div class="container-stat-label">总计</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Grid: Activity Log + Top Processes -->
+      <div class="bottom-grid">
+        <!-- Recent Activity -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="section-card-title">最近活动</span>
+            <span class="status-chip status-chip-success">实时</span>
+          </div>
+          <div class="section-card-body">
+            <div class="log-row">
+              <div class="log-dot" style="background:var(--op1-success);"></div>
+              <div class="log-text">容器 nginx 已重启</div>
+              <div class="log-time">2 分钟前</div>
+            </div>
+            <div class="log-row">
+              <div class="log-dot" style="background:var(--op1-info);"></div>
+              <div class="log-text">数据库 wordpress_db 备份完成</div>
+              <div class="log-time">15 分钟前</div>
+            </div>
+            <div class="log-row">
+              <div class="log-dot" style="background:var(--op1-warning);"></div>
+              <div class="log-text">磁盘使用率达到 55%，请注意</div>
+              <div class="log-time">32 分钟前</div>
+            </div>
+            <div class="log-row">
+              <div class="log-dot" style="background:var(--op1-success);"></div>
+              <div class="log-text">SSL 证书 example.com 续期成功</div>
+              <div class="log-time">1 小时前</div>
+            </div>
+            <div class="log-row">
+              <div class="log-dot" style="background:var(--op1-danger);"></div>
+              <div class="log-text">SSH 登录失败 (192.168.1.105)</div>
+              <div class="log-time">2 小时前</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Processes -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <span class="section-card-title">Top 进程</span>
+            <button class="command-btn" data-reveal title="更多">
+              <i data-lucide="more-horizontal" style="width:16px;height:16px;"></i>
+            </button>
+          </div>
+          <div class="section-card-body">
+            <table class="proc-table">
+              <thead>
+                <tr><th>进程名</th><th>CPU</th><th>内存</th><th>状态</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family:var(--op1-font-family-mono);font-size:12px;">nginx</td>
+                  <td>18.2%</td>
+                  <td>256 MB</td>
+                  <td><span class="status-chip status-chip-success">运行中</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--op1-font-family-mono);font-size:12px;">mysqld</td>
+                  <td>12.5%</td>
+                  <td>1.8 GB</td>
+                  <td><span class="status-chip status-chip-success">运行中</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--op1-font-family-mono);font-size:12px;">redis-server</td>
+                  <td>3.1%</td>
+                  <td>512 MB</td>
+                  <td><span class="status-chip status-chip-success">运行中</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--op1-font-family-mono);font-size:12px;">php-fpm</td>
+                  <td>5.7%</td>
+                  <td>768 MB</td>
+                  <td><span class="status-chip status-chip-success">运行中</span></td>
+                </tr>
+                <tr>
+                  <td style="font-family:var(--op1-font-family-mono);font-size:12px;">node</td>
+                  <td>2.4%</td>
+                  <td>384 MB</td>
+                  <td><span class="status-chip status-chip-success">运行中</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const rect = el.getBoundingClientRect();
+      el.style.setProperty('--reveal-x', (e.clientX - rect.left) + 'px');
+      el.style.setProperty('--reveal-y', (e.clientY - rect.top) + 'px');
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.removeProperty('--reveal-x');
+      el.style.removeProperty('--reveal-y');
+    });
+  });
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    if (html.classList.contains('light')) {
+      html.classList.remove('light');
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+      html.classList.add('light');
+    }
+  }
+  document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+</script>
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 系统监控</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+<div class="page">
+<div class="page-inner">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>系统监控</h1>
+    <p>实时服务器状态概览</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: 移动端 Mobile (<600px)                           -->
+  <!-- ============================================================ -->
+  <div class="section">
+    <span class="section-label">移动端 Mobile</span>
+
+    <!-- A) Server Info -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+        服务器信息
+      </div>
+      <div class="info-grid">
+        <span class="info-label">名称</span><span class="info-value">生产服务器</span>
+        <span class="info-label">IP</span><span class="info-value">192.168.1.100</span>
+        <span class="info-label">系统</span><span class="info-value">Ubuntu 22.04</span>
+        <span class="info-label">版本</span><span class="info-value">v2.0.0</span>
+        <span class="info-label">运行</span><span class="info-value">15天 8小时</span>
+      </div>
+    </div>
+
+    <!-- B) Resource -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        资源使用
+      </div>
+      <div class="resource-list">
+        <div class="resource-item">
+          <div class="resource-header">
+            <span class="resource-label">CPU 使用率</span>
+            <span class="resource-value">45%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill green" style="width:45%"></div></div>
+        </div>
+        <div class="resource-item">
+          <div class="resource-header">
+            <span class="resource-label">内存使用</span>
+            <span class="resource-value">68%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill green" style="width:68%"></div></div>
+        </div>
+        <div class="resource-item">
+          <div class="resource-header">
+            <span class="resource-label">磁盘使用</span>
+            <span class="resource-value">82%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill yellow" style="width:82%"></div></div>
+        </div>
+        <div class="resource-item">
+          <div class="resource-header">
+            <span class="resource-label">网络流量</span>
+            <span class="resource-value">12 Mbps</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill green" style="width:12%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C) Top Processes -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        进程排行
+      </div>
+      <div class="process-list">
+        <div class="process-row">
+          <span class="process-name"><span class="process-dot"></span>nginx</span>
+          <span class="process-metrics"><span>12.3%</span><span>256MB</span></span>
+        </div>
+        <div class="process-row">
+          <span class="process-name"><span class="process-dot"></span>mysql</span>
+          <span class="process-metrics"><span>8.7%</span><span>1.2GB</span></span>
+        </div>
+        <div class="process-row">
+          <span class="process-name"><span class="process-dot"></span>php-fpm</span>
+          <span class="process-metrics"><span>5.2%</span><span>512MB</span></span>
+        </div>
+        <div class="process-row">
+          <span class="process-name"><span class="process-dot"></span>node</span>
+          <span class="process-metrics"><span>3.1%</span><span>256MB</span></span>
+        </div>
+        <div class="process-row">
+          <span class="process-name"><span class="process-dot"></span>redis</span>
+          <span class="process-metrics"><span>1.5%</span><span>128MB</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- D) Quick Actions -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        快捷操作
+      </div>
+      <div class="action-grid">
+        <button class="action-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          终端
+        </button>
+        <button class="action-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M10 10l-2 2 2 2"/><path d="M14 10l2 2-2 2"/></svg>
+          容器
+        </button>
+        <button class="action-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          文件
+        </button>
+        <button class="action-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10 15 15 0 014-10z"/></svg>
+          网站
+        </button>
+        <button class="action-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          数据库
+        </button>
+        <button class="action-btn">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          备份
+        </button>
+      </div>
+    </div>
+
+    <!-- E) Activity -->
+    <div class="card">
+      <div class="card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        最近动态
+      </div>
+      <div class="activity-list">
+        <div class="activity-row">
+          <span class="activity-time">14:30</span>
+          <span class="activity-text">容器 nginx-web 重启成功</span>
+        </div>
+        <div class="activity-row">
+          <span class="activity-time">14:15</span>
+          <span class="activity-text">备份任务 completedb 完成</span>
+        </div>
+        <div class="activity-row">
+          <span class="activity-time">13:58</span>
+          <span class="activity-text">SSL证书 example.com 续期成功</span>
+        </div>
+        <div class="activity-row">
+          <span class="activity-time">13:42</span>
+          <span class="activity-text">用户 admin 修改了防火墙规则</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: 平板端 Tablet (600-1023px)                       -->
+  <!-- ============================================================ -->
+  <div class="section">
+    <span class="section-label">平板端 Tablet</span>
+
+    <div class="col-grid">
+      <div class="col-main">
+        <!-- B) Resource (left column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            资源使用
+          </div>
+          <div class="resource-list">
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">CPU 使用率</span>
+                <span class="resource-value">45%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill green" style="width:45%"></div></div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">内存使用</span>
+                <span class="resource-value">68%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill green" style="width:68%"></div></div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">磁盘使用</span>
+                <span class="resource-value">82%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill yellow" style="width:82%"></div></div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">网络流量</span>
+                <span class="resource-value">12 Mbps</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill green" style="width:12%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- C) Top Processes (left column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            进程排行
+          </div>
+          <div class="process-list">
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>nginx</span>
+              <span class="process-metrics"><span>12.3%</span><span>256MB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>mysql</span>
+              <span class="process-metrics"><span>8.7%</span><span>1.2GB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>php-fpm</span>
+              <span class="process-metrics"><span>5.2%</span><span>512MB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>node</span>
+              <span class="process-metrics"><span>3.1%</span><span>256MB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>redis</span>
+              <span class="process-metrics"><span>1.5%</span><span>128MB</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- E) Activity (left column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            最近动态
+          </div>
+          <div class="activity-list">
+            <div class="activity-row">
+              <span class="activity-time">14:30</span>
+              <span class="activity-text">容器 nginx-web 重启成功</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-time">14:15</span>
+              <span class="activity-text">备份任务 completedb 完成</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-time">13:58</span>
+              <span class="activity-text">SSL证书 example.com 续期成功</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-time">13:42</span>
+              <span class="activity-text">用户 admin 修改了防火墙规则</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-side">
+        <!-- A) Server Info (right column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+            服务器信息
+          </div>
+          <div class="info-grid">
+            <span class="info-label">名称</span><span class="info-value">生产服务器</span>
+            <span class="info-label">IP</span><span class="info-value">192.168.1.100</span>
+            <span class="info-label">系统</span><span class="info-value">Ubuntu 22.04</span>
+            <span class="info-label">版本</span><span class="info-value">v2.0.0</span>
+            <span class="info-label">运行</span><span class="info-value">15天 8小时</span>
+          </div>
+        </div>
+
+        <!-- D) Quick Actions (right column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            快捷操作
+          </div>
+          <div class="action-grid">
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              终端
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M10 10l-2 2 2 2"/><path d="M14 10l2 2-2 2"/></svg>
+              容器
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              文件
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10 15 15 0 014-10z"/></svg>
+              网站
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              数据库
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              备份
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: 桌面端 Desktop (>=1024px)                        -->
+  <!-- ============================================================ -->
+  <div class="section">
+    <span class="section-label">桌面端 Desktop</span>
+
+    <div class="col-grid">
+      <div class="col-main">
+        <!-- B) Resource (left column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            资源使用
+          </div>
+          <div class="resource-list">
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">CPU 使用率</span>
+                <span class="resource-value">45%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill green" style="width:45%"></div></div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">内存使用</span>
+                <span class="resource-value">68%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill green" style="width:68%"></div></div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">磁盘使用</span>
+                <span class="resource-value">82%</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill yellow" style="width:82%"></div></div>
+            </div>
+            <div class="resource-item">
+              <div class="resource-header">
+                <span class="resource-label">网络流量</span>
+                <span class="resource-value">12 Mbps</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill green" style="width:12%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- C) Top Processes (left column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            进程排行
+          </div>
+          <div class="process-list">
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>nginx</span>
+              <span class="process-metrics"><span>12.3%</span><span>256MB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>mysql</span>
+              <span class="process-metrics"><span>8.7%</span><span>1.2GB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>php-fpm</span>
+              <span class="process-metrics"><span>5.2%</span><span>512MB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>node</span>
+              <span class="process-metrics"><span>3.1%</span><span>256MB</span></span>
+            </div>
+            <div class="process-row">
+              <span class="process-name"><span class="process-dot"></span>redis</span>
+              <span class="process-metrics"><span>1.5%</span><span>128MB</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- E) Activity (left column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            最近动态
+          </div>
+          <div class="activity-list">
+            <div class="activity-row">
+              <span class="activity-time">14:30</span>
+              <span class="activity-text">容器 nginx-web 重启成功</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-time">14:15</span>
+              <span class="activity-text">备份任务 completedb 完成</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-time">13:58</span>
+              <span class="activity-text">SSL证书 example.com 续期成功</span>
+            </div>
+            <div class="activity-row">
+              <span class="activity-time">13:42</span>
+              <span class="activity-text">用户 admin 修改了防火墙规则</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-side">
+        <!-- A) Server Info (right column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+            服务器信息
+          </div>
+          <div class="info-grid">
+            <span class="info-label">名称</span><span class="info-value">生产服务器</span>
+            <span class="info-label">IP</span><span class="info-value">192.168.1.100</span>
+            <span class="info-label">系统</span><span class="info-value">Ubuntu 22.04</span>
+            <span class="info-label">版本</span><span class="info-value">v2.0.0</span>
+            <span class="info-label">运行</span><span class="info-value">15天 8小时</span>
+          </div>
+        </div>
+
+        <!-- D) Quick Actions (right column) -->
+        <div class="card">
+          <div class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            快捷操作
+          </div>
+          <div class="action-grid">
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              终端
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M10 10l-2 2 2 2"/><path d="M14 10l2 2-2 2"/></svg>
+              容器
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              文件
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10 15 15 0 014-10z"/></svg>
+              网站
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              数据库
+            </button>
+            <button class="action-btn">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              备份
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+    <style>
+  /* ===== Brand Tokens ===== */
+  :root {
+    --op1-primary: #0C9B4B;
+    --op1-primary-container: #C8E8D4;
+    --bg: #FAFBFC;
+    --card: #FFFFFF;
+    --on-surface: #1A1C1E;
+    --on-surface-variant: #44474E;
+    --outline-variant: #C4C7CF;
+    --surface-container-low: #F4F6F8;
+    --error: #DC2626;
+    --warning: #F59E0B;
+    --success: #16A34A;
+    --radius-card: 22px;
+    --radius-md: 14px;
+  }
+
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--on-surface);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ===== Page Shell ===== */
+  .page { max-width: 100%; overflow-x: hidden; }
+  .page-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .page-header {
+    margin-bottom: 20px;
+  }
+  .page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .page-header p {
+    color: var(--on-surface-variant);
+    font-size: 0.875rem;
+    margin-top: 2px;
+  }
+
+  /* ===== Section Breakpoints ===== */
+  .section-label {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--op1-primary);
+    background: var(--op1-primary-container);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+  .section { margin-bottom: 40px; }
+
+  /* ===== Card ===== */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  .card-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title svg { flex-shrink: 0; }
+
+  /* ===== Two-Column Layout ===== */
+  .col-grid {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .col-main { flex: 5; min-width: 0; }
+  .col-side { flex: 3; min-width: 0; }
+
+  /* ===== Server Info ===== */
+  .info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    font-size: 0.8125rem;
+  }
+  .info-label {
+    color: var(--on-surface-variant);
+    font-weight: 500;
+  }
+  .info-value {
+    color: var(--on-surface);
+    font-weight: 600;
+  }
+
+  /* ===== Resource Bars ===== */
+  .resource-list { display: flex; flex-direction: column; gap: 14px; }
+  .resource-item { display: flex; flex-direction: column; gap: 4px; }
+  .resource-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+  }
+  .resource-label { color: var(--on-surface-variant); }
+  .resource-value { font-weight: 600; }
+  .bar-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--surface-container-low);
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  .bar-fill.green { background: var(--op1-primary); }
+  .bar-fill.yellow { background: var(--warning); }
+  .bar-fill.red { background: var(--error); }
+
+  /* ===== Top Processes ===== */
+  .process-list { display: flex; flex-direction: column; gap: 0; }
+  .process-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--surface-container-low);
+    font-size: 0.8125rem;
+  }
+  .process-row:last-child { border-bottom: none; }
+  .process-name {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .process-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--op1-primary);
+    flex-shrink: 0;
+  }
+  .process-metrics { color: var(--on-surface-variant); text-align: right; }
+  .process-metrics span { margin-left: 12px; }
+
+  /* ===== Quick Actions ===== */
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    background: var(--surface-container-low);
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 0.75rem;
+    color: var(--on-surface-variant);
+    font-weight: 500;
+  }
+  .action-btn:hover { background: var(--op1-primary-container); }
+  .action-btn svg { flex-shrink: 0; }
+
+  /* ===== Activity ===== */
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+  .activity-row {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--surface-container-low);
+    font-size: 0.8125rem;
+  }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-time {
+    color: var(--on-surface-variant);
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    min-width: 42px;
+  }
+  .activity-text { color: var(--on-surface); }
+
+  /* ===== Responsive ===== */
+
+  /* Tablet */
+  @media (min-width: 600px) {
+    .page-inner {
+      max-width: 1040px;
+      padding: 20px 24px;
+    }
+    .col-grid { gap: 16px; }
+    .action-grid { gap: 12px; }
+  }
+
+  /* Desktop */
+  @media (min-width: 1024px) {
+    html { font-size: 16px; }
+    .page-inner {
+      max-width: 1280px;
+      padding: 24px 32px;
+    }
+    .page-header h1 { font-size: 1.75rem; }
+    .col-grid { gap: 20px; }
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 终端</title>
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B;
+  --op1-brand-light:#4DB87A;
+  --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE;
+  --op1-brand-100:#C8E8D4;
+  --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A;
+  --op1-brand-900:#055A2B;
+  --op1-success:#16A34A;
+  --op1-warning:#F59E0B;
+  --op1-danger:#DC2626;
+  --op1-info:#0EA5E9;
+  --op1-glass-blur:40px;
+  --op1-glass-saturate:180%;
+  --op1-glass-alpha:0.65;
+  --op1-glass-alpha-elevated:0.85;
+  --op1-glass-border-alpha:0.20;
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.6);
+  --op1-glass-shadow-outer:0 8px 32px rgba(31,38,135,0.15);
+  --op1-surface:rgba(255,255,255,0.15);
+  --op1-surface-elevated:rgba(255,255,255,0.40);
+  --op1-surface-card:rgba(255,255,255,0.20);
+  --op1-surface-nav:rgba(255,255,255,0.65);
+  --op1-surface-popover:rgba(255,255,255,0.50);
+  --op1-surface-container-low:rgba(255,255,255,0.10);
+  --op1-surface-container:rgba(255,255,255,0.15);
+  --op1-surface-container-high:rgba(255,255,255,0.25);
+  --op1-on-surface:rgba(0,0,0,0.85);
+  --op1-on-surface-variant:rgba(0,0,0,0.55);
+  --op1-on-surface-nav:rgba(0,0,0,0.75);
+  --op1-nav-sidebar-width:260px;
+  --op1-nav-tab-height:49px;
+  --op1-font-family:system-ui,-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --op1-font-family-mono:'SF Mono',ui-monospace,Menlo,monospace;
+  --op1-radius-sm:12px;
+  --op1-radius-md:16px;
+  --op1-radius-lg:20px;
+  --op1-radius-card:22px;
+  --op1-radius-button:9999px;
+  --op1-spacing-xs:4px;
+  --op1-spacing-sm:8px;
+  --op1-spacing-md:12px;
+  --op1-spacing-lg:16px;
+  --op1-spacing-xl:24px;
+  --op1-motion-fast:200ms;
+  --op1-motion-normal:350ms;
+  --op1-easing-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --op1-border:rgba(0,0,0,0.08);
+  --op1-border-strong:rgba(0,0,0,0.15);
+  --op1-error:#FF3B30;
+  --op1-bg-gradient-start:#667eea;
+  --op1-bg-gradient-end:#764ba2;
+}
+
+html.dark {
+  --op1-surface:rgba(30,30,30,0.65);
+  --op1-surface-card:rgba(40,40,40,0.70);
+  --op1-surface-nav:rgba(30,30,30,0.75);
+  --op1-on-surface:rgba(255,255,255,0.85);
+  --op1-on-surface-variant:rgba(255,255,255,0.55);
+  --op1-border:rgba(255,255,255,0.10);
+  --op1-border-strong:rgba(255,255,255,0.18);
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.08);
+  --op1-glass-shadow-outer:0 8px 32px rgba(0,0,0,0.3);
+  --op1-error:#FF6961;
+  --op1-error-container:rgba(255,105,97,0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--op1-font-family);
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+  color: var(--op1-on-surface);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Glass Card --- */
+.glass-card {
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: var(--op1-surface-card);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset);
+  border-radius: var(--op1-radius-card);
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+html.dark .glass-card {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--op1-nav-sidebar-width);
+  height: 100vh;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-right: 1px solid var(--op1-border);
+  box-shadow: var(--op1-glass-shadow-outer);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: var(--op1-spacing-lg);
+  transition: transform var(--op1-motion-normal);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: var(--op1-spacing-md) 0 var(--op1-spacing-xl);
+  border-bottom: 1px solid var(--op1-border);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.sidebar-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--op1-brand);
+  border-radius: var(--op1-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.sidebar-logo span {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: 10px 12px;
+  border-radius: var(--op1-radius-sm);
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.sidebar-nav a:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav a.active {
+  background: var(--op1-brand);
+  color: #fff;
+}
+
+.sidebar-nav a.active:hover {
+  background: var(--op1-brand-dark);
+}
+
+/* --- Icon Button --- */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.icon-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+/* --- Theme Toggle --- */
+.theme-btn {
+  position: fixed;
+  top: var(--op1-spacing-lg);
+  right: var(--op1-spacing-lg);
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.theme-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+/* --- Main Content --- */
+.main-content {
+  margin-left: var(--op1-nav-sidebar-width);
+  padding: var(--op1-spacing-xl);
+  padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* --- Terminal Toolbar (Glass) --- */
+.terminal-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: var(--op1-spacing-sm) var(--op1-spacing-lg);
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset);
+  border-radius: var(--op1-radius-lg) var(--op1-radius-lg) 0 0;
+  flex-shrink: 0;
+  margin-bottom: -1px;
+  z-index: 2;
+}
+
+html.dark .terminal-toolbar {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* Session Tabs */
+.session-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-xs);
+  flex: 1;
+  overflow-x: auto;
+}
+
+.session-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--op1-radius-button);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+  white-space: nowrap;
+  position: relative;
+  border: none;
+  background: transparent;
+  font-family: var(--op1-font-family);
+}
+
+.session-tab:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.session-tab.active {
+  color: var(--op1-brand);
+  background: var(--op1-brand-50);
+}
+
+html.dark .session-tab.active {
+  background: rgba(12,155,75,0.15);
+}
+
+.session-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2.5px;
+  border-radius: 2px;
+  background: var(--op1-brand);
+}
+
+.session-tab .tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--op1-success);
+  flex-shrink: 0;
+}
+
+.session-tab .tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--op1-motion-fast), background var(--op1-motion-fast);
+  margin-left: 2px;
+  color: var(--op1-on-surface-variant);
+}
+
+.session-tab:hover .tab-close {
+  opacity: 1;
+}
+
+.session-tab .tab-close:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+html.dark .session-tab .tab-close:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.tab-new-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast), transform var(--op1-motion-fast);
+  flex-shrink: 0;
+}
+
+.tab-new-btn:hover {
+  background: var(--op1-brand);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Toolbar Actions */
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  flex-shrink: 0;
+}
+
+/* --- Terminal Body --- */
+.terminal-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 0 var(--op1-radius-lg) var(--op1-radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-top: none;
+}
+
+html.dark .terminal-body {
+  border-color: rgba(255,255,255,0.08);
+}
+
+/* Terminal Output Area */
+.terminal-output {
+  flex: 1;
+  background: #1a1a2e;
+  padding: var(--op1-spacing-lg);
+  overflow-y: auto;
+  font-family: var(--op1-font-family-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: #00ff88;
+}
+
+.terminal-output::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+  background: rgba(0,255,136,0.15);
+  border-radius: 4px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,255,136,0.25);
+}
+
+.term-line {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.term-prompt {
+  color: #00cc6a;
+  font-weight: 600;
+}
+
+.term-command {
+  color: #00ff88;
+}
+
+.term-output-text {
+  color: #c0c0c0;
+}
+
+.term-header {
+  color: #7aa2f7;
+  font-weight: 600;
+}
+
+/* --- Terminal Input (macOS) --- */
+.terminal-input-bar {
+  display: flex;
+  align-items: center;
+  background: #16162a;
+  padding: var(--op1-spacing-sm) var(--op1-spacing-lg);
+  font-family: var(--op1-font-family-mono);
+  font-size: 13px;
+  color: #00ff88;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.terminal-input-prompt {
+  color: #00cc6a;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-right: var(--op1-spacing-sm);
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 18px;
+  background: #00ff88;
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* --- Mobile Bottom Tab Bar --- */
+.bottom-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--op1-nav-tab-height);
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-top: 1px solid var(--op1-border);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  z-index: 50;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 var(--op1-spacing-lg);
+}
+
+.bottom-tab-bar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  transition: color var(--op1-motion-fast);
+}
+
+.bottom-tab-bar a.active { color: var(--op1-brand); }
+
+/* --- Responsive --- */
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+  .bottom-tab-bar { display: flex; }
+  .main-content {
+    margin-left: 0;
+    padding: var(--op1-spacing-md);
+    padding-top: var(--op1-spacing-md);
+    padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-md));
+  }
+  .terminal-toolbar {
+    border-radius: var(--op1-radius-md) var(--op1-radius-md) 0 0;
+    padding: var(--op1-spacing-xs) var(--op1-spacing-md);
+  }
+  .terminal-body {
+    border-radius: 0 0 var(--op1-radius-md) var(--op1-radius-md);
+  }
+  .terminal-output {
+    padding: var(--op1-spacing-md);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .terminal-input-bar { display: none; }
+  .theme-btn {
+    top: auto;
+    bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-lg));
+    right: var(--op1-spacing-lg);
+  }
+  /* iOS: hide macOS-only toolbar buttons */
+  .macos-only { display: none !important; }
+  .ios-only { display: flex !important; }
+}
+
+@media (min-width: 768px) {
+  .bottom-tab-bar { display: none; }
+  .ios-only { display: none !important; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-btn" onclick="toggleTheme()" aria-label="切换主题">
+  <i data-lucide="sun" id="theme-icon-sun" style="width:18px;height:18px;display:none;"></i>
+  <i data-lucide="moon" id="theme-icon-moon" style="width:18px;height:18px;"></i>
+</button>
+
+<!-- Sidebar (macOS >=768px) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">1P</div>
+    <span>1Panel</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#">
+      <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+      仪表板
+    </a>
+    <a href="#">
+      <i data-lucide="container" style="width:18px;height:18px;"></i>
+      容器管理
+    </a>
+    <a href="#">
+      <i data-lucide="database" style="width:18px;height:18px;"></i>
+      数据库
+    </a>
+    <a href="#">
+      <i data-lucide="folder-open" style="width:18px;height:18px;"></i>
+      文件管理
+    </a>
+    <a href="#" class="active">
+      <i data-lucide="terminal" style="width:18px;height:18px;"></i>
+      终端
+    </a>
+    <a href="#">
+      <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      设置
+    </a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Terminal Glass Toolbar -->
+  <div class="terminal-toolbar">
+    <div class="session-tabs">
+      <button class="session-tab active">
+        <span class="tab-dot"></span>
+        root@生产服务器
+        <span class="tab-close">
+          <i data-lucide="x" style="width:12px;height:12px;"></i>
+        </span>
+      </button>
+      <button class="tab-new-btn" aria-label="新建终端会话">
+        <i data-lucide="plus" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+
+    <!-- macOS toolbar actions -->
+    <div class="toolbar-actions macos-only" style="display:flex;">
+      <button class="icon-btn" aria-label="分屏" title="分屏">
+        <i data-lucide="columns-2" style="width:18px;height:18px;"></i>
+      </button>
+      <button class="icon-btn" aria-label="字体大小" title="字体大小">
+        <i data-lucide="a-large-small" style="width:18px;height:18px;"></i>
+      </button>
+      <button class="icon-btn" aria-label="全屏" title="全屏">
+        <i data-lucide="maximize-2" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+
+    <!-- iOS toolbar actions -->
+    <div class="toolbar-actions ios-only" style="display:none;">
+      <button class="icon-btn" aria-label="更多操作" title="更多操作">
+        <i data-lucide="more-vertical" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Terminal Body -->
+  <div class="terminal-body">
+    <!-- Terminal Output -->
+    <div class="terminal-output">
+      <div class="term-line"><span class="term-prompt">root@server ~ # </span><span class="term-command">uptime</span></div>
+      <div class="term-line"><span class="term-output-text"> 15:32:01 up 15 days,  3:42,  2 users,  load average: 0.42, 0.38, 0.35</span></div>
+      <div class="term-line"></div>
+      <div class="term-line"><span class="term-prompt">root@server ~ # </span><span class="term-command">docker ps --format "table {{.Names}}\t{{.Status}}"</span></div>
+      <div class="term-line"><span class="term-header">NAMES           STATUS</span></div>
+      <div class="term-line"><span class="term-output-text">nginx-proxy     Up 15 days</span></div>
+      <div class="term-line"><span class="term-output-text">mysql-db        Up 15 days</span></div>
+      <div class="term-line"><span class="term-output-text">redis-cache     Up 10 days</span></div>
+      <div class="term-line"></div>
+      <div class="term-line"><span class="term-prompt">root@server ~ # </span><span class="term-command">free -h</span></div>
+      <div class="term-line"><span class="term-output-text">              total        used        free      shared  buff/cache   available</span></div>
+      <div class="term-line"><span class="term-output-text">Mem:           7.8Gi       5.2Gi       1.1Gi       256Mi       1.5Gi       2.1Gi</span></div>
+      <div class="term-line"></div>
+      <div class="term-line"><span class="term-prompt">root@server ~ # </span><span class="term-command"></span></div>
+    </div>
+
+    <!-- Terminal Input Bar (macOS only) -->
+    <div class="terminal-input-bar">
+      <span class="terminal-input-prompt">root@server ~ #</span>
+      <span class="terminal-cursor"></span>
+    </div>
+  </div>
+
+</main>
+
+<!-- Bottom Tab Bar (iOS <768px) -->
+<nav class="bottom-tab-bar">
+  <a href="#">
+    <i data-lucide="layout-dashboard" style="width:22px;height:22px;"></i>
+    仪表板
+  </a>
+  <a href="#">
+    <i data-lucide="container" style="width:22px;height:22px;"></i>
+    容器
+  </a>
+  <a href="#">
+    <i data-lucide="database" style="width:22px;height:22px;"></i>
+    数据库
+  </a>
+  <a href="#">
+    <i data-lucide="folder-open" style="width:22px;height:22px;"></i>
+    文件
+  </a>
+  <a href="#" class="active">
+    <i data-lucide="terminal" style="width:22px;height:22px;"></i>
+    终端
+  </a>
+  <a href="#">
+    <i data-lucide="settings" style="width:22px;height:22px;"></i>
+    设置
+  </a>
+</nav>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+    html.classList.toggle('dark', !isDark);
+    html.classList.toggle('light', isDark);
+    document.getElementById('theme-icon-sun').style.display = isDark ? 'none' : 'block';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

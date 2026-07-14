@@ -13,6 +13,9 @@ class AIRepository {
 
   Future<AIV2Api> _getApi() => _clientManager.getAiApi();
 
+  /// Public API accessor for direct API calls (R5 frontend alignment).
+  Future<AIV2Api> getApi() => _getApi();
+
   /// 绑定域名
   ///
   /// 为AI服务绑定域名
@@ -185,5 +188,27 @@ class AIRepository {
     final api = await _getApi();
     final response = await api.syncOllamaModels();
     return response.data!;
+  }
+
+  /// Search GPU monitor data for history chart (R5 frontend alignment).
+  Future<List<Map<String, dynamic>>> searchGpu(
+      Map<String, dynamic> request) async {
+    final api = await _getApi();
+    final response = await api.searchGpu(request);
+    final raw = response.data?['data'];
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+    return const <Map<String, dynamic>>[];
+  }
+
+  /// Get GPU options (R5 frontend alignment).
+  Future<List<Map<String, dynamic>>> getGpuOptions() async {
+    final api = await _getApi();
+    final response = await api.getGpuOptions();
+    return response.data ?? const <Map<String, dynamic>>[];
   }
 }

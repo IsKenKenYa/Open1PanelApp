@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 自适应导航壳</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <h1 class="page-title">1Panel Client - 自适应导航壳</h1>
+  <p class="page-subtitle">Material Design 3 自适应布局：底部导航栏 / 侧边导航轨 / 侧边栏，三套断点适配方案。</p>
+
+  <!-- ========== 1. Mobile (<600px) ========== -->
+  <div class="bp-section">
+    <div class="bp-label">Mobile &lt; 600px</div>
+    <p class="bp-desc">底部 NavigationBar，4 个导航槽位，全宽内容区域</p>
+    <div class="preview-frame mobile-preview">
+      <div class="mobile-shell">
+
+        <!-- Top Bar -->
+        <div class="mobile-topbar">
+          <div class="mobile-topbar-title">1<span>Panel</span></div>
+          <div class="mobile-server-badge">
+            <span class="dot"></span>
+            192.168.1.100
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="mobile-content">
+          <div class="placeholder-card">
+            <div class="card-header">仪表板概览</div>
+            <div class="card-grid">
+              <div class="stat-chip">
+                <div class="stat-value">3</div>
+                <div class="stat-label">运行容器</div>
+              </div>
+              <div class="stat-chip">
+                <div class="stat-value">78%</div>
+                <div class="stat-label">CPU 使用</div>
+              </div>
+              <div class="stat-chip">
+                <div class="stat-value">4.2G</div>
+                <div class="stat-label">内存占用</div>
+              </div>
+              <div class="stat-chip">
+                <div class="stat-value">2</div>
+                <div class="stat-label">网站数</div>
+              </div>
+            </div>
+          </div>
+          <div class="placeholder-card">
+            <div class="card-header">最近操作</div>
+            <div style="font-size:13px;color:var(--op1-muted-foreground);line-height:2;">
+              &#8226; Nginx 容器重启完成<br>
+              &#8226; 数据库备份已创建<br>
+              &#8226; SSL 证书已更新
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom NavigationBar -->
+        <div class="mobile-navbar">
+          <div class="nav-item active">
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg></div>
+            <span class="nav-label">仪表板</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg></div>
+            <span class="nav-label">服务器</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z"/></svg></div>
+            <span class="nav-label">容器</span>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-6-1h-4v-2h4v2zm2-3H8v-2h8v2z"/></svg></div>
+            <span class="nav-label">文件</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 2. Tablet (600-1023px) ========== -->
+  <div class="bp-section">
+    <div class="bp-label">Tablet 600 - 1023px</div>
+    <p class="bp-desc">左侧 NavigationRail (80px)，垂直分隔，双列内容区域</p>
+    <div class="preview-frame tablet-preview">
+      <div class="tablet-shell">
+
+        <!-- NavigationRail -->
+        <div class="nav-rail">
+          <div class="rail-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="rail-divider"></div>
+          <div class="rail-items">
+            <div class="rail-item active" title="仪表板">
+              <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+              <span class="rail-label">仪表板</span>
+            </div>
+            <div class="rail-item" title="服务器">
+              <svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+              <span class="rail-label">服务器</span>
+            </div>
+            <div class="rail-item" title="容器">
+              <svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg>
+              <span class="rail-label">容器</span>
+            </div>
+            <div class="rail-item" title="镜像">
+              <svg viewBox="0 0 24 24"><path d="M21.48 12.86c-.14-.2-.36-.3-.6-.3H3.12c-.24 0-.46.1-.6.3-.14.2-.18.44-.1.66L6.8 22.4c.16.38.5.6.9.6h8.6c.4 0 .74-.22.9-.6l4.38-8.88c.08-.22.04-.46-.1-.66zM12 17.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5.32 11l-.92-1.84c-.14-.28-.04-.62.24-.78l1.12-.56c.28-.14.62-.04.78.24L7.48 9.9c-.78.28-1.52.64-2.16 1.1zM12 3c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1zm6.52 6l.92-1.84c.14-.28.04-.62-.24-.78l-1.12-.56c-.28-.14-.62-.04-.78.24L16.52 7.9c.78.28 1.52.64 2.16 1.1z"/></svg>
+              <span class="rail-label">镜像</span>
+            </div>
+            <div class="rail-item" title="文件">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z"/></svg>
+              <span class="rail-label">文件</span>
+            </div>
+            <div class="rail-item disabled" title="网站">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              <span class="rail-label">网站</span>
+            </div>
+            <div class="rail-item" title="数据库">
+              <svg viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zM6 17V9.77C7.61 10.55 9.69 11 12 11s4.39-.45 6-1.23V17c0 .5-2.13 2-6 2s-6-1.5-6-2z"/></svg>
+              <span class="rail-label">数据库</span>
+            </div>
+            <div class="rail-fab-spacer"></div>
+            <div class="rail-item" title="设置">
+              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+              <span class="rail-label">设置</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tablet Content -->
+        <div class="tablet-content">
+          <div class="tablet-main">
+            <div class="tablet-card">
+              <div class="card-title">仪表板 - 主内容区</div>
+              <div style="display:flex;gap:10px;width:100%;margin-bottom:12px;">
+                <div style="flex:1;background:var(--op1-surface-container-low);border-radius:var(--op1-radius-md);padding:12px;text-align:center;">
+                  <div style="font-size:18px;font-weight:600;color:var(--op1-primary);">5</div>
+                  <div style="font-size:11px;color:var(--op1-muted-foreground);">容器运行中</div>
+                </div>
+                <div style="flex:1;background:var(--op1-surface-container-low);border-radius:var(--op1-radius-md);padding:12px;text-align:center;">
+                  <div style="font-size:18px;font-weight:600;color:var(--op1-primary);">45%</div>
+                  <div style="font-size:11px;color:var(--op1-muted-foreground);">CPU 使用</div>
+                </div>
+                <div style="flex:1;background:var(--op1-surface-container-low);border-radius:var(--op1-radius-md);padding:12px;text-align:center;">
+                  <div style="font-size:18px;font-weight:600;color:var(--op1-primary);">8.1G</div>
+                  <div style="font-size:11px;color:var(--op1-muted-foreground);">内存占用</div>
+                </div>
+              </div>
+              <div class="card-placeholder">实时监控数据与图表区域</div>
+            </div>
+          </div>
+          <div class="tablet-sidebar-content">
+            <div class="tablet-card">
+              <div class="card-title">系统信息</div>
+              <div class="content-label">内容区域</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 3. Desktop (>=1024px) ========== -->
+  <div class="bp-section">
+    <div class="bp-label">Desktop &ge; 1024px</div>
+    <p class="bp-desc">左侧 Sidebar (264px)，完整模块列表 + 图标标签，双列内容布局</p>
+    <div class="preview-frame desktop-preview">
+      <div class="desktop-shell">
+
+        <!-- Sidebar -->
+        <div class="nav-sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-header-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="sidebar-header-text">1<span>Panel</span> Client</div>
+          </div>
+          <div class="sidebar-server-section">
+            <div class="sidebar-server-info">
+              <span class="server-dot"></span>
+              192.168.1.100 - 生产服务器
+            </div>
+          </div>
+          <div class="sidebar-divider"></div>
+
+          <div class="sidebar-modules">
+            <!-- 仪表板 -->
+            <div class="sidebar-item active">
+              <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+              <span class="item-label">仪表板</span>
+            </div>
+            <!-- 服务器 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+              <span class="item-label">服务器</span>
+            </div>
+            <!-- 容器 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg>
+              <span class="item-label">容器</span>
+            </div>
+            <!-- 镜像 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M21.48 12.86c-.14-.2-.36-.3-.6-.3H3.12c-.24 0-.46.1-.6.3-.14.2-.18.44-.1.66L6.8 22.4c.16.38.5.6.9.6h8.6c.4 0 .74-.22.9-.6l4.38-8.88c.08-.22.04-.46-.1-.66zM12 17.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5.32 11l-.92-1.84c-.14-.28-.04-.62.24-.78l1.12-.56c.28-.14.62-.04.78.24L7.48 9.9c-.78.28-1.52.64-2.16 1.1zM12 3c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1zm6.52 6l.92-1.84c.14-.28.04-.62-.24-.78l-1.12-.56c-.28-.14-.62-.04-.78.24L16.52 7.9c.78.28 1.52.64 2.16 1.1z"/></svg>
+              <span class="item-label">镜像</span>
+            </div>
+            <!-- 文件 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z"/></svg>
+              <span class="item-label">文件</span>
+            </div>
+            <!-- 应用 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+              <span class="item-label">应用</span>
+            </div>
+            <!-- 网站 -->
+            <div class="sidebar-item disabled">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              <span class="item-label">网站</span>
+            </div>
+            <!-- AI 管理 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M13 8.57a1.43 1.43 0 100 2.86 1.43 1.43 0 000-2.86zM13 3v.04A7.96 7.96 0 0119.96 10H20v4h-1.08A8 8 0 0113 19.93V20h-2v-.07A8 8 0 015.08 14H4v-4h.04A7.96 7.96 0 0111 3.04V3h2zM11 18.93A6 6 0 0016.92 14H7.08A6 6 0 0011 18.93zM4.1 10.07A6 6 0 004.1 13.93L4.1 10.07zM11 5.07A6 6 0 007.08 10h9.84A6 6 0 0011 5.07zM7 12.43a1.43 1.43 0 100 2.86 1.43 1.43 0 000-2.86zm10 0a1.43 1.43 0 100 2.86 1.43 1.43 0 000-2.86z"/></svg>
+              <span class="item-label">AI 管理</span>
+            </div>
+            <!-- 数据库 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zM6 17V9.77C7.61 10.55 9.69 11 12 11s4.39-.45 6-1.23V17c0 .5-2.13 2-6 2s-6-1.5-6-2z"/></svg>
+              <span class="item-label">数据库</span>
+            </div>
+            <!-- 防火墙 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+              <span class="item-label">防火墙</span>
+            </div>
+            <!-- 日志 -->
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-6h8v2H8v-2zm0-4h8v2H8v-2z"/></svg>
+              <span class="item-label">日志</span>
+            </div>
+          </div>
+
+          <div class="sidebar-bottom-section">
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+              <span class="item-label">设置</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Content -->
+        <div class="desktop-content">
+          <div class="desktop-main">
+            <div class="desktop-card">
+              <div class="card-title">仪表板 - 主内容区域</div>
+              <div class="stats-row">
+                <div class="desktop-stat">
+                  <div class="val">5</div>
+                  <div class="lbl">运行容器</div>
+                </div>
+                <div class="desktop-stat">
+                  <div class="val">12</div>
+                  <div class="lbl">镜像数</div>
+                </div>
+                <div class="desktop-stat">
+                  <div class="val">3</div>
+                  <div class="lbl">网站数</div>
+                </div>
+                <div class="desktop-stat">
+                  <div class="val">2</div>
+                  <div class="lbl">数据库</div>
+                </div>
+              </div>
+              <div class="card-placeholder" style="margin-top:12px;font-size:13px;color:var(--op1-muted-foreground);">实时监控图表与系统状态概览</div>
+            </div>
+            <div class="desktop-card" style="flex:0.6;">
+              <div class="card-title">最近活动</div>
+              <div class="card-placeholder">内容区域</div>
+            </div>
+          </div>
+          <div class="desktop-side">
+            <div class="desktop-card">
+              <div class="card-title">系统信息</div>
+              <div class="card-placeholder">内容区域</div>
+            </div>
+            <div class="desktop-card">
+              <div class="card-title">资源使用</div>
+              <div class="card-placeholder">内容区域</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+    <style>
+/* ===== CSS Custom Properties ===== */
+:root {
+  --op1-primary: #0C9B4B;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-background: #FAFBFC;
+  --op1-surface: #FAFBFC;
+  --op1-card: #FFFFFF;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline-variant: #C4C7CF;
+  --op1-outline: #74777F;
+  --op1-muted-foreground: #6B7280;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-radius-card: 22px;
+  --op1-radius-md: 14px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-family);
+  background: #E8EBED;
+  color: var(--op1-on-surface);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Page Layout ===== */
+.page-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--op1-on-surface);
+}
+.page-subtitle {
+  font-size: 14px;
+  color: var(--op1-muted-foreground);
+  margin-bottom: 32px;
+}
+
+/* ===== Breakpoint Section ===== */
+.bp-section {
+  margin-bottom: 48px;
+}
+.bp-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--op1-primary);
+  background: var(--op1-primary-container);
+  padding: 6px 14px;
+  border-radius: var(--op1-radius-full);
+  margin-bottom: 16px;
+}
+.bp-desc {
+  font-size: 13px;
+  color: var(--op1-muted-foreground);
+  margin-bottom: 16px;
+}
+
+/* ===== Preview Frame ===== */
+.preview-frame {
+  border: 1px solid var(--op1-outline-variant);
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--op1-background);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ===== Mobile Preview (<600px) ===== */
+.mobile-preview {
+  max-width: 400px;
+  margin: 0 auto;
+}
+.mobile-shell {
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  background: var(--op1-background);
+}
+
+/* Mobile Top Bar */
+.mobile-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--op1-card);
+  border-bottom: 1px solid var(--op1-outline-variant);
+}
+.mobile-topbar-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--op1-on-surface);
+}
+.mobile-topbar-title span {
+  color: var(--op1-primary);
+}
+.mobile-server-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+  background: var(--op1-surface-container);
+  padding: 4px 10px;
+  border-radius: var(--op1-radius-full);
+}
+.mobile-server-badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--op1-primary);
+}
+
+/* Mobile Content */
+.mobile-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+.mobile-content .placeholder-card {
+  background: var(--op1-card);
+  border: 1px solid var(--op1-outline-variant);
+  border-radius: var(--op1-radius-card);
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.placeholder-card .card-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  margin-bottom: 12px;
+}
+.placeholder-card .card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stat-chip {
+  background: var(--op1-surface-container-low);
+  border-radius: var(--op1-radius-md);
+  padding: 12px;
+  text-align: center;
+}
+.stat-chip .stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--op1-primary);
+}
+.stat-chip .stat-label {
+  font-size: 11px;
+  color: var(--op1-muted-foreground);
+  margin-top: 2px;
+}
+
+/* Mobile Bottom NavigationBar */
+.mobile-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 80px;
+  background: var(--op1-card);
+  border-top: 1px solid var(--op1-outline-variant);
+  padding-bottom: 8px;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  min-width: 56px;
+  padding: 4px 0;
+  transition: color 150ms;
+  position: relative;
+}
+.nav-item .nav-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-item .nav-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--op1-on-surface-variant);
+  transition: fill 150ms;
+}
+.nav-item .nav-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+  transition: color 150ms;
+}
+.nav-item.active .nav-icon svg {
+  fill: var(--op1-primary);
+}
+.nav-item.active .nav-label {
+  color: var(--op1-primary);
+  font-weight: 600;
+}
+/* MD3 indicator pill */
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 32px;
+  background: var(--op1-primary-container);
+  border-radius: 16px;
+  z-index: -1;
+}
+.nav-item.active .nav-icon,
+.nav-item.active .nav-label {
+  position: relative;
+  z-index: 1;
+}
+.nav-item.disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+/* ===== Tablet Preview (600-1023px) ===== */
+.tablet-preview {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.tablet-shell {
+  display: flex;
+  height: 520px;
+  background: var(--op1-background);
+}
+
+/* NavigationRail */
+.nav-rail {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px;
+  background: var(--op1-surface);
+  border-right: 1px solid var(--op1-outline-variant);
+  flex-shrink: 0;
+}
+.rail-logo {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.rail-logo svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--op1-primary);
+}
+.rail-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--op1-outline-variant);
+  margin: 4px 0 8px;
+}
+.rail-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  overflow-y: auto;
+}
+.rail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 64px;
+  height: 56px;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--op1-radius-card);
+  transition: background 150ms;
+  position: relative;
+}
+.rail-item svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--op1-on-surface-variant);
+  transition: fill 150ms;
+}
+.rail-item .rail-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+  transition: color 150ms;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 64px;
+  text-align: center;
+}
+.rail-item.active {
+  background: var(--op1-primary-container);
+}
+.rail-item.active svg {
+  fill: var(--op1-on-primary-container);
+}
+.rail-item.active .rail-label {
+  color: var(--op1-on-primary-container);
+  font-weight: 600;
+}
+.rail-item.disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+.rail-fab-spacer {
+  flex: 1;
+}
+
+/* Tablet Content */
+.tablet-content {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  overflow: hidden;
+}
+.tablet-main {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tablet-sidebar-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tablet-card {
+  background: var(--op1-card);
+  border: 1px solid var(--op1-outline-variant);
+  border-radius: var(--op1-radius-card);
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.tablet-card .card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  margin-bottom: 8px;
+}
+.tablet-card .card-placeholder {
+  font-size: 13px;
+  color: var(--op1-muted-foreground);
+}
+.tablet-card .content-label {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--op1-outline);
+  opacity: 0.4;
+}
+
+/* ===== Desktop Preview (>=1024px) ===== */
+.desktop-preview {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.desktop-shell {
+  display: flex;
+  height: 560px;
+  background: var(--op1-background);
+}
+
+/* Sidebar Navigation */
+.nav-sidebar {
+  width: 264px;
+  display: flex;
+  flex-direction: column;
+  background: var(--op1-surface);
+  border-right: 1px solid var(--op1-outline-variant);
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px 12px;
+}
+.sidebar-header-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--op1-primary-container);
+  border-radius: var(--op1-radius-md);
+}
+.sidebar-header-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--op1-on-primary-container);
+}
+.sidebar-header-text {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--op1-on-surface);
+}
+.sidebar-header-text span {
+  color: var(--op1-primary);
+}
+.sidebar-server-section {
+  padding: 4px 12px 12px;
+}
+.sidebar-server-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--op1-surface-container-low);
+  border-radius: var(--op1-radius-md);
+  font-size: 13px;
+  color: var(--op1-on-surface-variant);
+}
+.sidebar-server-info .server-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--op1-primary);
+  flex-shrink: 0;
+}
+.sidebar-divider {
+  height: 1px;
+  background: var(--op1-outline-variant);
+  margin: 0 12px 4px;
+}
+
+/* Sidebar Module List */
+.sidebar-modules {
+  flex: 1;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 150ms;
+  text-decoration: none;
+}
+.sidebar-item svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--op1-on-surface-variant);
+  flex-shrink: 0;
+  transition: fill 150ms;
+}
+.sidebar-item .item-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+  transition: color 150ms;
+}
+.sidebar-item:hover {
+  background: var(--op1-surface-container);
+}
+.sidebar-item.active {
+  background: var(--op1-primary-container);
+}
+.sidebar-item.active svg {
+  fill: var(--op1-on-primary-container);
+}
+.sidebar-item.active .item-label {
+  color: var(--op1-on-primary-container);
+  font-weight: 600;
+}
+.sidebar-item.disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.sidebar-bottom-section {
+  padding: 8px;
+  border-top: 1px solid var(--op1-outline-variant);
+  margin-top: auto;
+}
+
+/* Desktop Content */
+.desktop-content {
+  flex: 1;
+  display: flex;
+  padding: 16px;
+  gap: 16px;
+  overflow: hidden;
+}
+.desktop-main {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.desktop-side {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.desktop-card {
+  background: var(--op1-card);
+  border: 1px solid var(--op1-outline-variant);
+  border-radius: var(--op1-radius-card);
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.desktop-card .card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  margin-bottom: 8px;
+}
+.desktop-card .content-label {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--op1-outline);
+  opacity: 0.35;
+}
+.desktop-card .stats-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+.desktop-stat {
+  text-align: center;
+  padding: 8px 16px;
+  background: var(--op1-surface-container-low);
+  border-radius: var(--op1-radius-md);
+}
+.desktop-stat .val {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--op1-primary);
+}
+.desktop-stat .lbl {
+  font-size: 11px;
+  color: var(--op1-muted-foreground);
+}
+
+/* ===== Utility: hidden scrollbar ===== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--op1-outline-variant); border-radius: 4px; }
+</style>
+</body>
+</html>

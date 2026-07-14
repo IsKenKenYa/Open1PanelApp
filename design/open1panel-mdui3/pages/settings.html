@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 设置</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <h1>设置</h1>
+    <p>管理应用偏好与服务器配置</p>
+  </div>
+
+  <div class="settings-layout">
+    <!-- Sidebar Nav (visible on tablet/desktop) -->
+    <nav class="settings-sidebar">
+      <a href="#general" class="sidebar-item active" data-group="general">通用</a>
+      <a href="#security" class="sidebar-item" data-group="security">安全</a>
+      <a href="#server" class="sidebar-item" data-group="server">服务器</a>
+      <a href="#terminal" class="sidebar-item" data-group="terminal">终端</a>
+      <a href="#about" class="sidebar-item" data-group="about">关于</a>
+    </nav>
+
+    <!-- Content -->
+    <div class="settings-content">
+
+      <!-- Group 1: 通用 -->
+      <div class="settings-group" id="general">
+        <div class="settings-group-title">通用</div>
+        <div class="settings-card">
+          <!-- 外观 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364-.707.707M6.343 17.657l-.707.707m0-12.728.707.707m11.314 11.314.707.707"/><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">外观</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                跟随系统
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 语言 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">语言</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                简体中文
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 通知 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">通知</div>
+            </div>
+            <div class="settings-item-trailing">
+              <label class="toggle">
+                <input type="checkbox" checked>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 2: 安全 -->
+      <div class="settings-group" id="security">
+        <div class="settings-group-title">安全</div>
+        <div class="settings-card">
+          <!-- 多因素认证 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">多因素认证</div>
+              <div class="settings-item-desc">启用 MFA 增强账户安全</div>
+            </div>
+            <div class="settings-item-trailing">
+              <label class="toggle">
+                <input type="checkbox">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+          <!-- 自动锁定 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">自动锁定</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                5 分钟
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 生物识别 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4 0L11 14"/><circle cx="8.5" cy="7" r=".5"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">生物识别</div>
+            </div>
+            <div class="settings-item-trailing">
+              <label class="toggle">
+                <input type="checkbox" checked>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 3: 服务器 -->
+      <div class="settings-group" id="server">
+        <div class="settings-group-title">服务器</div>
+        <div class="settings-card">
+          <!-- 默认服务器 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">默认服务器</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                生产服务器
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 连接超时 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">连接超时</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                30 秒
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 自动刷新 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">自动刷新</div>
+              <div class="settings-item-desc">定期刷新服务器状态</div>
+            </div>
+            <div class="settings-item-trailing">
+              <label class="toggle">
+                <input type="checkbox" checked>
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 4: 终端 -->
+      <div class="settings-group" id="terminal">
+        <div class="settings-group-title">终端</div>
+        <div class="settings-card">
+          <!-- 字体大小 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">字体大小</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                14
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 主题 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">主题</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="dropdown-value">
+                暗色
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- 快捷键提示 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">快捷键提示</div>
+            </div>
+            <div class="settings-item-trailing">
+              <label class="toggle">
+                <input type="checkbox">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 5: 关于 -->
+      <div class="settings-group" id="about">
+        <div class="settings-group-title">关于</div>
+        <div class="settings-card">
+          <!-- 应用版本 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">应用版本</div>
+            </div>
+            <div class="settings-item-trailing">
+              <span class="version-text">v0.6.0</span>
+            </div>
+          </div>
+          <!-- 检查更新 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">检查更新</div>
+            </div>
+            <div class="settings-item-trailing">
+              <button class="trailing-btn">检查更新</button>
+            </div>
+          </div>
+          <!-- 开源许可 -->
+          <div class="settings-item">
+            <div class="settings-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="settings-item-text">
+              <div class="settings-item-title">开源许可</div>
+            </div>
+            <div class="settings-item-trailing">
+              <div class="nav-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Breakpoint Label -->
+<div class="breakpoint-label" id="bpLabel">Mobile</div>
+
+<script>
+  // Breakpoint indicator
+  function updateBreakpointLabel() {
+    const w = window.innerWidth;
+    const label = w >= 1024 ? 'Desktop' : w >= 600 ? 'Tablet' : 'Mobile';
+    document.getElementById('bpLabel').textContent = label;
+  }
+  window.addEventListener('resize', updateBreakpointLabel);
+  updateBreakpointLabel();
+
+  // Sidebar active state on scroll
+  const groups = document.querySelectorAll('.settings-group[id]');
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        sidebarItems.forEach(item => item.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-item[data-group="${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  groups.forEach(g => observer.observe(g));
+
+  // Sidebar click smooth scroll
+  sidebarItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.getElementById(item.dataset.group);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+    <style>
+  /* ===== Brand Tokens ===== */
+  :root {
+    --op1-primary: #0C9B4B;
+    --op1-primary-container: #C8E8D4;
+    --op1-on-primary: #FFFFFF;
+    --bg: #FAFBFC;
+    --card: #FFFFFF;
+    --on-surface: #1A1C1E;
+    --on-surface-variant: #44474E;
+    --outline-variant: #C4C7CF;
+    --radius-card: 16px;
+    --radius-sm: 14px;
+    --sidebar-width: 220px;
+    --content-max-width: 900px;
+  }
+
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--on-surface);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ===== Page Shell ===== */
+  .page { max-width: 100%; overflow-x: hidden; }
+
+  /* ===== Page Header ===== */
+  .page-header {
+    padding: 16px 16px 0;
+    max-width: 100%;
+  }
+  .page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .page-header p {
+    color: var(--on-surface-variant);
+    font-size: 0.875rem;
+    margin-top: 2px;
+  }
+
+  /* ===== Breakpoint Labels ===== */
+  .breakpoint-label {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    background: var(--on-surface);
+    color: var(--card);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 8px;
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+
+  /* ===== Layout: Mobile (single column) ===== */
+  .settings-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
+  .settings-sidebar { display: none; }
+  .settings-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ===== Settings Group ===== */
+  .settings-group {
+    margin-bottom: 28px;
+  }
+  .settings-group:last-child { margin-bottom: 0; }
+  .settings-group-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    margin-top: 24px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+
+  /* ===== Settings Card ===== */
+  .settings-card {
+    background: var(--card);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  /* ===== Settings Item ===== */
+  .settings-item {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 16px;
+    gap: 16px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  .settings-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 0;
+    height: 1px;
+    background: var(--outline-variant);
+  }
+  .settings-item:hover {
+    background: rgba(0,0,0,0.03);
+  }
+
+  /* Item: Icon */
+  .settings-item-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--on-surface-variant);
+  }
+  .settings-item-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Item: Text */
+  .settings-item-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .settings-item-title {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--on-surface);
+  }
+  .settings-item-desc {
+    font-size: 0.8125rem;
+    color: var(--on-surface-variant);
+    line-height: 1.3;
+    margin-top: 1px;
+  }
+
+  /* Item: Trailing */
+  .settings-item-trailing {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Trailing: Dropdown Chevron */
+  .dropdown-value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+  }
+  .dropdown-value svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Trailing: Navigation Arrow */
+  .nav-arrow svg {
+    width: 20px;
+    height: 20px;
+    color: var(--on-surface-variant);
+  }
+
+  /* Trailing: Button */
+  .trailing-btn {
+    padding: 6px 16px;
+    border-radius: 9999px;
+    border: 1px solid var(--outline-variant);
+    background: transparent;
+    color: var(--op1-primary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  .trailing-btn:hover {
+    background: var(--op1-primary-container);
+  }
+
+  /* Trailing: Version Text */
+  .version-text {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+  }
+
+  /* ===== Toggle Switch (MD3) ===== */
+  .toggle {
+    position: relative;
+    width: 52px;
+    height: 32px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: var(--outline-variant);
+    border: 2px solid var(--outline-variant);
+    transition: background .2s, border-color .2s;
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--outline-variant);
+    transition: transform .2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                width .2s, height .2s, background .2s;
+  }
+  .toggle input:checked ~ .toggle-track {
+    background: var(--op1-primary);
+    border-color: var(--op1-primary);
+  }
+  .toggle input:checked ~ .toggle-thumb {
+    transform: translateX(20px);
+    width: 24px;
+    height: 24px;
+    top: 2px;
+    left: 2px;
+    background: var(--op1-on-primary);
+  }
+
+  /* ===== Tablet (600-1023px): Sidebar + Content ===== */
+  @media (min-width: 600px) {
+    .page-header {
+      padding: 24px 24px 0;
+    }
+    .settings-layout {
+      flex-direction: row;
+      padding: 20px 24px;
+      gap: 24px;
+    }
+    .settings-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
+      align-self: flex-start;
+    }
+    .sidebar-item {
+      padding: 10px 16px;
+      border-radius: 14px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      text-decoration: none;
+    }
+    .sidebar-item:hover {
+      background: rgba(0,0,0,0.05);
+    }
+    .sidebar-item.active {
+      background: var(--op1-primary-container);
+      color: var(--op1-primary);
+    }
+    .settings-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .settings-group-title {
+      display: none;
+    }
+  }
+
+  /* ===== Desktop (>=1024px): Wider content ===== */
+  @media (min-width: 1024px) {
+    .page-header {
+      padding: 32px 32px 0;
+      max-width: calc(var(--content-max-width) + var(--sidebar-width) + 24px + 64px);
+      margin: 0 auto;
+    }
+    .settings-layout {
+      max-width: calc(var(--content-max-width) + var(--sidebar-width) + 24px + 64px);
+      margin: 0 auto;
+      padding: 24px 32px;
+      gap: 32px;
+    }
+    .settings-content {
+      max-width: var(--content-max-width);
+    }
+  }
+
+  /* ===== Scroll offset for anchor links ===== */
+  .settings-group[id] {
+    scroll-margin-top: 20px;
+  }
+  @media (min-width: 600px) {
+    .settings-group[id] {
+      scroll-margin-top: 20px;
+    }
+  }
+</style>
+</body>
+</html>

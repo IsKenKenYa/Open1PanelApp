@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防火墙管理 - 1Panel Client</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+  --op1-surface: #FAFBFC;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-family-mono: ui-monospace, Menlo, monospace;
+}
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-surface: #121416;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body style="font: var(--text-body-large); margin: 0; min-height: 100vh;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 24px 16px;">
+
+        <!-- Breakpoint indicator -->
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; align-items: center;">
+            <span style="font: var(--text-label-small); color: var(--op1-on-surface-variant);">Current:</span>
+            <span class="bp-label bp-mobile">Mobile &lt;600px</span>
+            <span class="bp-label bp-tablet">Tablet 600-1023px</span>
+            <span class="bp-label bp-desktop">Desktop &ge;1024px</span>
+        </div>
+
+        <!-- Top area: Title + Switch -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <!-- Shield icon -->
+                <div style="width: 40px; height: 40px; border-radius: var(--op1-radius-md); background: var(--op1-primary-container); display: flex; align-items: center; justify-content: center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--op1-on-primary-container)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 style="font: var(--text-headline-small); margin: 0; color: var(--op1-on-surface);">防火墙管理</h1>
+                    <p style="font: var(--text-body-small); margin: 4px 0 0; color: var(--op1-on-surface-variant);">管理服务器端口、IP 和服务级别的防火墙规则</p>
+                </div>
+            </div>
+            <!-- Switch -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font: var(--text-label-large); color: var(--op1-on-surface-variant);">防火墙</span>
+                <div class="switch-track" id="firewallSwitch" role="switch" aria-checked="true" tabindex="0" onclick="toggleSwitch()" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleSwitch();}">
+                    <div class="switch-thumb"></div>
+                </div>
+                <span id="switchLabel" style="font: var(--text-label-medium); color: var(--op1-primary);">已开启</span>
+            </div>
+        </div>
+
+        <!-- Status chip -->
+        <div style="margin-bottom: 16px;">
+            <span class="chip chip-green" id="statusChip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+                </svg>
+                已启用 18 条规则
+            </span>
+        </div>
+
+        <!-- Summary stats -->
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+            <div class="stat-card">
+                <div style="font: var(--text-label-small); color: var(--op1-on-surface-variant); margin-bottom: 4px;">总规则数</div>
+                <div style="font: var(--text-headline-medium); color: var(--op1-on-surface);">18</div>
+            </div>
+            <div class="stat-card">
+                <div style="font: var(--text-label-small); color: var(--op1-on-surface-variant); margin-bottom: 4px;">允许规则</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="font: var(--text-headline-medium); color: #16A34A;">12</div>
+                    <span class="chip chip-green" style="padding: 3px 8px; font-size: 11px;">允许</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div style="font: var(--text-label-small); color: var(--op1-on-surface-variant); margin-bottom: 4px;">拒绝规则</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="font: var(--text-headline-medium); color: #DC2626;">6</div>
+                    <span class="chip chip-red" style="padding: 3px 8px; font-size: 11px;">拒绝</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar" style="margin-bottom: 0;">
+            <button class="tab-item active" data-tab="port-rules" onclick="switchTab('port-rules', this)">端口规则</button>
+            <button class="tab-item" data-tab="ip-rules" onclick="switchTab('ip-rules', this)">IP规则</button>
+            <button class="tab-item" data-tab="sys-services" onclick="switchTab('sys-services', this)">系统服务</button>
+        </div>
+
+        <!-- ========== Port Rules Tab ========== -->
+        <div class="tab-panel active" id="tab-port-rules">
+            <div class="mobile-cards">
+                <!-- Card 1: SSH -->
+                <div class="rule-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="port-mono" style="font-size: 20px; color: var(--op1-on-surface);">22</span>
+                        <span class="chip chip-green">允许</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font: var(--text-body-small);">
+                        <div><span style="color: var(--op1-on-surface-variant);">协议</span><br><span style="color: var(--op1-on-surface);">TCP</span></div>
+                        <div><span style="color: var(--op1-on-surface-variant);">来源</span><br><span class="port-mono" style="color: var(--op1-on-surface); font-size: 13px;">0.0.0.0</span></div>
+                    </div>
+                    <div style="margin-top: 8px; font: var(--text-body-small); color: var(--op1-on-surface-variant);">SSH</div>
+                    <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                        <button class="action-btn" title="编辑">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        </button>
+                        <button class="action-btn" title="删除">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Card 2: HTTP -->
+                <div class="rule-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="port-mono" style="font-size: 20px; color: var(--op1-on-surface);">80</span>
+                        <span class="chip chip-green">允许</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font: var(--text-body-small);">
+                        <div><span style="color: var(--op1-on-surface-variant);">协议</span><br><span style="color: var(--op1-on-surface);">TCP</span></div>
+                        <div><span style="color: var(--op1-on-surface-variant);">来源</span><br><span class="port-mono" style="color: var(--op1-on-surface); font-size: 13px;">0.0.0.0</span></div>
+                    </div>
+                    <div style="margin-top: 8px; font: var(--text-body-small); color: var(--op1-on-surface-variant);">HTTP</div>
+                    <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                        <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                        <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </div>
+                </div>
+                <!-- Card 3: HTTPS -->
+                <div class="rule-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="port-mono" style="font-size: 20px; color: var(--op1-on-surface);">443</span>
+                        <span class="chip chip-green">允许</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font: var(--text-body-small);">
+                        <div><span style="color: var(--op1-on-surface-variant);">协议</span><br><span style="color: var(--op1-on-surface);">TCP</span></div>
+                        <div><span style="color: var(--op1-on-surface-variant);">来源</span><br><span class="port-mono" style="color: var(--op1-on-surface); font-size: 13px;">0.0.0.0</span></div>
+                    </div>
+                    <div style="margin-top: 8px; font: var(--text-body-small); color: var(--op1-on-surface-variant);">HTTPS</div>
+                    <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                        <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                        <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </div>
+                </div>
+                <!-- Card 4: MySQL -->
+                <div class="rule-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="port-mono" style="font-size: 20px; color: var(--op1-on-surface);">3306</span>
+                        <span class="chip chip-red">拒绝</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font: var(--text-body-small);">
+                        <div><span style="color: var(--op1-on-surface-variant);">协议</span><br><span style="color: var(--op1-on-surface);">TCP</span></div>
+                        <div><span style="color: var(--op1-on-surface-variant);">来源</span><br><span class="port-mono" style="color: var(--op1-on-surface); font-size: 13px;">0.0.0.0</span></div>
+                    </div>
+                    <div style="margin-top: 8px; font: var(--text-body-small); color: var(--op1-on-surface-variant);">MySQL远程</div>
+                    <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                        <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                        <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </div>
+                </div>
+                <!-- Card 5: Redis -->
+                <div class="rule-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="port-mono" style="font-size: 20px; color: var(--op1-on-surface);">6379</span>
+                        <span class="chip chip-red">拒绝</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font: var(--text-body-small);">
+                        <div><span style="color: var(--op1-on-surface-variant);">协议</span><br><span style="color: var(--op1-on-surface);">TCP</span></div>
+                        <div><span style="color: var(--op1-on-surface-variant);">来源</span><br><span class="port-mono" style="color: var(--op1-on-surface); font-size: 13px;">0.0.0.0</span></div>
+                    </div>
+                    <div style="margin-top: 8px; font: var(--text-body-small); color: var(--op1-on-surface-variant);">Redis远程</div>
+                    <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                        <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                        <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </div>
+                </div>
+                <!-- Card 6: Dev -->
+                <div class="rule-card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span class="port-mono" style="font-size: 20px; color: var(--op1-on-surface);">8080</span>
+                        <span class="chip chip-green">允许</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font: var(--text-body-small);">
+                        <div><span style="color: var(--op1-on-surface-variant);">协议</span><br><span style="color: var(--op1-on-surface);">TCP</span></div>
+                        <div><span style="color: var(--op1-on-surface-variant);">来源</span><br><span class="port-mono" style="color: var(--op1-on-surface); font-size: 13px;">192.168.1.0/24</span></div>
+                    </div>
+                    <div style="margin-top: 8px; font: var(--text-body-small); color: var(--op1-on-surface-variant);">开发环境</div>
+                    <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                        <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                        <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Table -->
+            <div class="desktop-table" style="background: var(--op1-card); border: 1px solid var(--op1-outline-variant); border-radius: var(--op1-radius-card); overflow: hidden;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">端口 <svg class="sort-icon active" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></th>
+                            <th>协议</th>
+                            <th>策略</th>
+                            <th>来源</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="port-mono">22</span></td>
+                            <td>TCP</td>
+                            <td><span class="chip chip-green" style="padding: 3px 10px; font-size: 12px;">允许</span></td>
+                            <td><span class="port-mono" style="font-size: 13px;">0.0.0.0</span></td>
+                            <td>SSH</td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="port-mono">80</span></td>
+                            <td>TCP</td>
+                            <td><span class="chip chip-green" style="padding: 3px 10px; font-size: 12px;">允许</span></td>
+                            <td><span class="port-mono" style="font-size: 13px;">0.0.0.0</span></td>
+                            <td>HTTP</td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="port-mono">443</span></td>
+                            <td>TCP</td>
+                            <td><span class="chip chip-green" style="padding: 3px 10px; font-size: 12px;">允许</span></td>
+                            <td><span class="port-mono" style="font-size: 13px;">0.0.0.0</span></td>
+                            <td>HTTPS</td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="port-mono">3306</span></td>
+                            <td>TCP</td>
+                            <td><span class="chip chip-red" style="padding: 3px 10px; font-size: 12px;">拒绝</span></td>
+                            <td><span class="port-mono" style="font-size: 13px;">0.0.0.0</span></td>
+                            <td>MySQL远程</td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="port-mono">6379</span></td>
+                            <td>TCP</td>
+                            <td><span class="chip chip-red" style="padding: 3px 10px; font-size: 12px;">拒绝</span></td>
+                            <td><span class="port-mono" style="font-size: 13px;">0.0.0.0</span></td>
+                            <td>Redis远程</td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="port-mono">8080</span></td>
+                            <td>TCP</td>
+                            <td><span class="chip chip-green" style="padding: 3px 10px; font-size: 12px;">允许</span></td>
+                            <td><span class="port-mono" style="font-size: 13px;">192.168.1.0/24</span></td>
+                            <td>开发环境</td>
+                            <td>
+                                <div style="display: flex; gap: 4px;">
+                                    <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                    <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========== IP Rules Tab ========== -->
+        <div class="tab-panel" id="tab-ip-rules">
+            <div style="margin-top: 16px;">
+                <!-- Mobile cards -->
+                <div class="mobile-cards">
+                    <div class="rule-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span class="port-mono" style="font-size: 18px;">203.0.113.50</span>
+                            <span class="chip chip-red">拒绝</span>
+                        </div>
+                        <div style="font: var(--text-body-small); color: var(--op1-on-surface-variant);">疑似攻击IP</div>
+                        <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                            <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                            <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span class="port-mono" style="font-size: 18px;">10.0.0.0/8</span>
+                            <span class="chip chip-green">允许</span>
+                        </div>
+                        <div style="font: var(--text-body-small); color: var(--op1-on-surface-variant);">内网段</div>
+                        <div style="display: flex; gap: 4px; margin-top: 12px; justify-content: flex-end;">
+                            <button class="action-btn" title="编辑"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                            <button class="action-btn" title="删除"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Desktop table -->
+                <div class="desktop-table" style="background: var(--op1-card); border: 1px solid var(--op1-outline-variant); border-radius: var(--op1-radius-card); overflow: hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>IP 地址</th>
+                                <th>策略</th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="port-mono" style="font-size: 14px;">203.0.113.50</span></td>
+                                <td><span class="chip chip-red" style="padding: 3px 10px; font-size: 12px;">拒绝</span></td>
+                                <td>疑似攻击IP</td>
+                                <td>
+                                    <div style="display: flex; gap: 4px;">
+                                        <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                        <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="port-mono" style="font-size: 14px;">10.0.0.0/8</span></td>
+                                <td><span class="chip chip-green" style="padding: 3px 10px; font-size: 12px;">允许</span></td>
+                                <td>内网段</td>
+                                <td>
+                                    <div style="display: flex; gap: 4px;">
+                                        <button class="action-btn" title="编辑"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg></button>
+                                        <button class="action-btn" title="删除"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== System Services Tab ========== -->
+        <div class="tab-panel" id="tab-sys-services">
+            <div style="margin-top: 16px;">
+                <div class="mobile-cards">
+                    <div class="rule-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: var(--op1-radius-md); background: var(--op1-primary-container); display: flex; align-items: center; justify-content: center;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--op1-on-primary-container)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font: var(--text-title-small);">SSH</div>
+                                    <div style="font: var(--text-body-small); color: var(--op1-on-surface-variant);">端口 22</div>
+                                </div>
+                            </div>
+                            <span class="chip chip-green" style="padding: 4px 10px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>
+                                运行中
+                            </span>
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: var(--op1-radius-md); background: var(--op1-primary-container); display: flex; align-items: center; justify-content: center;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--op1-on-primary-container)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M15.05 5a5 5 0 0 1 3.95 3.95"/><path d="M15.05 1a9 9 0 0 1 7.95 7.95"/><path d="M10.5 14.5 2 22l1.5-8.5"/><path d="M22 2l-8.5 1.5"/><path d="m22 2-7.5 7.5"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font: var(--text-title-small);">Docker API</div>
+                                    <div style="font: var(--text-body-small); color: var(--op1-on-surface-variant);">端口 2375/2376</div>
+                                </div>
+                            </div>
+                            <span class="chip chip-green" style="padding: 4px 10px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>
+                                运行中
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="desktop-table" style="background: var(--op1-card); border: 1px solid var(--op1-outline-variant); border-radius: var(--op1-radius-card); overflow: hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>服务名称</th>
+                                <th>端口</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font: var(--text-title-small);">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: var(--op1-radius-sm); background: var(--op1-primary-container); display: flex; align-items: center; justify-content: center;">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--op1-on-primary-container)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+                                            </svg>
+                                        </div>
+                                        SSH
+                                    </div>
+                                </td>
+                                <td><span class="port-mono">22</span></td>
+                                <td><span class="chip chip-green" style="padding: 4px 12px;">运行中</span></td>
+                            </tr>
+                            <tr>
+                                <td style="font: var(--text-title-small);">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 36px; height: 36px; border-radius: var(--op1-radius-sm); background: var(--op1-primary-container); display: flex; align-items: center; justify-content: center;">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--op1-on-primary-container)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M15.05 5a5 5 0 0 1 3.95 3.95"/><path d="M15.05 1a9 9 0 0 1 7.95 7.95"/><path d="M10.5 14.5 2 22l1.5-8.5"/><path d="M22 2l-8.5 1.5"/><path d="m22 2-7.5 7.5"/>
+                                            </svg>
+                                        </div>
+                                        Docker API
+                                    </div>
+                                </td>
+                                <td><span class="port-mono">2375/2376</span></td>
+                                <td><span class="chip chip-green" style="padding: 4px 12px;">运行中</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" title="添加规则">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+    <div style="position: fixed; bottom: 88px; right: 20px; background: var(--op1-inverse-surface); color: var(--op1-inverse-on-surface); padding: 6px 14px; border-radius: var(--op1-radius-full); font: var(--text-label-small); box-shadow: var(--elevation-2); pointer-events: none;">+ 添加规则</div>
+
+    <script>
+        // Toggle firewall switch
+        function toggleSwitch() {
+            const sw = document.getElementById('firewallSwitch');
+            const label = document.getElementById('switchLabel');
+            const chip = document.getElementById('statusChip');
+            const isChecked = sw.getAttribute('aria-checked') === 'true';
+            sw.setAttribute('aria-checked', !isChecked);
+            if (!isChecked) {
+                label.textContent = '已开启';
+                label.style.color = 'var(--op1-primary)';
+                chip.className = 'chip chip-green';
+                chip.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> 已启用 18 条规则';
+            } else {
+                label.textContent = '已关闭';
+                label.style.color = 'var(--op1-on-surface-variant)';
+                chip.className = 'chip chip-gray';
+                chip.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> 已禁用';
+            }
+        }
+
+        // Tab switching
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        // Table sort (basic visual toggle)
+        let sortAsc = true;
+        function sortTable(colIdx) {
+            sortAsc = !sortAsc;
+            const icons = document.querySelectorAll('.sort-icon');
+            icons.forEach(i => i.classList.remove('active'));
+            // Toggle arrow direction visual only
+        }
+    </script>
+
+    <style>
+        /* Switch toggle */
+        .switch-track {
+            width: 52px; height: 32px; border-radius: 16px;
+            background: var(--op1-outline-variant);
+            position: relative; cursor: pointer;
+            transition: background var(--op1-motion-normal);
+        }
+        .switch-track[aria-checked="true"] {
+            background: var(--op1-primary);
+        }
+        .switch-thumb {
+            width: 24px; height: 24px; border-radius: 12px;
+            background: var(--op1-surface-container-lowest);
+            position: absolute; top: 4px; left: 4px;
+            transition: transform var(--op1-motion-normal);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .switch-track[aria-checked="true"] .switch-thumb {
+            transform: translateX(20px);
+        }
+        /* Tab bar */
+        .tab-bar {
+            display: flex; gap: 0;
+            border-bottom: 1px solid var(--op1-outline-variant);
+        }
+        .tab-item {
+            padding: 14px 24px;
+            font: var(--text-label-large);
+            color: var(--op1-on-surface-variant);
+            cursor: pointer;
+            position: relative;
+            border: none; background: none;
+            transition: color var(--op1-motion-fast);
+        }
+        .tab-item:hover { color: var(--op1-on-surface); background: var(--op1-surface-container); }
+        .tab-item.active {
+            color: var(--op1-primary);
+            font-weight: 600;
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute; bottom: -1px; left: 16px; right: 16px;
+            height: 3px; border-radius: 3px 3px 0 0;
+            background: var(--op1-primary);
+        }
+        /* Chip */
+        .chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: var(--op1-radius-full);
+            font: var(--text-label-medium);
+            font-size: 12px;
+            border: 1px solid var(--op1-outline-variant);
+            background: var(--op1-surface-container-lowest);
+            color: var(--op1-on-surface-variant);
+        }
+        .chip-green {
+            background: #E8F5EE; border-color: #A8DCBC; color: #055A2B;
+        }
+        .chip-red {
+            background: #FFDAD6; border-color: #FFB4AB; color: #410002;
+        }
+        .chip-gray {
+            background: var(--op1-surface-container-high); border-color: var(--op1-outline-variant); color: var(--op1-on-surface-variant);
+        }
+        /* FAB */
+        .fab {
+            position: fixed; bottom: 24px; right: 24px;
+            width: 56px; height: 56px; border-radius: 9999px;
+            background: var(--op1-primary-container);
+            color: var(--op1-on-primary-container);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: none;
+            box-shadow: var(--elevation-3);
+            transition: box-shadow var(--op1-motion-fast), transform var(--op1-motion-fast);
+        }
+        .fab:hover { box-shadow: 0 6px 14px 4px rgba(0,0,0,0.08); transform: scale(1.04); }
+        /* Table styles */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th {
+            font: var(--text-label-medium);
+            color: var(--op1-on-surface-variant);
+            text-align: left; padding: 12px 16px;
+            background: var(--op1-surface-container-low);
+            border-bottom: 1px solid var(--op1-outline-variant);
+            cursor: pointer; user-select: none;
+        }
+        .data-table th:hover { color: var(--op1-on-surface); }
+        .data-table th:first-child { border-radius: var(--op1-radius-card) 0 0 0; }
+        .data-table th:last-child { border-radius: 0 var(--op1-radius-card) 0 0; }
+        .data-table td {
+            padding: 14px 16px; border-bottom: 1px solid var(--op1-outline-variant);
+            font: var(--text-body-medium);
+            color: var(--op1-on-surface);
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: var(--op1-surface-container-low); }
+        /* Mobile card */
+        .rule-card {
+            background: var(--op1-card);
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-card);
+            padding: 16px;
+            margin-bottom: 8px;
+        }
+        .rule-card:hover { background: var(--op1-surface-container-low); }
+        /* Monospace port */
+        .port-mono { font-family: var(--font-family-mono); font-weight: 500; }
+        /* Sort icon */
+        .sort-icon { display: inline-block; margin-left: 4px; opacity: 0.4; vertical-align: middle; }
+        .sort-icon.active { opacity: 1; color: var(--op1-primary); }
+        /* Action button */
+        .action-btn {
+            width: 32px; height: 32px; border-radius: var(--op1-radius-full);
+            border: none; background: transparent; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--op1-on-surface-variant);
+            transition: background var(--op1-motion-fast);
+        }
+        .action-btn:hover { background: var(--op1-surface-container-high); }
+        /* Stat card */
+        .stat-card {
+            background: var(--op1-card);
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-card);
+            padding: 16px 20px;
+            flex: 1; min-width: 140px;
+        }
+        /* Breakpoint labels */
+        .bp-label {
+            display: none; padding: 4px 10px; border-radius: var(--op1-radius-full);
+            font: var(--text-label-small); font-size: 10px;
+            background: var(--op1-primary-container);
+            color: var(--op1-on-primary-container);
+        }
+        /* Responsive */
+        @media (max-width: 599px) {
+            .bp-mobile { display: inline-flex; }
+            .desktop-table { display: none; }
+            .mobile-cards { display: block; }
+        }
+        @media (min-width: 600px) and (max-width: 1023px) {
+            .bp-tablet { display: inline-flex; }
+            .desktop-table { display: none; }
+            .mobile-cards { display: block; }
+        }
+        @media (min-width: 1024px) {
+            .bp-desktop { display: inline-flex; }
+            .desktop-table { display: block; }
+            .mobile-cards { display: none; }
+        }
+        /* Tab panel */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+    </style>
+</body>
+</html>

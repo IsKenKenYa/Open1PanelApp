@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>容器管理 - 1Panel Client</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<!-- Top App Bar -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <h1>容器管理</h1>
+
+    <div class="summary-chips">
+      <span class="summary-chip running"><span class="dot"></span>运行中 12</span>
+      <span class="summary-chip stopped"><span class="dot"></span>已停止 3</span>
+      <span class="summary-chip paused"><span class="dot"></span>暂停 1</span>
+    </div>
+
+    <nav class="sub-nav">
+      <span class="filter-chip active">容器</span>
+      <span class="filter-chip">镜像</span>
+      <span class="filter-chip">网络</span>
+      <span class="filter-chip">卷</span>
+      <span class="filter-chip">Compose</span>
+      <span class="filter-chip">仓库</span>
+      <span class="filter-chip">模板</span>
+    </nav>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Breakpoint indicator -->
+  <div class="bp-labels">
+    <span class="bp-label bp-mobile current">&lt;600px Mobile</span>
+    <span class="bp-label bp-tablet">600-1023px Tablet</span>
+    <span class="bp-label bp-desktop">&ge;1024px Desktop</span>
+  </div>
+
+  <!-- Card Grid -->
+  <div class="card-grid">
+
+    <!-- Card 1: nginx-proxy -->
+    <div class="container-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="status-chip running"><span class="status-dot"></span>运行中</span>
+          <span class="card-name">nginx-proxy</span>
+          <span class="card-image">nginx:latest</span>
+        </div>
+        <button class="more-btn" aria-label="更多操作">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="resource-section">
+        <div class="resource-row">
+          <span class="resource-label">CPU</span>
+          <div class="resource-track"><div class="resource-fill cpu" style="width:21%"></div></div>
+          <span class="resource-value">2.1%</span>
+        </div>
+        <div class="resource-row">
+          <span class="resource-label">内存</span>
+          <div class="resource-track"><div class="resource-fill mem" style="width:6.4%"></div></div>
+          <span class="resource-value">128MB</span>
+        </div>
+      </div>
+      <div class="port-chips">
+        <span class="port-chip">80:80</span>
+        <span class="port-chip">443:443</span>
+      </div>
+    </div>
+
+    <!-- Card 2: mysql-db -->
+    <div class="container-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="status-chip running"><span class="status-dot"></span>运行中</span>
+          <span class="card-name">mysql-db</span>
+          <span class="card-image">mysql:8.0</span>
+        </div>
+        <button class="more-btn" aria-label="更多操作">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="resource-section">
+        <div class="resource-row">
+          <span class="resource-label">CPU</span>
+          <div class="resource-track"><div class="resource-fill cpu" style="width:53%"></div></div>
+          <span class="resource-value">5.3%</span>
+        </div>
+        <div class="resource-row">
+          <span class="resource-label">内存</span>
+          <div class="resource-track"><div class="resource-fill mem" style="width:60%"></div></div>
+          <span class="resource-value">1.2GB</span>
+        </div>
+      </div>
+      <div class="port-chips">
+        <span class="port-chip">3306:3306</span>
+      </div>
+    </div>
+
+    <!-- Card 3: redis-cache -->
+    <div class="container-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="status-chip running"><span class="status-dot"></span>运行中</span>
+          <span class="card-name">redis-cache</span>
+          <span class="card-image">redis:7-alpine</span>
+        </div>
+        <button class="more-btn" aria-label="更多操作">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="resource-section">
+        <div class="resource-row">
+          <span class="resource-label">CPU</span>
+          <div class="resource-track"><div class="resource-fill cpu" style="width:8%"></div></div>
+          <span class="resource-value">0.8%</span>
+        </div>
+        <div class="resource-row">
+          <span class="resource-label">内存</span>
+          <div class="resource-track"><div class="resource-fill mem" style="width:3.2%"></div></div>
+          <span class="resource-value">64MB</span>
+        </div>
+      </div>
+      <div class="port-chips">
+        <span class="port-chip">6379:6379</span>
+      </div>
+    </div>
+
+    <!-- Card 4: app-backend (Stopped) -->
+    <div class="container-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="status-chip stopped"><span class="status-dot"></span>已停止</span>
+          <span class="card-name">app-backend</span>
+          <span class="card-image">node:18-alpine</span>
+        </div>
+        <button class="more-btn" aria-label="更多操作">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="resource-section" style="opacity:0.45">
+        <div class="resource-row">
+          <span class="resource-label">CPU</span>
+          <div class="resource-track"><div class="resource-fill cpu" style="width:0%"></div></div>
+          <span class="resource-value">--</span>
+        </div>
+        <div class="resource-row">
+          <span class="resource-label">内存</span>
+          <div class="resource-track"><div class="resource-fill mem" style="width:0%"></div></div>
+          <span class="resource-value">--</span>
+        </div>
+      </div>
+      <div class="port-chips" style="opacity:0.55">
+        <span class="port-chip">3000:3000</span>
+      </div>
+    </div>
+
+    <!-- Card 5: postgres-main -->
+    <div class="container-card">
+      <div class="card-header">
+        <div class="card-header-left">
+          <span class="status-chip running"><span class="status-dot"></span>运行中</span>
+          <span class="card-name">postgres-main</span>
+          <span class="card-image">postgres:15</span>
+        </div>
+        <button class="more-btn" aria-label="更多操作">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="resource-section">
+        <div class="resource-row">
+          <span class="resource-label">CPU</span>
+          <div class="resource-track"><div class="resource-fill cpu" style="width:32%"></div></div>
+          <span class="resource-value">3.2%</span>
+        </div>
+        <div class="resource-row">
+          <span class="resource-label">内存</span>
+          <div class="resource-track"><div class="resource-fill mem" style="width:25%"></div></div>
+          <span class="resource-value">512MB</span>
+        </div>
+      </div>
+      <div class="port-chips">
+        <span class="port-chip">5432:5432</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" aria-label="创建容器">
+  <span class="fab-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </span>
+  创建容器
+</button>
+
+<script>
+// Breakpoint label auto-switch
+function updateBpLabel() {
+  const w = window.innerWidth;
+  const labels = document.querySelectorAll('.bp-label');
+  labels.forEach(l => l.classList.remove('current'));
+  if (w < 600)       document.querySelector('.bp-mobile').classList.add('current');
+  else if (w < 1024) document.querySelector('.bp-tablet').classList.add('current');
+  else               document.querySelector('.bp-desktop').classList.add('current');
+}
+updateBpLabel();
+window.addEventListener('resize', updateBpLabel);
+</script>
+
+
+    <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #0C9B4B;
+  --primary-container: #C8E8D4;
+  --on-primary-container: #055A2B;
+  --card-bg: #FFFFFF;
+  --border: #C4C7CF;
+  --on-surface: #1A1C1E;
+  --on-surface-variant: #44474E;
+  --surface: #FAFBFC;
+  --surface-container: #EEF0F3;
+  --outline-variant: #C4C7CF;
+  --radius: 16px;
+  --radius-full: 9999px;
+  --font: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Menlo', monospace;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--surface);
+  color: var(--on-surface);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Top App Bar ---- */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px 0;
+}
+.top-bar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.top-bar h1 {
+  font: 500 22px/28px var(--font);
+  color: var(--on-surface);
+}
+
+/* ---- Summary Chips ---- */
+.summary-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.summary-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font: 500 13px/18px var(--font);
+  white-space: nowrap;
+}
+.summary-chip.running  { background: #E8F5EE; color: #055A2B; }
+.summary-chip.stopped { background: #E8EAED; color: #44474E; }
+.summary-chip.paused  { background: #FEF3C7; color: #92400E; }
+.summary-chip .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.summary-chip.running .dot  { background: #16A34A; }
+.summary-chip.stopped .dot  { background: #9CA3AF; }
+.summary-chip.paused .dot   { background: #F59E0B; }
+
+/* ---- Sub Navigation (FilterChip row) ---- */
+.sub-nav {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.sub-nav::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex-shrink: 0;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font: 500 14px/20px var(--font);
+  border: 1px solid var(--outline-variant);
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  transition: background 180ms, color 180ms, border-color 180ms;
+  user-select: none;
+}
+.filter-chip:hover { background: rgba(12,155,75,0.08); }
+.filter-chip.active {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border-color: var(--primary-container);
+}
+
+/* ---- Content Area ---- */
+.content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 24px 100px;
+}
+
+/* ---- Breakpoint Labels ---- */
+.bp-labels {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.bp-label {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font: 500 11px/14px var(--mono);
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+}
+.bp-label.current {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+/* ---- Responsive Grid ---- */
+.card-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 600px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .card-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---- Container Card ---- */
+.container-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 200ms;
+  position: relative;
+}
+.container-card:hover {
+  box-shadow: 0 2px 6px 2px rgba(0,0,0,0.06);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font: 500 11px/14px var(--font);
+  width: fit-content;
+}
+.status-chip.running  { background: #E8F5EE; color: #055A2B; }
+.status-chip.stopped  { background: #E8EAED; color: #44474E; }
+.status-chip .status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.status-chip.running .status-dot { background: #16A34A; }
+.status-chip.stopped .status-dot { background: #9CA3AF; }
+
+.card-name {
+  font: 600 16px/22px var(--font);
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-image {
+  font: 400 13px/18px var(--mono);
+  color: var(--on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3-dot menu */
+.more-btn {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface-variant);
+  transition: background 150ms;
+}
+.more-btn:hover { background: var(--surface-container); }
+.more-btn svg { display: block; }
+
+/* ---- Resource Bars ---- */
+.resource-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.resource-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.resource-label {
+  font: 500 11px/14px var(--font);
+  color: var(--on-surface-variant);
+  width: 32px;
+  flex-shrink: 0;
+}
+.resource-track {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-container);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.resource-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 600ms cubic-bezier(0.2, 0, 0, 1);
+}
+.resource-fill.cpu { background: var(--primary); }
+.resource-fill.mem { background: #0EA5E9; }
+.resource-value {
+  font: 500 11px/14px var(--mono);
+  color: var(--on-surface-variant);
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ---- Port Chips ---- */
+.port-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.port-chip {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  font: 400 11px/14px var(--mono);
+  white-space: nowrap;
+}
+
+/* ---- FAB ---- */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px;
+  height: 56px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: #fff;
+  font: 500 14px/20px var(--font);
+  cursor: pointer;
+  box-shadow: 0 3px 8px 2px rgba(12,155,75,0.25);
+  transition: box-shadow 200ms, transform 200ms;
+}
+.fab:hover {
+  box-shadow: 0 6px 16px 4px rgba(12,155,75,0.30);
+  transform: translateY(-1px);
+}
+.fab:active { transform: scale(0.97); }
+.fab-icon {
+  width: 24px; height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Responsive helpers for bp labels ---- */
+@media (max-width: 599px)  { .bp-mobile  { display: inline-flex !important; } .bp-tablet, .bp-desktop { display: none !important; } }
+@media (min-width: 600px) and (max-width: 1023px) { .bp-tablet  { display: inline-flex !important; } .bp-mobile, .bp-desktop { display: none !important; } }
+@media (min-width: 1024px) { .bp-desktop { display: inline-flex !important; } .bp-mobile, .bp-tablet  { display: none !important; } }
+</style>
+</body>
+</html>

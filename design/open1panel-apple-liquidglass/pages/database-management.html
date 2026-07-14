@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1Panel Client - 数据库管理</title>
+  <style id="theme-vars">
+    /* ============================================================
+       Open1Panel — Apple Liquid Glass Design Tokens
+       ============================================================ */
+    :root {
+      /* Brand */
+      --op1-brand: #0C9B4B;
+      --op1-brand-light: #4DB87A;
+      --op1-brand-dark: #087A3A;
+      --op1-brand-50: #E8F5EE;
+      --op1-brand-100: #C8E8D4;
+      --op1-brand-500: #0C9B4B;
+      --op1-brand-700: #087A3A;
+      --op1-brand-900: #055A2B;
+
+      /* Semantic */
+      --op1-success: #16A34A;
+      --op1-warning: #F59E0B;
+      --op1-danger: #DC2626;
+      --op1-info: #0EA5E9;
+
+      /* Glass material */
+      --op1-glass-blur: 40px;
+      --op1-glass-saturate: 180%;
+      --op1-glass-alpha: 0.65;
+      --op1-glass-alpha-elevated: 0.85;
+      --op1-glass-border-alpha: 0.20;
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.6);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(31,38,135,0.15);
+
+      /* Surface */
+      --op1-surface: rgba(255,255,255,0.15);
+      --op1-surface-elevated: rgba(255,255,255,0.40);
+      --op1-surface-card: rgba(255,255,255,0.20);
+      --op1-surface-nav: rgba(255,255,255,0.65);
+      --op1-surface-popover: rgba(255,255,255,0.50);
+      --op1-surface-container-low: rgba(255,255,255,0.10);
+      --op1-surface-container: rgba(255,255,255,0.15);
+      --op1-surface-container-high: rgba(255,255,255,0.25);
+
+      /* On-Surface */
+      --op1-on-surface: rgba(0,0,0,0.85);
+      --op1-on-surface-variant: rgba(0,0,0,0.55);
+      --op1-on-surface-nav: rgba(0,0,0,0.75);
+      --op1-on-surface-card: rgba(0,0,0,0.85);
+
+      /* Navigation */
+      --op1-nav-sidebar-width: 260px;
+      --op1-nav-tab-height: 49px;
+
+      /* Typography */
+      --op1-font-family: system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --op1-font-family-mono: 'SF Mono', ui-monospace, Menlo, monospace;
+
+      /* Radius */
+      --op1-radius-sm: 12px;
+      --op1-radius-md: 16px;
+      --op1-radius-lg: 20px;
+      --op1-radius-card: 22px;
+      --op1-radius-button: 9999px;
+      --op1-radius-full: 9999px;
+
+      /* Spacing */
+      --op1-spacing-xs: 4px;
+      --op1-spacing-sm: 8px;
+      --op1-spacing-md: 12px;
+      --op1-spacing-lg: 16px;
+      --op1-spacing-xl: 24px;
+
+      /* Motion */
+      --op1-motion-fast: 200ms;
+      --op1-motion-normal: 350ms;
+      --op1-motion-slow: 500ms;
+      --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      /* Border */
+      --op1-border: rgba(0,0,0,0.08);
+      --op1-border-strong: rgba(0,0,0,0.15);
+
+      /* Error */
+      --op1-error: #FF3B30;
+
+      /* Background gradient */
+      --op1-bg-gradient-start: #667eea;
+      --op1-bg-gradient-end: #764ba2;
+    }
+
+    /* ----- Dark Mode ----- */
+    .dark {
+      --op1-brand-light: #3DA06A;
+      --op1-brand-50: rgba(12,155,75,0.15);
+      --op1-brand-100: rgba(12,155,75,0.25);
+
+      --op1-surface: rgba(0,0,0,0.25);
+      --op1-surface-elevated: rgba(0,0,0,0.50);
+      --op1-surface-card: rgba(0,0,0,0.35);
+      --op1-surface-nav: rgba(0,0,0,0.60);
+      --op1-surface-popover: rgba(0,0,0,0.45);
+      --op1-surface-container-low: rgba(0,0,0,0.15);
+      --op1-surface-container: rgba(0,0,0,0.25);
+      --op1-surface-container-high: rgba(0,0,0,0.40);
+
+      --op1-on-surface: rgba(255,255,255,0.90);
+      --op1-on-surface-variant: rgba(255,255,255,0.60);
+      --op1-on-surface-nav: rgba(255,255,255,0.80);
+      --op1-on-surface-card: rgba(255,255,255,0.90);
+
+      --op1-border: rgba(255,255,255,0.10);
+      --op1-border-strong: rgba(255,255,255,0.20);
+
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.15);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(0,0,0,0.40);
+
+      --op1-bg-gradient-start: #1a1a2e;
+      --op1-bg-gradient-end: #16213e;
+    }
+
+    /* ============================================================
+       Base styles
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--op1-font-family);
+      background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+      min-height: 100vh;
+      color: var(--op1-on-surface);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       Layout: macOS (>= 768px)
+       ============================================================ */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ----- Sidebar ----- */
+    .sidebar {
+      width: var(--op1-nav-sidebar-width);
+      min-width: var(--op1-nav-sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-right: 1px solid var(--op1-glass-border-alpha);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding-bottom: var(--op1-spacing-md);
+      border-bottom: 1px solid var(--op1-border);
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--op1-brand);
+      border-radius: var(--op1-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-server-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .sidebar-server-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--op1-on-surface-nav);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-server-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--op1-on-surface-variant);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.6);
+      flex-shrink: 0;
+    }
+
+    .sidebar-search {
+      position: relative;
+    }
+    .sidebar-search input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--op1-spacing-md) 0 36px;
+      border: none;
+      border-radius: var(--op1-radius-sm);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 13px;
+      font-family: var(--op1-font-family);
+      outline: none;
+    }
+    .sidebar-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .sidebar-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 16px;
+      height: 16px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      margin-top: var(--op1-spacing-sm);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: 10px var(--op1-spacing-md);
+      border-radius: var(--op1-radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--op1-on-surface-nav);
+      cursor: pointer;
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease;
+      text-decoration: none;
+      position: relative;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: var(--op1-surface-container-high);
+    }
+    .nav-item.active {
+      background: rgba(12,155,75,0.85);
+      color: #fff;
+    }
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--op1-on-surface-variant);
+      transition: color var(--op1-motion-fast) ease;
+    }
+    .nav-item.active svg {
+      color: #fff;
+    }
+
+    .sidebar-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--op1-spacing-md);
+      border-top: 1px solid var(--op1-border);
+      gap: var(--op1-spacing-sm);
+    }
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .footer-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .footer-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+    }
+    .footer-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .footer-btn.active-theme svg {
+      color: var(--op1-warning);
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ----- Content area ----- */
+    .content-area {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--op1-spacing-xl);
+    }
+
+    .mobile-header {
+      display: none;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+      color: var(--op1-on-surface);
+    }
+    .mobile-header .sidebar-server-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--op1-on-surface);
+    }
+
+    /* ============================================================
+       Glass Card base
+       ============================================================ */
+    .glass-card {
+      background: var(--op1-surface-card);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.30);
+      box-shadow: var(--op1-glass-highlight-inset);
+      border-radius: var(--op1-radius-card);
+      padding: var(--op1-spacing-xl);
+      transition: transform var(--op1-motion-normal) var(--op1-easing-spring),
+                  box-shadow var(--op1-motion-normal) ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--op1-glass-highlight-inset), var(--op1-glass-shadow-outer);
+    }
+
+    /* ============================================================
+       Page Header: title + search + add button
+       ============================================================ */
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      margin-bottom: var(--op1-spacing-xl);
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface);
+      white-space: nowrap;
+    }
+    .page-search {
+      position: relative;
+      flex: 1;
+      min-width: 180px;
+      max-width: 360px;
+    }
+    .page-search input {
+      width: 100%;
+      height: 40px;
+      padding: 0 var(--op1-spacing-lg) 0 40px;
+      border: 1px solid var(--op1-border-strong);
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 14px;
+      font-family: var(--op1-font-family);
+      outline: none;
+      transition: border-color var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+    }
+    .page-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .page-search input:focus {
+      border-color: var(--op1-brand);
+      box-shadow: 0 0 0 3px rgba(12,155,75,0.18);
+    }
+    .page-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+    }
+    .btn-add-database {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      height: 40px;
+      padding: 0 20px;
+      border: none;
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-brand);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--op1-font-family);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+    }
+    .btn-add-database:hover {
+      background: var(--op1-brand-dark);
+      transform: scale(1.03);
+    }
+    .btn-add-database:active {
+      transform: scale(0.97);
+    }
+    .btn-add-database svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================================
+       Segmented Control (iOS capsule style)
+       ============================================================ */
+    .segmented-control {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: var(--op1-radius-button);
+      margin-bottom: var(--op1-spacing-xl);
+    }
+    .segment-btn {
+      height: 36px;
+      padding: 0 20px;
+      border: none;
+      border-radius: var(--op1-radius-button);
+      background: transparent;
+      color: var(--op1-on-surface-variant);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--op1-font-family);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+    }
+    .segment-btn:hover:not(.active) {
+      color: var(--op1-on-surface);
+    }
+    .segment-btn.active {
+      background: var(--op1-brand);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(12,155,75,0.35);
+    }
+
+    /* ============================================================
+       Database List
+       ============================================================ */
+    .db-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--op1-spacing-lg);
+      margin-bottom: var(--op1-spacing-xl);
+    }
+    .db-card {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--op1-spacing-lg);
+      padding: var(--op1-spacing-lg) var(--op1-spacing-xl);
+    }
+    .db-card:hover {
+      transform: translateY(-2px);
+    }
+    .db-info {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-lg);
+      min-width: 0;
+      flex: 1;
+    }
+    .db-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--op1-radius-md);
+      background: rgba(12,155,75,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .db-icon-wrapper svg {
+      width: 24px;
+      height: 24px;
+      color: var(--op1-brand);
+    }
+    .db-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .db-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--op1-on-surface-card);
+      word-break: break-all;
+    }
+    .db-detail-row {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      flex-wrap: wrap;
+    }
+    .db-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--op1-on-surface-variant);
+      background: var(--op1-surface-container-low);
+      padding: 2px 10px;
+      border-radius: var(--op1-radius-button);
+    }
+    .db-tag svg {
+      width: 13px;
+      height: 13px;
+    }
+    .db-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: var(--op1-radius-button);
+    }
+    .db-status.online {
+      color: var(--op1-success);
+      background: rgba(22,163,74,0.12);
+    }
+    .db-status.offline {
+      color: var(--op1-on-surface-variant);
+      background: var(--op1-surface-container-low);
+    }
+    .db-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .db-status.online .db-status-dot {
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.5);
+    }
+    .db-status.offline .db-status-dot {
+      background: var(--op1-on-surface-variant);
+    }
+
+    .db-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      flex-shrink: 0;
+    }
+    .db-action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid var(--op1-border);
+      background: var(--op1-surface-container);
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease,
+                  border-color var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+    }
+    .db-action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    .db-action-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+      border-color: var(--op1-border-strong);
+    }
+    .db-action-btn.backup:hover {
+      background: rgba(12,155,75,0.12);
+      color: var(--op1-brand);
+      border-color: rgba(12,155,75,0.30);
+    }
+    .db-action-btn.delete:hover {
+      background: rgba(220,38,38,0.12);
+      color: var(--op1-danger);
+      border-color: rgba(220,38,38,0.30);
+    }
+    .db-action-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* ============================================================
+       Stats Card
+       ============================================================ */
+    .stats-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--op1-spacing-xl);
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface-card);
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+    }
+    .stat-divider {
+      width: 1px;
+      background: var(--op1-border-strong);
+      align-self: stretch;
+    }
+
+    /* ============================================================
+       Bottom Tab Bar (iOS, < 768px)
+       ============================================================ */
+    .bottom-tab-bar {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      height: var(--op1-nav-tab-height);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-radius: var(--op1-radius-lg);
+      border: 1px solid rgba(255,255,255,0.20);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 var(--op1-spacing-sm);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      color: var(--op1-on-surface-variant);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--op1-radius-sm);
+      transition: color var(--op1-motion-fast) ease;
+      background: transparent;
+      border: none;
+      font-family: var(--op1-font-family);
+    }
+    .tab-item.active {
+      color: var(--op1-brand);
+    }
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ============================================================
+       Responsive: iOS (< 768px)
+       ============================================================ */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .bottom-tab-bar {
+        display: flex;
+      }
+      .content-area {
+        padding: var(--op1-spacing-md) var(--op1-spacing-md) calc(var(--op1-nav-tab-height) + 40px);
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .page-title {
+        font-size: 22px;
+      }
+      .page-search {
+        max-width: 100%;
+      }
+      .segmented-control {
+        width: 100%;
+        justify-content: center;
+      }
+      .db-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .db-actions {
+        justify-content: flex-end;
+        padding-top: var(--op1-spacing-sm);
+        border-top: 1px solid var(--op1-border);
+      }
+      .stats-card {
+        grid-template-columns: 1fr;
+      }
+      .stat-divider {
+        display: none;
+      }
+    }
+
+    /* ============================================================
+       Scrollbar
+       ============================================================ */
+    .content-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content-area::-webkit-scrollbar-thumb {
+      background: var(--op1-surface-container-high);
+      border-radius: 3px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ============================================================
+         macOS Sidebar (>= 768px)
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+        <div class="sidebar-logo">1P</div>
+        <div class="sidebar-server-info">
+          <span class="sidebar-server-name">生产服务器</span>
+          <span class="sidebar-server-status">
+            <span class="status-dot"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <div class="sidebar-search">
+        <i data-lucide="search" class="sidebar-search-icon"></i>
+        <input type="text" placeholder="搜索功能..." />
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>仪表板</span>
+        </button>
+        <button class="nav-item" data-page="containers">
+          <i data-lucide="box"></i>
+          <span>容器</span>
+        </button>
+        <button class="nav-item" data-page="databases">
+          <i data-lucide="database"></i>
+          <span>数据库</span>
+        </button>
+        <button class="nav-item" data-page="files">
+          <i data-lucide="folder-open"></i>
+          <span>文件</span>
+        </button>
+        <button class="nav-item" data-page="websites">
+          <i data-lucide="globe"></i>
+          <span>网站</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <i data-lucide="settings"></i>
+          <span>设置</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="footer-actions">
+          <button class="footer-btn active-theme" id="themeToggleSidebar" onclick="toggleTheme()" title="切换主题">
+            <i data-lucide="sun"></i>
+          </button>
+          <button class="footer-btn" title="切换渲染模式">
+            <i data-lucide="monitor"></i>
+          </button>
+        </div>
+        <div class="user-avatar" title="用户">管</div>
+      </div>
+
+    </aside>
+
+    <!-- ============================================================
+         Content Area
+         ============================================================ -->
+    <main class="content-area">
+
+      <!-- Mobile Header (< 768px) -->
+      <div class="mobile-header">
+        <div class="sidebar-logo" style="width:28px;height:28px;font-size:11px;border-radius:8px;">1P</div>
+        <div>
+          <div class="sidebar-server-name">生产服务器</div>
+          <div class="sidebar-server-status">
+            <span class="status-dot" style="width:6px;height:6px;"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">数据库</h1>
+        <div class="page-search">
+          <i data-lucide="search" class="page-search-icon"></i>
+          <input type="text" placeholder="搜索数据库..." />
+        </div>
+        <button class="btn-add-database">
+          <i data-lucide="plus"></i>
+          添加数据库
+        </button>
+      </div>
+
+      <!-- Segmented Control -->
+      <div class="segmented-control">
+        <button class="segment-btn active" data-seg="mysql">MySQL</button>
+        <button class="segment-btn" data-seg="postgresql">PostgreSQL</button>
+        <button class="segment-btn" data-seg="mongodb">MongoDB</button>
+        <button class="segment-btn" data-seg="redis">Redis</button>
+      </div>
+
+      <!-- Database List -->
+      <div class="db-list">
+
+        <!-- 1panel_app -->
+        <div class="glass-card db-card">
+          <div class="db-info">
+            <div class="db-icon-wrapper">
+              <i data-lucide="database"></i>
+            </div>
+            <div class="db-meta">
+              <div class="db-name">1panel_app</div>
+              <div class="db-detail-row">
+                <span class="db-tag">
+                  <i data-lucide="hard-drive"></i>
+                  45.2 MB
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="file-code"></i>
+                  utf8mb4
+                </span>
+                <span class="db-status online">
+                  <span class="db-status-dot"></span>
+                  在线
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="link"></i>
+                  23 连接
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="db-actions">
+            <button class="db-action-btn backup" title="备份">
+              <i data-lucide="database-backup"></i>
+            </button>
+            <button class="db-action-btn delete" title="删除">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- wordpress_db -->
+        <div class="glass-card db-card">
+          <div class="db-info">
+            <div class="db-icon-wrapper">
+              <i data-lucide="database"></i>
+            </div>
+            <div class="db-meta">
+              <div class="db-name">wordpress_db</div>
+              <div class="db-detail-row">
+                <span class="db-tag">
+                  <i data-lucide="hard-drive"></i>
+                  128.5 MB
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="file-code"></i>
+                  utf8mb4
+                </span>
+                <span class="db-status online">
+                  <span class="db-status-dot"></span>
+                  在线
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="link"></i>
+                  15 连接
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="db-actions">
+            <button class="db-action-btn backup" title="备份">
+              <i data-lucide="database-backup"></i>
+            </button>
+            <button class="db-action-btn delete" title="删除">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- monitoring -->
+        <div class="glass-card db-card">
+          <div class="db-info">
+            <div class="db-icon-wrapper">
+              <i data-lucide="database"></i>
+            </div>
+            <div class="db-meta">
+              <div class="db-name">monitoring</div>
+              <div class="db-detail-row">
+                <span class="db-tag">
+                  <i data-lucide="hard-drive"></i>
+                  12.3 MB
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="file-code"></i>
+                  utf8
+                </span>
+                <span class="db-status online">
+                  <span class="db-status-dot"></span>
+                  在线
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="link"></i>
+                  8 连接
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="db-actions">
+            <button class="db-action-btn backup" title="备份">
+              <i data-lucide="database-backup"></i>
+            </button>
+            <button class="db-action-btn delete" title="删除">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- test_db -->
+        <div class="glass-card db-card">
+          <div class="db-info">
+            <div class="db-icon-wrapper">
+              <i data-lucide="database"></i>
+            </div>
+            <div class="db-meta">
+              <div class="db-name">test_db</div>
+              <div class="db-detail-row">
+                <span class="db-tag">
+                  <i data-lucide="hard-drive"></i>
+                  0.5 MB
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="file-code"></i>
+                  latin1
+                </span>
+                <span class="db-status offline">
+                  <span class="db-status-dot"></span>
+                  离线
+                </span>
+                <span class="db-tag">
+                  <i data-lucide="link"></i>
+                  0 连接
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="db-actions">
+            <button class="db-action-btn backup" title="备份">
+              <i data-lucide="database-backup"></i>
+            </button>
+            <button class="db-action-btn delete" title="删除">
+              <i data-lucide="trash-2"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Stats Card -->
+      <div class="glass-card stats-card">
+        <div class="stat-item">
+          <span class="stat-value">4</span>
+          <span class="stat-label">总数据库</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">3</span>
+          <span class="stat-label">在线</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">186.5 MB</span>
+          <span class="stat-label">总数据量</span>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       iOS Bottom Tab Bar (< 768px)
+       ============================================================ -->
+  <div class="bottom-tab-bar">
+    <button class="tab-item" data-page="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>仪表板</span>
+    </button>
+    <button class="tab-item" data-page="containers">
+      <i data-lucide="box"></i>
+      <span>容器</span>
+    </button>
+    <button class="tab-item active" data-page="databases">
+      <i data-lucide="database"></i>
+      <span>数据库</span>
+    </button>
+    <button class="tab-item" data-page="files">
+      <i data-lucide="folder-open"></i>
+      <span>文件</span>
+    </button>
+    <button class="tab-item" data-page="websites">
+      <i data-lucide="globe"></i>
+      <span>网站</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       Scripts
+       ============================================================ -->
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      html.classList.toggle('dark', !isDark);
+      html.classList.toggle('light', isDark);
+
+      const icon = document.querySelector('#themeToggleSidebar i');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    // Navigation active state
+    document.querySelectorAll('.nav-item, .tab-item').forEach(item => {
+      item.addEventListener('click', function () {
+        this.parentElement.querySelectorAll('.nav-item, .tab-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    // Segmented control
+    document.querySelectorAll('.segment-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:onepanel_client/core/config/api_constants.dart';
 import 'package:onepanel_client/core/platform/services/platform_system_paths.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
+import 'package:onepanel_client/data/models/file/file_wget.dart';
 import 'package:onepanel_client/data/repositories/files_repository.dart';
 
 class FileTransferService {
@@ -185,5 +186,39 @@ class FileTransferService {
       counter++;
     }
     return finalPath;
+  }
+
+  // ==================== New share/wget management methods (R5 frontend alignment) ====================
+
+  /// Search file shares.
+  Future<List<Map<String, dynamic>>> searchShares() async {
+    final api = await _repository.getApi();
+    final response = await api.searchShares({
+      'page': 1,
+      'pageSize': PagedQuery.listPageSize,
+    });
+    return (response.data ?? const <dynamic>[])
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  /// Delete a file share.
+  Future<void> deleteShare(String shareId) async {
+    final api = await _repository.getApi();
+    await api.deleteShare({'id': shareId});
+  }
+
+  /// Get wget download process status.
+  Future<Map<String, dynamic>> getWgetProcess() async {
+    final api = await _repository.getApi();
+    final response = await api.getWgetProcess();
+    return response.data ?? const <String, dynamic>{};
+  }
+
+  /// Stop a wget download by key.
+  Future<void> stopWget(String key) async {
+    final api = await _repository.getApi();
+    await api.stopWgetDownload(FileWgetStopRequest(key: key));
   }
 }

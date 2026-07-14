@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 日志查看</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+  --op1-surface: #FAFBFC;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-family-mono: ui-monospace, Menlo, monospace;
+}
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-surface: #121416;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+    <div class="bp-label"></div>
+
+    <div class="page">
+        <!-- Top bar -->
+        <div class="top-bar">
+            <h1 class="page-title">日志查看</h1>
+            <button class="icon-btn" title="刷新">
+                <span class="material-symbols-outlined">refresh</span>
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-bar">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" class="search-input" placeholder="搜索日志...">
+        </div>
+
+        <!-- Filter chips -->
+        <div class="filter-chips">
+            <button class="chip active">全部</button>
+            <button class="chip">信息</button>
+            <button class="chip">警告</button>
+            <button class="chip">错误</button>
+        </div>
+
+        <!-- Tab bar -->
+        <div class="tab-bar">
+            <button class="tab-item active">操作日志</button>
+            <button class="tab-item">登录日志</button>
+            <button class="tab-item">系统日志</button>
+            <button class="tab-item">任务日志</button>
+        </div>
+
+        <!-- Log list -->
+        <div class="log-card">
+            <!-- Entry 1: INFO -->
+            <div class="log-entry">
+                <div class="log-stripe info"></div>
+                <span class="level-badge info">INFO</span>
+                <div class="log-body">
+                    <div class="log-message">容器 nginx-proxy 重启成功</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 14:30:22</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">admin</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(admin)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 2: INFO -->
+            <div class="log-entry">
+                <div class="log-stripe info"></div>
+                <span class="level-badge info">INFO</span>
+                <div class="log-body">
+                    <div class="log-message">备份任务 completedb 执行完成</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 14:15:08</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">system</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(system)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 3: INFO -->
+            <div class="log-entry">
+                <div class="log-stripe info"></div>
+                <span class="level-badge info">INFO</span>
+                <div class="log-body">
+                    <div class="log-message">SSL证书 example.com 续期成功</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 13:58:45</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">system</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(system)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 4: WARN -->
+            <div class="log-entry">
+                <div class="log-stripe warn"></div>
+                <span class="level-badge warn">WARN</span>
+                <div class="log-body">
+                    <div class="log-message">磁盘使用率超过 80%</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 13:42:11</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">monitor</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(monitor)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 5: ERROR -->
+            <div class="log-entry">
+                <div class="log-stripe error"></div>
+                <span class="level-badge error">ERROR</span>
+                <div class="log-body">
+                    <div class="log-message">数据库连接超时</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 12:30:00</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">system</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(system)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 6: INFO -->
+            <div class="log-entry">
+                <div class="log-stripe info"></div>
+                <span class="level-badge info">INFO</span>
+                <div class="log-body">
+                    <div class="log-message">用户 admin 修改了防火墙规则</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 11:20:33</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">admin</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(admin)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 7: INFO -->
+            <div class="log-entry">
+                <div class="log-stripe info"></div>
+                <span class="level-badge info">INFO</span>
+                <div class="log-body">
+                    <div class="log-message">定时任务清理日志执行完成</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 10:15:00</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">cron</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(cron)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Entry 8: WARN -->
+            <div class="log-entry">
+                <div class="log-stripe warn"></div>
+                <span class="level-badge warn">WARN</span>
+                <div class="log-body">
+                    <div class="log-message">内存使用率超过 70%</div>
+                    <div class="log-meta">
+                        <div class="log-timestamp-row">
+                            <span class="log-timestamp">2024-01-15 09:00:22</span>
+                            <button class="expand-btn log-expand-mobile" title="展开">
+                                <span class="material-symbols-outlined">expand_more</span>
+                            </button>
+                        </div>
+                        <span class="log-user">monitor</span>
+                    </div>
+                </div>
+                <div class="log-right">
+                    <span class="log-user-inline">(monitor)</span>
+                    <button class="expand-btn" title="展开">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom actions -->
+        <div class="log-actions">
+            <button class="text-btn">显示更多</button>
+            <button class="outlined-btn">
+                <span class="material-symbols-outlined">download</span>
+                导出日志
+            </button>
+        </div>
+    </div>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: var(--text-body-medium);
+            background: var(--op1-background);
+            color: var(--op1-on-surface);
+            font-family: var(--font-family);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Breakpoint label */
+        .bp-label {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 1000;
+            padding: 4px 10px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-small);
+            background: var(--op1-primary);
+            color: var(--op1-primary-foreground);
+            pointer-events: none;
+        }
+
+        /* Page shell */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--op1-spacing-lg);
+        }
+
+        /* Top bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--op1-spacing-lg);
+            flex-wrap: wrap;
+            gap: var(--op1-spacing-sm);
+        }
+
+        .page-title {
+            font: var(--text-headline-small);
+            color: var(--op1-on-surface);
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--op1-radius-full);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--op1-on-surface-variant);
+            transition: background var(--op1-motion-fast);
+        }
+
+        .icon-btn:hover {
+            background: var(--op1-surface-container-high);
+        }
+
+        .icon-btn .material-symbols-outlined {
+            font-size: 24px;
+        }
+
+        /* Search */
+        .search-bar {
+            position: relative;
+            margin-bottom: var(--op1-spacing-md);
+        }
+
+        .search-bar .material-symbols-outlined {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--op1-on-surface-variant);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px 0 48px;
+            border: 1px solid var(--op1-outline-variant);
+            border-radius: var(--op1-radius-full);
+            background: var(--op1-surface-container-low);
+            font: var(--text-body-medium);
+            color: var(--op1-on-surface);
+            outline: none;
+            transition: border-color var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+        }
+
+        .search-input::placeholder {
+            color: var(--op1-on-surface-variant);
+        }
+
+        .search-input:focus {
+            border-color: var(--op1-primary);
+            box-shadow: 0 0 0 1px var(--op1-primary);
+        }
+
+        /* Filter chips */
+        .filter-chips {
+            display: flex;
+            gap: var(--op1-spacing-sm);
+            margin-bottom: var(--op1-spacing-lg);
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            height: 32px;
+            padding: 0 16px;
+            border-radius: var(--op1-radius-sm);
+            border: 1px solid var(--op1-outline-variant);
+            background: transparent;
+            font: var(--text-label-large);
+            color: var(--op1-on-surface-variant);
+            cursor: pointer;
+            transition: all var(--op1-motion-fast);
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .chip:hover {
+            background: var(--op1-surface-container-high);
+        }
+
+        .chip.active {
+            background: var(--op1-secondary-container, #D4E4F7);
+            color: var(--op1-on-secondary-container, #0C3B6E);
+            border-color: transparent;
+        }
+
+        .chip.active-info {
+            background: #D4E4F7;
+            color: #0C3B6E;
+            border-color: transparent;
+        }
+
+        .chip.active-warn {
+            background: #FEF3C7;
+            color: #78350F;
+            border-color: transparent;
+        }
+
+        .chip.active-error {
+            background: #FEE2E2;
+            color: #7F1D1D;
+            border-color: transparent;
+        }
+
+        /* Tab bar */
+        .tab-bar {
+            display: flex;
+            border-bottom: 1px solid var(--op1-outline-variant);
+            margin-bottom: var(--op1-spacing-lg);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-item {
+            position: relative;
+            padding: 14px 20px;
+            font: var(--text-title-small);
+            color: var(--op1-on-surface-variant);
+            background: none;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color var(--op1-motion-fast);
+        }
+
+        .tab-item:hover {
+            color: var(--op1-on-surface);
+        }
+
+        .tab-item.active {
+            color: var(--op1-primary);
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 12px;
+            right: 12px;
+            height: 3px;
+            background: var(--op1-primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Log list card */
+        .log-card {
+            background: var(--op1-card);
+            border: 1px solid #C4C7CF;
+            border-radius: var(--op1-radius-card);
+            overflow: hidden;
+            box-shadow: var(--elevation-1);
+        }
+
+        /* Log entry */
+        .log-entry {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px var(--op1-spacing-lg);
+            border-bottom: 1px solid var(--op1-surface-container);
+            position: relative;
+            transition: background var(--op1-motion-fast);
+            cursor: pointer;
+            gap: var(--op1-spacing-md);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry:hover {
+            background: var(--op1-surface-container-low);
+        }
+
+        /* Left color stripe */
+        .log-stripe {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+        }
+
+        .log-stripe.info { background: #0EA5E9; }
+        .log-stripe.warn { background: #F59E0B; }
+        .log-stripe.error { background: #DC2626; }
+
+        /* Level badge */
+        .level-badge {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 52px;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: var(--op1-radius-full);
+            font: var(--text-label-medium);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 1px;
+        }
+
+        .level-badge.info {
+            background: #D4E4F7;
+            color: #0C3B6E;
+        }
+
+        .level-badge.warn {
+            background: #FEF3C7;
+            color: #78350F;
+        }
+
+        .level-badge.error {
+            background: #FEE2E2;
+            color: #7F1D1D;
+        }
+
+        /* Log body */
+        .log-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .log-message {
+            font: var(--text-body-medium);
+            color: var(--op1-on-surface);
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+
+        .log-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--op1-spacing-sm);
+        }
+
+        .log-timestamp {
+            font: var(--text-body-small);
+            font-family: var(--font-family-mono);
+            color: var(--op1-on-surface-variant);
+        }
+
+        .log-user {
+            font: var(--text-body-small);
+            color: var(--op1-on-surface-variant);
+        }
+
+        .log-user::before {
+            content: '(';
+        }
+
+        .log-user::after {
+            content: ')';
+        }
+
+        /* Right area: user + expand */
+        .log-right {
+            display: flex;
+            align-items: center;
+            gap: var(--op1-spacing-sm);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .log-user-inline {
+            font: var(--text-body-small);
+            color: var(--op1-on-surface-variant);
+            white-space: nowrap;
+        }
+
+        .expand-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--op1-radius-full);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--op1-on-surface-variant);
+            transition: background var(--op1-motion-fast);
+            flex-shrink: 0;
+        }
+
+        .expand-btn:hover {
+            background: var(--op1-surface-container-high);
+        }
+
+        .expand-btn .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        /* Bottom actions */
+        .log-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--op1-spacing-lg);
+            padding: var(--op1-spacing-lg) 0;
+        }
+
+        .text-btn {
+            padding: 8px 16px;
+            border-radius: var(--op1-radius-full);
+            border: none;
+            background: transparent;
+            font: var(--text-label-large);
+            color: var(--op1-primary);
+            cursor: pointer;
+            transition: background var(--op1-motion-fast);
+        }
+
+        .text-btn:hover {
+            background: var(--op1-primary-container);
+        }
+
+        .outlined-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 24px;
+            border-radius: var(--op1-radius-full);
+            border: 1px solid var(--op1-outline);
+            background: transparent;
+            font: var(--text-label-large);
+            color: var(--op1-primary);
+            cursor: pointer;
+            transition: all var(--op1-motion-fast);
+        }
+
+        .outlined-btn:hover {
+            background: var(--op1-primary-container);
+            border-color: var(--op1-primary);
+        }
+
+        .outlined-btn .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        /* Responsive: Mobile */
+        @media (max-width: 599px) {
+            .bp-label::after { content: 'Mobile'; }
+
+            .page {
+                padding: var(--op1-spacing-md);
+            }
+
+            .log-entry {
+                flex-wrap: wrap;
+                padding: var(--op1-spacing-md) var(--op1-spacing-md) var(--op1-spacing-md) 14px;
+                gap: var(--op1-spacing-sm);
+            }
+
+            .log-right {
+                display: none;
+            }
+
+            .log-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+
+            .log-timestamp-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .log-expand-mobile {
+                display: inline-flex;
+            }
+
+            .log-user {
+                display: inline;
+            }
+
+            .top-bar {
+                margin-bottom: var(--op1-spacing-md);
+            }
+
+            .filter-chips {
+                margin-bottom: var(--op1-spacing-md);
+            }
+
+            .tab-item {
+                padding: 12px 14px;
+            }
+        }
+
+        /* Hide mobile-only elements on larger screens */
+        @media (min-width: 600px) {
+            .log-expand-mobile {
+                display: none;
+            }
+
+            .log-timestamp-row {
+                display: contents;
+            }
+        }
+
+        /* Responsive: Tablet */
+        @media (min-width: 600px) and (max-width: 1023px) {
+            .bp-label::after { content: 'Tablet'; }
+
+            .page {
+                padding: var(--op1-spacing-lg);
+            }
+
+            .log-entry {
+                align-items: center;
+            }
+
+            .log-meta {
+                flex-direction: row;
+            }
+        }
+
+        /* Responsive: Desktop */
+        @media (min-width: 1024px) {
+            .bp-label::after { content: 'Desktop'; }
+
+            .page {
+                padding: var(--op1-spacing-xl);
+            }
+
+            .log-entry {
+                align-items: center;
+            }
+
+            .log-meta {
+                flex-direction: row;
+            }
+        }
+    </style>
+</body>
+</html>

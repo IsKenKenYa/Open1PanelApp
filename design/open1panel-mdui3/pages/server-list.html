@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器管理 - 1Panel Client</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+  <!-- Breakpoint indicator -->
+  <div id="bpIndicator" class="bp-indicator mobile">Mobile &lt;600px</div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <h1>服务器管理</h1>
+    <p class="subtitle">6 台服务器</p>
+  </div>
+
+  <!-- Server grid -->
+  <div class="server-grid">
+
+    <!-- Server 1: 生产服务器 -->
+    <div class="server-card">
+      <div class="card-header">
+        <span class="status-dot online"></span>
+        <span class="card-title">生产服务器</span>
+        <button class="card-menu" aria-label="更多选项">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="card-ip">192.168.1.100</div>
+      <div class="card-chips">
+        <span class="chip">Ubuntu 22.04</span>
+        <span class="chip chip-version">v2.0.0</span>
+      </div>
+      <div class="card-footer">上次连接: 2分钟前</div>
+    </div>
+
+    <!-- Server 2: 测试服务器 -->
+    <div class="server-card">
+      <div class="card-header">
+        <span class="status-dot online"></span>
+        <span class="card-title">测试服务器</span>
+        <button class="card-menu" aria-label="更多选项">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="card-ip">10.0.0.50</div>
+      <div class="card-chips">
+        <span class="chip">CentOS 8</span>
+        <span class="chip chip-version">v2.0.0</span>
+      </div>
+      <div class="card-footer">上次连接: 15分钟前</div>
+    </div>
+
+    <!-- Server 3: 开发服务器 -->
+    <div class="server-card">
+      <div class="card-header">
+        <span class="status-dot offline"></span>
+        <span class="card-title">开发服务器</span>
+        <button class="card-menu" aria-label="更多选项">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="card-ip">172.16.0.10</div>
+      <div class="card-chips">
+        <span class="chip">Debian 12</span>
+        <span class="chip chip-version">v1.10.0</span>
+      </div>
+      <div class="card-footer">上次连接: 3天前</div>
+    </div>
+
+    <!-- Server 4: 客户A服务器 -->
+    <div class="server-card">
+      <div class="card-header">
+        <span class="status-dot online"></span>
+        <span class="card-title">客户A服务器</span>
+        <button class="card-menu" aria-label="更多选项">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="card-ip">203.0.113.20</div>
+      <div class="card-chips">
+        <span class="chip">Ubuntu 20.04</span>
+        <span class="chip chip-version">v2.0.0</span>
+      </div>
+      <div class="card-footer">上次连接: 30分钟前</div>
+    </div>
+
+    <!-- Server 5: 备份服务器 -->
+    <div class="server-card">
+      <div class="card-header">
+        <span class="status-dot timeout"></span>
+        <span class="card-title">备份服务器</span>
+        <button class="card-menu" aria-label="更多选项">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="card-ip">192.168.1.200</div>
+      <div class="card-chips">
+        <span class="chip">Rocky Linux 9</span>
+        <span class="chip chip-version">v2.0.0</span>
+      </div>
+      <div class="card-footer">上次连接: 1小时前</div>
+    </div>
+
+    <!-- Server 6: 预发布服务器 -->
+    <div class="server-card">
+      <div class="card-header">
+        <span class="status-dot online"></span>
+        <span class="card-title">预发布服务器</span>
+        <button class="card-menu" aria-label="更多选项">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+        </button>
+      </div>
+      <div class="card-ip">10.0.0.100</div>
+      <div class="card-chips">
+        <span class="chip">Ubuntu 24.04</span>
+        <span class="chip chip-version">v2.0.0</span>
+      </div>
+      <div class="card-footer">上次连接: 5分钟前</div>
+    </div>
+
+  </div>
+
+  <!-- FAB -->
+  <button class="fab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    添加服务器
+  </button>
+
+  <script>
+    // Breakpoint indicator logic
+    const indicator = document.getElementById('bpIndicator');
+    function updateIndicator() {
+      const w = window.innerWidth;
+      if (w < 600) {
+        indicator.textContent = 'Mobile <600px';
+        indicator.className = 'bp-indicator mobile';
+      } else if (w < 1024) {
+        indicator.textContent = 'Tablet 600\u20131023px';
+        indicator.className = 'bp-indicator tablet';
+      } else {
+        indicator.textContent = 'Desktop \u22651024px';
+        indicator.className = 'bp-indicator desktop';
+      }
+    }
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+  </script>
+
+
+    <style>
+    :root {
+      --primary: #0C9B4B;
+      --primary-container: #C8E8D4;
+      --on-primary-container: #055A2B;
+      --card-bg: #FFFFFF;
+      --border: #C4C7CF;
+      --on-surface: #1A1C1E;
+      --on-surface-variant: #44474E;
+      --surface: #FAFBFC;
+      --surface-container-low: #F4F6F8;
+      --radius-card: 22px;
+      --radius-chip: 8px;
+      --radius-fab: 9999px;
+      --font: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+      --status-online: #16A34A;
+      --status-offline: #DC2626;
+      --status-timeout: #F59E0B;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--on-surface);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* === Top Bar === */
+    .top-bar {
+      padding: 16px 16px 8px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .top-bar h1 {
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.2px;
+      color: var(--on-surface);
+    }
+    .top-bar .subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--on-surface-variant);
+      margin-top: 4px;
+    }
+
+    /* === Breakpoint Labels === */
+    .bp-indicator {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      z-index: 100;
+      transition: background 0.24s, color 0.24s;
+    }
+    .bp-indicator.mobile {
+      background: #FFDAD6;
+      color: #410002;
+    }
+    .bp-indicator.tablet {
+      background: #E8F5EE;
+      color: #055A2B;
+    }
+    .bp-indicator.desktop {
+      background: #D0E8DB;
+      color: #055A2B;
+    }
+
+    /* === Grid === */
+    .server-grid {
+      display: grid;
+      gap: 12px;
+      padding: 12px 16px 100px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Mobile: single column */
+    .server-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Tablet: 2 columns */
+    @media (min-width: 600px) {
+      .server-grid { grid-template-columns: repeat(2, 1fr); }
+      .top-bar { padding: 24px 24px 12px; }
+      .server-grid { padding: 16px 24px 100px; }
+    }
+
+    /* Desktop: 3 columns */
+    @media (min-width: 1024px) {
+      .server-grid { grid-template-columns: repeat(3, 1fr); }
+      .top-bar { padding: 32px 32px 16px; }
+      .server-grid { padding: 20px 32px 100px; }
+    }
+
+    /* === Server Card === */
+    .server-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      transition: box-shadow 0.24s, transform 0.24s;
+      cursor: pointer;
+      position: relative;
+    }
+    .server-card:hover {
+      box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    /* Card header row */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.online { background: var(--status-online); }
+    .status-dot.offline { background: var(--status-offline); }
+    .status-dot.timeout { background: var(--status-timeout); }
+
+    .card-title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 24px;
+      color: var(--on-surface);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-menu {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--on-surface-variant);
+      flex-shrink: 0;
+    }
+    .card-menu:hover { background: var(--surface-container-low); }
+    .card-menu svg { width: 20px; height: 20px; }
+
+    /* IP address */
+    .card-ip {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--on-surface-variant);
+      line-height: 20px;
+      margin-left: 18px;
+      margin-bottom: 12px;
+      font-family: 'Inter', monospace;
+    }
+
+    /* Chips row */
+    .card-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: var(--radius-chip);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-container-low);
+      color: var(--on-surface-variant);
+    }
+    .chip.chip-version {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-color: transparent;
+    }
+
+    /* Last connected */
+    .card-footer {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--on-surface-variant);
+      line-height: 16px;
+    }
+
+    /* === FAB === */
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 24px;
+      height: 56px;
+      border: none;
+      border-radius: var(--radius-fab);
+      background: var(--primary);
+      color: #FFFFFF;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+      transition: box-shadow 0.24s, transform 0.24s;
+      z-index: 50;
+    }
+    .fab:hover {
+      box-shadow: 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+    .fab:active { transform: scale(0.97); }
+    .fab svg { width: 20px; height: 20px; }
+
+    @media (max-width: 599px) {
+      .fab {
+        bottom: 16px;
+        right: 16px;
+        padding: 0 16px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</body>
+</html>

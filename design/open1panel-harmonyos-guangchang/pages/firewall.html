@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 防火墙</title>
+    <style id="theme-vars">
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+  --op1-glow-color: rgba(12, 155, 75, 0.08);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.16);
+  --op1-glow-spread: 20px;
+  --op1-glow-spread-intense: 40px;
+  --op1-glow-blur: 20px;
+  --op1-surface: #F1F3F5;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(241, 243, 245, 0.92);
+  --op1-surface-popover: rgba(255, 255, 255, 0.95);
+  --op1-surface-container-low: #F7F8FA;
+  --op1-surface-container: #F1F3F5;
+  --op1-surface-container-high: #E8EAED;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #616161;
+  --op1-on-surface-nav: #1A1C1E;
+  --op1-nav-tab-height: 56px;
+  --op1-nav-tab-icon-size: 24px;
+  --op1-nav-sidebar-width: 280px;
+  --op1-nav-statusbar-height: 44px;
+  --op1-ripple-color: rgba(12, 155, 75, 0.12);
+  --op1-ripple-duration: 400ms;
+  --op1-font-family: 'HarmonyOS Sans', 'Noto Sans SC', system-ui, sans-serif;
+  --op1-font-family-mono: 'HarmonyOS Sans Mono', 'Noto Sans Mono', monospace;
+  --op1-radius-sm: 8px;
+  --op1-radius-md: 16px;
+  --op1-radius-lg: 24px;
+  --op1-radius-card: 24px;
+  --op1-radius-full: 9999px;
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-motion-gravity: cubic-bezier(0.2, 0, 0, 1);
+  --op1-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --op1-border: #E5E7EB;
+  --op1-border-strong: #D1D5DB;
+  --op1-error: #E84026;
+  --op1-error-container: #FDECEB;
+}
+.dark {
+  --op1-surface: #1A1C1E;
+  --op1-surface-card: #242628;
+  --op1-surface-nav: rgba(26, 28, 30, 0.92);
+  --op1-surface-popover: rgba(36, 38, 40, 0.95);
+  --op1-surface-container-low: #1E2022;
+  --op1-surface-container: #242628;
+  --op1-surface-container-high: #2E3032;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #9CA3AF;
+  --op1-on-surface-nav: #E2E5E8;
+  --op1-border: #3A3D42;
+  --op1-border-strong: #4A4D52;
+  --op1-glow-color: rgba(12, 155, 75, 0.12);
+  --op1-glow-color-intense: rgba(12, 155, 75, 0.20);
+  --op1-error: #FF6B6B;
+  --op1-error-container: #3D1419;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-op1-surface: var(--op1-surface);
+    --color-op1-surface-card: var(--op1-surface-card);
+    --color-op1-surface-nav: var(--op1-surface-nav);
+    --color-op1-surface-container-low: var(--op1-surface-container-low);
+    --color-op1-surface-container: var(--op1-surface-container);
+    --color-op1-on-surface: var(--op1-on-surface);
+    --color-op1-on-surface-variant: var(--op1-on-surface-variant);
+    --color-op1-brand: var(--op1-brand);
+    --color-op1-border: var(--op1-border);
+    --color-op1-ripple: var(--op1-ripple-color);
+    --radius-card: var(--op1-radius-card);
+    --radius-md: var(--op1-radius-md);
+    --radius-full: var(--op1-radius-full);
+  }
+  @layer base {
+    body { background: var(--op1-surface); color: var(--op1-on-surface); }
+  }
+    </style>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: var(--op1-font-family);
+        background: #E8EAED;
+        color: var(--op1-on-surface);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: var(--op1-on-surface);
+      }
+      .page-subtitle {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+        margin-bottom: 32px;
+      }
+      .preview-frame {
+        border: 1px solid var(--op1-border);
+        border-radius: var(--op1-radius-card);
+        overflow: hidden;
+        background: var(--op1-surface);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .mobile-shell {
+        display: flex;
+        flex-direction: column;
+        height: 720px;
+        background: var(--op1-surface);
+        position: relative;
+        overflow: hidden;
+      }
+      .status-bar {
+        height: var(--op1-nav-statusbar-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--op1-spacing-lg);
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--op1-on-surface-nav);
+        flex-shrink: 0;
+        z-index: 10;
+      }
+      .status-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .status-bar-right svg { width: 16px; height: 16px; color: var(--op1-on-surface-nav); }
+      .content-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--op1-spacing-lg);
+      }
+      .content-area::-webkit-scrollbar { width: 0; display: none; }
+
+      /* Ripple Effect */
+      .ripple-container { position: relative; overflow: hidden; }
+      .ripple-container::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), var(--op1-ripple-color) 0%, transparent 60%);
+        opacity: 0;
+        transition: opacity var(--op1-ripple-duration) ease;
+        pointer-events: none;
+      }
+      .ripple-container:active::after { opacity: 1; }
+
+      /* Page Header */
+      .page-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--op1-spacing-lg);
+      }
+      .page-header {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+      }
+
+      /* Toggle Switch */
+      .toggle-switch {
+        width: 44px;
+        height: 24px;
+        border-radius: var(--op1-radius-full);
+        background: var(--op1-border-strong);
+        position: relative;
+        cursor: pointer;
+        transition: background var(--op1-motion-normal) ease;
+        flex-shrink: 0;
+      }
+      .toggle-switch.active { background: var(--op1-brand); }
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        top: 2px;
+        left: 2px;
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      }
+      .toggle-switch.active::after { transform: translateX(20px); }
+
+      /* Tabs */
+      .fw-tabs {
+        display: flex;
+        background: var(--op1-surface-container-low);
+        border-radius: var(--op1-radius-md);
+        padding: 3px;
+        margin-bottom: var(--op1-spacing-md);
+      }
+      .fw-tab {
+        flex: 1;
+        text-align: center;
+        padding: 8px 4px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--op1-on-surface-variant);
+        cursor: pointer;
+        transition: all var(--op1-motion-fast) ease;
+      }
+      .fw-tab.active {
+        background: var(--op1-surface-card);
+        color: var(--op1-brand);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      }
+
+      /* Glow Card */
+      .glow-card {
+        background: var(--op1-surface-card);
+        border-radius: var(--op1-radius-card);
+        padding: 0;
+        margin-bottom: var(--op1-spacing-md);
+        box-shadow: 0 0 var(--op1-glow-spread) var(--op1-glow-color);
+        transition: box-shadow var(--op1-motion-normal) var(--op1-motion-gravity);
+        overflow: hidden;
+      }
+
+      /* Rule Row */
+      .rule-row {
+        display: flex;
+        align-items: center;
+        padding: 12px var(--op1-spacing-lg);
+        gap: var(--op1-spacing-sm);
+      }
+      .rule-row:not(:last-child) {
+        border-bottom: 1px solid var(--op1-border);
+      }
+      .rule-port {
+        font-size: 15px;
+        font-weight: 600;
+        font-family: var(--op1-font-family-mono);
+        color: var(--op1-on-surface);
+        min-width: 44px;
+      }
+      .rule-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .rule-protocol {
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: var(--op1-radius-full);
+        background: var(--op1-surface-container-high);
+        color: var(--op1-on-surface-variant);
+        display: inline-block;
+        margin-right: 4px;
+      }
+      .rule-remark {
+        font-size: 12px;
+        color: var(--op1-on-surface-variant);
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .rule-action {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: var(--op1-radius-full);
+        flex-shrink: 0;
+      }
+      .action-allow {
+        background: #ECFDF5;
+        color: #059669;
+      }
+      .dark .action-allow { background: rgba(5, 150, 105, 0.15); color: #34D399; }
+      .action-deny {
+        background: #FEE2E2;
+        color: #DC2626;
+      }
+      .dark .action-deny { background: rgba(220, 38, 38, 0.15); color: #F87171; }
+
+      /* Add Rule Button */
+      .btn-add-rule {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--op1-spacing-sm);
+        padding: 14px var(--op1-spacing-xl);
+        border-radius: var(--op1-radius-card);
+        background: var(--op1-surface-card);
+        border: 2px dashed var(--op1-border);
+        color: var(--op1-brand);
+        font-size: 14px;
+        font-weight: 500;
+        font-family: var(--op1-font-family);
+        cursor: pointer;
+        box-shadow: 0 0 var(--op1-glow-spread) var(--op1-glow-color);
+        transition: all var(--op1-motion-fast) var(--op1-motion-spring);
+        margin-bottom: var(--op1-spacing-md);
+      }
+      .btn-add-rule:hover {
+        border-color: var(--op1-brand);
+        box-shadow: 0 0 var(--op1-glow-spread-intense) var(--op1-glow-color-intense);
+        transform: translateY(-1px);
+      }
+      .btn-add-rule:active { transform: scale(0.98); }
+      .btn-add-rule svg { width: 18px; height: 18px; }
+
+      /* Bottom Sheet */
+      .bottom-sheet-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 50;
+        display: flex;
+        align-items: flex-end;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--op1-motion-normal) ease;
+      }
+      .bottom-sheet-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .bottom-sheet {
+        width: 100%;
+        background: var(--op1-surface-card);
+        border-radius: var(--op1-radius-card) var(--op1-radius-card) 0 0;
+        padding: var(--op1-spacing-xl);
+        transform: translateY(100%);
+        transition: transform var(--op1-motion-normal) var(--op1-motion-spring);
+      }
+      .bottom-sheet-overlay.visible .bottom-sheet {
+        transform: translateY(0);
+      }
+      .bottom-sheet-handle {
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--op1-border-strong);
+        margin: 0 auto var(--op1-spacing-lg);
+      }
+      .bottom-sheet-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--op1-on-surface);
+        margin-bottom: var(--op1-spacing-lg);
+      }
+      .bottom-sheet-body {
+        font-size: 14px;
+        color: var(--op1-on-surface-variant);
+        margin-bottom: var(--op1-spacing-xl);
+        line-height: 1.6;
+      }
+      .bottom-sheet-actions {
+        display: flex;
+        gap: var(--op1-spacing-md);
+      }
+      .btn-sheet {
+        flex: 1;
+        padding: 12px var(--op1-spacing-xl);
+        border-radius: var(--op1-radius-card);
+        font-size: 15px;
+        font-weight: 500;
+        font-family: var(--op1-font-family);
+        cursor: pointer;
+        border: none;
+        transition: transform var(--op1-motion-fast) var(--op1-motion-spring);
+      }
+      .btn-sheet:active { transform: scale(0.97); }
+      .btn-sheet-cancel {
+        background: var(--op1-surface-container-high);
+        color: var(--op1-on-surface);
+      }
+      .btn-sheet-confirm {
+        background: var(--op1-brand);
+        color: #FFFFFF;
+        box-shadow: 0 2px 8px rgba(12, 155, 75, 0.2);
+      }
+      .btn-sheet-danger {
+        background: var(--op1-danger);
+        color: #FFFFFF;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+      }
+
+      /* Tab Bar */
+      .tab-bar {
+        height: var(--op1-nav-tab-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: var(--op1-surface-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--op1-border);
+        flex-shrink: 0;
+        z-index: 10;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        color: var(--op1-on-surface-variant);
+        font-size: 11px;
+        cursor: pointer;
+        padding: 4px 12px;
+        border-radius: var(--op1-radius-md);
+      }
+      .tab-item.active { color: var(--op1-brand); }
+      .tab-item svg { width: 22px; height: 22px; }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: absolute;
+        top: var(--op1-spacing-lg);
+        right: var(--op1-spacing-lg);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--op1-surface-card);
+        border: 1px solid var(--op1-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: background var(--op1-motion-fast) ease, transform var(--op1-motion-fast) var(--op1-motion-spring);
+      }
+      .theme-toggle:hover { transform: scale(1.1); }
+      .theme-toggle:active { transform: scale(0.9); }
+      .theme-toggle svg { width: 18px; height: 18px; color: var(--op1-on-surface); }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <div>
+                <h1 class="page-title">防火墙</h1>
+                <p class="page-subtitle">端口规则、IP 规则和服务标签管理</p>
+            </div>
+            <button class="theme-toggle ripple-container" onclick="toggleTheme()">
+                <i data-lucide="sun" class="light-icon"></i>
+                <i data-lucide="moon" class="dark-icon" style="display:none;"></i>
+            </button>
+        </div>
+
+        <div class="preview-frame">
+            <div class="mobile-shell">
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span>09:41</span>
+                    <div class="status-bar-right">
+                        <i data-lucide="signal"></i>
+                        <i data-lucide="wifi"></i>
+                        <i data-lucide="battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="content-area">
+                    <!-- Header + Master Toggle -->
+                    <div class="page-header-row">
+                        <h2 class="page-header">防火墙</h2>
+                        <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="fw-tabs">
+                        <div class="fw-tab active" onclick="switchTab(this)">端口规则</div>
+                        <div class="fw-tab" onclick="switchTab(this)">IP 规则</div>
+                        <div class="fw-tab" onclick="switchTab(this)">服务标签</div>
+                    </div>
+
+                    <!-- Rules List -->
+                    <div class="glow-card">
+                        <!-- Rule 1: 80 -->
+                        <div class="rule-row ripple-container">
+                            <span class="rule-port">80</span>
+                            <div class="rule-info">
+                                <span class="rule-protocol">TCP</span>
+                                <div class="rule-remark">HTTP Web 服务</div>
+                            </div>
+                            <span class="rule-action action-allow">允许</span>
+                            <div class="toggle-switch active" onclick="event.stopPropagation(); toggleSwitch(this);"></div>
+                        </div>
+                        <!-- Rule 2: 443 -->
+                        <div class="rule-row ripple-container">
+                            <span class="rule-port">443</span>
+                            <div class="rule-info">
+                                <span class="rule-protocol">TCP</span>
+                                <div class="rule-remark">HTTPS 加密连接</div>
+                            </div>
+                            <span class="rule-action action-allow">允许</span>
+                            <div class="toggle-switch active" onclick="event.stopPropagation(); toggleSwitch(this);"></div>
+                        </div>
+                        <!-- Rule 3: 22 -->
+                        <div class="rule-row ripple-container">
+                            <span class="rule-port">22</span>
+                            <div class="rule-info">
+                                <span class="rule-protocol">TCP</span>
+                                <div class="rule-remark">SSH 远程管理</div>
+                            </div>
+                            <span class="rule-action action-allow">允许</span>
+                            <div class="toggle-switch active" onclick="event.stopPropagation(); toggleSwitch(this);"></div>
+                        </div>
+                        <!-- Rule 4: 3306 -->
+                        <div class="rule-row ripple-container">
+                            <span class="rule-port">3306</span>
+                            <div class="rule-info">
+                                <span class="rule-protocol">TCP</span>
+                                <div class="rule-remark">MySQL 数据库</div>
+                            </div>
+                            <span class="rule-action action-deny">拒绝</span>
+                            <div class="toggle-switch" onclick="event.stopPropagation(); toggleSwitch(this);"></div>
+                        </div>
+                        <!-- Rule 5: 8888 -->
+                        <div class="rule-row ripple-container">
+                            <span class="rule-port">8888</span>
+                            <div class="rule-info">
+                                <span class="rule-protocol">TCP</span>
+                                <div class="rule-remark">1Panel 管理面板</div>
+                            </div>
+                            <span class="rule-action action-allow">允许</span>
+                            <div class="toggle-switch active" onclick="event.stopPropagation(); toggleSwitch(this);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Add Rule Button -->
+                    <button class="btn-add-rule ripple-container" onclick="showBottomSheet()">
+                        <i data-lucide="plus"></i>
+                        <span>添加规则</span>
+                    </button>
+                </div>
+
+                <!-- Bottom Sheet -->
+                <div class="bottom-sheet-overlay" id="bottomSheet" onclick="hideBottomSheet(event)">
+                    <div class="bottom-sheet" onclick="event.stopPropagation()">
+                        <div class="bottom-sheet-handle"></div>
+                        <div class="bottom-sheet-title">确认添加规则</div>
+                        <div class="bottom-sheet-body">
+                            你将新增一条防火墙规则。请确认以下信息：<br>
+                            <strong>端口:</strong> 自定义端口<br>
+                            <strong>协议:</strong> TCP<br>
+                            <strong>动作:</strong> 允许<br>
+                            <strong>备注:</strong> 新增自定义规则
+                        </div>
+                        <div class="bottom-sheet-actions">
+                            <button class="btn-sheet btn-sheet-cancel" onclick="hideBottomSheet()">取消</button>
+                            <button class="btn-sheet btn-sheet-confirm" onclick="hideBottomSheet()">确认添加</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Bar -->
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>概览</span>
+                    </div>
+                    <div class="tab-item">
+                        <i data-lucide="globe"></i>
+                        <span>网站</span>
+                    </div>
+                    <div class="tab-item active">
+                        <i data-lucide="shield"></i>
+                        <span>防火墙</span>
+                    </div>
+                    <div class="tab-item">
+                        <i data-lucide="container"></i>
+                        <span>容器</span>
+                    </div>
+                    <div class="tab-item">
+                        <i data-lucide="settings"></i>
+                        <span>设置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleTheme() {
+        const html = document.documentElement;
+        html.classList.toggle('dark');
+        html.classList.toggle('light');
+        document.querySelectorAll('.light-icon').forEach(el => el.style.display = html.classList.contains('dark') ? 'none' : '');
+        document.querySelectorAll('.dark-icon').forEach(el => el.style.display = html.classList.contains('dark') ? '' : 'none');
+    }
+    function toggleSwitch(el) {
+        el.classList.toggle('active');
+    }
+    function switchTab(el) {
+        el.parentElement.querySelectorAll('.fw-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+    }
+    function showBottomSheet() {
+        document.getElementById('bottomSheet').classList.add('visible');
+    }
+    function hideBottomSheet(e) {
+        if (e && e.target !== e.currentTarget && !e.target.closest('.btn-sheet-cancel')) return;
+        document.getElementById('bottomSheet').classList.remove('visible');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        document.querySelectorAll('.ripple-container').forEach(el => {
+            el.addEventListener('pointerdown', e => {
+                const rect = el.getBoundingClientRect();
+                el.style.setProperty('--ripple-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+                el.style.setProperty('--ripple-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+            });
+        });
+    });
+    </script>
+</body>
+</html>

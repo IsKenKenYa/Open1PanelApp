@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>备份 - Open1Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+  --brand:#0C9B4B;--brand-light:#E8F5EE;--brand-dark:#09803E;
+  --surface:#F1F3F5;--surface-white:#FFFFFF;
+  --text-primary:#1A1C1E;--text-secondary:#666E78;--text-hint:#9CA3AF;
+  --error:#E84026;--error-bg:#FDEAE7;
+  --success:#0C9B4B;--success-bg:#E8F5EE;
+  --border:#E5E7EB;
+  --glow:0 0 20px rgba(12,155,75,0.08);
+  --ripple:rgba(12,155,75,0.12);
+  --card-radius:24px;--btn-radius:24px;
+  --nav-h:56px;--status-h:44px;
+  --font-family:'Noto Sans SC','HarmonyOS Sans',system-ui,sans-serif;
+  --spring:cubic-bezier(.2,.9,.3,1);
+}
+[data-theme="dark"]{
+  --surface:#1A1C1E;--surface-white:#242628;
+  --text-primary:#E5E7EB;--text-secondary:#9CA3AF;--text-hint:#6B7280;
+  --error:#F87171;--error-bg:rgba(248,113,113,.1);
+  --success:#34D399;--success-bg:rgba(52,211,153,.1);
+  --border:#374151;
+  --glow:0 0 24px rgba(12,155,75,0.12);
+  --ripple:rgba(52,211,153,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-family);background:var(--surface);color:var(--text-primary);
+  transition:background .35s var(--spring),color .35s var(--spring);-webkit-tap-highlight-color:transparent}
+.status-bar{height:var(--status-h);background:var(--surface-white);display:flex;align-items:center;
+  justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;
+  color:var(--text-secondary);transition:background .35s var(--spring)}
+.page-header{background:var(--surface-white);padding:12px 20px 16px;
+  transition:background .35s var(--spring)}
+.page-header h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.page-header p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.glow-card{background:var(--surface-white);border-radius:var(--card-radius);
+  box-shadow:var(--glow);padding:20px;margin:12px 16px;transition:all .35s var(--spring)}
+.glow-row{background:var(--surface-white);border-radius:16px;box-shadow:var(--glow);
+  padding:16px 20px;margin:6px 16px;display:flex;align-items:center;gap:12px;
+  transition:all .35s var(--spring);position:relative;overflow:hidden;cursor:pointer}
+.glow-row:active{transform:scale(.985);opacity:.92}
+.btn-brand{background:var(--brand);color:#fff;border:none;border-radius:var(--btn-radius);
+  padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;
+  align-items:center;gap:6px;transition:all .25s var(--spring);position:relative;overflow:hidden}
+.btn-brand:active{transform:scale(.95);opacity:.88}
+.progress-track{height:8px;background:var(--surface);border-radius:4px;overflow:hidden;flex:1}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand-dark));
+  border-radius:4px;transition:width .6s var(--spring)}
+.stat-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;
+  background:var(--brand-light);color:var(--brand);border-radius:20px;font-size:12px;font-weight:500;
+  transition:all .35s var(--spring)}
+[data-theme="dark"] .stat-chip{background:rgba(12,155,75,.15);color:#34D399}
+.action-btn{width:36px;height:36px;border-radius:12px;border:none;background:var(--surface);
+  color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .25s var(--spring);flex-shrink:0}
+.action-btn:active{transform:scale(.9);background:var(--brand-light);color:var(--brand)}
+.action-btn.danger:active{background:var(--error-bg);color:var(--error)}
+.tab-bar{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--surface-white);
+  display:flex;align-items:center;justify-content:space-around;border-top:1px solid var(--border);
+  transition:background .35s var(--spring),border-color .35s var(--spring);z-index:50}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;
+  color:var(--text-hint);cursor:pointer;padding:4px 12px;transition:color .25s var(--spring)}
+.tab-item.active{color:var(--brand)}
+.tab-item i{width:22px;height:22px}
+.content-scroll{padding-bottom:calc(var(--nav-h) + 16px);overflow-y:auto}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;
+  border-radius:10px;font-size:11px;font-weight:500}
+.status-badge.success{background:var(--success-bg);color:var(--success)}
+.status-badge.error{background:var(--error-bg);color:var(--error)}
+.ripple-host{position:relative;overflow:hidden}
+.ripple-host .ripple-circle{position:absolute;border-radius:50%;background:var(--ripple);
+  transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(3);opacity:0}}
+</style>
+</head>
+<body>
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>09:41</span>
+  <div style="display:flex;align-items:center;gap:6px">
+    <i data-lucide="wifi" style="width:15px;height:15px"></i>
+    <i data-lucide="signal" style="width:15px;height:15px"></i>
+    <i data-lucide="battery-full" style="width:18px;height:18px"></i>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between">
+  <div>
+    <h1>备份</h1>
+    <p>管理服务器备份与恢复</p>
+  </div>
+  <button class="btn-brand ripple-host" onclick="createRipple(event)">
+    <i data-lucide="plus" style="width:18px;height:18px"></i>
+    新建备份
+  </button>
+</div>
+
+<!-- Stats -->
+<div style="display:flex;gap:8px;padding:4px 16px 0;flex-wrap:wrap">
+  <span class="stat-chip"><i data-lucide="hard-drive" style="width:13px;height:13px"></i> 12.5 GB 已用</span>
+  <span class="stat-chip"><i data-lucide="archive" style="width:13px;height:13px"></i> 5 条记录</span>
+  <span class="stat-chip"><i data-lucide="check-circle" style="width:13px;height:13px"></i> 4 成功</span>
+</div>
+
+<div class="content-scroll">
+  <!-- Storage Card -->
+  <div class="glow-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;border-radius:14px;background:var(--brand-light);display:flex;align-items:center;justify-content:center">
+          <i data-lucide="folder" style="width:20px;height:20px;color:var(--brand)"></i>
+        </div>
+        <div>
+          <div style="font-size:15px;font-weight:600">备份存储账户</div>
+          <div style="font-size:12px;color:var(--text-hint);margin-top:1px">本地路径 /opt/1panel/backup</div>
+        </div>
+      </div>
+      <i data-lucide="settings" style="width:18px;height:18px;color:var(--text-hint);cursor:pointer"></i>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span style="font-size:13px;color:var(--text-secondary)">存储用量</span>
+      <span style="font-size:13px;font-weight:600;color:var(--brand)">12.5 GB <span style="color:var(--text-hint);font-weight:400">/ 50 GB</span></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" style="width:25%"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-hint);margin-top:6px;text-align:right">25% 已使用</div>
+  </div>
+
+  <!-- Section Title -->
+  <div style="padding:20px 20px 8px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:16px;font-weight:600">备份记录</span>
+    <span style="font-size:12px;color:var(--text-hint)">共 5 条</span>
+  </div>
+
+  <!-- Record 1 -->
+  <div class="glow-row ripple-host" onclick="createRipple(event)">
+    <div style="width:40px;height:40px;border-radius:14px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i data-lucide="database" style="width:20px;height:20px;color:var(--brand)"></i>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500">数据库备份</div>
+      <div style="font-size:12px;color:var(--text-hint);margin-top:2px">2025-01-15 03:00 · 128.5 MB</div>
+    </div>
+    <span class="status-badge success"><i data-lucide="check" style="width:12px;height:12px"></i> 成功</span>
+    <div style="display:flex;gap:4px;margin-left:8px">
+      <button class="action-btn" title="恢复"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i></button>
+      <button class="action-btn" title="下载"><i data-lucide="download" style="width:16px;height:16px"></i></button>
+      <button class="action-btn danger" title="删除"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+    </div>
+  </div>
+
+  <!-- Record 2 -->
+  <div class="glow-row ripple-host" onclick="createRipple(event)">
+    <div style="width:40px;height:40px;border-radius:14px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i data-lucide="server" style="width:20px;height:20px;color:#3B82F6"></i>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500">系统备份</div>
+      <div style="font-size:12px;color:var(--text-hint);margin-top:2px">2025-01-14 03:00 · 2.3 GB</div>
+    </div>
+    <span class="status-badge success"><i data-lucide="check" style="width:12px;height:12px"></i> 成功</span>
+    <div style="display:flex;gap:4px;margin-left:8px">
+      <button class="action-btn" title="恢复"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i></button>
+      <button class="action-btn" title="下载"><i data-lucide="download" style="width:16px;height:16px"></i></button>
+      <button class="action-btn danger" title="删除"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+    </div>
+  </div>
+
+  <!-- Record 3 -->
+  <div class="glow-row ripple-host" onclick="createRipple(event)">
+    <div style="width:40px;height:40px;border-radius:14px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i data-lucide="database" style="width:20px;height:20px;color:var(--brand)"></i>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500">数据库备份</div>
+      <div style="font-size:12px;color:var(--text-hint);margin-top:2px">2025-01-13 03:00 · 125.8 MB</div>
+    </div>
+    <span class="status-badge success"><i data-lucide="check" style="width:12px;height:12px"></i> 成功</span>
+    <div style="display:flex;gap:4px;margin-left:8px">
+      <button class="action-btn" title="恢复"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i></button>
+      <button class="action-btn" title="下载"><i data-lucide="download" style="width:16px;height:16px"></i></button>
+      <button class="action-btn danger" title="删除"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+    </div>
+  </div>
+
+  <!-- Record 4 - Failed -->
+  <div class="glow-row ripple-host" onclick="createRipple(event)">
+    <div style="width:40px;height:40px;border-radius:14px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i data-lucide="file-archive" style="width:20px;height:20px;color:#D97706"></i>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500">文件备份</div>
+      <div style="font-size:12px;color:var(--text-hint);margin-top:2px">2025-01-12 03:00 · 856 MB</div>
+    </div>
+    <span class="status-badge error"><i data-lucide="x" style="width:12px;height:12px"></i> 失败</span>
+    <div style="display:flex;gap:4px;margin-left:8px">
+      <button class="action-btn" title="重试"><i data-lucide="refresh-cw" style="width:16px;height:16px"></i></button>
+      <button class="action-btn danger" title="删除"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+    </div>
+  </div>
+
+  <!-- Record 5 -->
+  <div class="glow-row ripple-host" onclick="createRipple(event)">
+    <div style="width:40px;height:40px;border-radius:14px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i data-lucide="database" style="width:20px;height:20px;color:var(--brand)"></i>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:500">数据库备份</div>
+      <div style="font-size:12px;color:var(--text-hint);margin-top:2px">2025-01-11 03:00 · 122.1 MB</div>
+    </div>
+    <span class="status-badge success"><i data-lucide="check" style="width:12px;height:12px"></i> 成功</span>
+    <div style="display:flex;gap:4px;margin-left:8px">
+      <button class="action-btn" title="恢复"><i data-lucide="rotate-ccw" style="width:16px;height:16px"></i></button>
+      <button class="action-btn" title="下载"><i data-lucide="download" style="width:16px;height:16px"></i></button>
+      <button class="action-btn danger" title="删除"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <div class="tab-item"><i data-lucide="layout-dashboard"></i><span>概览</span></div>
+  <div class="tab-item"><i data-lucide="box"></i><span>容器</span></div>
+  <div class="tab-item"><i data-lucide="database"></i><span>数据库</span></div>
+  <div class="tab-item"><i data-lucide="folder-open"></i><span>文件</span></div>
+  <div class="tab-item active"><i data-lucide="hard-drive"></i><span>更多</span></div>
+</div>
+
+<script>
+function toggleTheme(){
+  const d=document.documentElement;
+  const isDark=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',isDark?'light':'dark');
+}
+function createRipple(e){
+  const el=e.currentTarget||e.target.closest('.ripple-host');
+  if(!el)return;
+  const r=document.createElement('span');r.className='ripple-circle';
+  const rect=el.getBoundingClientRect();
+  const sz=Math.max(rect.width,rect.height)*2;
+  r.style.width=r.style.height=sz+'px';
+  r.style.left=(e.clientX||e.touches?.[0]?.clientX||rect.left+rect.width/2)-rect.left-sz/2+'px';
+  r.style.top=(e.clientY||e.touches?.[0]?.clientY||rect.top+rect.height/2)-rect.top-sz/2+'px';
+  el.appendChild(r);setTimeout(()=>r.remove(),600);
+}
+lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 日志</title>
+
+<!-- Tailwind 4.x -->
+<script src="https://cdn.jsdelivr.net/npm/tailwindcss@4"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+/* ===== Windows Fluent Design Tokens ===== */
+:root {
+  --op1-brand: #0C9B4B;
+  --op1-brand-hover: #0A8540;
+  --op1-brand-pressed: #087036;
+  --op1-success: #0C9B4B;
+  --op1-warning: #9B6F0C;
+  --op1-danger: #C42B1C;
+  --op1-info: #0078D4;
+  --op1-acrylic-blur: 30px;
+  --op1-acrylic-noise-opacity: 0.03;
+  --op1-acrylic-tint-opacity: 0.80;
+  --op1-mica-opacity: 0.85;
+  --op1-mica-blur: 60px;
+  --op1-reveal-hover: rgba(255, 255, 255, 0.08);
+  --op1-reveal-pressed: rgba(255, 255, 255, 0.04);
+  --reveal-x: 50%;
+  --reveal-y: 50%;
+  --op1-surface: #F3F3F3;
+  --op1-surface-card: #FFFFFF;
+  --op1-surface-nav: rgba(243, 243, 243, 0.80);
+  --op1-surface-container-low: #F9F9F9;
+  --op1-surface-container: #F3F3F3;
+  --op1-surface-container-high: #EDEDED;
+  --op1-on-surface: #1A1A1A;
+  --op1-on-surface-variant: #616161;
+  --op1-nav-pane-expanded: 320px;
+  --op1-nav-pane-compact: 48px;
+  --op1-nav-top-height: 48px;
+  --op1-font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --op1-font-family-mono: 'Cascadia Code', 'Consolas', monospace;
+  --op1-radius-sm: 4px;
+  --op1-radius-md: 8px;
+  --op1-radius-lg: 8px;
+  --op1-radius-card: 8px;
+  --op1-radius-full: 9999px;
+  --op1-motion-fast: 167ms;
+  --op1-motion-normal: 250ms;
+  --op1-motion-easing-decelerate: cubic-bezier(0, 0, 0, 1);
+  --op1-motion-easing-standard: cubic-bezier(0.8, 0, 0.2, 1);
+  --op1-border: #E5E5E5;
+  --op1-card-stroke: #E5E5E5;
+  --op1-error: #C42B1C;
+  --op1-divider: #E5E5E5;
+}
+html.dark {
+  --op1-surface: #202020;
+  --op1-surface-card: #2D2D2D;
+  --op1-surface-nav: rgba(32, 32, 32, 0.80);
+  --op1-surface-container-low: #2A2A2A;
+  --op1-surface-container: #202020;
+  --op1-surface-container-high: #1A1A1A;
+  --op1-on-surface: #FFFFFF;
+  --op1-on-surface-variant: #A0A0A0;
+  --op1-border: #3D3D3D;
+  --op1-card-stroke: #3D3D3D;
+  --op1-divider: #3D3D3D;
+  --op1-reveal-hover: rgba(255, 255, 255, 0.06);
+  --op1-reveal-pressed: rgba(255, 255, 255, 0.03);
+  --op1-acrylic-tint-opacity: 0.60;
+  --op1-mica-opacity: 0.80;
+}
+
+/* ===== Base ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--op1-font-family); color: var(--op1-on-surface);
+  background: var(--op1-surface); overflow: hidden; height: 100vh;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+
+.op1-acrylic { position: relative; }
+.op1-acrylic::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  opacity: var(--op1-acrylic-noise-opacity); pointer-events: none; border-radius: inherit; z-index: 1;
+}
+
+.nav-view { display: flex; height: 100vh; width: 100vw; }
+
+.nav-pane {
+  width: var(--op1-nav-pane-expanded); min-width: var(--op1-nav-pane-expanded);
+  height: 100vh; display: flex; flex-direction: column;
+  background: rgba(243, 243, 243, 0.85);
+  backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);
+  border-right: 1px solid var(--op1-border);
+  transition: width var(--op1-motion-normal) var(--op1-motion-easing-standard),
+              min-width var(--op1-motion-normal) var(--op1-motion-easing-standard);
+  overflow: hidden; z-index: 10;
+}
+html.dark .nav-pane { background: var(--op1-surface-nav); }
+
+@media (max-width: 1279px) and (min-width: 768px), (max-width: 767px) {
+  .nav-pane { width: var(--op1-nav-pane-compact); min-width: var(--op1-nav-pane-compact); }
+  .nav-pane .nav-label, .nav-pane .nav-search-wrap, .nav-pane .nav-footer-info, .nav-pane .nav-footer-server-name { display: none; }
+  .nav-pane .nav-search { display: none; }
+  .nav-pane .nav-item { justify-content: center; padding: 12px 0; }
+  .nav-pane .nav-header { justify-content: center; padding: 12px 0; }
+  .nav-pane .nav-header-title { display: none; }
+  .nav-pane .nav-footer { justify-content: center; padding: 12px 0; }
+}
+
+.nav-header { display: flex; align-items: center; gap: 10px; padding: 16px 16px 12px 16px; flex-shrink: 0; }
+.nav-header-brand { color: var(--op1-brand); }
+.nav-header-title { font-size: 16px; font-weight: 600; color: var(--op1-on-surface); white-space: nowrap; }
+.nav-search-wrap { padding: 0 16px 12px 16px; flex-shrink: 0; }
+.nav-search { position: relative; }
+.nav-search input {
+  width: 100%; height: 36px; padding: 0 12px 0 36px; font-size: 13px;
+  font-family: var(--op1-font-family); color: var(--op1-on-surface);
+  background: var(--op1-surface-container-low); border: none;
+  border-bottom: 1px solid var(--op1-border); border-radius: var(--op1-radius-sm);
+  outline: none; transition: border-color var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              background var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+html.dark .nav-search input { background: rgba(255, 255, 255, 0.06); border-bottom-color: var(--op1-border); }
+.nav-search input::placeholder { color: var(--op1-on-surface-variant); }
+.nav-search input:focus { border-bottom: 2px solid var(--op1-brand); background: var(--op1-surface-card); }
+.nav-search .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--op1-on-surface-variant); pointer-events: none; }
+
+.nav-items { flex: 1; overflow-y: auto; padding: 4px 8px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  border-radius: var(--op1-radius-sm); cursor: pointer; font-size: 14px;
+  color: var(--op1-on-surface); position: relative; user-select: none;
+  white-space: nowrap; border-left: 3px solid transparent;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.nav-item:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+.nav-item:active { background: var(--op1-reveal-pressed); }
+.nav-item .nav-icon { flex-shrink: 0; color: var(--op1-on-surface); }
+.nav-item.active { border-left-color: var(--op1-brand); background: rgba(12, 155, 75, 0.08); color: var(--op1-brand); font-weight: 600; }
+.nav-item.active .nav-icon { color: var(--op1-brand); }
+html.dark .nav-item.active { background: rgba(12, 155, 75, 0.15); }
+
+@media (max-width: 1279px) and (min-width: 768px), (max-width: 767px) {
+  .nav-item .nav-tooltip { display: none; position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%);
+    background: var(--op1-surface-card); color: var(--op1-on-surface); padding: 6px 12px;
+    border-radius: var(--op1-radius-sm); font-size: 13px; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14); border: 1px solid var(--op1-border); z-index: 100; pointer-events: none; }
+  .nav-item:hover .nav-tooltip { display: block; }
+}
+
+.nav-footer { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--op1-divider); flex-shrink: 0; }
+.nav-footer-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.nav-footer-server-name { font-size: 13px; color: var(--op1-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-footer-online-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--op1-success); flex-shrink: 0; }
+.theme-toggle-btn {
+  display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+  border-radius: var(--op1-radius-sm); cursor: pointer; color: var(--op1-on-surface-variant);
+  background: transparent; border: none;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard); flex-shrink: 0;
+}
+.theme-toggle-btn:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+.nav-footer-settings-btn {
+  display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+  border-radius: var(--op1-radius-sm); cursor: pointer; color: var(--op1-on-surface-variant);
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard); flex-shrink: 0;
+}
+.nav-footer-settings-btn:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+
+.nav-content { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--op1-surface); overflow: hidden; }
+
+/* CommandBar */
+.command-bar {
+  display: flex; align-items: center; gap: 4px; padding: 8px 16px;
+  height: var(--op1-nav-top-height); background: var(--op1-surface);
+  border-bottom: 1px solid var(--op1-border); flex-shrink: 0;
+}
+.command-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; height: 32px;
+  font-size: 13px; font-family: var(--op1-font-family); color: var(--op1-on-surface);
+  background: transparent; border: 1px solid transparent; border-radius: var(--op1-radius-sm);
+  cursor: pointer; white-space: nowrap; position: relative; overflow: hidden;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.command-btn:hover { background: radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); border-color: var(--op1-border); }
+.command-btn:active { background: var(--op1-reveal-pressed); border-color: var(--op1-border); }
+.command-btn-label { display: inline; }
+.command-separator { width: 1px; height: 24px; background: var(--op1-divider); margin: 0 4px; }
+
+.content-body { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* ===== Log-specific styles ===== */
+
+/* Toolbar Row */
+.toolbar-row {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+}
+.toolbar-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.toolbar-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.log-search {
+  position: relative; width: 260px;
+}
+.log-search input {
+  width: 100%; height: 32px; padding: 0 12px 0 36px; font-size: 13px;
+  font-family: var(--op1-font-family); color: var(--op1-on-surface);
+  background: var(--op1-surface-card); border: 1px solid var(--op1-border);
+  border-radius: var(--op1-radius-sm); outline: none;
+  transition: border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.log-search input::placeholder { color: var(--op1-on-surface-variant); }
+.log-search input:focus { border-color: var(--op1-brand); }
+.log-search .log-search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--op1-on-surface-variant); pointer-events: none;
+}
+
+/* Pivot Tabs */
+.pivot-tabs {
+  display: flex; align-items: center; gap: 0; height: 32px; flex-shrink: 0;
+  border-bottom: 1px solid var(--op1-border); margin-bottom: 16px;
+}
+.pivot-tab {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; height: 32px;
+  font-size: 13px; font-family: var(--op1-font-family); color: var(--op1-on-surface-variant);
+  background: transparent; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap; position: relative; overflow: hidden;
+  transition: color var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+  margin-bottom: -1px;
+}
+.pivot-tab:hover { color: var(--op1-on-surface); }
+.pivot-tab.active { color: var(--op1-brand); border-bottom-color: var(--op1-brand); font-weight: 600; }
+
+/* Time Range Chips */
+.chip-row { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.chip-row-label { font-size: 12px; color: var(--op1-on-surface-variant); margin-right: 4px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; height: 28px;
+  font-size: 12px; font-family: var(--op1-font-family); color: var(--op1-on-surface-variant);
+  background: var(--op1-surface-card); border: 1px solid var(--op1-border);
+  border-radius: var(--op1-radius-full); cursor: pointer; white-space: nowrap;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              border-color var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.chip:hover { border-color: var(--op1-brand); color: var(--op1-on-surface); }
+.chip.active { background: rgba(12, 155, 75, 0.08); border-color: var(--op1-brand); color: var(--op1-brand); font-weight: 600; }
+
+/* Live Toggle */
+.live-toggle {
+  display: inline-flex; align-items: center; gap: 8px; padding: 0; height: 32px;
+  cursor: pointer; user-select: none;
+}
+.live-toggle-track {
+  width: 40px; height: 20px; border-radius: var(--op1-radius-full);
+  background: var(--op1-surface-container-high); border: 1px solid var(--op1-border);
+  position: relative; transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.live-toggle-track::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--op1-on-surface-variant);
+  transition: transform var(--op1-motion-normal) var(--op1-motion-easing-standard),
+              background var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.live-toggle.active .live-toggle-track {
+  background: var(--op1-brand); border-color: var(--op1-brand);
+}
+.live-toggle.active .live-toggle-track::after {
+  transform: translateX(20px); background: #FFFFFF;
+}
+.live-toggle-label { font-size: 13px; color: var(--op1-on-surface-variant); }
+.live-toggle.active .live-toggle-label { color: var(--op1-brand); font-weight: 600; }
+
+/* Log List */
+.log-list {
+  background: var(--op1-surface-card); border: 1px solid var(--op1-card-stroke);
+  border-radius: var(--op1-radius-card); overflow: hidden;
+}
+.log-entry {
+  display: flex; align-items: flex-start; gap: 12px; padding: 10px 16px;
+  border-bottom: 1px solid var(--op1-divider); font-size: 13px;
+  font-family: var(--op1-font-family-mono); line-height: 1.5;
+  position: relative; overflow: hidden;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.log-entry:last-child { border-bottom: none; }
+.log-entry:hover { background: var(--op1-surface-container-low); }
+.log-entry.error-row { background: rgba(196, 43, 28, 0.03); }
+html.dark .log-entry.error-row { background: rgba(196, 43, 28, 0.06); }
+
+.log-timestamp { color: var(--op1-on-surface-variant); white-space: nowrap; flex-shrink: 0; font-size: 12px; min-width: 140px; }
+.log-level { flex-shrink: 0; }
+.log-source { color: var(--op1-info); white-space: nowrap; flex-shrink: 0; min-width: 100px; }
+.log-content { color: var(--op1-on-surface); word-break: break-all; flex: 1; }
+
+/* Level badges */
+.level-info {
+  display: inline-flex; align-items: center; padding: 1px 8px;
+  border-radius: var(--op1-radius-full); font-size: 10px; font-weight: 700;
+  background: rgba(0, 120, 212, 0.12); color: var(--op1-info); letter-spacing: 0.5px;
+}
+.level-warn {
+  display: inline-flex; align-items: center; padding: 1px 8px;
+  border-radius: var(--op1-radius-full); font-size: 10px; font-weight: 700;
+  background: rgba(155, 111, 12, 0.12); color: var(--op1-warning); letter-spacing: 0.5px;
+}
+.level-error {
+  display: inline-flex; align-items: center; padding: 1px 8px;
+  border-radius: var(--op1-radius-full); font-size: 10px; font-weight: 700;
+  background: rgba(196, 43, 28, 0.12); color: var(--op1-danger); letter-spacing: 0.5px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; margin-top: 16px;
+}
+.pagination-info { font-size: 12px; color: var(--op1-on-surface-variant); }
+.pagination-controls { display: flex; align-items: center; gap: 4px; }
+.page-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 32px; height: 32px; padding: 0 8px; font-size: 13px;
+  font-family: var(--op1-font-family); color: var(--op1-on-surface);
+  background: var(--op1-surface-card); border: 1px solid var(--op1-border);
+  border-radius: var(--op1-radius-sm); cursor: pointer;
+  transition: background var(--op1-motion-fast) var(--op1-motion-easing-standard),
+              border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.page-btn:hover { border-color: var(--op1-brand); }
+.page-btn.active { background: var(--op1-brand); color: #FFFFFF; border-color: var(--op1-brand); }
+.page-btn:disabled { opacity: 0.4; cursor: default; }
+.page-btn:disabled:hover { border-color: var(--op1-border); }
+
+@media (max-width: 1279px) and (min-width: 768px), (max-width: 767px) {
+  .command-btn-label { display: none; }
+  .command-btn { padding: 6px; width: 32px; justify-content: center; }
+  .log-search { width: 200px; }
+}
+
+html.dark .icon-sun { display: block; }
+html.dark .icon-moon { display: none; }
+html.light .icon-sun { display: none; }
+html.light .icon-moon { display: block; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--op1-on-surface-variant); border-radius: 3px; opacity: 0.5; }
+::-webkit-scrollbar-thumb:hover { background: var(--op1-on-surface); }
+</style>
+</head>
+
+<body>
+<div class="nav-view">
+
+  <!-- ===== Navigation Pane ===== -->
+  <nav class="nav-pane op1-acrylic" id="navPane">
+    <div class="nav-header">
+      <div class="nav-header-brand"><i data-lucide="server" style="width:20px;height:20px;"></i></div>
+      <span class="nav-header-title">1Panel</span>
+    </div>
+    <div class="nav-search-wrap">
+      <div class="nav-search">
+        <i data-lucide="search" class="search-icon" style="width:14px;height:14px;"></i>
+        <input type="text" placeholder="搜索模块...">
+      </div>
+    </div>
+    <div class="nav-items">
+      <div class="nav-item" data-reveal data-nav="dashboard">
+        <i data-lucide="layout-dashboard" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">仪表板</span><span class="nav-tooltip">仪表板</span>
+      </div>
+      <div class="nav-item" data-reveal data-nav="containers">
+        <i data-lucide="box" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">容器</span><span class="nav-tooltip">容器</span>
+      </div>
+      <div class="nav-item" data-reveal data-nav="files">
+        <i data-lucide="folder-open" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">文件</span><span class="nav-tooltip">文件</span>
+      </div>
+      <div class="nav-item active" data-reveal data-nav="logs">
+        <i data-lucide="scroll-text" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">日志</span><span class="nav-tooltip">日志</span>
+      </div>
+      <div class="nav-item" data-reveal data-nav="monitoring">
+        <i data-lucide="monitor" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">监控</span><span class="nav-tooltip">监控</span>
+      </div>
+      <div class="nav-item" data-reveal data-nav="firewall">
+        <i data-lucide="shield" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">防火墙</span><span class="nav-tooltip">防火墙</span>
+      </div>
+      <div class="nav-item" data-reveal data-nav="settings">
+        <i data-lucide="settings" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">设置</span><span class="nav-tooltip">设置</span>
+      </div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-footer-info">
+        <span class="nav-footer-online-dot"></span>
+        <span class="nav-footer-server-name">生产服务器</span>
+      </div>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换主题">
+        <i data-lucide="sun" class="icon-sun" style="width:16px;height:16px;"></i>
+        <i data-lucide="moon" class="icon-moon" style="width:16px;height:16px;"></i>
+      </button>
+      <div class="nav-footer-settings-btn" data-reveal title="设置">
+        <i data-lucide="settings" style="width:16px;height:16px;"></i>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Content Area ===== -->
+  <div class="nav-content">
+
+    <!-- CommandBar -->
+    <div class="command-bar">
+      <button class="command-btn" data-reveal title="导出">
+        <i data-lucide="download" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">导出</span>
+      </button>
+      <div class="command-separator"></div>
+      <button class="command-btn" data-reveal title="清除">
+        <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">清除</span>
+      </button>
+      <button class="command-btn" data-reveal title="设置">
+        <i data-lucide="settings" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">设置</span>
+      </button>
+    </div>
+
+    <!-- Content Body -->
+    <div class="content-body">
+
+      <!-- Toolbar: Search + Live Toggle -->
+      <div class="toolbar-row">
+        <div class="toolbar-left">
+          <div class="log-search">
+            <i data-lucide="search" class="log-search-icon" style="width:14px;height:14px;"></i>
+            <input type="text" placeholder="搜索日志内容...">
+          </div>
+          <div class="live-toggle active" id="liveToggle">
+            <span class="live-toggle-label">实时跟踪</span>
+            <div class="live-toggle-track"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pivot: Log Categories -->
+      <div class="pivot-tabs">
+        <button class="pivot-tab active" data-reveal>系统</button>
+        <button class="pivot-tab" data-reveal>应用</button>
+        <button class="pivot-tab" data-reveal>安全</button>
+        <button class="pivot-tab" data-reveal>自定义</button>
+      </div>
+
+      <!-- Time Range Chips -->
+      <div class="chip-row">
+        <span class="chip-row-label">时间范围:</span>
+        <button class="chip" data-reveal>最近 1 小时</button>
+        <button class="chip active" data-reveal>最近 6 小时</button>
+        <button class="chip" data-reveal>最近 24 小时</button>
+        <button class="chip" data-reveal>最近 7 天</button>
+        <button class="chip" data-reveal>自定义</button>
+      </div>
+
+      <!-- Log Entries -->
+      <div class="log-list">
+
+        <!-- Entry 1: INFO -->
+        <div class="log-entry">
+          <span class="log-timestamp">2025-01-15 14:32:01</span>
+          <span class="log-level"><span class="level-info">INFO</span></span>
+          <span class="log-source">[systemd]</span>
+          <span class="log-content">Started Docker Application Container Engine.</span>
+        </div>
+
+        <!-- Entry 2: INFO -->
+        <div class="log-entry">
+          <span class="log-timestamp">2025-01-15 14:31:58</span>
+          <span class="log-level"><span class="level-info">INFO</span></span>
+          <span class="log-source">[nginx]</span>
+          <span class="log-content">nginx: configuration file /etc/nginx/nginx.conf test is successful</span>
+        </div>
+
+        <!-- Entry 3: WARN -->
+        <div class="log-entry">
+          <span class="log-timestamp">2025-01-15 14:31:45</span>
+          <span class="log-level"><span class="level-warn">WARN</span></span>
+          <span class="log-source">[mysqld]</span>
+          <span class="log-content">InnoDB: Buffer pool(s) load completed at 2025-01-15 14:31:45</span>
+        </div>
+
+        <!-- Entry 4: ERROR -->
+        <div class="log-entry error-row">
+          <span class="log-timestamp">2025-01-15 14:30:22</span>
+          <span class="log-level"><span class="level-error">ERROR</span></span>
+          <span class="log-source">[1panel]</span>
+          <span class="log-content">备份任务执行失败: 文件 /opt/1panel/backup/temp_20250112.tar.gz 权限不足，无法写入目标目录</span>
+        </div>
+
+        <!-- Entry 5: INFO -->
+        <div class="log-entry">
+          <span class="log-timestamp">2025-01-15 14:28:10</span>
+          <span class="log-level"><span class="level-info">INFO</span></span>
+          <span class="log-source">[dockerd]</span>
+          <span class="log-content">Container 1panel-nginx-01 started with ID a3b2c1d0e4f5</span>
+        </div>
+
+        <!-- Entry 6: WARN -->
+        <div class="log-entry">
+          <span class="log-timestamp">2025-01-15 14:25:33</span>
+          <span class="log-level"><span class="level-warn">WARN</span></span>
+          <span class="log-source">[kernel]</span>
+          <span class="log-content">TCP: out of memory -- consider tuning tcp_mem</span>
+        </div>
+
+        <!-- Entry 7: INFO -->
+        <div class="log-entry">
+          <span class="log-timestamp">2025-01-15 14:22:08</span>
+          <span class="log-level"><span class="level-info">INFO</span></span>
+          <span class="log-source">[sshd]</span>
+          <span class="log-content">Accepted publickey for root from 192.168.1.100 port 52341 ssh2</span>
+        </div>
+
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <span class="pagination-info">显示 1-7 / 共 1,247 条记录</span>
+        <div class="pagination-controls">
+          <button class="page-btn" disabled><i data-lucide="chevron-left" style="width:14px;height:14px;"></i></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn" data-reveal>2</button>
+          <button class="page-btn" data-reveal>3</button>
+          <button class="page-btn" data-reveal>...</button>
+          <button class="page-btn" data-reveal>178</button>
+          <button class="page-btn" data-reveal><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  lucide.createIcons();
+
+  // Reveal highlight hover effect
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const rect = el.getBoundingClientRect();
+      el.style.setProperty('--reveal-x', (e.clientX - rect.left) + 'px');
+      el.style.setProperty('--reveal-y', (e.clientY - rect.top) + 'px');
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.removeProperty('--reveal-x');
+      el.style.removeProperty('--reveal-y');
+    });
+  });
+
+  // Navigation item selection
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // Pivot tab selection
+  document.querySelectorAll('.pivot-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.pivot-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Chip selection
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Live toggle
+  document.getElementById('liveToggle').addEventListener('click', function() {
+    this.classList.toggle('active');
+  });
+
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    if (html.classList.contains('light')) {
+      html.classList.remove('light');
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+      html.classList.add('light');
+    }
+  }
+  document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+</script>
+</body>
+</html>

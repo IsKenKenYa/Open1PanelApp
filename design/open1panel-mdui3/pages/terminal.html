@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Panel Client - 终端/SSH</title>
+    <style id="theme-vars">
+:root {
+  /* Brand Primary - from AppDesignTokens.brand #0C9B4B */
+  --op1-brand: #0C9B4B;
+  --op1-brand-light: #4DB87A;
+  --op1-brand-dark: #087A3A;
+  --op1-brand-50: #E8F5EE;
+  --op1-brand-100: #C8E8D4;
+  --op1-brand-200: #A8DCBC;
+  --op1-brand-500: #0C9B4B;
+  --op1-brand-700: #087A3A;
+  --op1-brand-900: #055A2B;
+
+  /* Semantic Colors - from AppDesignTokens */
+  --op1-success: #16A34A;
+  --op1-warning: #F59E0B;
+  --op1-danger: #DC2626;
+  --op1-info: #0EA5E9;
+
+  /* Semantic Aliases */
+  --op1-background: #FAFBFC;
+  --op1-foreground: #1A1C1E;
+  --op1-card: #FFFFFF;
+  --op1-card-foreground: #1A1C1E;
+  --op1-popover: #FFFFFF;
+  --op1-popover-foreground: #1A1C1E;
+  --op1-primary: #0C9B4B;
+  --op1-primary-foreground: #FFFFFF;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-muted: #F0F2F5;
+  --op1-muted-foreground: #6B7280;
+  --op1-border: #E5E7EB;
+  --op1-input: #E5E7EB;
+  --op1-ring: #0C9B4B;
+
+  /* Surface System - MDUI3 */
+  --op1-surface: #FAFBFC;
+  --op1-surface-dim: #DAD9DB;
+  --op1-surface-bright: #FAFBFC;
+  --op1-surface-container-lowest: #FFFFFF;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-high: #E8EBED;
+  --op1-surface-container-highest: #E2E5E8;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline: #74777F;
+  --op1-outline-variant: #C4C7CF;
+  --op1-inverse-surface: #2F3033;
+  --op1-inverse-on-surface: #F1F0F4;
+  --op1-inverse-primary: #A0D4AA;
+
+  /* Error */
+  --op1-error: #BA1A1A;
+  --op1-error-container: #FFDAD6;
+  --op1-on-error-container: #410002;
+
+  /* Radius System - from AppDesignTokens */
+  --op1-radius-sm: 12px;
+  --op1-radius-md: 14px;
+  --op1-radius-lg: 20px;
+  --op1-radius-card: 22px;
+  --op1-radius-full: 9999px;
+  --op1-radius-button: 9999px;
+
+  /* Spacing System - from AppDesignTokens */
+  --op1-spacing-xs: 4px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+
+  /* Motion */
+  --op1-motion-fast: 200ms;
+  --op1-motion-normal: 300ms;
+  --op1-motion-slow: 400ms;
+  --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --op1-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography - MDUI3 Scale */
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+
+  /* Display */
+  --text-display-large: 500 57px/64px var(--font-family);
+  --text-display-medium: 500 45px/52px var(--font-family);
+  --text-display-small: 500 36px/44px var(--font-family);
+
+  /* Headline */
+  --text-headline-large: 500 32px/40px var(--font-family);
+  --text-headline-medium: 500 28px/36px var(--font-family);
+  --text-headline-small: 500 24px/32px var(--font-family);
+
+  /* Title */
+  --text-title-large: 500 22px/28px var(--font-family);
+  --text-title-medium: 600 16px/24px var(--font-family);
+  --text-title-small: 600 14px/20px var(--font-family);
+
+  /* Body */
+  --text-body-large: 400 16px/24px var(--font-family);
+  --text-body-medium: 400 14px/20px var(--font-family);
+  --text-body-small: 400 12px/16px var(--font-family);
+
+  /* Label */
+  --text-label-large: 500 14px/20px var(--font-family);
+  --text-label-medium: 500 12px/16px var(--font-family);
+  --text-label-small: 500 11px/16px var(--font-family);
+
+  /* Elevation */
+  --elevation-0: none;
+  --elevation-1: 0 1px 3px 1px rgba(0, 0, 0, 0.05);
+  --elevation-2: 0 2px 6px 2px rgba(0, 0, 0, 0.05);
+  --elevation-3: 0 4px 8px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode */
+.dark {
+  --op1-brand: #A0D4AA;
+  --op1-brand-light: #C8E8D4;
+  --op1-brand-dark: #0C9B4B;
+
+  --op1-background: #1A1C1E;
+  --op1-foreground: #E2E5E8;
+  --op1-card: #1E2022;
+  --op1-card-foreground: #E2E5E8;
+  --op1-popover: #1E2022;
+  --op1-popover-foreground: #E2E5E8;
+  --op1-primary: #A0D4AA;
+  --op1-primary-foreground: #055A2B;
+  --op1-primary-container: #087A3A;
+  --op1-on-primary-container: #C8E8D4;
+  --op1-muted: #2A2C2E;
+  --op1-muted-foreground: #A0A4AB;
+  --op1-border: #3A3D42;
+  --op1-input: #3A3D42;
+  --op1-ring: #A0D4AA;
+  --op1-accent: #0E3D20;
+
+  --op1-surface: #121416;
+  --op1-surface-dim: #121416;
+  --op1-surface-bright: #383A3D;
+  --op1-surface-container-lowest: #0D0F11;
+  --op1-surface-container-low: #1A1C1E;
+  --op1-surface-container: #1E2022;
+  --op1-surface-container-high: #282A2D;
+  --op1-surface-container-highest: #333538;
+  --op1-on-surface: #E2E5E8;
+  --op1-on-surface-variant: #C4C7CF;
+  --op1-outline: #8E9099;
+  --op1-outline-variant: #44474E;
+  --op1-inverse-surface: #E2E5E8;
+  --op1-inverse-on-surface: #2F3033;
+  --op1-inverse-primary: #087A3A;
+
+  --op1-error: #FFB4AB;
+  --op1-error-container: #93000A;
+  --op1-on-error-container: #FFDAD6;
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--op1-background);
+    --color-foreground: var(--op1-foreground);
+    --color-card: var(--op1-card);
+    --color-card-foreground: var(--op1-card-foreground);
+    --color-popover: var(--op1-popover);
+    --color-popover-foreground: var(--op1-popover-foreground);
+    --color-primary: var(--op1-primary);
+    --color-primary-foreground: var(--op1-primary-foreground);
+    --color-muted: var(--op1-muted);
+    --color-muted-foreground: var(--op1-muted-foreground);
+    --color-border: var(--op1-border);
+    --color-input: var(--op1-input);
+    --color-ring: var(--op1-ring);
+    --radius-sm: var(--op1-radius-sm);
+    --radius-md: var(--op1-radius-md);
+    --radius-lg: var(--op1-radius-lg);
+  }
+  @layer base {
+    body { background: var(--op1-background); color: var(--op1-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--op1-background); }
+      .text-background { color: var(--op1-background); }
+      .border-background { border-color: var(--op1-background); }
+      .ring-background { --tw-ring-color: var(--op1-background); }
+      .bg-foreground { background-color: var(--op1-foreground); }
+      .text-foreground { color: var(--op1-foreground); }
+      .border-foreground { border-color: var(--op1-foreground); }
+      .ring-foreground { --tw-ring-color: var(--op1-foreground); }
+      .bg-card { background-color: var(--op1-card); }
+      .text-card { color: var(--op1-card); }
+      .border-card { border-color: var(--op1-card); }
+      .ring-card { --tw-ring-color: var(--op1-card); }
+      .bg-card-foreground { background-color: var(--op1-card-foreground); }
+      .text-card-foreground { color: var(--op1-card-foreground); }
+      .border-card-foreground { border-color: var(--op1-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--op1-card-foreground); }
+      .bg-popover { background-color: var(--op1-popover); }
+      .text-popover { color: var(--op1-popover); }
+      .border-popover { border-color: var(--op1-popover); }
+      .ring-popover { --tw-ring-color: var(--op1-popover); }
+      .bg-popover-foreground { background-color: var(--op1-popover-foreground); }
+      .text-popover-foreground { color: var(--op1-popover-foreground); }
+      .border-popover-foreground { border-color: var(--op1-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--op1-popover-foreground); }
+      .bg-primary { background-color: var(--op1-primary); }
+      .text-primary { color: var(--op1-primary); }
+      .border-primary { border-color: var(--op1-primary); }
+      .ring-primary { --tw-ring-color: var(--op1-primary); }
+      .bg-primary-foreground { background-color: var(--op1-primary-foreground); }
+      .text-primary-foreground { color: var(--op1-primary-foreground); }
+      .border-primary-foreground { border-color: var(--op1-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--op1-primary-foreground); }
+      .bg-muted { background-color: var(--op1-muted); }
+      .text-muted { color: var(--op1-muted); }
+      .border-muted { border-color: var(--op1-muted); }
+      .ring-muted { --tw-ring-color: var(--op1-muted); }
+      .bg-muted-foreground { background-color: var(--op1-muted-foreground); }
+      .text-muted-foreground { color: var(--op1-muted-foreground); }
+      .border-muted-foreground { border-color: var(--op1-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--op1-muted-foreground); }
+      .bg-border { background-color: var(--op1-border); }
+      .text-border { color: var(--op1-border); }
+      .border-border { border-color: var(--op1-border); }
+      .ring-border { --tw-ring-color: var(--op1-border); }
+      .bg-input { background-color: var(--op1-input); }
+      .text-input { color: var(--op1-input); }
+      .border-input { border-color: var(--op1-input); }
+      .ring-input { --tw-ring-color: var(--op1-input); }
+      .bg-ring { background-color: var(--op1-ring); }
+      .text-ring { color: var(--op1-ring); }
+      .border-ring { border-color: var(--op1-ring); }
+      .ring-ring { --tw-ring-color: var(--op1-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <h1 class="page-title">终端 / SSH</h1>
+  <p class="page-subtitle">通过 SSH 协议连接并管理远程服务器终端会话，支持多会话管理与多标签页操作。</p>
+
+  <div class="bp-info-grid">
+    <div class="bp-info-card mobile-info">&lt; 600px / 手机</div>
+    <div class="bp-info-card tablet-info">600 - 1023px / 平板</div>
+    <div class="bp-info-card desktop-info">&ge; 1024px / 桌面</div>
+  </div>
+
+  <!-- ========== Mobile ========== -->
+  <div class="bp-section">
+    <div class="bp-label">Mobile &lt; 600px</div>
+    <p class="bp-desc">全屏终端 + 可折叠工具栏，最大化终端可用空间</p>
+    <div class="preview-frame">
+      <div class="preview-titlebar">
+        <div class="preview-dot red"></div>
+        <div class="preview-dot yellow"></div>
+        <div class="preview-dot green"></div>
+        <span class="preview-titlebar-text">375 x 667 - Mobile</span>
+      </div>
+      <div class="mobile-layout">
+        <!-- Mobile Toolbar -->
+        <div class="mobile-toolbar">
+          <div class="mobile-toolbar-session">
+            <div class="status-dot active"></div>
+            <span class="mobile-toolbar-name">prod-server</span>
+          </div>
+          <!-- 新建会话 -->
+          <button class="toolbar-btn" title="新建会话">
+            <span class="toolbar-btn-icon">+</span>
+          </button>
+          <!-- 断开 -->
+          <button class="toolbar-btn" title="断开">
+            <span class="toolbar-btn-icon" style="font-size:14px;">&#x2B07;</span>
+          </button>
+          <!-- 全屏 -->
+          <button class="toolbar-btn" title="全屏">
+            <span class="toolbar-btn-icon">&#x26F6;</span>
+          </button>
+          <!-- 更多 -->
+          <button class="toolbar-btn" title="更多">
+            <span class="toolbar-btn-icon">&#x22EE;</span>
+          </button>
+        </div>
+        <!-- Mobile Terminal -->
+        <div class="mobile-terminal">
+          <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">docker ps</span></div>
+          <div class="term-line term-output">CONTAINER ID   <span class="term-dir">IMAGE</span>          STATUS         PORTS</div>
+          <div class="term-line term-output">a1b2c3d4e5f6   <span class="term-dir">nginx:latest</span>   Up <span class="term-number">3</span> days      <span class="term-number">0.0.0.0:80</span>-&gt;80/tcp</div>
+          <div class="term-line term-output">f6e5d4c3b2a1   <span class="term-dir">mysql:8.0</span>      Up <span class="term-number">3</span> days      <span class="term-number">0.0.0.0:3306</span>-&gt;3306/tcp</div>
+          <div class="term-line"></div>
+          <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">free -h</span></div>
+          <div class="term-line term-output">              total        used        free</div>
+          <div class="term-line term-output">Mem:           <span class="term-number">7.8G</span>        <span class="term-number">5.2G</span>        <span class="term-number">1.4G</span></div>
+          <div class="term-line term-output">Swap:          <span class="term-number">2.0G</span>        <span class="term-number">128M</span>        <span class="term-number">1.9G</span></div>
+          <div class="term-line"></div>
+          <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">uptime</span></div>
+          <div class="term-line term-output"> <span class="term-number">14:30:22</span> up <span class="term-number">15</span> days, <span class="term-number">8:42</span>, <span class="term-number">2</span> users, load average: <span class="term-number">0.45</span>, <span class="term-number">0.32</span>, <span class="term-number">0.28</span></div>
+          <div class="term-line"></div>
+          <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Tablet ========== -->
+  <div class="bp-section">
+    <div class="bp-label">Tablet 600 - 1023px</div>
+    <p class="bp-desc">左侧会话列表 + 右侧终端区域，便于快速切换连接</p>
+    <div class="preview-frame">
+      <div class="preview-titlebar">
+        <div class="preview-dot red"></div>
+        <div class="preview-dot yellow"></div>
+        <div class="preview-dot green"></div>
+        <span class="preview-titlebar-text">800 x 520 - Tablet</span>
+      </div>
+      <div class="tablet-layout">
+        <!-- Session Panel -->
+        <div class="tablet-session-panel">
+          <div class="session-panel-header">
+            <span>SSH 会话</span>
+            <span class="session-count">3</span>
+          </div>
+          <div class="session-list">
+            <!-- Active session -->
+            <div class="session-item active">
+              <div class="status-dot active"></div>
+              <div class="session-info">
+                <div class="session-name">prod-server</div>
+                <div class="session-os">Ubuntu 22.04</div>
+              </div>
+            </div>
+            <!-- Connected session -->
+            <div class="session-item">
+              <div class="status-dot connected"></div>
+              <div class="session-info">
+                <div class="session-name">test-server</div>
+                <div class="session-os">CentOS 8</div>
+              </div>
+            </div>
+            <!-- Disconnected session -->
+            <div class="session-item">
+              <div class="status-dot disconnected"></div>
+              <div class="session-info">
+                <div class="session-name">dev-server</div>
+                <div class="session-os">Debian 12</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Terminal Area -->
+        <div class="tablet-terminal-area">
+          <div class="tablet-terminal">
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">docker ps</span></div>
+            <div class="term-line term-output">CONTAINER ID   <span class="term-dir">IMAGE</span>          STATUS         PORTS</div>
+            <div class="term-line term-output">a1b2c3d4e5f6   <span class="term-dir">nginx:latest</span>   Up <span class="term-number">3</span> days      <span class="term-number">0.0.0.0:80</span>-&gt;80/tcp</div>
+            <div class="term-line term-output">f6e5d4c3b2a1   <span class="term-dir">mysql:8.0</span>      Up <span class="term-number">3</span> days      <span class="term-number">0.0.0.0:3306</span>-&gt;3306/tcp</div>
+            <div class="term-line"></div>
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">free -h</span></div>
+            <div class="term-line term-output">              total        used        free</div>
+            <div class="term-line term-output">Mem:           <span class="term-number">7.8G</span>        <span class="term-number">5.2G</span>        <span class="term-number">1.4G</span></div>
+            <div class="term-line term-output">Swap:          <span class="term-number">2.0G</span>        <span class="term-number">128M</span>        <span class="term-number">1.9G</span></div>
+            <div class="term-line"></div>
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">uptime</span></div>
+            <div class="term-line term-output"> <span class="term-number">14:30:22</span> up <span class="term-number">15</span> days, <span class="term-number">8:42</span>, <span class="term-number">2</span> users, load average: <span class="term-number">0.45</span>, <span class="term-number">0.32</span>, <span class="term-number">0.28</span></div>
+            <div class="term-line"></div>
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Desktop ========== -->
+  <div class="bp-section">
+    <div class="bp-label">Desktop &ge; 1024px</div>
+    <p class="bp-desc">左侧会话列表 + 多标签页终端区域，高效管理多个并发终端</p>
+    <div class="preview-frame">
+      <div class="preview-titlebar">
+        <div class="preview-dot red"></div>
+        <div class="preview-dot yellow"></div>
+        <div class="preview-dot green"></div>
+        <span class="preview-titlebar-text">Desktop - Full Width</span>
+      </div>
+      <div class="desktop-layout">
+        <!-- Session Panel -->
+        <div class="desktop-session-panel">
+          <div class="session-panel-header">
+            <span>SSH 会话</span>
+            <span class="session-count">3</span>
+          </div>
+          <div class="session-list">
+            <div class="session-item active">
+              <div class="status-dot active"></div>
+              <div class="session-info">
+                <div class="session-name">prod-server</div>
+                <div class="session-os">Ubuntu 22.04</div>
+              </div>
+            </div>
+            <div class="session-item">
+              <div class="status-dot connected"></div>
+              <div class="session-info">
+                <div class="session-name">test-server</div>
+                <div class="session-os">CentOS 8</div>
+              </div>
+            </div>
+            <div class="session-item">
+              <div class="status-dot disconnected"></div>
+              <div class="session-info">
+                <div class="session-name">dev-server</div>
+                <div class="session-os">Debian 12</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Terminal Area -->
+        <div class="desktop-terminal-area">
+          <!-- Tab Bar -->
+          <div class="tab-bar">
+            <div class="tab-item active">
+              <span class="tab-dot"></span>
+              prod-server
+              <button class="tab-close">&times;</button>
+            </div>
+            <div class="tab-item">
+              <span class="tab-dot"></span>
+              test-server
+              <button class="tab-close">&times;</button>
+            </div>
+            <button class="tab-new" title="新建标签页">+</button>
+          </div>
+          <!-- Terminal Content -->
+          <div class="desktop-terminal">
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">docker ps</span></div>
+            <div class="term-line term-output">CONTAINER ID   <span class="term-dir">IMAGE</span>          STATUS         PORTS</div>
+            <div class="term-line term-output">a1b2c3d4e5f6   <span class="term-dir">nginx:latest</span>   Up <span class="term-number">3</span> days      <span class="term-number">0.0.0.0:80</span>-&gt;80/tcp</div>
+            <div class="term-line term-output">f6e5d4c3b2a1   <span class="term-dir">mysql:8.0</span>      Up <span class="term-number">3</span> days      <span class="term-number">0.0.0.0:3306</span>-&gt;3306/tcp</div>
+            <div class="term-line"></div>
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">free -h</span></div>
+            <div class="term-line term-output">              total        used        free</div>
+            <div class="term-line term-output">Mem:           <span class="term-number">7.8G</span>        <span class="term-number">5.2G</span>        <span class="term-number">1.4G</span></div>
+            <div class="term-line term-output">Swap:          <span class="term-number">2.0G</span>        <span class="term-number">128M</span>        <span class="term-number">1.9G</span></div>
+            <div class="term-line"></div>
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cmd">uptime</span></div>
+            <div class="term-line term-output"> <span class="term-number">14:30:22</span> up <span class="term-number">15</span> days, <span class="term-number">8:42</span>, <span class="term-number">2</span> users, load average: <span class="term-number">0.45</span>, <span class="term-number">0.32</span>, <span class="term-number">0.28</span></div>
+            <div class="term-line"></div>
+            <div class="term-line"><span class="term-prompt">admin@prod-server:~$</span> <span class="term-cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Color Legend ===== -->
+  <div class="color-legend">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-prompt);"></div>
+      <span>用户提示符 #0C9B4B</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-fg);"></div>
+      <span>命令文本 #D4D4D4</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-output);"></div>
+      <span>输出文本 #9CA3AF</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-dir);"></div>
+      <span>目录名称 #60A5FA</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-number);"></div>
+      <span>数值/容量 #F59E0B</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-error);"></div>
+      <span>错误文本 #DC2626</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background: var(--terminal-bg); border: 1px solid var(--op1-outline-variant);"></div>
+      <span>终端背景 #1E1E1E</span>
+    </div>
+  </div>
+</div>
+
+
+    <style>
+/* ===== CSS Custom Properties ===== */
+:root {
+  --op1-primary: #0C9B4B;
+  --op1-primary-container: #C8E8D4;
+  --op1-on-primary-container: #055A2B;
+  --op1-background: #FAFBFC;
+  --op1-surface: #FAFBFC;
+  --op1-card: #FFFFFF;
+  --op1-on-surface: #1A1C1E;
+  --op1-on-surface-variant: #44474E;
+  --op1-outline-variant: #C4C7CF;
+  --op1-outline: #74777F;
+  --op1-muted-foreground: #6B7280;
+  --op1-surface-container: #EEF0F3;
+  --op1-surface-container-low: #F4F6F8;
+  --op1-radius-card: 22px;
+  --op1-radius-md: 14px;
+  --op1-spacing-sm: 8px;
+  --op1-spacing-md: 12px;
+  --op1-spacing-lg: 16px;
+  --op1-spacing-xl: 24px;
+  --font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --terminal-bg: #1E1E1E;
+  --terminal-fg: #D4D4D4;
+  --terminal-prompt: #0C9B4B;
+  --terminal-output: #9CA3AF;
+  --terminal-dir: #60A5FA;
+  --terminal-number: #F59E0B;
+  --terminal-error: #DC2626;
+  --terminal-font: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-family);
+  background: #E8EBED;
+  color: var(--op1-on-surface);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== Page Layout ===== */
+.page-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--op1-on-surface);
+}
+.page-subtitle {
+  font-size: 14px;
+  color: var(--op1-muted-foreground);
+  margin-bottom: 32px;
+}
+
+/* ===== Breakpoint Section ===== */
+.bp-section {
+  margin-bottom: 48px;
+}
+.bp-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--op1-primary);
+  background: var(--op1-primary-container);
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.bp-desc {
+  font-size: 13px;
+  color: var(--op1-muted-foreground);
+  margin-bottom: 16px;
+}
+
+/* ===== Preview Frame ===== */
+.preview-frame {
+  border-radius: var(--op1-radius-card);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  border: 1px solid var(--op1-outline-variant);
+  background: var(--op1-card);
+}
+.preview-titlebar {
+  background: var(--op1-surface-container);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--op1-outline-variant);
+}
+.preview-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.preview-dot.red { background: #FF5F57; }
+.preview-dot.yellow { background: #FEBC2E; }
+.preview-dot.green { background: #28C840; }
+.preview-titlebar-text {
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--op1-muted-foreground);
+  font-weight: 500;
+}
+
+/* ===== Mobile Layout (<600px) ===== */
+.mobile-layout {
+  width: 375px;
+  height: 667px;
+  background: var(--terminal-bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.mobile-toolbar {
+  background: var(--terminal-bg);
+  border-bottom: 1px solid #333;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.mobile-toolbar-session {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.active { background: #4ADE80; box-shadow: 0 0 4px rgba(74,222,128,0.5); }
+.status-dot.connected { background: #4ADE80; }
+.status-dot.disconnected { background: #6B7280; }
+.mobile-toolbar-name {
+  font-size: 13px;
+  color: var(--terminal-fg);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toolbar-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--terminal-fg);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toolbar-btn:hover { background: #333; }
+.toolbar-btn-icon {
+  font-family: var(--font-family);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.mobile-terminal {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  font-family: var(--terminal-font);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--terminal-fg);
+}
+
+/* ===== Tablet Layout (600-1023px) ===== */
+.tablet-layout {
+  width: 800px;
+  height: 520px;
+  display: flex;
+  background: var(--card-bg, #FFFFFF);
+}
+.tablet-session-panel {
+  width: 200px;
+  background: var(--op1-surface-container-low);
+  border-right: 1px solid var(--op1-outline-variant);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.session-panel-header {
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  border-bottom: 1px solid var(--op1-outline-variant);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.session-panel-header .session-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--op1-muted-foreground);
+  background: var(--op1-surface-container);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.session-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.session-item {
+  height: 56px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+.session-item:hover { background: rgba(0,0,0,0.04); }
+.session-item.active {
+  background: var(--op1-primary-container);
+}
+.session-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--op1-primary);
+  border-radius: 0 2px 2px 0;
+}
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+.session-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--op1-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.session-os {
+  font-size: 11px;
+  color: var(--op1-muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tablet-terminal-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--terminal-bg);
+}
+.tablet-terminal {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  font-family: var(--terminal-font);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--terminal-fg);
+}
+
+/* ===== Desktop Layout (>=1024px) ===== */
+.desktop-layout {
+  width: 100%;
+  height: 560px;
+  display: flex;
+  background: var(--card-bg, #FFFFFF);
+}
+.desktop-session-panel {
+  width: 200px;
+  background: var(--op1-surface-container-low);
+  border-right: 1px solid var(--op1-outline-variant);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.desktop-terminal-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--terminal-bg);
+}
+
+/* Tab bar */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  background: #252526;
+  border-bottom: 1px solid #333;
+  height: 36px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 100%;
+  font-size: 12px;
+  color: var(--terminal-output);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  position: relative;
+}
+.tab-item:hover { color: var(--terminal-fg); background: rgba(255,255,255,0.04); }
+.tab-item.active {
+  color: var(--terminal-fg);
+  border-bottom-color: var(--op1-primary);
+  background: var(--terminal-bg);
+}
+.tab-item .tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.tab-item.active .tab-dot { background: var(--op1-primary); }
+.tab-item:not(.active) .tab-dot { background: var(--terminal-output); }
+.tab-close {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--terminal-output);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+.tab-item:hover .tab-close { opacity: 1; }
+.tab-close:hover { background: rgba(255,255,255,0.1); }
+.tab-new {
+  width: 32px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--terminal-output);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.tab-new:hover { background: rgba(255,255,255,0.08); }
+
+.desktop-terminal {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  font-family: var(--terminal-font);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--terminal-fg);
+}
+
+/* ===== Terminal Content Styles ===== */
+.term-prompt { color: var(--terminal-prompt); font-weight: 500; }
+.term-cmd { color: var(--terminal-fg); }
+.term-output { color: var(--terminal-output); }
+.term-dir { color: var(--terminal-dir); }
+.term-number { color: var(--terminal-number); }
+.term-error { color: var(--terminal-error); }
+.term-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--terminal-fg);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.term-line { white-space: pre-wrap; word-break: break-all; }
+
+/* ===== Responsive info ===== */
+.bp-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.bp-info-card {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+.bp-info-card.mobile-info { background: #DBEAFE; color: #1E40AF; }
+.bp-info-card.tablet-info { background: #FEF3C7; color: #92400E; }
+.bp-info-card.desktop-info { background: var(--op1-primary-container); color: var(--op1-on-primary-container); }
+
+/* ===== Color legend ===== */
+.color-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--op1-surface-container-low);
+  border-radius: var(--op1-radius-md);
+  margin-top: 32px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+}
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+</style>
+</body>
+</html>

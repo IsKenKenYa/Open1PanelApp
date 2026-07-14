@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 容器</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B; --op1-brand-light:#4DB87A; --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE; --op1-brand-100:#C8E8D4; --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A; --op1-brand-900:#055A2B;
+  --op1-success:#16A34A; --op1-warning:#F59E0B; --op1-danger:#DC2626; --op1-info:#0EA5E9;
+  --op1-acrylic-blur:30px; --op1-acrylic-noise-opacity:0.03; --op1-acrylic-tint-opacity:0.80;
+  --op1-mica-opacity:0.85; --op1-mica-blur:60px;
+  --op1-reveal-hover:rgba(255,255,255,0.08); --op1-reveal-pressed:rgba(255,255,255,0.04);
+  --reveal-x:50%; --reveal-y:50%;
+  --op1-surface:#F3F3F3; --op1-surface-card:#FFFFFF; --op1-surface-popover:#FCFCFC;
+  --op1-surface-nav:rgba(243,243,243,0.80); --op1-surface-nav-top:rgba(243,243,243,0.70);
+  --op1-surface-container-low:#F9F9F9; --op1-surface-container:#F3F3F3; --op1-surface-container-high:#EDEDED;
+  --op1-on-surface:#1A1A1A; --op1-on-surface-variant:#616161;
+  --op1-nav-pane-expanded:320px; --op1-nav-pane-compact:48px; --op1-nav-top-height:48px;
+  --op1-font-family:'Segoe UI Variable','Segoe UI',system-ui,sans-serif;
+  --op1-font-family-mono:'Cascadia Code','Consolas',monospace;
+  --op1-radius-sm:4px; --op1-radius-md:8px; --op1-radius-lg:8px; --op1-radius-card:8px; --op1-radius-full:9999px;
+  --op1-motion-fast:167ms; --op1-motion-normal:250ms;
+  --op1-motion-easing-decelerate:cubic-bezier(0,0,0,1); --op1-motion-easing-standard:cubic-bezier(0.8,0,0.2,1);
+  --op1-border:#E5E5E5; --op1-card-stroke:#E5E5E5; --op1-error:#C42B1C; --op1-divider:#E5E5E5;
+}
+html.dark {
+  --op1-surface:#202020; --op1-surface-card:#2D2D2D; --op1-surface-popover:#383838;
+  --op1-surface-nav:rgba(32,32,32,0.80); --op1-surface-nav-top:rgba(32,32,32,0.70);
+  --op1-surface-container-low:#2A2A2A; --op1-surface-container:#202020; --op1-surface-container-high:#1A1A1A;
+  --op1-on-surface:#FFFFFF; --op1-on-surface-variant:#A0A0A0;
+  --op1-border:#3D3D3D; --op1-card-stroke:#3D3D3D; --op1-divider:#3D3D3D;
+  --op1-reveal-hover:rgba(255,255,255,0.06); --op1-reveal-pressed:rgba(255,255,255,0.03);
+  --op1-acrylic-tint-opacity:0.60; --op1-mica-opacity:0.80;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--op1-font-family); color:var(--op1-on-surface); background:var(--op1-surface); overflow:hidden; height:100vh; -webkit-font-smoothing:antialiased; }
+
+.op1-acrylic { position:relative; }
+.op1-acrylic::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"); opacity:var(--op1-acrylic-noise-opacity); pointer-events:none; border-radius:inherit; z-index:1; }
+
+.nav-view { display:flex; height:100vh; width:100vw; }
+.nav-pane { width:var(--op1-nav-pane-expanded); min-width:var(--op1-nav-pane-expanded); height:100vh; display:flex; flex-direction:column; background:rgba(243,243,243,0.85); backdrop-filter:blur(60px); -webkit-backdrop-filter:blur(60px); border-right:1px solid var(--op1-border); transition:width var(--op1-motion-normal) var(--op1-motion-easing-standard), min-width var(--op1-motion-normal) var(--op1-motion-easing-standard); overflow:hidden; z-index:10; }
+html.dark .nav-pane { background:var(--op1-surface-nav); }
+
+@media (max-width:1279px) and (min-width:768px),(max-width:767px) {
+  .nav-pane { width:var(--op1-nav-pane-compact); min-width:var(--op1-nav-pane-compact); }
+  .nav-pane .nav-label,.nav-pane .nav-search-wrap,.nav-pane .nav-footer-info,.nav-pane .nav-footer-server-name { display:none; }
+  .nav-pane .nav-search { display:none; }
+  .nav-pane .nav-item { justify-content:center; padding:12px 0; }
+  .nav-pane .nav-header { justify-content:center; padding:12px 0; }
+  .nav-pane .nav-header-title { display:none; }
+  .nav-pane .nav-footer { justify-content:center; padding:12px 0; }
+}
+
+.nav-header { display:flex; align-items:center; gap:10px; padding:16px 16px 12px; flex-shrink:0; }
+.nav-header-brand { color:var(--op1-brand); }
+.nav-header-title { font-size:16px; font-weight:600; color:var(--op1-on-surface); white-space:nowrap; }
+.nav-search-wrap { padding:0 16px 12px; flex-shrink:0; }
+.nav-search { position:relative; }
+.nav-search input { width:100%; height:36px; padding:0 12px 0 36px; font-size:13px; font-family:var(--op1-font-family); color:var(--op1-on-surface); background:var(--op1-surface-container-low); border:none; border-bottom:1px solid var(--op1-border); border-radius:var(--op1-radius-sm); outline:none; transition:border-color var(--op1-motion-fast) var(--op1-motion-easing-standard); }
+html.dark .nav-search input { background:rgba(255,255,255,0.06); }
+.nav-search input::placeholder { color:var(--op1-on-surface-variant); }
+.nav-search input:focus { border-bottom:2px solid var(--op1-brand); background:var(--op1-surface-card); }
+.nav-search .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--op1-on-surface-variant); pointer-events:none; }
+
+.nav-items { flex:1; overflow-y:auto; padding:4px 8px; }
+.nav-item { display:flex; align-items:center; gap:12px; padding:10px 16px; border-radius:var(--op1-radius-sm); cursor:pointer; font-size:14px; color:var(--op1-on-surface); position:relative; user-select:none; white-space:nowrap; transition:background var(--op1-motion-fast) var(--op1-motion-easing-standard); border-left:3px solid transparent; }
+.nav-item:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+.nav-item:active { background:var(--op1-reveal-pressed); }
+.nav-item .nav-icon { flex-shrink:0; color:var(--op1-on-surface); }
+.nav-item.active { border-left-color:var(--op1-brand); background:rgba(12,155,75,0.08); color:var(--op1-brand); font-weight:600; }
+.nav-item.active .nav-icon { color:var(--op1-brand); }
+html.dark .nav-item.active { background:rgba(12,155,75,0.15); }
+
+@media (max-width:1279px) and (min-width:768px),(max-width:767px) {
+  .nav-item .nav-tooltip { display:none; position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%); background:var(--op1-surface-card); color:var(--op1-on-surface); padding:6px 12px; border-radius:var(--op1-radius-sm); font-size:13px; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.14); border:1px solid var(--op1-border); z-index:100; pointer-events:none; }
+  .nav-item:hover .nav-tooltip { display:block; }
+}
+
+.nav-footer { display:flex; align-items:center; gap:10px; padding:12px 16px; border-top:1px solid var(--op1-divider); flex-shrink:0; }
+.nav-footer-info { display:flex; align-items:center; gap:8px; flex:1; min-width:0; }
+.nav-footer-server-name { font-size:13px; color:var(--op1-on-surface); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.nav-footer-online-dot { width:8px; height:8px; border-radius:50%; background:var(--op1-success); flex-shrink:0; }
+.nav-footer-settings-btn { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:var(--op1-radius-sm); cursor:pointer; color:var(--op1-on-surface-variant); transition:background var(--op1-motion-fast) var(--op1-motion-easing-standard); flex-shrink:0; }
+.nav-footer-settings-btn:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+
+.nav-content { flex:1; display:flex; flex-direction:column; min-width:0; background:var(--op1-surface); overflow:hidden; }
+.command-bar { display:flex; align-items:center; gap:4px; padding:8px 16px; height:var(--op1-nav-top-height); background:var(--op1-surface); border-bottom:1px solid var(--op1-border); flex-shrink:0; }
+.command-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; height:32px; font-size:13px; font-family:var(--op1-font-family); color:var(--op1-on-surface); background:transparent; border:1px solid transparent; border-radius:var(--op1-radius-sm); cursor:pointer; white-space:nowrap; position:relative; overflow:hidden; transition:background var(--op1-motion-fast) var(--op1-motion-easing-standard), border-color var(--op1-motion-fast) var(--op1-motion-easing-standard); }
+.command-btn:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); border-color:var(--op1-border); }
+.command-btn:active { background:var(--op1-reveal-pressed); border-color:var(--op1-border); }
+.command-btn-label { display:inline; }
+.command-separator { width:1px; height:24px; background:var(--op1-divider); margin:0 4px; }
+.content-body { flex:1; overflow-y:auto; padding:24px; }
+
+@media (max-width:1279px) and (min-width:768px),(max-width:767px) {
+  .command-btn-label { display:none; }
+  .command-btn { padding:6px; width:32px; justify-content:center; }
+}
+
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--op1-on-surface-variant); border-radius:3px; opacity:0.5; }
+::-webkit-scrollbar-thumb:hover { background:var(--op1-on-surface); }
+
+.theme-toggle-btn { display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:var(--op1-radius-sm); cursor:pointer; color:var(--op1-on-surface-variant); background:transparent; border:none; transition:background var(--op1-motion-fast) var(--op1-motion-easing-standard); flex-shrink:0; }
+.theme-toggle-btn:hover { background:radial-gradient(circle at var(--reveal-x) var(--reveal-y), var(--op1-reveal-hover), transparent 70%); }
+html.dark .icon-sun { display:block; } html.dark .icon-moon { display:none; }
+html.light .icon-sun { display:none; } html.light .icon-moon { display:block; }
+
+/* ===== Container Management Specific ===== */
+.container-toolbar {
+  display:flex; align-items:center; gap:12px; margin-bottom:16px;
+}
+.container-search-wrap { position:relative; flex:1; max-width:360px; }
+.container-search-wrap i { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--op1-on-surface-variant); pointer-events:none; }
+.container-search-input {
+  width:100%; height:36px; padding:0 12px 0 36px; font-size:13px; font-family:var(--op1-font-family);
+  color:var(--op1-on-surface); background:var(--op1-surface-card); border:1px solid var(--op1-border);
+  border-radius:var(--op1-radius-sm); outline:none;
+  transition:border-color var(--op1-motion-fast) var(--op1-motion-easing-standard);
+}
+.container-search-input:focus { border-color:var(--op1-brand); }
+
+.view-toggle { display:flex; border:1px solid var(--op1-border); border-radius:var(--op1-radius-sm); overflow:hidden; }
+.view-toggle-btn {
+  display:flex; align-items:center; justify-content:center; width:32px; height:32px;
+  background:transparent; border:none; cursor:pointer; color:var(--op1-on-surface-variant);
+  transition:background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+.view-toggle-btn.active { background:var(--op1-surface-container-high); color:var(--op1-brand); }
+.view-toggle-btn:hover:not(.active) { background:var(--op1-surface-container-low); }
+
+.pivot-tabs { display:flex; border-bottom:1px solid var(--op1-border); margin-bottom:20px; }
+.pivot-tab { padding:8px 16px; font-size:13px; font-family:var(--op1-font-family); color:var(--op1-on-surface-variant); cursor:pointer; position:relative; background:transparent; border:none; transition:color var(--op1-motion-fast); white-space:nowrap; }
+.pivot-tab:hover { color:var(--op1-on-surface); }
+.pivot-tab.active { color:var(--op1-brand); font-weight:600; }
+.pivot-tab.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--op1-brand); border-radius:1px 1px 0 0; }
+
+.container-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:12px; }
+
+.container-card {
+  background:var(--op1-surface-card); border:1px solid var(--op1-card-stroke);
+  border-radius:var(--op1-radius-card); padding:16px 20px; cursor:pointer;
+  position:relative; overflow:hidden;
+  transition:box-shadow var(--op1-motion-fast) var(--op1-motion-easing-standard), border-color var(--op1-motion-fast);
+  border-left:3px solid transparent;
+}
+.container-card:hover {
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+html.dark .container-card:hover { box-shadow:0 2px 8px rgba(0,0,0,0.20); }
+.container-card.selected {
+  border-left-color:var(--op1-brand);
+  background:var(--op1-surface-container-low);
+}
+
+.container-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.container-card-name { font-size:14px; font-weight:600; color:var(--op1-on-surface); font-family:var(--op1-font-family-mono); }
+.container-card-image { font-size:11px; color:var(--op1-on-surface-variant); margin-bottom:12px; }
+
+.container-card-status { display:flex; align-items:center; gap:6px; margin-bottom:12px; }
+.container-status-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.container-status-running { background:var(--op1-success); }
+.container-status-stopped { background:var(--op1-on-surface-variant); }
+
+.container-card-metrics { display:flex; gap:20px; }
+.container-metric { display:flex; flex-direction:column; gap:2px; }
+.container-metric-label { font-size:11px; color:var(--op1-on-surface-variant); text-transform:uppercase; letter-spacing:0.5px; }
+.container-metric-value { font-size:13px; font-weight:600; color:var(--op1-on-surface); font-family:var(--op1-font-family-mono); }
+
+.container-card-ports { margin-top:10px; padding-top:10px; border-top:1px solid var(--op1-border); font-size:12px; color:var(--op1-on-surface-variant); font-family:var(--op1-font-family-mono); }
+
+/* Checkbox style */
+.container-checkbox {
+  width:18px; height:18px; border:2px solid var(--op1-border); border-radius:var(--op1-radius-sm);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  transition:background var(--op1-motion-fast), border-color var(--op1-motion-fast);
+  flex-shrink:0;
+}
+.container-checkbox.checked {
+  background:var(--op1-brand); border-color:var(--op1-brand);
+}
+.container-checkbox.checked::after {
+  content:''; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translateY(-1px);
+}
+</style>
+</head>
+
+<body>
+<div class="nav-view">
+  <nav class="nav-pane op1-acrylic" id="navPane">
+    <div class="nav-header">
+      <div class="nav-header-brand"><i data-lucide="server" style="width:20px;height:20px;"></i></div>
+      <span class="nav-header-title">1Panel</span>
+    </div>
+    <div class="nav-search-wrap">
+      <div class="nav-search">
+        <i data-lucide="search" class="search-icon" style="width:14px;height:14px;"></i>
+        <input type="text" placeholder="搜索模块...">
+      </div>
+    </div>
+    <div class="nav-items">
+      <div class="nav-item" data-reveal>
+        <i data-lucide="layout-dashboard" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">仪表板</span><span class="nav-tooltip">仪表板</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="server" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">服务器</span><span class="nav-tooltip">服务器</span>
+      </div>
+      <div class="nav-item active" data-reveal>
+        <i data-lucide="box" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">容器</span><span class="nav-tooltip">容器</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="database" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">数据库</span><span class="nav-tooltip">数据库</span>
+      </div>
+      <div class="nav-item" data-reveal>
+        <i data-lucide="settings" class="nav-icon" style="width:20px;height:20px;"></i>
+        <span class="nav-label">设置</span><span class="nav-tooltip">设置</span>
+      </div>
+    </div>
+    <div class="nav-footer">
+      <div class="nav-footer-info">
+        <span class="nav-footer-online-dot"></span>
+        <span class="nav-footer-server-name">生产服务器</span>
+      </div>
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="切换主题">
+        <i data-lucide="sun" class="icon-sun" style="width:16px;height:16px;"></i>
+        <i data-lucide="moon" class="icon-moon" style="width:16px;height:16px;"></i>
+      </button>
+      <div class="nav-footer-settings-btn" data-reveal title="设置"><i data-lucide="settings" style="width:16px;height:16px;"></i></div>
+    </div>
+  </nav>
+
+  <div class="nav-content">
+    <div class="command-bar">
+      <span style="font-size:14px;font-weight:600;color:var(--op1-on-surface);margin-right:8px;">容器</span>
+      <div class="command-separator"></div>
+      <button class="command-btn" data-reveal title="创建容器">
+        <i data-lucide="plus" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">创建</span>
+      </button>
+      <button class="command-btn" data-reveal title="批量启动">
+        <i data-lucide="play" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">启动</span>
+      </button>
+      <button class="command-btn" data-reveal title="批量停止">
+        <i data-lucide="square" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">停止</span>
+      </button>
+      <button class="command-btn" data-reveal title="批量重启">
+        <i data-lucide="rotate-cw" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">重启</span>
+      </button>
+      <button class="command-btn" data-reveal title="批量删除" style="color:var(--op1-danger);">
+        <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">删除</span>
+      </button>
+      <div style="flex:1;"></div>
+      <button class="command-btn" data-reveal title="刷新">
+        <i data-lucide="refresh-cw" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">刷新</span>
+      </button>
+      <button class="command-btn" data-reveal title="镜像">
+        <i data-lucide="layers" style="width:16px;height:16px;"></i>
+        <span class="command-btn-label">镜像</span>
+      </button>
+    </div>
+
+    <div class="content-body">
+      <!-- Toolbar: Search + View Toggle -->
+      <div class="container-toolbar">
+        <div class="container-search-wrap">
+          <i data-lucide="search" style="width:14px;height:14px;"></i>
+          <input type="text" class="container-search-input" placeholder="搜索容器名称、镜像...">
+        </div>
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" title="卡片视图"><i data-lucide="layout-grid" style="width:16px;height:16px;"></i></button>
+          <button class="view-toggle-btn" title="列表视图"><i data-lucide="list" style="width:16px;height:16px;"></i></button>
+        </div>
+      </div>
+
+      <!-- Pivot Tabs -->
+      <div class="pivot-tabs">
+        <button class="pivot-tab active" data-reveal>全部 (6)</button>
+        <button class="pivot-tab" data-reveal>运行中 (4)</button>
+        <button class="pivot-tab" data-reveal>已停止 (2)</button>
+      </div>
+
+      <!-- Container Cards -->
+      <div class="container-grid">
+        <!-- nginx -->
+        <div class="container-card selected" data-reveal>
+          <div class="container-card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="container-checkbox checked"></div>
+              <span class="container-card-name">nginx-proxy</span>
+            </div>
+            <span style="font-size:11px;color:var(--op1-success);font-weight:600;">运行中</span>
+          </div>
+          <div class="container-card-image">nginx:1.25-alpine</div>
+          <div class="container-card-status">
+            <span class="container-status-dot container-status-running"></span>
+            <span style="font-size:12px;color:var(--op1-on-surface-variant);">运行 15 天</span>
+          </div>
+          <div class="container-card-metrics">
+            <div class="container-metric">
+              <span class="container-metric-label">CPU</span>
+              <span class="container-metric-value">2.3%</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">内存</span>
+              <span class="container-metric-value">64 MB</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">网络</span>
+              <span class="container-metric-value">12.5 MB/s</span>
+            </div>
+          </div>
+          <div class="container-card-ports">0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp</div>
+        </div>
+
+        <!-- mysql -->
+        <div class="container-card" data-reveal>
+          <div class="container-card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="container-checkbox"></div>
+              <span class="container-card-name">mysql-db</span>
+            </div>
+            <span style="font-size:11px;color:var(--op1-success);font-weight:600;">运行中</span>
+          </div>
+          <div class="container-card-image">mysql:8.0</div>
+          <div class="container-card-status">
+            <span class="container-status-dot container-status-running"></span>
+            <span style="font-size:12px;color:var(--op1-on-surface-variant);">运行 15 天</span>
+          </div>
+          <div class="container-card-metrics">
+            <div class="container-metric">
+              <span class="container-metric-label">CPU</span>
+              <span class="container-metric-value">8.7%</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">内存</span>
+              <span class="container-metric-value">1.8 GB</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">网络</span>
+              <span class="container-metric-value">3.2 MB/s</span>
+            </div>
+          </div>
+          <div class="container-card-ports">0.0.0.0:3306->3306/tcp</div>
+        </div>
+
+        <!-- redis -->
+        <div class="container-card" data-reveal>
+          <div class="container-card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="container-checkbox"></div>
+              <span class="container-card-name">redis-cache</span>
+            </div>
+            <span style="font-size:11px;color:var(--op1-success);font-weight:600;">运行中</span>
+          </div>
+          <div class="container-card-image">redis:7-alpine</div>
+          <div class="container-card-status">
+            <span class="container-status-dot container-status-running"></span>
+            <span style="font-size:12px;color:var(--op1-on-surface-variant);">运行 10 天</span>
+          </div>
+          <div class="container-card-metrics">
+            <div class="container-metric">
+              <span class="container-metric-label">CPU</span>
+              <span class="container-metric-value">1.2%</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">内存</span>
+              <span class="container-metric-value">512 MB</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">网络</span>
+              <span class="container-metric-value">0.8 MB/s</span>
+            </div>
+          </div>
+          <div class="container-card-ports">127.0.0.1:6379->6379/tcp</div>
+        </div>
+
+        <!-- wordpress -->
+        <div class="container-card" data-reveal>
+          <div class="container-card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="container-checkbox"></div>
+              <span class="container-card-name">wordpress-app</span>
+            </div>
+            <span style="font-size:11px;color:var(--op1-success);font-weight:600;">运行中</span>
+          </div>
+          <div class="container-card-image">wordpress:6.5-php8.2</div>
+          <div class="container-card-status">
+            <span class="container-status-dot container-status-running"></span>
+            <span style="font-size:12px;color:var(--op1-on-surface-variant);">运行 8 天</span>
+          </div>
+          <div class="container-card-metrics">
+            <div class="container-metric">
+              <span class="container-metric-label">CPU</span>
+              <span class="container-metric-value">5.1%</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">内存</span>
+              <span class="container-metric-value">256 MB</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">网络</span>
+              <span class="container-metric-value">1.5 MB/s</span>
+            </div>
+          </div>
+          <div class="container-card-ports">0.0.0.0:8080->80/tcp</div>
+        </div>
+
+        <!-- postgres (stopped) -->
+        <div class="container-card" data-reveal>
+          <div class="container-card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="container-checkbox"></div>
+              <span class="container-card-name">postgres-db</span>
+            </div>
+            <span style="font-size:11px;color:var(--op1-on-surface-variant);font-weight:600;">已停止</span>
+          </div>
+          <div class="container-card-image">postgres:16-alpine</div>
+          <div class="container-card-status">
+            <span class="container-status-dot container-status-stopped"></span>
+            <span style="font-size:12px;color:var(--op1-on-surface-variant);">停止于 2 天前</span>
+          </div>
+          <div class="container-card-metrics">
+            <div class="container-metric">
+              <span class="container-metric-label">CPU</span>
+              <span class="container-metric-value">--</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">内存</span>
+              <span class="container-metric-value">--</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">网络</span>
+              <span class="container-metric-value">--</span>
+            </div>
+          </div>
+          <div class="container-card-ports">0.0.0.0:5432->5432/tcp</div>
+        </div>
+
+        <!-- mongo (stopped) -->
+        <div class="container-card" data-reveal>
+          <div class="container-card-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="container-checkbox"></div>
+              <span class="container-card-name">mongo-db</span>
+            </div>
+            <span style="font-size:11px;color:var(--op1-on-surface-variant);font-weight:600;">已停止</span>
+          </div>
+          <div class="container-card-image">mongo:7</div>
+          <div class="container-card-status">
+            <span class="container-status-dot container-status-stopped"></span>
+            <span style="font-size:12px;color:var(--op1-on-surface-variant);">停止于 5 天前</span>
+          </div>
+          <div class="container-card-metrics">
+            <div class="container-metric">
+              <span class="container-metric-label">CPU</span>
+              <span class="container-metric-value">--</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">内存</span>
+              <span class="container-metric-value">--</span>
+            </div>
+            <div class="container-metric">
+              <span class="container-metric-label">网络</span>
+              <span class="container-metric-value">--</span>
+            </div>
+          </div>
+          <div class="container-card-ports">0.0.0.0:27017->27017/tcp</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  document.querySelectorAll('[data-reveal]').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const rect = el.getBoundingClientRect();
+      el.style.setProperty('--reveal-x', (e.clientX - rect.left) + 'px');
+      el.style.setProperty('--reveal-y', (e.clientY - rect.top) + 'px');
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.removeProperty('--reveal-x');
+      el.style.removeProperty('--reveal-y');
+    });
+  });
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.pivot-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.pivot-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.container-checkbox').forEach(cb => {
+    cb.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cb.classList.toggle('checked');
+      cb.closest('.container-card').classList.toggle('selected');
+    });
+  });
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    if (html.classList.contains('light')) { html.classList.remove('light'); html.classList.add('dark'); }
+    else { html.classList.remove('dark'); html.classList.add('light'); }
+  }
+  document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+</script>
+</body>
+</html>

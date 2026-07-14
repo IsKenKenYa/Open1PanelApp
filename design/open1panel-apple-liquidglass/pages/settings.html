@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1Panel Client - 设置</title>
+  <style id="theme-vars">
+    /* ============================================================
+       Open1Panel — Apple Liquid Glass Design Tokens
+       ============================================================ */
+    :root {
+      /* Brand */
+      --op1-brand: #0C9B4B;
+      --op1-brand-light: #4DB87A;
+      --op1-brand-dark: #087A3A;
+      --op1-brand-50: #E8F5EE;
+      --op1-brand-100: #C8E8D4;
+      --op1-brand-500: #0C9B4B;
+      --op1-brand-700: #087A3A;
+      --op1-brand-900: #055A2B;
+
+      /* Semantic */
+      --op1-success: #16A34A;
+      --op1-warning: #F59E0B;
+      --op1-danger: #DC2626;
+      --op1-info: #0EA5E9;
+
+      /* Glass material */
+      --op1-glass-blur: 40px;
+      --op1-glass-saturate: 180%;
+      --op1-glass-alpha: 0.65;
+      --op1-glass-alpha-elevated: 0.85;
+      --op1-glass-border-alpha: 0.20;
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.6);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(31,38,135,0.15);
+
+      /* Surface */
+      --op1-surface: rgba(255,255,255,0.15);
+      --op1-surface-elevated: rgba(255,255,255,0.40);
+      --op1-surface-card: rgba(255,255,255,0.20);
+      --op1-surface-nav: rgba(255,255,255,0.65);
+      --op1-surface-popover: rgba(255,255,255,0.50);
+      --op1-surface-container-low: rgba(255,255,255,0.10);
+      --op1-surface-container: rgba(255,255,255,0.15);
+      --op1-surface-container-high: rgba(255,255,255,0.25);
+
+      /* On-Surface */
+      --op1-on-surface: rgba(0,0,0,0.85);
+      --op1-on-surface-variant: rgba(0,0,0,0.55);
+      --op1-on-surface-nav: rgba(0,0,0,0.75);
+      --op1-on-surface-card: rgba(0,0,0,0.85);
+
+      /* Navigation */
+      --op1-nav-sidebar-width: 260px;
+      --op1-nav-tab-height: 49px;
+
+      /* Typography */
+      --op1-font-family: system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --op1-font-family-mono: 'SF Mono', ui-monospace, Menlo, monospace;
+
+      /* Radius */
+      --op1-radius-sm: 12px;
+      --op1-radius-md: 16px;
+      --op1-radius-lg: 20px;
+      --op1-radius-card: 22px;
+      --op1-radius-button: 9999px;
+      --op1-radius-full: 9999px;
+
+      /* Spacing */
+      --op1-spacing-xs: 4px;
+      --op1-spacing-sm: 8px;
+      --op1-spacing-md: 12px;
+      --op1-spacing-lg: 16px;
+      --op1-spacing-xl: 24px;
+
+      /* Motion */
+      --op1-motion-fast: 200ms;
+      --op1-motion-normal: 350ms;
+      --op1-motion-slow: 500ms;
+      --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --op1-easing-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+      /* Border */
+      --op1-border: rgba(0,0,0,0.08);
+      --op1-border-strong: rgba(0,0,0,0.15);
+
+      /* Error */
+      --op1-error: #FF3B30;
+
+      /* Background gradient */
+      --op1-bg-gradient-start: #667eea;
+      --op1-bg-gradient-end: #764ba2;
+    }
+
+    /* ----- Dark Mode ----- */
+    .dark {
+      --op1-brand-light: #3DA06A;
+      --op1-brand-50: rgba(12,155,75,0.15);
+      --op1-brand-100: rgba(12,155,75,0.25);
+
+      --op1-surface: rgba(0,0,0,0.25);
+      --op1-surface-elevated: rgba(0,0,0,0.50);
+      --op1-surface-card: rgba(0,0,0,0.35);
+      --op1-surface-nav: rgba(0,0,0,0.60);
+      --op1-surface-popover: rgba(0,0,0,0.45);
+      --op1-surface-container-low: rgba(0,0,0,0.15);
+      --op1-surface-container: rgba(0,0,0,0.25);
+      --op1-surface-container-high: rgba(0,0,0,0.40);
+
+      --op1-on-surface: rgba(255,255,255,0.90);
+      --op1-on-surface-variant: rgba(255,255,255,0.60);
+      --op1-on-surface-nav: rgba(255,255,255,0.80);
+      --op1-on-surface-card: rgba(255,255,255,0.90);
+
+      --op1-border: rgba(255,255,255,0.10);
+      --op1-border-strong: rgba(255,255,255,0.20);
+
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.15);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(0,0,0,0.40);
+
+      --op1-bg-gradient-start: #1a1a2e;
+      --op1-bg-gradient-end: #16213e;
+    }
+
+    /* ============================================================
+       Base styles
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--op1-font-family);
+      background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+      min-height: 100vh;
+      color: var(--op1-on-surface);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       Layout: macOS (>= 768px)
+       ============================================================ */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ----- Sidebar ----- */
+    .sidebar {
+      width: var(--op1-nav-sidebar-width);
+      min-width: var(--op1-nav-sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-right: 1px solid var(--op1-glass-border-alpha);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding-bottom: var(--op1-spacing-md);
+      border-bottom: 1px solid var(--op1-border);
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--op1-brand);
+      border-radius: var(--op1-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-server-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .sidebar-server-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--op1-on-surface-nav);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-server-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--op1-on-surface-variant);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.6);
+      flex-shrink: 0;
+    }
+
+    /* Search box */
+    .sidebar-search {
+      position: relative;
+    }
+    .sidebar-search input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--op1-spacing-md) 0 36px;
+      border: none;
+      border-radius: var(--op1-radius-sm);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 13px;
+      font-family: var(--op1-font-family);
+      outline: none;
+    }
+    .sidebar-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .sidebar-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Navigation menu */
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      margin-top: var(--op1-spacing-sm);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: 10px var(--op1-spacing-md);
+      border-radius: var(--op1-radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--op1-on-surface-nav);
+      cursor: pointer;
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease;
+      text-decoration: none;
+      position: relative;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: var(--op1-surface-container-high);
+    }
+    .nav-item.active {
+      background: rgba(12,155,75,0.85);
+      color: #fff;
+    }
+    .nav-item.active svg {
+      color: #fff;
+    }
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--op1-on-surface-variant);
+      transition: color var(--op1-motion-fast) ease;
+    }
+
+    /* Sidebar footer */
+    .sidebar-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--op1-spacing-md);
+      border-top: 1px solid var(--op1-border);
+      gap: var(--op1-spacing-sm);
+    }
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .footer-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .footer-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+    }
+    .footer-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .footer-btn.active-theme svg {
+      color: var(--op1-warning);
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ----- Content area ----- */
+    .content-area {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--op1-spacing-xl) var(--op1-spacing-xl) var(--op1-spacing-xl) 32px;
+    }
+
+    /* Mobile header (visible < 768px) */
+    .mobile-header {
+      display: none;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+      color: var(--op1-on-surface);
+    }
+    .mobile-header .sidebar-server-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--op1-on-surface);
+    }
+
+    /* ============================================================
+       Settings page styles
+       ============================================================ */
+    .settings-page {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .settings-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface);
+      margin-bottom: var(--op1-spacing-xl);
+      letter-spacing: -0.5px;
+    }
+
+    /* iOS Grouped List style: glass group container */
+    .settings-group {
+      background: var(--op1-surface-card);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.30);
+      box-shadow: var(--op1-glass-highlight-inset);
+      border-radius: var(--op1-radius-lg);
+      overflow: hidden;
+      margin-bottom: var(--op1-spacing-lg);
+    }
+
+    .settings-group-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--op1-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0 var(--op1-spacing-lg);
+      margin-bottom: var(--op1-spacing-sm);
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px var(--op1-spacing-lg);
+      min-height: 48px;
+      cursor: default;
+      transition: background var(--op1-motion-fast) ease;
+    }
+    .settings-row:only-child {
+      cursor: default;
+    }
+
+    /* Separator between rows (semi-transparent) */
+    .settings-row + .settings-row {
+      border-top: 1px solid var(--op1-border);
+    }
+
+    .settings-row-left {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      min-width: 0;
+    }
+
+    .settings-row-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--op1-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .settings-row-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+    .settings-row-icon.icon-green { background: rgba(12,155,75,0.15); color: var(--op1-brand); }
+    .settings-row-icon.icon-blue { background: rgba(14,165,233,0.15); color: var(--op1-info); }
+    .settings-row-icon.icon-orange { background: rgba(245,158,11,0.15); color: var(--op1-warning); }
+    .settings-row-icon.icon-red { background: rgba(220,38,38,0.15); color: var(--op1-danger); }
+    .settings-row-icon.icon-purple { background: rgba(139,92,246,0.15); color: #8B5CF6; }
+    .settings-row-icon.icon-gray { background: var(--op1-surface-container-high); color: var(--op1-on-surface-variant); }
+
+    .settings-row-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--op1-on-surface);
+    }
+
+    .settings-row-right {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      flex-shrink: 0;
+    }
+
+    .settings-row-value {
+      font-size: 14px;
+      color: var(--op1-on-surface-variant);
+    }
+
+    /* Chevron */
+    .settings-chevron {
+      color: var(--op1-on-surface-variant);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+    .settings-chevron svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Navigable row */
+    .settings-row.navigable {
+      cursor: pointer;
+    }
+    .settings-row.navigable:hover {
+      background: var(--op1-surface-container-high);
+    }
+
+    /* ============================================================
+       Toggle Switch (iOS style)
+       ============================================================ */
+    .toggle-switch {
+      position: relative;
+      width: 51px;
+      height: 31px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--op1-surface-container-high);
+      border-radius: var(--op1-radius-full);
+      transition: background var(--op1-motion-normal) var(--op1-easing-default);
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 27px;
+      width: 27px;
+      left: 2px;
+      bottom: 2px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transition: transform var(--op1-motion-normal) var(--op1-easing-spring);
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: var(--op1-brand);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    /* ============================================================
+       Custom Select (appearance dropdown)
+       ============================================================ */
+    .settings-select-wrapper {
+      position: relative;
+    }
+    .settings-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--op1-border-strong);
+      border-radius: var(--op1-radius-sm);
+      padding: 6px 32px 6px 12px;
+      font-size: 14px;
+      font-family: var(--op1-font-family);
+      color: var(--op1-on-surface);
+      cursor: pointer;
+      outline: none;
+      transition: border-color var(--op1-motion-fast) ease,
+                  box-shadow var(--op1-motion-fast) ease;
+    }
+    .settings-select:focus {
+      border-color: var(--op1-brand);
+      box-shadow: 0 0 0 3px rgba(12,155,75,0.2);
+    }
+    .settings-select-arrow {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--op1-on-surface-variant);
+    }
+    .settings-select-arrow svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ============================================================
+       Bottom Tab Bar (iOS, < 768px)
+       ============================================================ */
+    .bottom-tab-bar {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      height: var(--op1-nav-tab-height);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-radius: var(--op1-radius-lg);
+      border: 1px solid rgba(255,255,255,0.20);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 var(--op1-spacing-sm);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      color: var(--op1-on-surface-variant);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--op1-radius-sm);
+      transition: color var(--op1-motion-fast) ease;
+      background: transparent;
+      border: none;
+      font-family: var(--op1-font-family);
+    }
+    .tab-item.active {
+      color: var(--op1-brand);
+    }
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ============================================================
+       Responsive: iOS (< 768px)
+       ============================================================ */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .bottom-tab-bar {
+        display: flex;
+      }
+      .content-area {
+        padding: var(--op1-spacing-md) var(--op1-spacing-md) calc(var(--op1-nav-tab-height) + 40px);
+      }
+      .settings-title {
+        font-size: 24px;
+        margin-bottom: var(--op1-spacing-lg);
+      }
+    }
+
+    /* ============================================================
+       Scrollbar styling
+       ============================================================ */
+    .content-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content-area::-webkit-scrollbar-thumb {
+      background: var(--op1-surface-container-high);
+      border-radius: 3px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ============================================================
+         macOS Sidebar (>= 768px)
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <!-- Header: Logo + Server -->
+      <div class="sidebar-header">
+        <div class="sidebar-logo">1P</div>
+        <div class="sidebar-server-info">
+          <span class="sidebar-server-name">生产服务器</span>
+          <span class="sidebar-server-status">
+            <span class="status-dot"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="sidebar-search">
+        <i data-lucide="search" class="sidebar-search-icon"></i>
+        <input type="text" placeholder="搜索功能..." />
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>仪表板</span>
+        </button>
+        <button class="nav-item" data-page="containers">
+          <i data-lucide="box"></i>
+          <span>容器</span>
+        </button>
+        <button class="nav-item" data-page="files">
+          <i data-lucide="folder-open"></i>
+          <span>文件</span>
+        </button>
+        <button class="nav-item" data-page="websites">
+          <i data-lucide="globe"></i>
+          <span>网站</span>
+        </button>
+        <button class="nav-item active" data-page="settings">
+          <i data-lucide="settings"></i>
+          <span>设置</span>
+        </button>
+      </nav>
+
+      <!-- Footer -->
+      <div class="sidebar-footer">
+        <div class="footer-actions">
+          <button class="footer-btn active-theme" id="themeToggleSidebar" onclick="toggleTheme()" title="切换主题">
+            <i data-lucide="sun"></i>
+          </button>
+          <button class="footer-btn" title="切换渲染模式">
+            <i data-lucide="monitor"></i>
+          </button>
+        </div>
+        <div class="user-avatar" title="用户">管</div>
+      </div>
+
+    </aside>
+
+    <!-- ============================================================
+         Content Area — Settings Page
+         ============================================================ -->
+    <main class="content-area">
+
+      <!-- Mobile Header (< 768px) -->
+      <div class="mobile-header">
+        <div class="sidebar-logo" style="width:28px;height:28px;font-size:11px;border-radius:8px;">1P</div>
+        <div>
+          <div class="sidebar-server-name">生产服务器</div>
+          <div class="sidebar-server-status">
+            <span class="status-dot" style="width:6px;height:6px;"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <div class="settings-page">
+
+        <h1 class="settings-title">设置</h1>
+
+        <!-- ==========================================================
+             通用设置组
+             ========================================================== -->
+        <div class="settings-group-label">通用</div>
+        <div class="settings-group">
+
+          <!-- 外观 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-blue">
+                <i data-lucide="sun-moon"></i>
+              </div>
+              <span class="settings-row-label">外观</span>
+            </div>
+            <div class="settings-row-right">
+              <div class="settings-select-wrapper">
+                <select class="settings-select">
+                  <option selected>跟随系统</option>
+                  <option>浅色</option>
+                  <option>深色</option>
+                </select>
+                <span class="settings-select-arrow"><i data-lucide="chevron-down"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 语言 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-purple">
+                <i data-lucide="languages"></i>
+              </div>
+              <span class="settings-row-label">语言</span>
+            </div>
+            <div class="settings-row-right">
+              <div class="settings-select-wrapper">
+                <select class="settings-select">
+                  <option selected>简体中文</option>
+                  <option>English</option>
+                </select>
+                <span class="settings-select-arrow"><i data-lucide="chevron-down"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 渲染模式 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-green">
+                <i data-lucide="monitor"></i>
+              </div>
+              <span class="settings-row-label">渲染模式</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-row-value">原生</span>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==========================================================
+             安全设置组
+             ========================================================== -->
+        <div class="settings-group-label">安全</div>
+        <div class="settings-group">
+
+          <!-- 多因素认证 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-orange">
+                <i data-lucide="shield-check"></i>
+              </div>
+              <span class="settings-row-label">多因素认证</span>
+            </div>
+            <div class="settings-row-right">
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 自动锁定 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-red">
+                <i data-lucide="lock"></i>
+              </div>
+              <span class="settings-row-label">自动锁定</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-row-value">5分钟后</span>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- API Key 管理 -->
+          <div class="settings-row navigable">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-gray">
+                <i data-lucide="key-round"></i>
+              </div>
+              <span class="settings-row-label">API Key 管理</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==========================================================
+             服务器设置组
+             ========================================================== -->
+        <div class="settings-group-label">服务器</div>
+        <div class="settings-group">
+
+          <!-- 连接超时 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-blue">
+                <i data-lucide="timer"></i>
+              </div>
+              <span class="settings-row-label">连接超时</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-row-value">30秒</span>
+            </div>
+          </div>
+
+          <!-- 自动重连 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-green">
+                <i data-lucide="refresh-cw"></i>
+              </div>
+              <span class="settings-row-label">自动重连</span>
+            </div>
+            <div class="settings-row-right">
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 离线缓存 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-purple">
+                <i data-lucide="hard-drive-download"></i>
+              </div>
+              <span class="settings-row-label">离线缓存</span>
+            </div>
+            <div class="settings-row-right">
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==========================================================
+             终端设置组
+             ========================================================== -->
+        <div class="settings-group-label">终端</div>
+        <div class="settings-group">
+
+          <!-- 字体大小 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-gray">
+                <i data-lucide="type"></i>
+              </div>
+              <span class="settings-row-label">字体大小</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-row-value">14</span>
+            </div>
+          </div>
+
+          <!-- 终端主题 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-blue">
+                <i data-lucide="palette"></i>
+              </div>
+              <span class="settings-row-label">终端主题</span>
+            </div>
+            <div class="settings-row-right">
+              <div class="settings-select-wrapper">
+                <select class="settings-select">
+                  <option>亮色</option>
+                  <option selected>暗色</option>
+                </select>
+                <span class="settings-select-arrow"><i data-lucide="chevron-down"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快捷键参考 -->
+          <div class="settings-row navigable">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-orange">
+                <i data-lucide="keyboard"></i>
+              </div>
+              <span class="settings-row-label">快捷键参考</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ==========================================================
+             关于
+             ========================================================== -->
+        <div class="settings-group-label">关于</div>
+        <div class="settings-group">
+
+          <!-- 版本 -->
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-green">
+                <i data-lucide="info"></i>
+              </div>
+              <span class="settings-row-label">版本</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-row-value">v0.6.0</span>
+            </div>
+          </div>
+
+          <!-- 检查更新 -->
+          <div class="settings-row navigable">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-blue">
+                <i data-lucide="download-cloud"></i>
+              </div>
+              <span class="settings-row-label">检查更新</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+          </div>
+
+          <!-- 开源许可 -->
+          <div class="settings-row navigable">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-purple">
+                <i data-lucide="scroll-text"></i>
+              </div>
+              <span class="settings-row-label">开源许可</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+          </div>
+
+          <!-- 隐私政策 -->
+          <div class="settings-row navigable">
+            <div class="settings-row-left">
+              <div class="settings-row-icon icon-gray">
+                <i data-lucide="shield"></i>
+              </div>
+              <span class="settings-row-label">隐私政策</span>
+            </div>
+            <div class="settings-row-right">
+              <span class="settings-chevron"><i data-lucide="chevron-right"></i></span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       iOS Bottom Tab Bar (< 768px)
+       ============================================================ -->
+  <div class="bottom-tab-bar">
+    <button class="tab-item" data-page="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>仪表板</span>
+    </button>
+    <button class="tab-item" data-page="containers">
+      <i data-lucide="box"></i>
+      <span>容器</span>
+    </button>
+    <button class="tab-item" data-page="files">
+      <i data-lucide="folder-open"></i>
+      <span>文件</span>
+    </button>
+    <button class="tab-item" data-page="websites">
+      <i data-lucide="globe"></i>
+      <span>网站</span>
+    </button>
+    <button class="tab-item active" data-page="settings">
+      <i data-lucide="settings"></i>
+      <span>设置</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       Scripts
+       ============================================================ -->
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      html.classList.toggle('dark', !isDark);
+      html.classList.toggle('light', isDark);
+
+      const icon = document.querySelector('#themeToggleSidebar i');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    // Navigation active state
+    document.querySelectorAll('.nav-item, .tab-item').forEach(item => {
+      item.addEventListener('click', function () {
+        this.parentElement.querySelectorAll('.nav-item, .tab-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

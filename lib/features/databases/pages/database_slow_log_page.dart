@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/network/api_client_manager.dart';
+import 'package:onepanel_client/api/v2/database_v2.dart';
+import 'package:onepanel_client/data/models/database_models.dart';
+
+/// MySQL slow query log page.
+/// Mirrors frontend's database/mysql slow-log tab.
+class DatabaseSlowLogPage extends StatefulWidget {
+  const DatabaseSlowLogPage({
+    super.key,
+    required this.databaseName,
+  });
+
+  final String databaseName;
+
+  @override
+  State<DatabaseSlowLogPage> createState() => _DatabaseSlowLogPageState();
+}
+
+class _DatabaseSlowLogPageState extends State<DatabaseSlowLogPage> {
+  List<dynamic> _logs = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final api = DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
+      // MySQL variables endpoint also returns slow-log related settings
+      final response = await api.loadMysqlVariables(
+        type: 'mysql',
+        name: widget.databaseName,
+      );
+      if (mounted) {
+        final data = response.data ?? {};
+        final slowLogEntries = data['slowLogs'] as List? ?? [];
+        setState(() {
+          _logs = slowLogEntries;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Slow Query Log'),
+        actions: [
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(child: Text(_error!))
+              : _logs.isEmpty
+                  ? const Center(child: Text('No slow queries'))
+                  : ListView.builder(
+                      itemCount: _logs.length,
+                      itemBuilder: (context, index) {
+                        final log = _logs[index] as Map? ?? {};
+                        return Card(
+                          child: ListTile(
+                            title: Text(log['sql']?.toString() ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
+                            subtitle: Text('Time: ${log['time'] ?? 'N/A'} | Duration: ${log['duration'] ?? 'N/A'}s'),
+                            dense: true,
+                          ),
+                        );
+                      },
+                    ),
+    );
+  }
+}

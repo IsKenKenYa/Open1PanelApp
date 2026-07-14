@@ -54,4 +54,19 @@ class McpServerService {
   Future<void> updateDomain(McpBindDomainUpdate request) {
     return _repository.updateDomain(request);
   }
+
+  /// Get MCP server detail (R5 frontend alignment).
+  Future<Map<String, dynamic>> getServerDetail(int serverId) async {
+    return _repository.getServerDetail(serverId);
+  }
+
+  /// Test MCP server connection (R5 frontend alignment).
+  Future<Map<String, dynamic>> testConnection(int serverId) async {
+    return _repository.testConnection(serverId);
+  }
+
+  /// Sync MCP server status (R5 frontend alignment).
+  Future<void> syncStatus(int serverId) async {
+    await _repository.syncStatus(serverId);
+  }
 }

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1Panel Client - 网站管理</title>
+<style id="theme-vars">
+:root {
+  --op1-brand:#0C9B4B;
+  --op1-brand-light:#4DB87A;
+  --op1-brand-dark:#087A3A;
+  --op1-brand-50:#E8F5EE;
+  --op1-brand-100:#C8E8D4;
+  --op1-brand-500:#0C9B4B;
+  --op1-brand-700:#087A3A;
+  --op1-brand-900:#055A2B;
+  --op1-success:#16A34A;
+  --op1-warning:#F59E0B;
+  --op1-danger:#DC2626;
+  --op1-info:#0EA5E9;
+  --op1-glass-blur:40px;
+  --op1-glass-saturate:180%;
+  --op1-glass-alpha:0.65;
+  --op1-glass-alpha-elevated:0.85;
+  --op1-glass-border-alpha:0.20;
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.6);
+  --op1-glass-shadow-outer:0 8px 32px rgba(31,38,135,0.15);
+  --op1-surface:rgba(255,255,255,0.15);
+  --op1-surface-elevated:rgba(255,255,255,0.40);
+  --op1-surface-card:rgba(255,255,255,0.20);
+  --op1-surface-nav:rgba(255,255,255,0.65);
+  --op1-surface-popover:rgba(255,255,255,0.50);
+  --op1-surface-container-low:rgba(255,255,255,0.10);
+  --op1-surface-container:rgba(255,255,255,0.15);
+  --op1-surface-container-high:rgba(255,255,255,0.25);
+  --op1-on-surface:rgba(0,0,0,0.85);
+  --op1-on-surface-variant:rgba(0,0,0,0.55);
+  --op1-on-surface-nav:rgba(0,0,0,0.75);
+  --op1-nav-sidebar-width:260px;
+  --op1-nav-tab-height:49px;
+  --op1-font-family:system-ui,-apple-system,'SF Pro Display','Helvetica Neue',sans-serif;
+  --op1-font-family-mono:'SF Mono',ui-monospace,Menlo,monospace;
+  --op1-radius-sm:12px;
+  --op1-radius-md:16px;
+  --op1-radius-lg:20px;
+  --op1-radius-card:22px;
+  --op1-radius-button:9999px;
+  --op1-spacing-xs:4px;
+  --op1-spacing-sm:8px;
+  --op1-spacing-md:12px;
+  --op1-spacing-lg:16px;
+  --op1-spacing-xl:24px;
+  --op1-motion-fast:200ms;
+  --op1-motion-normal:350ms;
+  --op1-easing-spring:cubic-bezier(0.175,0.885,0.32,1.275);
+  --op1-border:rgba(0,0,0,0.08);
+  --op1-border-strong:rgba(0,0,0,0.15);
+  --op1-error:#FF3B30;
+  --op1-bg-gradient-start:#667eea;
+  --op1-bg-gradient-end:#764ba2;
+}
+
+html.dark {
+  --op1-surface:rgba(30,30,30,0.65);
+  --op1-surface-card:rgba(40,40,40,0.70);
+  --op1-surface-nav:rgba(30,30,30,0.75);
+  --op1-on-surface:rgba(255,255,255,0.85);
+  --op1-on-surface-variant:rgba(255,255,255,0.55);
+  --op1-border:rgba(255,255,255,0.10);
+  --op1-border-strong:rgba(255,255,255,0.18);
+  --op1-glass-highlight-inset:0 1px 2px rgba(255,255,255,0.08);
+  --op1-glass-shadow-outer:0 8px 32px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--op1-font-family);
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+  color: var(--op1-on-surface);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Glass Card --- */
+.glass-card {
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  background: var(--op1-surface-card);
+  border: 1px solid rgba(255,255,255,0.30);
+  box-shadow: var(--op1-glass-highlight-inset);
+  border-radius: var(--op1-radius-card);
+  transition: transform var(--op1-motion-normal) var(--op1-easing-spring), box-shadow var(--op1-motion-normal);
+}
+
+html.dark .glass-card {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--op1-nav-sidebar-width);
+  height: 100vh;
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-right: 1px solid var(--op1-border);
+  box-shadow: var(--op1-glass-shadow-outer);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: var(--op1-spacing-lg);
+  transition: transform var(--op1-motion-normal);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: var(--op1-spacing-md) 0 var(--op1-spacing-xl);
+  border-bottom: 1px solid var(--op1-border);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.sidebar-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--op1-brand);
+  border-radius: var(--op1-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.sidebar-logo span {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  padding: 10px 12px;
+  border-radius: var(--op1-radius-sm);
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+.sidebar-nav a:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+.sidebar-nav a.active {
+  background: var(--op1-brand);
+  color: #fff;
+}
+
+.sidebar-nav a.active:hover {
+  background: var(--op1-brand-dark);
+}
+
+/* --- Main Content --- */
+.main-content {
+  margin-left: var(--op1-nav-sidebar-width);
+  padding: var(--op1-spacing-xl);
+  padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  max-width: 1200px;
+}
+
+/* --- Page Header --- */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--op1-spacing-xl);
+  flex-wrap: wrap;
+  gap: var(--op1-spacing-md);
+}
+
+.page-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-lg);
+  flex: 1;
+  min-width: 280px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--op1-on-surface);
+  white-space: nowrap;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 360px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border-radius: var(--op1-radius-button);
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  color: var(--op1-on-surface);
+  font-size: 14px;
+  font-family: var(--op1-font-family);
+  outline: none;
+  transition: border-color var(--op1-motion-fast), box-shadow var(--op1-motion-fast);
+}
+
+html.dark .search-box input {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.search-box input::placeholder {
+  color: var(--op1-on-surface-variant);
+}
+
+.search-box input:focus {
+  border-color: var(--op1-brand);
+  box-shadow: 0 0 0 3px rgba(12,155,75,0.2);
+}
+
+.search-box .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--op1-on-surface-variant);
+  pointer-events: none;
+}
+
+.page-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+}
+
+.create-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: 10px 22px;
+  border-radius: var(--op1-radius-button);
+  background: var(--op1-brand);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: var(--op1-font-family);
+  transition: background var(--op1-motion-fast), transform var(--op1-motion-fast);
+  white-space: nowrap;
+}
+
+.create-btn:hover {
+  background: var(--op1-brand-dark);
+  transform: translateY(-1px);
+}
+
+.theme-btn {
+  position: fixed;
+  top: var(--op1-spacing-lg);
+  right: var(--op1-spacing-lg);
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--op1-on-surface-variant);
+  cursor: pointer;
+  transition: background var(--op1-motion-fast), color var(--op1-motion-fast);
+}
+
+html.dark .theme-btn {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.theme-btn:hover {
+  background: var(--op1-surface-container-high);
+  color: var(--op1-on-surface);
+}
+
+/* --- Stats Bar --- */
+.stats-bar {
+  display: flex;
+  gap: var(--op1-spacing-lg);
+  margin-bottom: var(--op1-spacing-xl);
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-sm);
+  padding: 10px 18px;
+  border-radius: var(--op1-radius-button);
+  backdrop-filter: blur(12px);
+  background: var(--op1-surface-elevated);
+  border: 1px solid rgba(255,255,255,0.25);
+  font-size: 13px;
+  color: var(--op1-on-surface);
+  transition: background var(--op1-motion-fast);
+}
+
+html.dark .stat-pill {
+  border-color: rgba(255,255,255,0.12);
+}
+
+.stat-pill:hover {
+  background: var(--op1-surface-container-high);
+}
+
+.stat-pill .pill-value {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--op1-on-surface);
+}
+
+.stat-pill .pill-label {
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+}
+
+.stat-pill .pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* --- Website Card Grid --- */
+.website-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--op1-spacing-lg);
+}
+
+.website-card {
+  padding: var(--op1-spacing-lg);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.website-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--op1-glass-shadow-outer);
+}
+
+.website-card .card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--op1-spacing-md);
+}
+
+.website-card .card-domain {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--op1-on-surface);
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+.website-card .card-status-row {
+  display: flex;
+  align-items: center;
+  gap: var(--op1-spacing-md);
+  margin-top: var(--op1-spacing-xs);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.running {
+  background: var(--op1-success);
+  box-shadow: 0 0 6px var(--op1-success);
+  animation: pulse-dot 2s infinite;
+}
+
+.status-dot.stopped {
+  background: #9CA3AF;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+}
+
+.ssl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--op1-radius-button);
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.ssl-badge.certified {
+  background: var(--op1-brand-50);
+  color: var(--op1-brand);
+}
+
+html.dark .ssl-badge.certified {
+  background: rgba(12,155,75,0.15);
+}
+
+.ssl-badge.not-configured {
+  background: rgba(156,163,175,0.15);
+  color: #9CA3AF;
+}
+
+.ssl-badge i {
+  width: 12px;
+  height: 12px;
+}
+
+.website-card .card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--op1-spacing-md);
+  border-top: 1px solid var(--op1-border);
+}
+
+.type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: var(--op1-radius-button);
+  background: var(--op1-surface-container-high);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--op1-on-surface-variant);
+}
+
+.type-tag i {
+  width: 13px;
+  height: 13px;
+}
+
+.traffic-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--op1-on-surface-variant);
+  font-family: var(--op1-font-family-mono);
+}
+
+.traffic-stat i {
+  width: 14px;
+  height: 14px;
+}
+
+.traffic-stat .traffic-value {
+  font-weight: 600;
+  color: var(--op1-on-surface);
+}
+
+/* --- Section Title --- */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--op1-on-surface);
+  margin-bottom: var(--op1-spacing-md);
+}
+
+/* --- Mobile Bottom Tab Bar --- */
+.bottom-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--op1-nav-tab-height);
+  backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+  background: var(--op1-surface-nav);
+  border-top: 1px solid var(--op1-border);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  z-index: 50;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 var(--op1-spacing-lg);
+}
+
+.bottom-tab-bar a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--op1-on-surface-variant);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  transition: color var(--op1-motion-fast);
+}
+
+.bottom-tab-bar a.active { color: var(--op1-brand); }
+
+/* --- Responsive --- */
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+  .bottom-tab-bar { display: flex; }
+  .main-content {
+    margin-left: 0;
+    padding: var(--op1-spacing-lg);
+    padding-top: var(--op1-spacing-lg);
+    padding-bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-xl));
+  }
+  .page-header { flex-direction: column; align-items: stretch; }
+  .page-header .header-left { flex-direction: column; min-width: unset; }
+  .page-header .header-right { justify-content: flex-end; }
+  .page-header h1 { font-size: 22px; }
+  .website-grid { grid-template-columns: 1fr; }
+  .stats-bar { flex-direction: column; }
+  .theme-btn { top: auto; bottom: calc(var(--op1-nav-tab-height) + var(--op1-spacing-lg)); right: var(--op1-spacing-lg); }
+}
+
+@media (min-width: 768px) {
+  .bottom-tab-bar { display: none; }
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+
+<!-- Theme Toggle -->
+<button class="theme-btn" onclick="toggleTheme()" aria-label="切换主题">
+  <i data-lucide="sun" id="theme-icon-sun" style="width:18px;height:18px;display:none;"></i>
+  <i data-lucide="moon" id="theme-icon-moon" style="width:18px;height:18px;"></i>
+</button>
+
+<!-- Sidebar (macOS >=768px) -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">1P</div>
+    <span>1Panel</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#">
+      <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+      仪表板
+    </a>
+    <a href="#">
+      <i data-lucide="container" style="width:18px;height:18px;"></i>
+      容器管理
+    </a>
+    <a href="#">
+      <i data-lucide="database" style="width:18px;height:18px;"></i>
+      数据库
+    </a>
+    <a href="#" class="active">
+      <i data-lucide="globe" style="width:18px;height:18px;"></i>
+      网站
+    </a>
+    <a href="#">
+      <i data-lucide="folder-open" style="width:18px;height:18px;"></i>
+      文件管理
+    </a>
+    <a href="#">
+      <i data-lucide="shield" style="width:18px;height:18px;"></i>
+      防火墙
+    </a>
+    <a href="#">
+      <i data-lucide="terminal" style="width:18px;height:18px;"></i>
+      终端
+    </a>
+    <a href="#">
+      <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      设置
+    </a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>网站</h1>
+      <div class="search-box">
+        <i data-lucide="search" class="search-icon" style="width:16px;height:16px;"></i>
+        <input type="text" placeholder="搜索域名..." />
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="create-btn">
+        <i data-lucide="plus" style="width:16px;height:16px;"></i>
+        创建网站
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <span class="pill-value">4</span>
+      <span class="pill-label">总网站</span>
+    </div>
+    <div class="stat-pill">
+      <span class="pill-dot" style="background:var(--op1-success);box-shadow:0 0 6px var(--op1-success);"></span>
+      <span class="pill-value">3</span>
+      <span class="pill-label">在线</span>
+    </div>
+    <div class="stat-pill">
+      <span class="pill-dot" style="background:#9CA3AF;"></span>
+      <span class="pill-value">1</span>
+      <span class="pill-label">已停止</span>
+    </div>
+    <div class="stat-pill">
+      <i data-lucide="shield-check" style="width:16px;height:16px;color:var(--op1-brand);"></i>
+      <span class="pill-value">75%</span>
+      <span class="pill-label">SSL 覆盖</span>
+    </div>
+  </div>
+
+  <!-- Website Card Grid -->
+  <div class="website-grid">
+
+    <!-- blog.example.com -->
+    <div class="glass-card website-card">
+      <div class="card-top">
+        <div>
+          <div class="card-domain">blog.example.com</div>
+          <div class="card-status-row">
+            <span class="status-dot running"></span>
+            <span class="status-text">运行中</span>
+          </div>
+        </div>
+        <span class="ssl-badge certified">
+          <i data-lucide="shield-check"></i>
+          SSL已认证
+        </span>
+      </div>
+      <div class="card-bottom">
+        <span class="type-tag">
+          <i data-lucide="file-text"></i>
+          WordPress
+        </span>
+        <span class="traffic-stat">
+          <i data-lucide="bar-chart-3"></i>
+          <span class="traffic-value">1.2K</span>
+          访问/天
+        </span>
+      </div>
+    </div>
+
+    <!-- api.example.com -->
+    <div class="glass-card website-card">
+      <div class="card-top">
+        <div>
+          <div class="card-domain">api.example.com</div>
+          <div class="card-status-row">
+            <span class="status-dot running"></span>
+            <span class="status-text">运行中</span>
+          </div>
+        </div>
+        <span class="ssl-badge not-configured">
+          <i data-lucide="shield-off"></i>
+          SSL未配置
+        </span>
+      </div>
+      <div class="card-bottom">
+        <span class="type-tag">
+          <i data-lucide="server"></i>
+          Node.js
+        </span>
+        <span class="traffic-stat">
+          <i data-lucide="bar-chart-3"></i>
+          <span class="traffic-value">5.8K</span>
+          访问/天
+        </span>
+      </div>
+    </div>
+
+    <!-- shop.example.com -->
+    <div class="glass-card website-card">
+      <div class="card-top">
+        <div>
+          <div class="card-domain">shop.example.com</div>
+          <div class="card-status-row">
+            <span class="status-dot stopped"></span>
+            <span class="status-text">已停止</span>
+          </div>
+        </div>
+        <span class="ssl-badge certified">
+          <i data-lucide="shield-check"></i>
+          SSL已认证
+        </span>
+      </div>
+      <div class="card-bottom">
+        <span class="type-tag">
+          <i data-lucide="file"></i>
+          静态网站
+        </span>
+        <span class="traffic-stat">
+          <i data-lucide="bar-chart-3"></i>
+          <span class="traffic-value">0</span>
+          访问/天
+        </span>
+      </div>
+    </div>
+
+    <!-- docs.example.com -->
+    <div class="glass-card website-card">
+      <div class="card-top">
+        <div>
+          <div class="card-domain">docs.example.com</div>
+          <div class="card-status-row">
+            <span class="status-dot running"></span>
+            <span class="status-text">运行中</span>
+          </div>
+        </div>
+        <span class="ssl-badge certified">
+          <i data-lucide="shield-check"></i>
+          SSL已认证
+        </span>
+      </div>
+      <div class="card-bottom">
+        <span class="type-tag">
+          <i data-lucide="code-2"></i>
+          PHP
+        </span>
+        <span class="traffic-stat">
+          <i data-lucide="bar-chart-3"></i>
+          <span class="traffic-value">890</span>
+          访问/天
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- Bottom Tab Bar (iOS <768px) -->
+<nav class="bottom-tab-bar">
+  <a href="#">
+    <i data-lucide="layout-dashboard" style="width:22px;height:22px;"></i>
+    仪表板
+  </a>
+  <a href="#">
+    <i data-lucide="container" style="width:22px;height:22px;"></i>
+    容器
+  </a>
+  <a href="#">
+    <i data-lucide="globe" style="width:22px;height:22px;" class="active"></i>
+    网站
+  </a>
+  <a href="#">
+    <i data-lucide="folder-open" style="width:22px;height:22px;"></i>
+    文件
+  </a>
+  <a href="#">
+    <i data-lucide="settings" style="width:22px;height:22px;"></i>
+    设置
+  </a>
+</nav>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.classList.contains('dark');
+    html.classList.toggle('dark', !isDark);
+    html.classList.toggle('light', isDark);
+    document.getElementById('theme-icon-sun').style.display = isDark ? 'none' : 'block';
+    document.getElementById('theme-icon-moon').style.display = isDark ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

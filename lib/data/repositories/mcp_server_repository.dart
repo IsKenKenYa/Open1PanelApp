@@ -66,4 +66,24 @@ class McpServerRepository {
     final api = await _ensureApi();
     await api.updateMcpDomain(request);
   }
+
+  /// Get MCP server detail (R5 frontend alignment).
+  Future<Map<String, dynamic>> getServerDetail(int serverId) async {
+    final api = await _ensureApi();
+    final response = await api.getMcpServerDetail({'id': serverId});
+    return response.data ?? const <String, dynamic>{};
+  }
+
+  /// Test MCP server connection (R5 frontend alignment).
+  Future<Map<String, dynamic>> testConnection(int serverId) async {
+    final api = await _ensureApi();
+    final response = await api.testMcpServerConnection({'id': serverId});
+    return response.data ?? const <String, dynamic>{};
+  }
+
+  /// Sync MCP server status (R5 frontend alignment).
+  Future<void> syncStatus(int serverId) async {
+    final api = await _ensureApi();
+    await api.syncMcpServerStatus({'id': serverId});
+  }
 }

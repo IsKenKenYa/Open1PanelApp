@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1Panel Client - 备份管理</title>
+  <style id="theme-vars">
+    /* ============================================================
+       Open1Panel — Apple Liquid Glass Design Tokens
+       ============================================================ */
+    :root {
+      /* Brand */
+      --op1-brand: #0C9B4B;
+      --op1-brand-light: #4DB87A;
+      --op1-brand-dark: #087A3A;
+      --op1-brand-50: #E8F5EE;
+      --op1-brand-100: #C8E8D4;
+      --op1-brand-500: #0C9B4B;
+      --op1-brand-700: #087A3A;
+      --op1-brand-900: #055A2B;
+
+      /* Semantic */
+      --op1-success: #16A34A;
+      --op1-warning: #F59E0B;
+      --op1-danger: #DC2626;
+      --op1-info: #0EA5E9;
+
+      /* Glass material */
+      --op1-glass-blur: 40px;
+      --op1-glass-saturate: 180%;
+      --op1-glass-alpha: 0.65;
+      --op1-glass-alpha-elevated: 0.85;
+      --op1-glass-border-alpha: 0.20;
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.6);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(31,38,135,0.15);
+
+      /* Surface */
+      --op1-surface: rgba(255,255,255,0.15);
+      --op1-surface-elevated: rgba(255,255,255,0.40);
+      --op1-surface-card: rgba(255,255,255,0.20);
+      --op1-surface-nav: rgba(255,255,255,0.65);
+      --op1-surface-popover: rgba(255,255,255,0.50);
+      --op1-surface-container-low: rgba(255,255,255,0.10);
+      --op1-surface-container: rgba(255,255,255,0.15);
+      --op1-surface-container-high: rgba(255,255,255,0.25);
+
+      /* On-Surface */
+      --op1-on-surface: rgba(0,0,0,0.85);
+      --op1-on-surface-variant: rgba(0,0,0,0.55);
+      --op1-on-surface-nav: rgba(0,0,0,0.75);
+      --op1-on-surface-card: rgba(0,0,0,0.85);
+
+      /* Navigation */
+      --op1-nav-sidebar-width: 260px;
+      --op1-nav-tab-height: 49px;
+
+      /* Typography */
+      --op1-font-family: system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      --op1-font-family-mono: 'SF Mono', ui-monospace, Menlo, monospace;
+
+      /* Radius */
+      --op1-radius-sm: 12px;
+      --op1-radius-md: 16px;
+      --op1-radius-lg: 20px;
+      --op1-radius-card: 22px;
+      --op1-radius-button: 9999px;
+
+      /* Spacing */
+      --op1-spacing-xs: 4px;
+      --op1-spacing-sm: 8px;
+      --op1-spacing-md: 12px;
+      --op1-spacing-lg: 16px;
+      --op1-spacing-xl: 24px;
+
+      /* Motion */
+      --op1-motion-fast: 200ms;
+      --op1-motion-normal: 350ms;
+      --op1-motion-slow: 500ms;
+      --op1-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      /* Border */
+      --op1-border: rgba(0,0,0,0.08);
+      --op1-border-strong: rgba(0,0,0,0.15);
+
+      /* Error */
+      --op1-error: #FF3B30;
+
+      /* Background gradient */
+      --op1-bg-gradient-start: #667eea;
+      --op1-bg-gradient-end: #764ba2;
+    }
+
+    /* ----- Dark Mode ----- */
+    .dark {
+      --op1-brand-light: #3DA06A;
+      --op1-brand-50: rgba(12,155,75,0.15);
+      --op1-brand-100: rgba(12,155,75,0.25);
+
+      --op1-surface: rgba(0,0,0,0.25);
+      --op1-surface-elevated: rgba(0,0,0,0.50);
+      --op1-surface-card: rgba(0,0,0,0.35);
+      --op1-surface-nav: rgba(0,0,0,0.60);
+      --op1-surface-popover: rgba(0,0,0,0.45);
+      --op1-surface-container-low: rgba(0,0,0,0.15);
+      --op1-surface-container: rgba(0,0,0,0.25);
+      --op1-surface-container-high: rgba(0,0,0,0.40);
+
+      --op1-on-surface: rgba(255,255,255,0.90);
+      --op1-on-surface-variant: rgba(255,255,255,0.60);
+      --op1-on-surface-nav: rgba(255,255,255,0.80);
+      --op1-on-surface-card: rgba(255,255,255,0.90);
+
+      --op1-border: rgba(255,255,255,0.10);
+      --op1-border-strong: rgba(255,255,255,0.20);
+
+      --op1-glass-highlight-inset: 0 1px 2px rgba(255,255,255,0.15);
+      --op1-glass-shadow-outer: 0 8px 32px rgba(0,0,0,0.40);
+
+      --op1-bg-gradient-start: #1a1a2e;
+      --op1-bg-gradient-end: #16213e;
+    }
+
+    /* ============================================================
+       Base styles
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--op1-font-family);
+      background: linear-gradient(135deg, var(--op1-bg-gradient-start), var(--op1-bg-gradient-end));
+      min-height: 100vh;
+      color: var(--op1-on-surface);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       Layout: macOS (>= 768px)
+       ============================================================ */
+    .app-layout {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ----- Sidebar ----- */
+    .sidebar {
+      width: var(--op1-nav-sidebar-width);
+      min-width: var(--op1-nav-sidebar-width);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: var(--op1-spacing-lg);
+      gap: var(--op1-spacing-md);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-right: 1px solid var(--op1-glass-border-alpha);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding-bottom: var(--op1-spacing-md);
+      border-bottom: 1px solid var(--op1-border);
+    }
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--op1-brand);
+      border-radius: var(--op1-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-server-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .sidebar-server-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--op1-on-surface-nav);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-server-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--op1-on-surface-variant);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--op1-success);
+      box-shadow: 0 0 6px rgba(22,163,74,0.6);
+      flex-shrink: 0;
+    }
+
+    .sidebar-search {
+      position: relative;
+    }
+    .sidebar-search input {
+      width: 100%;
+      height: 36px;
+      padding: 0 var(--op1-spacing-md) 0 36px;
+      border: none;
+      border-radius: var(--op1-radius-sm);
+      background: var(--op1-surface-elevated);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--op1-on-surface);
+      font-size: 13px;
+      font-family: var(--op1-font-family);
+      outline: none;
+    }
+    .sidebar-search input::placeholder {
+      color: var(--op1-on-surface-variant);
+    }
+    .sidebar-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--op1-on-surface-variant);
+      width: 16px;
+      height: 16px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      margin-top: var(--op1-spacing-sm);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: 10px var(--op1-spacing-md);
+      border-radius: var(--op1-radius-button);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--op1-on-surface-nav);
+      cursor: pointer;
+      transition: background var(--op1-motion-fast) var(--op1-easing-spring),
+                  color var(--op1-motion-fast) ease;
+      text-decoration: none;
+      position: relative;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: var(--op1-surface-container-high);
+    }
+    .nav-item.active {
+      background: rgba(12,155,75,0.85);
+      color: #fff;
+    }
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--op1-on-surface-variant);
+      transition: color var(--op1-motion-fast) ease;
+    }
+    .nav-item.active svg {
+      color: #fff;
+    }
+
+    .sidebar-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--op1-spacing-md);
+      border-top: 1px solid var(--op1-border);
+      gap: var(--op1-spacing-sm);
+    }
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .footer-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease;
+    }
+    .footer-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+    }
+    .footer-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+    .footer-btn.active-theme svg {
+      color: var(--op1-warning);
+    }
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--op1-brand), var(--op1-brand-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ----- Content area ----- */
+    .content-area {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--op1-spacing-xl);
+    }
+
+    .mobile-header {
+      display: none;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      padding: var(--op1-spacing-md) var(--op1-spacing-lg);
+      color: var(--op1-on-surface);
+    }
+    .mobile-header .sidebar-server-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--op1-on-surface);
+    }
+
+    /* ============================================================
+       Glass Card base
+       ============================================================ */
+    .glass-card {
+      background: var(--op1-surface-card);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border: 1px solid rgba(255,255,255,0.30);
+      box-shadow: var(--op1-glass-highlight-inset);
+      border-radius: var(--op1-radius-card);
+      padding: var(--op1-spacing-xl);
+      transition: transform var(--op1-motion-normal) var(--op1-easing-spring),
+                  box-shadow var(--op1-motion-normal) ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--op1-glass-highlight-inset), var(--op1-glass-shadow-outer);
+    }
+
+    /* ============================================================
+       Page Header: title + capsule button
+       ============================================================ */
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      margin-bottom: var(--op1-spacing-xl);
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface);
+      white-space: nowrap;
+    }
+    .btn-capsule {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--op1-spacing-sm);
+      height: 40px;
+      padding: 0 20px;
+      border: none;
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-brand);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--op1-font-family);
+      cursor: pointer;
+      white-space: nowrap;
+      margin-left: auto;
+      transition: background var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+    }
+    .btn-capsule:hover {
+      background: var(--op1-brand-dark);
+      transform: scale(1.03);
+    }
+    .btn-capsule:active {
+      transform: scale(0.97);
+    }
+    .btn-capsule svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================================
+       Backup Account Card
+       ============================================================ */
+    .account-card {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xl);
+      margin-bottom: var(--op1-spacing-lg);
+      padding: var(--op1-spacing-lg) var(--op1-spacing-xl);
+    }
+    .account-icon-wrapper {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--op1-radius-md);
+      background: rgba(12,155,75,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .account-icon-wrapper svg {
+      width: 26px;
+      height: 26px;
+      color: var(--op1-brand);
+    }
+    .account-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .account-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--op1-on-surface-card);
+      margin-bottom: 2px;
+    }
+    .account-path {
+      font-size: 13px;
+      font-family: var(--op1-font-family-mono);
+      color: var(--op1-on-surface-variant);
+      margin-bottom: var(--op1-spacing-md);
+    }
+    .account-usage {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+    }
+    .usage-bar-track {
+      flex: 1;
+      max-width: 300px;
+      height: 8px;
+      border-radius: var(--op1-radius-button);
+      background: var(--op1-surface-container-high);
+      overflow: hidden;
+    }
+    .usage-bar-fill {
+      height: 100%;
+      width: 25%;
+      border-radius: var(--op1-radius-button);
+      background: linear-gradient(90deg, var(--op1-brand), var(--op1-brand-light));
+      transition: width var(--op1-motion-slow) var(--op1-easing-spring);
+    }
+    .usage-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--op1-on-surface-variant);
+      white-space: nowrap;
+    }
+    .usage-text .usage-current {
+      color: var(--op1-on-surface-card);
+    }
+
+    /* ============================================================
+       Backup Records List
+       ============================================================ */
+    .records-header {
+      display: grid;
+      grid-template-columns: 1fr 80px 100px 80px 150px 120px;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: var(--op1-spacing-md) var(--op1-spacing-xl);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--op1-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .record-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--op1-spacing-sm);
+      margin-bottom: var(--op1-spacing-xl);
+    }
+    .record-row {
+      display: grid;
+      grid-template-columns: 1fr 80px 100px 80px 150px 120px;
+      align-items: center;
+      gap: var(--op1-spacing-md);
+      padding: var(--op1-spacing-md) var(--op1-spacing-xl);
+      border-radius: var(--op1-radius-md);
+      background: var(--op1-surface-container-low);
+      border: 1px solid var(--op1-border);
+      transition: background var(--op1-motion-fast) ease,
+                  border-color var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+    }
+    .record-row:hover {
+      background: var(--op1-surface-container-high);
+      border-color: var(--op1-border-strong);
+      transform: translateX(2px);
+    }
+    .record-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--op1-on-surface-card);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .record-type {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--op1-on-surface-variant);
+      background: var(--op1-surface-container);
+      padding: 3px 12px;
+      border-radius: var(--op1-radius-button);
+      width: fit-content;
+    }
+    .record-size {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--op1-on-surface-variant);
+    }
+    .record-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .record-status.success {
+      background: rgba(22,163,74,0.12);
+      color: var(--op1-success);
+    }
+    .record-status.failed {
+      background: rgba(255,59,48,0.12);
+      color: var(--op1-error);
+    }
+    .record-status svg {
+      width: 16px;
+      height: 16px;
+    }
+    .record-time {
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+      white-space: nowrap;
+    }
+    .record-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--op1-spacing-xs);
+      justify-content: flex-end;
+    }
+    .record-action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--op1-radius-button);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid var(--op1-border);
+      background: var(--op1-surface-container);
+      color: var(--op1-on-surface-variant);
+      transition: background var(--op1-motion-fast) ease,
+                  color var(--op1-motion-fast) ease,
+                  border-color var(--op1-motion-fast) ease,
+                  transform var(--op1-motion-fast) var(--op1-easing-spring);
+    }
+    .record-action-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+    .record-action-btn:hover {
+      background: var(--op1-surface-container-high);
+      color: var(--op1-on-surface);
+      border-color: var(--op1-border-strong);
+    }
+    .record-action-btn.restore:hover {
+      background: rgba(12,155,75,0.12);
+      color: var(--op1-brand);
+      border-color: rgba(12,155,75,0.30);
+    }
+    .record-action-btn.download:hover {
+      background: rgba(14,165,233,0.12);
+      color: var(--op1-info);
+      border-color: rgba(14,165,233,0.30);
+    }
+    .record-action-btn.delete:hover {
+      background: rgba(255,59,48,0.12);
+      color: var(--op1-error);
+      border-color: rgba(255,59,48,0.30);
+    }
+    .record-action-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* ============================================================
+       Stats Card
+       ============================================================ */
+    .stats-card {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--op1-spacing-xl);
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: var(--op1-spacing-xs);
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--op1-on-surface-card);
+    }
+    .stat-value.success-color {
+      color: var(--op1-success);
+    }
+    .stat-value.danger-color {
+      color: var(--op1-error);
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--op1-on-surface-variant);
+    }
+    .stat-divider {
+      width: 1px;
+      background: var(--op1-border-strong);
+      align-self: stretch;
+    }
+
+    /* ============================================================
+       Bottom Tab Bar (iOS, < 768px)
+       ============================================================ */
+    .bottom-tab-bar {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      height: var(--op1-nav-tab-height);
+      background: var(--op1-surface-nav);
+      backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      -webkit-backdrop-filter: blur(var(--op1-glass-blur)) saturate(var(--op1-glass-saturate));
+      border-radius: var(--op1-radius-lg);
+      border: 1px solid rgba(255,255,255,0.20);
+      box-shadow: var(--op1-glass-shadow-outer);
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 var(--op1-spacing-sm);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      color: var(--op1-on-surface-variant);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--op1-radius-sm);
+      transition: color var(--op1-motion-fast) ease;
+      background: transparent;
+      border: none;
+      font-family: var(--op1-font-family);
+    }
+    .tab-item.active {
+      color: var(--op1-brand);
+    }
+    .tab-item svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ============================================================
+       Responsive: iOS (< 768px)
+       ============================================================ */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+      .mobile-header {
+        display: flex;
+      }
+      .bottom-tab-bar {
+        display: flex;
+      }
+      .content-area {
+        padding: var(--op1-spacing-md) var(--op1-spacing-md) calc(var(--op1-nav-tab-height) + 40px);
+      }
+      .page-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .page-title {
+        font-size: 22px;
+      }
+      .btn-capsule {
+        margin-left: 0;
+        justify-content: center;
+      }
+      .account-card {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .account-icon-wrapper {
+        align-self: center;
+      }
+      .account-path {
+        word-break: break-all;
+      }
+      .usage-bar-track {
+        max-width: 100%;
+      }
+      .records-header {
+        display: none;
+      }
+      .record-row {
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto auto;
+        gap: var(--op1-spacing-sm) var(--op1-spacing-md);
+        padding: var(--op1-spacing-lg);
+      }
+      .record-name {
+        grid-column: 1 / -1;
+        font-size: 16px;
+      }
+      .record-type {
+        justify-self: start;
+      }
+      .record-status {
+        justify-self: end;
+      }
+      .record-size {
+        justify-self: start;
+      }
+      .record-time {
+        justify-self: end;
+      }
+      .record-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        padding-top: var(--op1-spacing-sm);
+        border-top: 1px solid var(--op1-border);
+      }
+      .stats-card {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--op1-spacing-lg);
+      }
+      .stat-divider {
+        display: none;
+      }
+    }
+
+    /* ============================================================
+       Scrollbar
+       ============================================================ */
+    .content-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    .content-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .content-area::-webkit-scrollbar-thumb {
+      background: var(--op1-surface-container-high);
+      border-radius: 3px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ============================================================
+         macOS Sidebar (>= 768px)
+         ============================================================ -->
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+        <div class="sidebar-logo">1P</div>
+        <div class="sidebar-server-info">
+          <span class="sidebar-server-name">生产服务器</span>
+          <span class="sidebar-server-status">
+            <span class="status-dot"></span>
+            在线
+          </span>
+        </div>
+      </div>
+
+      <div class="sidebar-search">
+        <i data-lucide="search" class="sidebar-search-icon"></i>
+        <input type="text" placeholder="搜索功能..." />
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item" data-page="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>仪表板</span>
+        </button>
+        <button class="nav-item" data-page="containers">
+          <i data-lucide="box"></i>
+          <span>容器</span>
+        </button>
+        <button class="nav-item" data-page="databases">
+          <i data-lucide="database"></i>
+          <span>数据库</span>
+        </button>
+        <button class="nav-item" data-page="files">
+          <i data-lucide="folder-open"></i>
+          <span>文件</span>
+        </button>
+        <button class="nav-item" data-page="websites">
+          <i data-lucide="globe"></i>
+          <span>网站</span>
+        </button>
+        <button class="nav-item active" data-page="backups">
+          <i data-lucide="hard-drive"></i>
+          <span>备份</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+          <i data-lucide="settings"></i>
+          <span>设置</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="footer-actions">
+          <button class="footer-btn active-theme" id="themeToggleSidebar" onclick="toggleTheme()" title="切换主题">
+            <i data-lucide="sun"></i>
+          </button>
+          <button class="footer-btn" title="切换渲染模式">
+            <i data-lucide="monitor"></i>
+          </button>
+        </div>
+        <div class="user-avatar" title="用户">管</div>
+      </div>
+
+    </aside>
+
+    <!-- ============================================================
+         Content Area
+         ============================================================ -->
+    <main class="content-area">
+
+      <!-- Mobile Header (< 768px) -->
+      <div class="mobile-header">
+        <div class="sidebar-logo" style="width:28px;height:28px;font-size:11px;border-radius:8px;">1P</div>
+        <div>
+          <div class="sidebar-server-name">生产服务器</div>
+          <div class="sidebar-server-status">
+            <span class="status-dot" style="width:6px;height:6px;"></span>
+            在线
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">备份</h1>
+        <button class="btn-capsule">
+          <i data-lucide="plus"></i>
+          新建备份
+        </button>
+      </div>
+
+      <!-- Backup Account Card -->
+      <div class="glass-card account-card">
+        <div class="account-icon-wrapper">
+          <i data-lucide="hard-drive"></i>
+        </div>
+        <div class="account-info">
+          <div class="account-name">本地备份</div>
+          <div class="account-path">/opt/1panel/backup</div>
+          <div class="account-usage">
+            <div class="usage-bar-track">
+              <div class="usage-bar-fill"></div>
+            </div>
+            <div class="usage-text">
+              <span class="usage-current">12.5 GB</span> / 50 GB
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backup Records -->
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div class="records-header">
+          <span>备份名称</span>
+          <span>类型</span>
+          <span>大小</span>
+          <span>状态</span>
+          <span>时间</span>
+          <span style="text-align:right;">操作</span>
+        </div>
+        <div class="record-list" style="padding: var(--op1-spacing-md); display: flex; flex-direction: column; gap: var(--op1-spacing-sm);">
+
+          <!-- Record 1: Success -->
+          <div class="record-row">
+            <div class="record-name">数据库备份-20250115</div>
+            <span class="record-type">数据库</span>
+            <span class="record-size">128.5 MB</span>
+            <div class="record-status success" title="成功">
+              <i data-lucide="check"></i>
+            </div>
+            <span class="record-time">2025-01-15 03:00</span>
+            <div class="record-actions">
+              <button class="record-action-btn restore" title="恢复">
+                <i data-lucide="rotate-ccw"></i>
+              </button>
+              <button class="record-action-btn download" title="下载">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="record-action-btn delete" title="删除">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Record 2: Success -->
+          <div class="record-row">
+            <div class="record-name">系统备份-20250114</div>
+            <span class="record-type">系统</span>
+            <span class="record-size">2.3 GB</span>
+            <div class="record-status success" title="成功">
+              <i data-lucide="check"></i>
+            </div>
+            <span class="record-time">2025-01-14 03:00</span>
+            <div class="record-actions">
+              <button class="record-action-btn restore" title="恢复">
+                <i data-lucide="rotate-ccw"></i>
+              </button>
+              <button class="record-action-btn download" title="下载">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="record-action-btn delete" title="删除">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Record 3: Success -->
+          <div class="record-row">
+            <div class="record-name">数据库备份-20250113</div>
+            <span class="record-type">数据库</span>
+            <span class="record-size">125.8 MB</span>
+            <div class="record-status success" title="成功">
+              <i data-lucide="check"></i>
+            </div>
+            <span class="record-time">2025-01-13 03:00</span>
+            <div class="record-actions">
+              <button class="record-action-btn restore" title="恢复">
+                <i data-lucide="rotate-ccw"></i>
+              </button>
+              <button class="record-action-btn download" title="下载">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="record-action-btn delete" title="删除">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Record 4: Failed -->
+          <div class="record-row">
+            <div class="record-name">文件备份-20250112</div>
+            <span class="record-type">文件</span>
+            <span class="record-size">856 MB</span>
+            <div class="record-status failed" title="失败">
+              <i data-lucide="x"></i>
+            </div>
+            <span class="record-time">2025-01-12 15:30</span>
+            <div class="record-actions">
+              <button class="record-action-btn restore" title="恢复">
+                <i data-lucide="rotate-ccw"></i>
+              </button>
+              <button class="record-action-btn download" title="下载">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="record-action-btn delete" title="删除">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Record 5: Success -->
+          <div class="record-row">
+            <div class="record-name">数据库备份-20250111</div>
+            <span class="record-type">数据库</span>
+            <span class="record-size">122.1 MB</span>
+            <div class="record-status success" title="成功">
+              <i data-lucide="check"></i>
+            </div>
+            <span class="record-time">2025-01-11 03:00</span>
+            <div class="record-actions">
+              <button class="record-action-btn restore" title="恢复">
+                <i data-lucide="rotate-ccw"></i>
+              </button>
+              <button class="record-action-btn download" title="下载">
+                <i data-lucide="download"></i>
+              </button>
+              <button class="record-action-btn delete" title="删除">
+                <i data-lucide="trash-2"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Stats Card -->
+      <div class="glass-card stats-card" style="margin-top: var(--op1-spacing-lg);">
+        <div class="stat-item">
+          <span class="stat-value">5</span>
+          <span class="stat-label">总备份</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value success-color">4</span>
+          <span class="stat-label">成功</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value danger-color">1</span>
+          <span class="stat-label">失败</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">3.4 GB</span>
+          <span class="stat-label">总占用</span>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ============================================================
+       iOS Bottom Tab Bar (< 768px)
+       ============================================================ -->
+  <div class="bottom-tab-bar">
+    <button class="tab-item" data-page="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span>仪表板</span>
+    </button>
+    <button class="tab-item" data-page="containers">
+      <i data-lucide="box"></i>
+      <span>容器</span>
+    </button>
+    <button class="tab-item" data-page="databases">
+      <i data-lucide="database"></i>
+      <span>数据库</span>
+    </button>
+    <button class="tab-item" data-page="files">
+      <i data-lucide="folder-open"></i>
+      <span>文件</span>
+    </button>
+    <button class="tab-item active" data-page="backups">
+      <i data-lucide="hard-drive"></i>
+      <span>备份</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       Scripts
+       ============================================================ -->
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      html.classList.toggle('dark', !isDark);
+      html.classList.toggle('light', isDark);
+
+      const icon = document.querySelector('#themeToggleSidebar i');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
+
+    // Navigation active state
+    document.querySelectorAll('.nav-item, .tab-item').forEach(item => {
+      item.addEventListener('click', function () {
+        this.parentElement.querySelectorAll('.nav-item, .tab-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        this.classList.add('active');
+      });
+    });
+
+    // Initialize icons
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>
