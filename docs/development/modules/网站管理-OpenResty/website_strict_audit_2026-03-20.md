@@ -16,7 +16,7 @@
 
 本次审计使用的输入来源：
 
-- 工作流: `docs/模块适配专属工作流.md`
+- 工作流: `AGENTS.md`「模块适配与原生UI工作流（持续活规范）」
 - OpenAPI: `docs/OpenSource/1Panel/core/cmd/server/docs/swagger.json`
 - 移动端实现: `lib/features/websites/`、`lib/features/openresty/`、`lib/api/v2/`
 - 测试实现: `test/api_client/website*_test.dart`、`test/api_client/openresty_api_client_test.dart`

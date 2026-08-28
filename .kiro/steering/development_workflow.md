@@ -4,13 +4,20 @@ inclusion: auto
 
 # 开发工作流
 
+## 实时功能规划（强制）
+
+- 功能批次状态唯一维护在 `docs/development/modules/阶段总计划.md`；不要在模块计划、审计报告或聊天记录中维护第二份“当前状态”。
+- 开始前登记范围、前端行为对照、Swagger 关键字、验收和门禁；完成后回写交付、残留、验证命令与结果日期。
+- 计划状态使用 `planned`、`in_progress`、`blocked`、`verified`、`deferred`。`verified` 必须附可重复命令，`deferred` 必须记录重新评估条件。
+- 模块与原生 UI 强制规则以 `AGENTS.md` 为准；`docs/模块适配专属工作流.md` 与 `docs/原生UI适配专属工作流.md` 已退役，不得引用。
+
 ## 问题修复流程（强制）
 
 ### 0. 文档创建前检查（必须）
 ```bash
 # 在创建任何文档前，先搜索是否已有相似文档
-find . -name "*.md" -type f | grep -v node_modules | grep -v ".git"
-grep -r "关键词" --include="*.md" .
+rg --files -g '*.md' -g '!docs/OpenSource/**'
+rg '关键词' -g '*.md' -g '!docs/OpenSource/**'
 
 # 优先更新现有文档，而不是创建新文档
 # 禁止为单个 bug/功能创建独立文档
@@ -37,7 +44,7 @@ wc -l lib/path/to/file.dart
 ```
 
 ### 3. 查阅契约
-- API 问题：查看 `docs/OpenSource/1Panel/backend/swagger.json`
+- API 问题：查看 `docs/OpenSource/1Panel/core/cmd/server/docs/swagger.json`
 - 前端行为：参考 `docs/OpenSource/1Panel/frontend/src/`
 - **禁止修改** `docs/OpenSource/1Panel/**` 下任何文件
 

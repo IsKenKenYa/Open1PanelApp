@@ -34,6 +34,12 @@ flutter build ios --release                  # iOS（仅 macOS）
 
 测试门禁：`dart run test/scripts/test_runner.dart unit|integration|ui|all`
 
+## 实时功能规划
+
+- 当前功能批次的唯一计划入口是 `docs/development/modules/阶段总计划.md`。
+- 开工前登记范围、上游行为对照、契约关键字、验收标准与门禁；完成后在同一条目回写实际交付、残留和命令结果。
+- 强制规则以 `AGENTS.md`「模块适配与原生UI工作流」为准；旧的独立工作流文档已退役，不得重新引用。
+
 ## 架构概览
 
 ```
@@ -150,6 +156,7 @@ CodeGraph 通过 MCP Server 提供代码符号索引。当 `.codegraph/` 存在�
 4. 创建 Repository 方法
 5. 添加 Provider action
 6. 更新 UI，处理 loading/error 状态
+7. 回写 `docs/development/modules/阶段总计划.md` 的批次状态和验证证据
 
 ### 调试技巧
 - Debug 模式获取完整日志
