@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/ai/ai_repository.dart';
 
 /// AI GPU monitor history page.

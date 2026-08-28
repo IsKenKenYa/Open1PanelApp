@@ -25,6 +25,21 @@ class AIService {
     }
   }
 
+  /// 更新绑定域名
+  ///
+  /// 更新当前AI服务绑定的域名信息
+  /// @param request 更新绑定域名请求
+  /// @return 更新结果
+  Future<Response> updateBindDomain(OllamaBindDomain request) async {
+    try {
+      return await _api.updateBindDomain(request);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw Exception('更新绑定域名失败: $e');
+    }
+  }
+
   /// 获取绑定域名
   ///
   /// 获取当前AI服务绑定的域名信息

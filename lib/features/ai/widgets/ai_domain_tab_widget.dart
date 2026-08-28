@@ -135,6 +135,21 @@ class _AIDomainTabWidgetState extends State<AIDomainTabWidget> {
                     icon: const Icon(Icons.save_outlined),
                     label: Text(l10n.aiBindDomain),
                   ),
+                  OutlinedButton.icon(
+                    onPressed: provider.isLoading
+                        ? null
+                        : () => AIDomainTabActions.submitDomainUpdate(
+                              context,
+                              formKey: _formKey,
+                              appInstallIdController: _appInstallIdController,
+                              domainController: _domainController,
+                              ipListController: _ipListController,
+                              sslIdController: _sslIdController,
+                              websiteIdController: _websiteIdController,
+                            ),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: Text(l10n.commonEdit),
+                  ),
                 ],
               ),
               if (provider.bindDomainInfo != null) ...[

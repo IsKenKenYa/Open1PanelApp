@@ -43,6 +43,33 @@ class AIRepository {
     return api.bindDomain(request);
   }
 
+  /// 更新绑定域名
+  ///
+  /// 更新当前AI服务绑定的域名信息
+  /// @param appInstallID 应用安装ID
+  /// @param domain 域名
+  /// @param ipList IP列表
+  /// @param sslID SSL证书ID
+  /// @param websiteID 网站ID
+  /// @return 更新结果
+  Future<Response> updateBindDomain({
+    required int appInstallID,
+    required String domain,
+    String? ipList,
+    int? sslID,
+    int? websiteID,
+  }) async {
+    final api = await _getApi();
+    final request = OllamaBindDomain(
+      appInstallID: appInstallID,
+      domain: domain,
+      ipList: ipList,
+      sslID: sslID,
+      websiteID: websiteID,
+    );
+    return api.updateBindDomain(request);
+  }
+
   /// 获取绑定域名
   ///
   /// 获取当前AI服务绑定的域名信息

@@ -39,7 +39,7 @@ class AIDomainTabActions {
     final appInstallId = parseInt(appInstallIdController.text);
 
     if (appInstallId == null || appInstallId <= 0) {
-      SnackBarUtils.showSuccess(context, l10n.aiAppInstallIdRequired);
+      SnackBarUtils.showError(context, l10n.aiAppInstallIdRequired);
       return;
     }
 
@@ -128,6 +128,68 @@ class AIDomainTabActions {
         label: l10n.commonRetry,
         onPressed: () {
           submitDomainBinding(
+            context,
+            formKey: formKey,
+            appInstallIdController: appInstallIdController,
+            domainController: domainController,
+            ipListController: ipListController,
+            sslIdController: sslIdController,
+            websiteIdController: websiteIdController,
+          );
+        },
+      ),
+    );
+  }
+
+  static Future<void> submitDomainUpdate(
+    BuildContext context, {
+    required GlobalKey<FormState> formKey,
+    required TextEditingController appInstallIdController,
+    required TextEditingController domainController,
+    required TextEditingController ipListController,
+    required TextEditingController sslIdController,
+    required TextEditingController websiteIdController,
+  }) async {
+    if (!formKey.currentState!.validate()) return;
+
+    final provider = context.read<AIProvider>();
+    final appInstallId = parseInt(appInstallIdController.text) ?? 0;
+
+    final success = await provider.updateBindDomain(
+      appInstallId: appInstallId,
+      domain: domainController.text.trim(),
+      ipList: ipListController.text.trim().isEmpty
+          ? null
+          : ipListController.text.trim(),
+      sslId: parseInt(sslIdController.text),
+      websiteId: parseInt(websiteIdController.text),
+    );
+
+    if (!context.mounted) return;
+
+    final l10n = context.l10n;
+
+    if (success) {
+      fillFromProvider(
+        provider: provider,
+        domainController: domainController,
+        ipListController: ipListController,
+        sslIdController: sslIdController,
+        websiteIdController: websiteIdController,
+      );
+      SnackBarUtils.showSuccess(context, context.l10n.aiOperationSuccess);
+      return;
+    }
+
+    SnackBarUtils.showError(
+      context,
+      l10n.aiOperationFailed(
+        provider.errorMessage ?? l10n.commonUnknownError,
+      ),
+      action: SnackBarAction(
+        label: l10n.commonRetry,
+        onPressed: () {
+          submitDomainUpdate(
             context,
             formKey: formKey,
             appInstallIdController: appInstallIdController,

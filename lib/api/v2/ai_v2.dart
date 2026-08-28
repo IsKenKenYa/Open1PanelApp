@@ -32,6 +32,18 @@ class AIV2Api {
     );
   }
 
+  /// 更新绑定域名
+  ///
+  /// 更新当前AI服务绑定的域名信息
+  /// @param request 更新绑定域名请求
+  /// @return 更新结果
+  Future<Response<void>> updateBindDomain(OllamaBindDomain request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/domain/update'),
+      data: request.toJson(),
+    );
+  }
+
   /// 获取绑定域名
   ///
   /// 获取当前AI服务绑定的域名信息
@@ -516,6 +528,15 @@ class AIV2Api {
     );
   }
 
+  /// 审批飞书通道配对。
+  Future<Response<void>> approveAgentFeishuPairing(
+      AgentFeishuPairingApproveReq request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/agents/channel/feishu/approve'),
+      data: request.toJson(),
+    );
+  }
+
   /// 获取 Telegram 通道配置
   Future<Response<AgentTelegramConfig>> getAgentTelegramConfig(
       AgentTelegramConfigReq request) async {
@@ -698,6 +719,30 @@ class AIV2Api {
     );
   }
 
+  /// 获取 Agent 浏览器配置。
+  Future<Response<AgentBrowserConfig>> getAgentBrowserConfig(
+      AgentBrowserConfigReq request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/browser/get'),
+      data: request.toJson(),
+    );
+    return Response(
+      data: AgentBrowserConfig.fromJson(_unwrapDataMap(response.data)),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 更新 Agent 浏览器配置。
+  Future<Response<void>> updateAgentBrowserConfig(
+      AgentBrowserConfigUpdateReq request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/agents/browser/update'),
+      data: request.toJson(),
+    );
+  }
+
   /// 更新 Agent 安全配置
   Future<Response<void>> updateAgentSecurityConfig(
       AgentSecurityConfigUpdateReq request) async {
@@ -813,6 +858,156 @@ class AIV2Api {
     return await _client.post<void>(
       ApiConstants.buildApiPath('/ai/agents/channel/pairing/approve'),
       data: request.toJson(),
+    );
+  }
+
+  /// 批量安装 Agent。
+  Future<Response<AgentItem>> batchInstallAgent(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/batch/install'),
+      data: request,
+    );
+    return Response(
+      data: AgentItem.fromJson(_unwrapDataMap(response.data)),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 批量操作 Agent。
+  Future<Response<List<Map<String, dynamic>>>> batchOperateAgent(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/batch/operate'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataList(response.data)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 批量安装 Agent 技能。
+  Future<Response<List<Map<String, dynamic>>>> batchInstallAgentSkill(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/batch/skill/install'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataList(response.data)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 批量升级 Agent。
+  Future<Response<List<Map<String, dynamic>>>> batchUpgradeAgent(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/batch/upgrade'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataList(response.data)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 查询 Hermes 聊天会话。
+  Future<Response<Map<String, dynamic>>> searchHermesChatSessions(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/hermes/chat/sessions'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataMap(response.data),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 删除 Hermes 聊天会话。
+  Future<Response<void>> deleteHermesChatSessions(
+      Map<String, dynamic> request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/agents/hermes/chat/sessions/delete'),
+      data: request,
+    );
+  }
+
+  /// 重命名 Hermes 聊天会话。
+  Future<Response<void>> renameHermesChatSession(
+      Map<String, dynamic> request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/agents/hermes/chat/sessions/rename'),
+      data: request,
+    );
+  }
+
+  /// 创建 TensorRT LLM。
+  Future<Response<void>> createTensorRtLlm(Map<String, dynamic> request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/tensorrt/create'),
+      data: request,
+    );
+  }
+
+  /// 删除 TensorRT LLM。
+  Future<Response<void>> deleteTensorRtLlm(Map<String, dynamic> request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/tensorrt/delete'),
+      data: request,
+    );
+  }
+
+  /// 操作 TensorRT LLM。
+  Future<Response<void>> operateTensorRtLlm(
+      Map<String, dynamic> request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/tensorrt/operate'),
+      data: request,
+    );
+  }
+
+  /// 搜索 TensorRT LLM 列表。
+  Future<Response<Map<String, dynamic>>> searchTensorRtLlm(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/tensorrt/search'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataMap(response.data),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 更新 TensorRT LLM。
+  Future<Response<void>> updateTensorRtLlm(Map<String, dynamic> request) async {
+    return await _client.post<void>(
+      ApiConstants.buildApiPath('/ai/tensorrt/update'),
+      data: request,
     );
   }
 

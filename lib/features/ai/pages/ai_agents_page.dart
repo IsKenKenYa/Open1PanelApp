@@ -38,7 +38,7 @@ class _AiAgentsPageState extends State<AiAgentsPage> {
   Future<void> _deleteAgent(int agentId) async {
     try {
       final repo = AgentsRepository();
-      await repo.deleteAgent(AgentDeleteReq(id: agentId));
+      await repo.deleteAgent(AgentDeleteReq(id: agentId, taskID: ''));
       if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
       _load();
     } catch (e) {

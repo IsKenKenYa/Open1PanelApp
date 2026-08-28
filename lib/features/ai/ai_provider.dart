@@ -229,6 +229,44 @@ class AIProvider with ChangeNotifier, SafeChangeNotifier {
     }
   }
 
+  /// 更新绑定域名
+  ///
+  /// 更新AI服务绑定的域名配置
+  /// @param appInstallId 应用安装ID
+  /// @param domain 域名
+  /// @param ipList IP列表
+  /// @param sslId SSL证书ID
+  /// @param websiteId 网站ID
+  Future<bool> updateBindDomain({
+    required int appInstallId,
+    String? domain,
+    String? ipList,
+    int? sslId,
+    int? websiteId,
+  }) async {
+    _activeAppInstallId = appInstallId;
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      await _repository.updateBindDomain(
+        appInstallID: appInstallId,
+        domain: domain ?? '',
+        ipList: ipList,
+        sslID: sslId,
+        websiteID: websiteId,
+      );
+      await getBindDomain(appInstallId: appInstallId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _setError('更新绑定域名失败: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   /// 创建Ollama模型
   ///
   /// 创建一个新的Ollama模型
