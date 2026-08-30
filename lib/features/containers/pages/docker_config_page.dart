@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/container_v2.dart';
@@ -14,7 +15,6 @@ class DockerConfigPage extends StatefulWidget {
 }
 
 class _DockerConfigPageState extends State<DockerConfigPage> {
-  String _configContent = '';
   bool _isLoading = true;
   bool _isSaving = false;
   String? _error;
@@ -41,7 +41,6 @@ class _DockerConfigPageState extends State<DockerConfigPage> {
       _controller.text = content;
       if (mounted) {
         setState(() {
-          _configContent = content;
           _isLoading = false;
         });
       }
@@ -55,9 +54,9 @@ class _DockerConfigPageState extends State<DockerConfigPage> {
     try {
       final api = ContainerV2Api(await ApiClientManager.instance.getCurrentClient());
       await api.updateDaemonJsonByFile(DaemonJsonUpdateByFile(file: _controller.text));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Saved');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Save failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -67,12 +66,12 @@ class _DockerConfigPageState extends State<DockerConfigPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Docker Configuration'),
+        title:  Text(context.l10n.dockerConfigTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: _isSaving ? null : _save,
-            tooltip: 'Save',
+            tooltip: context.l10n.commonSave,
           ),
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -86,7 +85,7 @@ class _DockerConfigPageState extends State<DockerConfigPage> {
                     children: [
                       Text(_error!),
                       const SizedBox(height: 16),
-                      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                      ElevatedButton(onPressed: _load, child:  Text(context.l10n.commonRetry)),
                     ],
                   ),
                 )

@@ -149,13 +149,13 @@ class _DatabaseScopeTabView extends StatelessWidget {
                     ),
                     child: SegmentedButton<DatabaseSourceFilter>(
                       segments: [
-                        const ButtonSegment(
+                        ButtonSegment(
                           value: DatabaseSourceFilter.all,
-                          label: Text('All'),
+                          label: Text(l10n.databaseSourceAll),
                         ),
-                        const ButtonSegment(
+                        ButtonSegment(
                           value: DatabaseSourceFilter.local,
-                          label: Text('Local'),
+                          label: Text(l10n.databaseSourceLocal),
                         ),
                         ButtonSegment(
                           value: DatabaseSourceFilter.remote,

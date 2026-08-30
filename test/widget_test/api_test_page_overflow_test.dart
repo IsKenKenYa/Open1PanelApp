@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/pages/settings/api_test_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +9,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'ui_overflow_test_utils.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    // getConfigs 会把 inline apiKey 迁移进 secure storage 并回读；
+    // 测试环境用 mock 通道兜底，避免 MissingPluginException。
+    const secureChannel =
+        MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(secureChannel, (call) async {
+      if (call.method == 'read') return 'key';
+      return null;
+    });
+  });
+
   group('ApiTestPage overflow guard', () {
     final longName =
         'Primary Server ${List.filled(10, 'International-Node').join('-')}';
@@ -36,12 +51,18 @@ void main() {
     for (final variant in kCoreOverflowVariants) {
       testWidgets('config rows remain stable in ${variant.name}',
           (tester) async {
+        // ApiTestPage 有常驻动画（连接状态轮询），不能 pumpAndSettle。
         await pumpOverflowHarness(
           tester,
           variant: variant,
           wrapWithScaffold: false,
+          settle: false,
           child: const ApiTestPage(),
         );
+
+        // 异步读取 SharedPreferences 完成后再断言（页面有常驻动画不能用 settle）。
+        await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
 
         await expectNoFlutterExceptions(
           tester,

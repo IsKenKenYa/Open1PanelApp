@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/logs/providers/logs_provider.dart';
+import 'package:onepanel_client/features/logs/widgets/website_log_tab_widget.dart';
 import 'package:onepanel_client/features/logs/providers/system_logs_provider.dart';
 import 'package:onepanel_client/features/logs/providers/task_logs_provider.dart';
 import 'package:onepanel_client/features/logs/widgets/logs_login_tab_widget.dart';
@@ -68,7 +69,7 @@ class _LogsCenterPageState extends State<LogsCenterPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: ServerAwarePageScaffold(
         title: l10n.operationsLogsTitle,
         onServerChanged: _loadAll,
@@ -83,6 +84,7 @@ class _LogsCenterPageState extends State<LogsCenterPage> {
                   Tab(text: l10n.logsCenterTabLogin),
                   Tab(text: l10n.logsCenterTabTask),
                   Tab(text: l10n.logsCenterTabSystem),
+                  Tab(text: l10n.logsCenterTabWebsite),
                 ],
               ),
             ),
@@ -115,6 +117,7 @@ class _LogsCenterPageState extends State<LogsCenterPage> {
                     builder: (context, provider, _) =>
                         LogsSystemTabWidget(provider: provider),
                   ),
+                  const WebsiteLogTabWidget(),
                 ],
               ),
             ),

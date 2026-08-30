@@ -35,30 +35,30 @@ class _DashboardPageState extends State<DashboardPage> {
           // 自动刷新设置
           PopupMenuButton<Duration>(
             icon: const Icon(Icons.timer),
-            tooltip: '刷新间隔',
+            tooltip: l10n.dashboardRefreshInterval,
             onSelected: (duration) {
               context.read<DashboardProvider>().setRefreshInterval(duration);
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: Duration(seconds: 3),
-                child: Text('3秒'),
+                child: Text(l10n.dashboardInterval3s),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: Duration(seconds: 5),
-                child: Text('5秒 (默认)'),
+                child: Text(l10n.dashboardInterval5s),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: Duration(seconds: 10),
-                child: Text('10秒'),
+                child: Text(l10n.dashboardInterval10s),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: Duration(seconds: 30),
-                child: Text('30秒'),
+                child: Text(l10n.dashboardInterval30s),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: Duration(minutes: 1),
-                child: Text('1分钟'),
+                child: Text(l10n.dashboardInterval1m),
               ),
             ],
           ),

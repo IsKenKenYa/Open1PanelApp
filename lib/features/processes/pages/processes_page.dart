@@ -31,6 +31,11 @@ class _ProcessesPageState extends State<ProcessesPage>
   }
 
   @override
+  void onServerReady() {
+    context.read<ProcessesProvider>().load();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Consumer<ProcessesProvider>(

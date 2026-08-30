@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/ai/agent_account_models.dart';
 import 'package:onepanel_client/features/ai/ai_repository.dart';
@@ -46,10 +47,10 @@ class _AiAccountsPageState extends State<AiAccountsPage> {
     try {
       final api = await _repo.getApi();
       await api.deleteAgentAccount(AgentAccountDeleteReq(id: id));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonDeleted);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
     }
   }
 
@@ -57,7 +58,7 @@ class _AiAccountsPageState extends State<AiAccountsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Accounts'),
+        title:  Text(context.l10n.aiAccountsTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -71,12 +72,12 @@ class _AiAccountsPageState extends State<AiAccountsPage> {
                     children: [
                       Text(_error!),
                       const SizedBox(height: 16),
-                      ElevatedButton(onPressed: _load, child: const Text('Retry')),
+                      ElevatedButton(onPressed: _load, child:  Text(context.l10n.commonRetry)),
                     ],
                   ),
                 )
               : _accounts.isEmpty
-                  ? const Center(child: Text('No accounts'))
+                  ?  Center(child: Text(context.l10n.aiAccountsEmpty))
                   : ListView.builder(
                       itemCount: _accounts.length,
                       itemBuilder: (context, index) {

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'ai_agent_create_dialog.dart';
 import 'ai_agents_detail_widget.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 class AIAgentsListWidget extends StatefulWidget {
   const AIAgentsListWidget({super.key});
@@ -91,7 +92,7 @@ class _AIAgentsListWidgetState extends State<AIAgentsListWidget> {
 
                     return Row(
                       children: <Widget>[
-                        SizedBox(width: 380, child: list),
+                        SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth,  child: list),
                         const SizedBox(width: 12),
                         Expanded(child: detail),
                       ],

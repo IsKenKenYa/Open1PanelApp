@@ -151,18 +151,6 @@ class WebsiteV2Api {
     );
   }
 
-  Future<void> batchSetWebsiteHttps({
-    required List<int> ids,
-    required bool https,
-  }) async {
-    await _client.post<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/websites/batch/https'),
-      data: {
-        'ids': ids,
-        'https': https,
-      },
-    );
-  }
 
   Future<void> changeDefaultServer({
     required int id,

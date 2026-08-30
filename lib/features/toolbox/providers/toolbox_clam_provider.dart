@@ -50,6 +50,79 @@ class ToolboxClamProvider extends ChangeNotifier with SafeChangeNotifier {
   List<ClamBaseInfo> get allTasks => _tasks;
   List<ClamLogInfo> get records => _records;
 
+  // ── 配置文件（对齐前端 clam/setting：clamd/freshclam/clamd-log/freshclam-log）──
+  static const List<String> clamFileNames = <String>[
+    'clamd',
+    'freshclam',
+    'clamd-log',
+    'freshclam-log',
+  ];
+
+  String _selectedClamFileName = 'clamd';
+  String _clamFileContent = '';
+  bool _isLoadingFile = false;
+  bool _isSavingFile = false;
+
+  String get selectedClamFileName => _selectedClamFileName;
+  String get clamFileContent => _clamFileContent;
+  bool get isLoadingFile => _isLoadingFile;
+  bool get isSavingFile => _isSavingFile;
+  bool get isClamLogFile => _selectedClamFileName.endsWith('-log');
+
+  Future<void> selectClamFile(String name) async {
+    _selectedClamFileName = name;
+    await loadClamFile();
+  }
+
+  Future<void> loadClamFile() async {
+    _isLoadingFile = true;
+    notifyListeners();
+    try {
+      final lines = await _service.loadClamFileLines(
+        name: _selectedClamFileName,
+        tail: '200',
+      );
+      _clamFileContent = lines
+          .map((line) => line.name ?? '')
+          .join('\n');
+    } catch (error, stackTrace) {
+      _clamFileContent = '';
+      appLogger.eWithPackage(
+        'features.toolbox.providers.toolbox_clam',
+        'load clam file failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      _isLoadingFile = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> saveClamFile(String content) async {
+    _isSavingFile = true;
+    notifyListeners();
+    try {
+      await _service.saveClamFile(
+        name: _selectedClamFileName,
+        file: content,
+      );
+      return true;
+    } catch (error, stackTrace) {
+      appLogger.eWithPackage(
+        'features.toolbox.providers.toolbox_clam',
+        'save clam file failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _error = ErrorMessageUtils.userFacingMessage(error);
+      return false;
+    } finally {
+      _isSavingFile = false;
+      notifyListeners();
+    }
+  }
+
   ClamBaseInfo? get selectedTask {
     for (final item in _tasks) {
       if (item.id == _selectedTaskId) {

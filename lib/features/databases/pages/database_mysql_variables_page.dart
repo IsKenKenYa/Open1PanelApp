@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
 
@@ -44,7 +45,7 @@ class _DatabaseMysqlVariablesPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MySQL Variables'),
+        title:  Text(context.l10n.databaseMysqlVariablesTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -54,7 +55,7 @@ class _DatabaseMysqlVariablesPageState
           : _error != null
               ? Center(child: Text(_error!))
               : _variables == null || _variables!.isEmpty
-                  ? const Center(child: Text('No variables'))
+                  ?  Center(child: Text(context.l10n.databaseMysqlVariablesEmpty))
                   : ListView.builder(
                       itemCount: _variables!.keys.length,
                       itemBuilder: (context, index) {

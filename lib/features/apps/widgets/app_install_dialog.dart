@@ -6,6 +6,7 @@ import '../../../data/models/app_models.dart';
 import '../app_service.dart';
 
 import '../../../core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 class AppInstallDialog extends StatefulWidget {
   final AppItem app;
 
@@ -230,8 +231,7 @@ class _AppInstallDialogState extends State<AppInstallDialog> {
     return AlertDialog.adaptive(
       title: Text('${l10n.appStoreInstall} ${widget.app.name}'),
       scrollable: true,
-      content: SizedBox(
-        width: 600, // Reasonable width for desktop/tablet
+      content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth,  // Reasonable width for desktop/tablet
         child: Form(
           key: _formKey,
           child: Column(

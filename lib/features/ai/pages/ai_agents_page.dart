@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/ai/agents/agents_repository.dart';
 import 'package:onepanel_client/features/ai/agents/agents_provider.dart';
+import 'package:onepanel_client/features/ai/pages/ai_agent_plugins_page.dart';
 import 'package:onepanel_client/data/models/ai/agent_core_models.dart';
 import 'package:provider/provider.dart';
 
@@ -39,10 +41,11 @@ class _AiAgentsPageState extends State<AiAgentsPage> {
     try {
       final repo = AgentsRepository();
       await repo.deleteAgent(AgentDeleteReq(id: agentId, taskID: ''));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      if (!mounted) return;
+      SnackBarUtils.showSuccess(context, context.l10n.commonDeleted);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+      if (context.mounted) SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
     }
   }
 
@@ -50,7 +53,7 @@ class _AiAgentsPageState extends State<AiAgentsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Agents'),
+        title:  Text(context.l10n.aiAgentsTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -63,7 +66,7 @@ class _AiAgentsPageState extends State<AiAgentsPage> {
                   builder: (context, provider, _) {
                     final agents = provider.agents;
                     if (agents.isEmpty) {
-                      return const Center(child: Text('No agents'));
+                      return  Center(child: Text(context.l10n.aiAgentsNoAgents));
                     }
                     return ListView.builder(
                       itemCount: agents.length,
@@ -72,10 +75,29 @@ class _AiAgentsPageState extends State<AiAgentsPage> {
                         return Card(
                           child: ListTile(
                             title: Text(agent.name ?? 'Unnamed'),
-                            subtitle: Text('Type: ${agent.agentType ?? 'N/A'} | Status: ${agent.status ?? 'N/A'}'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline),
-                              onPressed: () => _deleteAgent(agent.id ?? 0),
+                            subtitle: Text('${context.l10n.aiAgentsTypeWith(agent.agentType ?? 'N/A')} | ${context.l10n.commonStatus}: ${agent.status ?? 'N/A'}'),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.extension_outlined),
+                                  tooltip: context.l10n.aiAgentPluginsTitle,
+                                  onPressed: agent.id == null
+                                      ? null
+                                      : () => Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                              builder: (_) =>
+                                                  AiAgentPluginsPage(
+                                                agentId: agent.id.toString(),
+                                              ),
+                                            ),
+                                          ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete_outline),
+                                  onPressed: () => _deleteAgent(agent.id ?? 0),
+                                ),
+                              ],
                             ),
                           ),
                         );

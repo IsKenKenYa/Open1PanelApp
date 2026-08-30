@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/services/file_transfer_service.dart';
 
@@ -36,10 +37,10 @@ class _FileSharePageState extends State<FileSharePage> {
   Future<void> _deleteShare(String shareId) async {
     try {
       await _service.deleteShare(shareId);
-      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonDeleted);
       _loadShares();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
     }
   }
 
@@ -47,7 +48,7 @@ class _FileSharePageState extends State<FileSharePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('File Shares'),
+        title:  Text(context.l10n.fileShareTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadShares),
         ],
@@ -57,7 +58,7 @@ class _FileSharePageState extends State<FileSharePage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _shares.isEmpty
-                  ? const Center(child: Text('No shares'))
+                  ?  Center(child: Text(context.l10n.fileShareEmpty))
                   : ListView.builder(
                       itemCount: _shares.length,
                       itemBuilder: (context, index) {

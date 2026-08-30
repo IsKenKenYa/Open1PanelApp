@@ -17,6 +17,11 @@ extension _FilesViewScaffold on _FilesViewState {
     final theme = Theme.of(context);
     final canPop = Navigator.of(context).canPop();
     final provider = context.watch<FilesProvider>();
+    // 目录导航走 provider 内部状态而非 Navigator，子目录层级也要显示返回键。
+    final inSubdirectory =
+        provider.data.currentPath.isNotEmpty &&
+            provider.data.currentPath != '/';
+    final showBack = canPop || inSubdirectory;
 
     return Shortcuts(
       shortcuts: {
@@ -48,12 +53,26 @@ extension _FilesViewScaffold on _FilesViewState {
         },
         child: Focus(
           autofocus: true,
+          child: PopScope(
+          canPop: canPop || false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            if (!canPop && inSubdirectory) {
+              provider.navigateUp();
+            }
+          },
           child: Scaffold(
             appBar: AppBar(
-              leading: canPop
+              leading: showBack
                   ? IconButton(
                       icon: const Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.of(context).maybePop(),
+                      onPressed: () {
+                        if (canPop) {
+                          Navigator.of(context).maybePop();
+                        } else if (inSubdirectory) {
+                          provider.navigateUp();
+                        }
+                      },
                       tooltip:
                           MaterialLocalizations.of(context).backButtonTooltip,
                     )
@@ -107,6 +126,7 @@ extension _FilesViewScaffold on _FilesViewState {
             bottomNavigationBar: !provider.data.hasSelection
                 ? const SizedBox.shrink()
                 : _buildSelectionBar(context, provider, l10n),
+          ),
           ),
         ),
       ),

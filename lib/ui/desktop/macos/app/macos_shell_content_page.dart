@@ -105,6 +105,7 @@ class _MacosShellContentPageState extends State<MacosShellContentPage> {
           backgroundColor: scheme.surface,
           floatingActionButton: inputKind == InputDeviceKind.touch
               ? FloatingActionButton(
+                  heroTag: 'macos_touch_sidebar_toggle_fab',
                   key: const Key('macos-touch-sidebar-toggle'),
                   onPressed: () {
                     setState(() {

@@ -93,4 +93,43 @@ class AppRoutes {
   static const String phpSupervisor = '/runtimes/php/supervisor';
   static const String nodeModules = '/runtimes/node/modules';
   static const String nodeScripts = '/runtimes/node/scripts';
+  // Website config sub-pages (frontend parity: HTTPS/redirect/CORS/leech/log/auth/resource/LB)
+  static const String websiteHttps = '/website/https';
+  static const String websiteRedirect = '/website/redirect';
+  static const String websiteCors = '/website/cors';
+  static const String websiteLeech = '/website/leech';
+  static const String websiteLog = '/website/log';
+  static const String websiteAuthBasic = '/website/auth-basic';
+  static const String websiteResource = '/website/resource';
+  static const String websiteLoadBalancer = '/website/load-balancer';
+  // File management sub-pages
+  static const String fileShare = '/files/share';
+  static const String wgetManager = '/files/wget';
+  static const String fileHistory = '/files/history';
+  static const String filePermission = '/files/permission';
+  static const String recycleBinStatus = '/files/recycle-status';
+  // AI module sub-pages
+  static const String aiAccounts = '/ai/accounts';
+  static const String aiOllamaModels = '/ai/ollama-models';
+  static const String aiAgents = '/ai/agents';
+  static const String aiGpuHistory = '/ai/gpu-history';
+  static const String mcpServerDetail = '/ai/mcp/detail';
+  // Database sub-pages
+  static const String databaseMongodb = '/databases/mongodb';
+  static const String databaseMysqlVariables = '/databases/mysql/variables';
+  static const String databasePgPrivileges = '/databases/pg/privileges';
+  static const String databaseRedisPersistence = '/databases/redis/persistence';
+  static const String databaseSlowLog = '/databases/slow-log';
+  static const String databaseRemoteConfig = '/databases/remote-config';
+  // Container sub-pages
+  static const String containerInspect = '/containers/inspect';
+  static const String containerFiles = '/containers/files';
+  static const String containerMaintenance = '/containers/maintenance';
+  static const String dockerConfig = '/containers/docker-config';
+  static const String imageOperations = '/containers/image-operations';
+  // Toolbox / monitor sub-pages
+  static const String toolboxSupervisor = '/toolbox/supervisor';
+  // Host diagnostics & AI agent plugins (V2 new)
+  static const String hostDiagnostics = '/hosts/diagnostics';
+  static const String aiAgentPlugins = '/ai/agents/plugins';
 }

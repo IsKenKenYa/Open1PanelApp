@@ -40,7 +40,7 @@ class _AppDetailPageState extends State<AppDetailPage> {
       // This is more reliable than getAppDetail for display purposes
       try {
         final appByKey = await appService.getAppByKey(_app.key ?? '');
-        if (mounted) {
+        if (mounted && appByKey != null) {
           setState(() {
             _app = appByKey;
             _readme = appByKey.readMe;
@@ -48,7 +48,7 @@ class _AppDetailPageState extends State<AppDetailPage> {
         }
       } catch (e) {
         // If getAppByKey fails, use the existing app data
-        _readme = _app.readMe;
+        _readme ??= _app.readMe;
       }
 
       // Then try to get detailed info (may fail for some apps due to server-side issues)
@@ -65,6 +65,9 @@ class _AppDetailPageState extends State<AppDetailPage> {
         if (mounted) {
           setState(() {
             // Merge detail info but keep the README from getAppByKey
+            final mergedReadMe =
+                (_readme?.isNotEmpty == true) ? _readme! : detail.readMe;
+            _readme = mergedReadMe;
             _app = AppItem(
               description: detail.description ?? _app.description,
               github: detail.github ?? _app.github,
@@ -75,7 +78,7 @@ class _AppDetailPageState extends State<AppDetailPage> {
               key: detail.key ?? _app.key,
               limit: detail.limit ?? _app.limit,
               name: detail.name ?? _app.name,
-              readMe: _readme, // Keep README from getAppByKey
+              readMe: mergedReadMe, // byKey 优先，detail 兜底
               recommend: detail.recommend ?? _app.recommend,
               resource: detail.resource ?? _app.resource,
               status: detail.status ?? _app.status,

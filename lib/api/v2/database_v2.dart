@@ -95,6 +95,91 @@ class DatabaseV2Api {
     return _mapListResponse(response);
   }
 
+  // ── MySQL 用户与授权（V2 新体系：/databases/users*、/databases/grants*）──
+
+  Future<Response<List<Map<String, dynamic>>>> searchDatabaseUsers(
+    String database,
+  ) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/databases/users/search'),
+      data: <String, dynamic>{'database': database},
+    );
+    return _mapListResponse(response);
+  }
+
+  Future<Response<void>> createDatabaseUser(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/users'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> deleteDatabaseUser(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/users/del'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> updateDatabaseUser(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/users/update'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> updateDatabaseUserPassword(
+    Map<String, dynamic> request,
+  ) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/users/password'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> saveDatabaseUserPassword(
+    Map<String, dynamic> request,
+  ) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/users/password/save'),
+      data: request,
+    );
+  }
+
+  Future<Response<List<Map<String, dynamic>>>> searchDatabaseGrants(
+    String database,
+  ) async {
+    final response = await _client.post<dynamic>(
+      ApiConstants.buildApiPath('/databases/grants/search'),
+      data: <String, dynamic>{'database': database},
+    );
+    return _mapListResponse(response);
+  }
+
+  Future<Response<Map<String, dynamic>>> searchDatabaseGrantSummary(
+    Map<String, dynamic> request,
+  ) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/databases/grants/summary'),
+      data: request,
+    );
+    return _mapObjectResponse(response);
+  }
+
+  Future<Response<void>> createDatabaseGrant(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/grants'),
+      data: request,
+    );
+  }
+
+  Future<Response<void>> deleteDatabaseGrant(Map<String, dynamic> request) {
+    return _client.post<void>(
+      ApiConstants.buildApiPath('/databases/grants/del'),
+      data: request,
+    );
+  }
+
   Future<Response<Map<String, dynamic>>> getRemoteDatabase(String name) async {
     final response = await _client.get<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/databases/db/$name'),
@@ -210,12 +295,6 @@ class DatabaseV2Api {
     );
   }
 
-  Future<Response<void>> bindMysqlUser(Map<String, dynamic> request) {
-    return _client.post<void>(
-      ApiConstants.buildApiPath('/databases/bind'),
-      data: request,
-    );
-  }
 
   Future<Response<void>> loadMysqlDatabaseFromRemote(
     Map<String, dynamic> request,
@@ -628,20 +707,6 @@ class DatabaseV2Api {
     );
   }
 
-  Future<Response<DatabaseConn>> resetDatabasePassword(
-    DatabaseResetPassword request,
-  ) async {
-    final response = await _client.post<Map<String, dynamic>>(
-      '${ApiConstants.buildApiPath('/databases')}/${request.id}/password/reset',
-      data: request.toJson(),
-    );
-    return Response(
-      data: DatabaseConn.fromJson(_unwrapData(response.data)),
-      statusCode: response.statusCode,
-      statusMessage: response.statusMessage,
-      requestOptions: response.requestOptions,
-    );
-  }
 
   Future<Response<List<Map<String, dynamic>>>> getDatabasePrivileges(
     int id,

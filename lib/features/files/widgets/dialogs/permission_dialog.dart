@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 void showPermissionDialog(
   BuildContext context,
@@ -199,15 +200,14 @@ class _PermissionDialogState extends State<_PermissionDialog> {
   Widget _buildContent(ThemeData theme, ColorScheme colorScheme) {
     if (_isLoading) {
       return const SizedBox(
-        width: 400,
+          width: 40,
         height: 300,
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_error != null) {
-      return SizedBox(
-        width: 400,
+      return SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
         height: 200,
         child: Center(
           child: Column(
@@ -227,8 +227,7 @@ class _PermissionDialogState extends State<_PermissionDialog> {
     }
 
     return SingleChildScrollView(
-      child: SizedBox(
-        width: 400,
+      child: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

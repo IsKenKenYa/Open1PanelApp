@@ -15236,6 +15236,1092 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Extensions'**
   String get phpExtensionsLabel;
+
+  /// No description provided for @commonUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get commonUpdated;
+
+  /// No description provided for @commonUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update failed'**
+  String get commonUpdateFailed;
+
+  /// No description provided for @commonOperationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation failed'**
+  String get commonOperationFailed;
+
+  /// No description provided for @commonDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get commonDeleted;
+
+  /// No description provided for @commonDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete failed'**
+  String get commonDeleteFailed;
+
+  /// No description provided for @commonTestConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Connection'**
+  String get commonTestConnection;
+
+  /// No description provided for @commonTestPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection test passed'**
+  String get commonTestPassed;
+
+  /// No description provided for @commonTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection test failed'**
+  String get commonTestFailed;
+
+  /// No description provided for @commonAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get commonAddress;
+
+  /// No description provided for @commonVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get commonVersion;
+
+  /// No description provided for @commonStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get commonStatus;
+
+  /// No description provided for @commonSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get commonSize;
+
+  /// No description provided for @commonType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get commonType;
+
+  /// No description provided for @commonCommand.
+  ///
+  /// In en, this message translates to:
+  /// **'Command'**
+  String get commonCommand;
+
+  /// No description provided for @commonImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get commonImage;
+
+  /// No description provided for @commonTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout'**
+  String get commonTimeout;
+
+  /// No description provided for @commonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonOk;
+
+  /// No description provided for @websiteHttpsUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update HTTPS config'**
+  String get websiteHttpsUpdateFailed;
+
+  /// No description provided for @websiteHttpsHsts.
+  ///
+  /// In en, this message translates to:
+  /// **'HSTS'**
+  String get websiteHttpsHsts;
+
+  /// No description provided for @websiteHttpsSslCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'SSL Certificate'**
+  String get websiteHttpsSslCertificate;
+
+  /// No description provided for @websiteRedirectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Redirect'**
+  String get websiteRedirectTitle;
+
+  /// No description provided for @websiteRedirectEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No redirect rules'**
+  String get websiteRedirectEmpty;
+
+  /// No description provided for @websiteCorsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'CORS'**
+  String get websiteCorsTitle;
+
+  /// No description provided for @websiteLeechTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Anti-Leech'**
+  String get websiteLeechTitle;
+
+  /// No description provided for @websiteLeechProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'Anti-Leech Protection'**
+  String get websiteLeechProtection;
+
+  /// No description provided for @websiteLogClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear logs'**
+  String get websiteLogClear;
+
+  /// No description provided for @websiteLogEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No logs'**
+  String get websiteLogEmpty;
+
+  /// No description provided for @websiteAuthBasicTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auth'**
+  String get websiteAuthBasicTitle;
+
+  /// No description provided for @websiteAuthBasicEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No auth users'**
+  String get websiteAuthBasicEmpty;
+
+  /// No description provided for @websiteResourceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resource'**
+  String get websiteResourceTitle;
+
+  /// No description provided for @websiteLoadBalancerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Load Balancer'**
+  String get websiteLoadBalancerTitle;
+
+  /// No description provided for @websiteLoadBalancerEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No load balancers'**
+  String get websiteLoadBalancerEmpty;
+
+  /// No description provided for @fileShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File Shares'**
+  String get fileShareTitle;
+
+  /// No description provided for @fileShareEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No shares'**
+  String get fileShareEmpty;
+
+  /// No description provided for @wgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WGET Downloads'**
+  String get wgetTitle;
+
+  /// No description provided for @wgetEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No active downloads'**
+  String get wgetEmpty;
+
+  /// No description provided for @wgetStopFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop failed'**
+  String get wgetStopFailed;
+
+  /// No description provided for @wgetStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get wgetStopped;
+
+  /// No description provided for @fileHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No history'**
+  String get fileHistoryEmpty;
+
+  /// No description provided for @fileHistoryRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get fileHistoryRestore;
+
+  /// No description provided for @fileHistoryRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get fileHistoryRestored;
+
+  /// No description provided for @fileHistoryRestoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore failed'**
+  String get fileHistoryRestoreFailed;
+
+  /// No description provided for @filePermissionApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get filePermissionApply;
+
+  /// No description provided for @filePermissionRecursive.
+  ///
+  /// In en, this message translates to:
+  /// **'Recursive'**
+  String get filePermissionRecursive;
+
+  /// No description provided for @filePermissionOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner (e.g. root)'**
+  String get filePermissionOwner;
+
+  /// No description provided for @filePermissionGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group (e.g. root)'**
+  String get filePermissionGroup;
+
+  /// No description provided for @filePermissionMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode (e.g. 0644, 0755)'**
+  String get filePermissionMode;
+
+  /// No description provided for @filePermissionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions updated'**
+  String get filePermissionUpdated;
+
+  /// No description provided for @recycleBinStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycle Bin Status'**
+  String get recycleBinStatusTitle;
+
+  /// No description provided for @recycleBinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycle Bin'**
+  String get recycleBinTitle;
+
+  /// No description provided for @aiGpuHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GPU History'**
+  String get aiGpuHistoryTitle;
+
+  /// No description provided for @aiGpuHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No GPU data'**
+  String get aiGpuHistoryEmpty;
+
+  /// No description provided for @mcpServerDetailServerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Name'**
+  String get mcpServerDetailServerName;
+
+  /// No description provided for @mcpServerDetailSyncStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync status'**
+  String get mcpServerDetailSyncStatus;
+
+  /// No description provided for @mcpServerDetailSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Status synced'**
+  String get mcpServerDetailSynced;
+
+  /// No description provided for @mcpServerDetailSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed'**
+  String get mcpServerDetailSyncFailed;
+
+  /// No description provided for @mcpServerDetailTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Test failed'**
+  String get mcpServerDetailTestFailed;
+
+  /// No description provided for @aiAccountsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Accounts'**
+  String get aiAccountsTitle;
+
+  /// No description provided for @aiAccountsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts'**
+  String get aiAccountsEmpty;
+
+  /// No description provided for @aiOllamaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ollama Models'**
+  String get aiOllamaTitle;
+
+  /// No description provided for @aiOllamaEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No models'**
+  String get aiOllamaEmpty;
+
+  /// No description provided for @aiOllamaSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get aiOllamaSync;
+
+  /// No description provided for @aiOllamaSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced'**
+  String get aiOllamaSynced;
+
+  /// No description provided for @aiOllamaSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed'**
+  String get aiOllamaSyncFailed;
+
+  /// No description provided for @aiOllamaLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Load failed'**
+  String get aiOllamaLoadFailed;
+
+  /// No description provided for @aiOllamaLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get aiOllamaLoading;
+
+  /// No description provided for @aiOllamaModified.
+  ///
+  /// In en, this message translates to:
+  /// **'Modified'**
+  String get aiOllamaModified;
+
+  /// No description provided for @aiAgentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Agents'**
+  String get aiAgentsTitle;
+
+  /// No description provided for @databaseMongodbEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No databases'**
+  String get databaseMongodbEmpty;
+
+  /// No description provided for @databaseMysqlVariablesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MySQL Variables'**
+  String get databaseMysqlVariablesTitle;
+
+  /// No description provided for @databaseMysqlVariablesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No variables'**
+  String get databaseMysqlVariablesEmpty;
+
+  /// No description provided for @databasePgPrivilegesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PostgreSQL Privileges'**
+  String get databasePgPrivilegesTitle;
+
+  /// No description provided for @databasePgPrivilegesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No privileges'**
+  String get databasePgPrivilegesEmpty;
+
+  /// No description provided for @databaseRedisRdbTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'RDB Persistence'**
+  String get databaseRedisRdbTitle;
+
+  /// No description provided for @databaseRedisRdbDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'RDB snapshot'**
+  String get databaseRedisRdbDesc;
+
+  /// No description provided for @databaseRedisAofTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AOF Persistence'**
+  String get databaseRedisAofTitle;
+
+  /// No description provided for @databaseRedisAofDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Append-only file'**
+  String get databaseRedisAofDesc;
+
+  /// No description provided for @databaseSlowLogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow Query Log'**
+  String get databaseSlowLogTitle;
+
+  /// No description provided for @databaseSlowLogEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No slow queries'**
+  String get databaseSlowLogEmpty;
+
+  /// No description provided for @databaseSlowLogDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get databaseSlowLogDuration;
+
+  /// No description provided for @databaseRemoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote'**
+  String get databaseRemoteTitle;
+
+  /// No description provided for @databaseRemoteTimeoutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout (s)'**
+  String get databaseRemoteTimeoutLabel;
+
+  /// No description provided for @databaseRemoteTestBeforeSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Test connection before saving'**
+  String get databaseRemoteTestBeforeSave;
+
+  /// No description provided for @containerInspectEntrypoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Entrypoint'**
+  String get containerInspectEntrypoint;
+
+  /// No description provided for @containerInspectWorkingDir.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Dir'**
+  String get containerInspectWorkingDir;
+
+  /// No description provided for @containerInspectGateway.
+  ///
+  /// In en, this message translates to:
+  /// **'Gateway'**
+  String get containerInspectGateway;
+
+  /// No description provided for @dockerConfigTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Docker Configuration'**
+  String get dockerConfigTitle;
+
+  /// No description provided for @containerMaintenanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Container Maintenance'**
+  String get containerMaintenanceTitle;
+
+  /// No description provided for @containerMaintenanceCommitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit Container'**
+  String get containerMaintenanceCommitTitle;
+
+  /// No description provided for @containerMaintenanceCommitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit Message (optional)'**
+  String get containerMaintenanceCommitMessage;
+
+  /// No description provided for @containerMaintenanceNewImageName.
+  ///
+  /// In en, this message translates to:
+  /// **'New Image Name (e.g. myimage:v1)'**
+  String get containerMaintenanceNewImageName;
+
+  /// No description provided for @containerMaintenanceCommit.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit'**
+  String get containerMaintenanceCommit;
+
+  /// No description provided for @containerMaintenanceCommitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Committed'**
+  String get containerMaintenanceCommitted;
+
+  /// No description provided for @containerMaintenanceCommitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Commit failed'**
+  String get containerMaintenanceCommitFailed;
+
+  /// No description provided for @containerMaintenancePruneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prune Stopped Containers'**
+  String get containerMaintenancePruneTitle;
+
+  /// No description provided for @containerMaintenancePrune.
+  ///
+  /// In en, this message translates to:
+  /// **'Prune'**
+  String get containerMaintenancePrune;
+
+  /// No description provided for @containerMaintenancePruneFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Prune failed'**
+  String get containerMaintenancePruneFailed;
+
+  /// No description provided for @containerMaintenanceContainerId.
+  ///
+  /// In en, this message translates to:
+  /// **'Container ID'**
+  String get containerMaintenanceContainerId;
+
+  /// No description provided for @containerFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get containerFilesTitle;
+
+  /// No description provided for @containerFilesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No files'**
+  String get containerFilesEmpty;
+
+  /// No description provided for @imageOpsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Operations'**
+  String get imageOpsTitle;
+
+  /// No description provided for @imageOpsPushImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Push Image'**
+  String get imageOpsPushImage;
+
+  /// No description provided for @imageOpsPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Push'**
+  String get imageOpsPush;
+
+  /// No description provided for @imageOpsPushStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Push started'**
+  String get imageOpsPushStarted;
+
+  /// No description provided for @imageOpsPushFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Push failed'**
+  String get imageOpsPushFailed;
+
+  /// No description provided for @imageOpsSaveImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Image to Tar'**
+  String get imageOpsSaveImage;
+
+  /// No description provided for @imageOpsImageSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Image saved'**
+  String get imageOpsImageSaved;
+
+  /// No description provided for @imageOpsTagImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Image'**
+  String get imageOpsTagImage;
+
+  /// No description provided for @imageOpsTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get imageOpsTag;
+
+  /// No description provided for @imageOpsTagged.
+  ///
+  /// In en, this message translates to:
+  /// **'Tagged'**
+  String get imageOpsTagged;
+
+  /// No description provided for @imageOpsTagFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag failed'**
+  String get imageOpsTagFailed;
+
+  /// No description provided for @imageOpsSourceImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Source image'**
+  String get imageOpsSourceImage;
+
+  /// No description provided for @imageOpsTargetTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Target tag'**
+  String get imageOpsTargetTag;
+
+  /// No description provided for @imageOpsImageName.
+  ///
+  /// In en, this message translates to:
+  /// **'Image name'**
+  String get imageOpsImageName;
+
+  /// No description provided for @imageOpsImageNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Image name (e.g. registry/myimage:v1)'**
+  String get imageOpsImageNameHint;
+
+  /// No description provided for @toolboxSupervisorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor'**
+  String get toolboxSupervisorTitle;
+
+  /// No description provided for @toolboxSupervisorStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor Status'**
+  String get toolboxSupervisorStatusTitle;
+
+  /// No description provided for @toolboxSupervisorEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No processes'**
+  String get toolboxSupervisorEmpty;
+
+  /// No description provided for @toolboxSupervisorNotInit.
+  ///
+  /// In en, this message translates to:
+  /// **'Not initialized'**
+  String get toolboxSupervisorNotInit;
+
+  /// No description provided for @monitorSettingsStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor Status'**
+  String get monitorSettingsStatus;
+
+  /// No description provided for @fileHistoryTitleWith.
+  ///
+  /// In en, this message translates to:
+  /// **'History: {path}'**
+  String fileHistoryTitleWith(String path);
+
+  /// No description provided for @filePermissionTitleWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions ({count} files)'**
+  String filePermissionTitleWith(int count);
+
+  /// No description provided for @aiOllamaSizeWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Size: {size}'**
+  String aiOllamaSizeWith(String size);
+
+  /// No description provided for @aiAgentsTypeWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Type: {type}'**
+  String aiAgentsTypeWith(String type);
+
+  /// No description provided for @databaseMongodbSizeWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Size: {size}'**
+  String databaseMongodbSizeWith(String size);
+
+  /// No description provided for @databasePgPrivilegeWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Privileges: {privileges}'**
+  String databasePgPrivilegeWith(String privileges);
+
+  /// No description provided for @databaseSlowLogTimeWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Time: {time}'**
+  String databaseSlowLogTimeWith(String time);
+
+  /// No description provided for @containerInspectIpWith.
+  ///
+  /// In en, this message translates to:
+  /// **'IP: {ip}'**
+  String containerInspectIpWith(String ip);
+
+  /// No description provided for @monitorSettingsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {key}'**
+  String monitorSettingsEdit(String key);
+
+  /// No description provided for @containerInspectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect'**
+  String get containerInspectTitle;
+
+  /// No description provided for @orchestrationTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Templates'**
+  String get orchestrationTemplates;
+
+  /// No description provided for @composeTemplateCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Template'**
+  String get composeTemplateCreate;
+
+  /// No description provided for @composeTemplateEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Template'**
+  String get composeTemplateEdit;
+
+  /// No description provided for @composeTemplateContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Template Content'**
+  String get composeTemplateContent;
+
+  /// No description provided for @composeTemplateNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name is required'**
+  String get composeTemplateNameRequired;
+
+  /// No description provided for @composeTemplateEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No templates'**
+  String get composeTemplateEmpty;
+
+  /// No description provided for @containerTerminal.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminal'**
+  String get containerTerminal;
+
+  /// No description provided for @composeTemplateDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete template {name}?'**
+  String composeTemplateDeleteConfirm(String name);
+
+  /// No description provided for @toolboxClamFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Config Files'**
+  String get toolboxClamFilesTitle;
+
+  /// No description provided for @toolboxClamFileContent.
+  ///
+  /// In en, this message translates to:
+  /// **'File Content'**
+  String get toolboxClamFileContent;
+
+  /// No description provided for @toolboxClamFileReadonly.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Content (read-only)'**
+  String get toolboxClamFileReadonly;
+
+  /// No description provided for @logsCenterTabWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Website Logs'**
+  String get logsCenterTabWebsite;
+
+  /// No description provided for @logsWebsiteSelectorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Website'**
+  String get logsWebsiteSelectorLabel;
+
+  /// No description provided for @databaseUserListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Database Users'**
+  String get databaseUserListTitle;
+
+  /// No description provided for @databaseUserChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get databaseUserChangePassword;
+
+  /// No description provided for @databaseUserDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete user {name}?'**
+  String databaseUserDeleteConfirm(String name);
+
+  /// No description provided for @databaseUserNewPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get databaseUserNewPasswordLabel;
+
+  /// No description provided for @aiAgentPluginsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent Plugins'**
+  String get aiAgentPluginsTitle;
+
+  /// No description provided for @aiAgentInstalledPlugins.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed Plugins'**
+  String get aiAgentInstalledPlugins;
+
+  /// No description provided for @aiAgentPluginMarket.
+  ///
+  /// In en, this message translates to:
+  /// **'Plugin Market'**
+  String get aiAgentPluginMarket;
+
+  /// No description provided for @aiAgentPluginSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search market plugins'**
+  String get aiAgentPluginSearchHint;
+
+  /// No description provided for @aiAgentPluginMarketEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the market to find plugins'**
+  String get aiAgentPluginMarketEmpty;
+
+  /// No description provided for @aiAgentPluginInstallConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Install this plugin?'**
+  String get aiAgentPluginInstallConfirm;
+
+  /// No description provided for @aiAgentPluginUninstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Uninstall'**
+  String get aiAgentPluginUninstall;
+
+  /// No description provided for @aiAgentPluginUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get aiAgentPluginUpgrade;
+
+  /// No description provided for @hostDiagnosticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime Diagnostics'**
+  String get hostDiagnosticsTitle;
+
+  /// No description provided for @hostDiagnosticsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics Summary'**
+  String get hostDiagnosticsSummary;
+
+  /// No description provided for @hostDiagnosticsCaptureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture Profile'**
+  String get hostDiagnosticsCaptureTitle;
+
+  /// No description provided for @hostDiagnosticsDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get hostDiagnosticsDuration;
+
+  /// No description provided for @hostDiagnosticsCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture'**
+  String get hostDiagnosticsCapture;
+
+  /// No description provided for @hostDiagnosticsGoroutines.
+  ///
+  /// In en, this message translates to:
+  /// **'Goroutine Dump'**
+  String get hostDiagnosticsGoroutines;
+
+  /// No description provided for @hostDiagnosticsCaptureDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile captured'**
+  String get hostDiagnosticsCaptureDone;
+
+  /// No description provided for @toolboxClamFreshStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Freshclam Start'**
+  String get toolboxClamFreshStart;
+
+  /// No description provided for @toolboxClamFreshStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Freshclam Stop'**
+  String get toolboxClamFreshStop;
+
+  /// No description provided for @toolboxClamFreshRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Freshclam Restart'**
+  String get toolboxClamFreshRestart;
+
+  /// No description provided for @websiteRoutingProxyStatusDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Proxy Status / Delete'**
+  String get websiteRoutingProxyStatusDelete;
+
+  /// No description provided for @databaseSourceAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get databaseSourceAll;
+
+  /// No description provided for @databaseSourceLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get databaseSourceLocal;
+
+  /// No description provided for @databaseSourceRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote'**
+  String get databaseSourceRemote;
+
+  /// No description provided for @databaseFormPgSuperuser.
+  ///
+  /// In en, this message translates to:
+  /// **'PostgreSQL Superuser'**
+  String get databaseFormPgSuperuser;
+
+  /// No description provided for @filePreviewLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load file'**
+  String get filePreviewLoadFailed;
+
+  /// No description provided for @filePreviewSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save file'**
+  String get filePreviewSaveFailed;
+
+  /// No description provided for @filePreviewLoadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'File loaded'**
+  String get filePreviewLoadSuccess;
+
+  /// No description provided for @dashboardRefreshInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh interval'**
+  String get dashboardRefreshInterval;
+
+  /// No description provided for @dashboardInterval3s.
+  ///
+  /// In en, this message translates to:
+  /// **'3 seconds'**
+  String get dashboardInterval3s;
+
+  /// No description provided for @dashboardInterval5s.
+  ///
+  /// In en, this message translates to:
+  /// **'5 seconds (default)'**
+  String get dashboardInterval5s;
+
+  /// No description provided for @dashboardInterval10s.
+  ///
+  /// In en, this message translates to:
+  /// **'10 seconds'**
+  String get dashboardInterval10s;
+
+  /// No description provided for @dashboardInterval30s.
+  ///
+  /// In en, this message translates to:
+  /// **'30 seconds'**
+  String get dashboardInterval30s;
+
+  /// No description provided for @dashboardInterval1m.
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute'**
+  String get dashboardInterval1m;
+
+  /// No description provided for @filePreviewLoadImageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load image'**
+  String get filePreviewLoadImageFailed;
+
+  /// No description provided for @filePreviewLoadPdfFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load PDF'**
+  String get filePreviewLoadPdfFailed;
 }
 
 class _AppLocalizationsDelegate

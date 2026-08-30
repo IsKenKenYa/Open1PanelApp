@@ -3,6 +3,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 import '../providers/website_routing_rules_provider.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 class WebsiteRoutingRulesSingleActions {
   static Future<void> showFileEditorDialog(
@@ -19,14 +20,13 @@ class WebsiteRoutingRulesSingleActions {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(title),
-        content: SizedBox(
-          width: 520,
+        content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: l10n.commonName),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -78,17 +78,17 @@ class WebsiteRoutingRulesSingleActions {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setStateDialog) => AlertDialog(
-          title: const Text('Proxy Status / Delete'),
+          title: Text(l10n.websiteRoutingProxyStatusDelete),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: l10n.commonName),
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Enable'),
+                title: Text(l10n.commonStart),
                 value: enabled,
                 onChanged: (value) => setStateDialog(() => enabled = value),
               ),

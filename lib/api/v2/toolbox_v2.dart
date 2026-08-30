@@ -58,8 +58,8 @@ class ToolboxV2Api {
     );
   }
 
-  /// 更新Clam扫描文件
-  Future<Response<void>> updateClamFile(ClamFileReq request) async {
+  /// 更新Clam扫描文件（V2 契约：{name, file}）
+  Future<Response<void>> updateClamFile(ClamFileUpdateReq request) async {
     return await _client.post<void>(
       ApiConstants.buildApiPath('/toolbox/clam/file/update'),
       data: request.toJson(),

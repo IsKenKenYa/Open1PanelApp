@@ -135,3 +135,58 @@ class DatabasePrivilegeCardWidget extends StatelessWidget {
     );
   }
 }
+
+/// V2 新体系：MySQL 用户列表卡（/databases/users/search）。
+class DatabaseUserListCardWidget extends StatelessWidget {
+  const DatabaseUserListCardWidget({
+    super.key,
+    required this.users,
+    required this.onChangePassword,
+    required this.onDelete,
+  });
+
+  final List<Map<String, dynamic>> users;
+  final void Function(Map<String, dynamic> user) onChangePassword;
+  final void Function(Map<String, dynamic> user) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AppCard(
+      title: l10n.databaseUserListTitle,
+      child: users.isEmpty
+          ? Text(l10n.commonEmpty)
+          : Column(
+              children: [
+                for (final user in users)
+                  ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.person_outline),
+                    title: Text(user['username']?.toString() ?? '-'),
+                    subtitle: Text(
+                      '${user['host'] ?? '-'}'
+                      '${(user['description']?.toString() ?? '').isNotEmpty ? ' · ${user['description']}' : ''}',
+                    ),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'password') onChangePassword(user);
+                        if (value == 'delete') onDelete(user);
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'password',
+                          child: Text(l10n.databaseUserChangePassword),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text(l10n.commonDelete),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+    );
+  }
+}

@@ -70,7 +70,7 @@ MODULE_CLIENT_FILES = {
     'monitor': ['monitor_v2.dart'],
     'backup': ['backup_account_v2.dart', 'snapshot_v2.dart'],
     'runtime': ['runtime_v2.dart'],
-    'ssh': ['ssh_v2.dart', 'setting_v2.dart'],
+    'ssh': ['ssh_v2.dart', 'setting_v2.dart', 'host_v2.dart'],
     'firewall': ['firewall_v2.dart'],
     'cronjob': ['cronjob_v2.dart'],
     'ssl': ['ssl_v2.dart'],
@@ -224,6 +224,17 @@ MISSING_ENDPOINT_CLASSIFICATIONS = {
         ('GET', '/core/commands/command'): '有意缺失：运行时真实接口为 POST /core/commands/command，客户端严格 POST，不做 GET 回退。',
         ('GET', '/core/commands/tree'): '有意缺失：运行时真实接口为 POST /core/commands/tree，客户端严格 POST，不做 GET 回退。',
     },
+    'host': {
+        ('GET', '/hosts/terminal/container'): '保留：容器终端 WS 升级端点，客户端经 WebSocket connector 接入；非 REST。',
+        ('GET', '/hosts/terminal/local'): '保留：本地终端 WS 升级端点，客户端经 WebSocket connector 接入；非 REST。',
+        ('GET', '/hosts/terminal/ssh'): '保留：SSH 终端 WS 升级端点，客户端经 WebSocket connector 接入；非 REST。',
+    },
+    'process': {
+        ('GET', '/process/ws'): '保留：进程监控实时 WS 升级端点，客户端经 process_ws_client 接入；非 REST。',
+    },
+    'ssh': {
+        ('GET', '/hosts/terminal/ssh'): '保留：SSH 终端 WS 升级端点，客户端经 WebSocket connector 接入；非 REST。',
+    },
 }
 
 LEGACY_EXTRA_ALLOWLIST = {
@@ -235,6 +246,12 @@ KNOWN_MISSING_ALLOWLIST = {
     module: set(entries.keys())
     for module, entries in MISSING_ENDPOINT_CLASSIFICATIONS.items()
 }
+
+# _postWithLegacyFallback(primaryPath=..., legacyPath=...) 双路径识别
+FALLBACK_PATH_PAIR_PATTERN = re.compile(
+    r"primaryPath:\s*['\"]([^'\"]+)['\"]\s*,[^)]*?legacyPath:\s*['\"]([^'\"]+)['\"]",
+    re.DOTALL,
+)
 
 PATH_PARAM_BRACE_PATTERN = re.compile(r'\{[^/{}]+\}')
 PATH_PARAM_COLON_PATTERN = re.compile(r'/:([A-Za-z_][A-Za-z0-9_]*)')
@@ -313,6 +330,14 @@ def _load_client_signatures(file_paths):
                 method_upper = method.upper()
                 if method_upper in METHOD_SET:
                     signatures.add((method_upper, _normalize_path(path)))
+
+        # _postWithLegacyFallback 模式：primaryPath（/core/...）与 legacyPath（/...）
+        # 同属真实调用路径，均计入客户端覆盖。
+        for primary, legacy in FALLBACK_PATH_PAIR_PATTERN.findall(content):
+            if primary:
+                signatures.add(('POST', _normalize_path(primary)))
+            if legacy:
+                signatures.add(('POST', _normalize_path(legacy)))
 
     return signatures, missing_files
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
@@ -53,7 +54,7 @@ class _DatabaseMongodbPageState extends State<DatabaseMongodbPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _databases.isEmpty
-                  ? const Center(child: Text('No databases'))
+                  ?  Center(child: Text(context.l10n.databaseMongodbEmpty))
                   : ListView.builder(
                       itemCount: _databases.length,
                       itemBuilder: (context, index) {
@@ -61,7 +62,7 @@ class _DatabaseMongodbPageState extends State<DatabaseMongodbPage> {
                         return Card(
                           child: ListTile(
                             title: Text(db['name']?.toString() ?? ''),
-                            subtitle: Text('Size: ${db['size'] ?? 'N/A'}'),
+                            subtitle: Text(context.l10n.databaseMongodbSizeWith(db['size'] ?? 'N/A')),
                           ),
                         );
                       },

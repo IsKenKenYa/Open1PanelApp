@@ -3387,5 +3387,252 @@
       "title": { "type": "String" }
     }
   },
-  "phpExtensionsLabel": "Extensions"
+  "phpExtensionsLabel": "Extensions",
+  "commonUpdated": "Updated",
+  "commonUpdateFailed": "Update failed",
+  "commonOperationFailed": "Operation failed",
+  "commonDeleted": "Deleted",
+  "commonDeleteFailed": "Delete failed",
+  "commonTestConnection": "Test Connection",
+  "commonTestPassed": "Connection test passed",
+  "commonTestFailed": "Connection test failed",
+  "commonAddress": "Address",
+  "commonVersion": "Version",
+  "commonStatus": "Status",
+  "commonSize": "Size",
+  "commonType": "Type",
+  "commonCommand": "Command",
+  "commonImage": "Image",
+  "commonTimeout": "Timeout",
+  "commonOk": "OK",
+  "websiteHttpsUpdateFailed": "Failed to update HTTPS config",
+  "websiteHttpsHsts": "HSTS",
+  "websiteHttpsSslCertificate": "SSL Certificate",
+  "websiteRedirectTitle": "Redirect",
+  "websiteRedirectEmpty": "No redirect rules",
+  "websiteCorsTitle": "CORS",
+  "websiteLeechTitle": "Anti-Leech",
+  "websiteLeechProtection": "Anti-Leech Protection",
+  "websiteLogClear": "Clear logs",
+  "websiteLogEmpty": "No logs",
+  "websiteAuthBasicTitle": "Auth",
+  "websiteAuthBasicEmpty": "No auth users",
+  "websiteResourceTitle": "Resource",
+  "websiteLoadBalancerTitle": "Load Balancer",
+  "websiteLoadBalancerEmpty": "No load balancers",
+  "fileShareTitle": "File Shares",
+  "fileShareEmpty": "No shares",
+  "wgetTitle": "WGET Downloads",
+  "wgetEmpty": "No active downloads",
+  "wgetStopFailed": "Stop failed",
+  "wgetStopped": "Stopped",
+  "fileHistoryEmpty": "No history",
+  "fileHistoryRestore": "Restore",
+  "fileHistoryRestored": "Restored",
+  "fileHistoryRestoreFailed": "Restore failed",
+  "filePermissionApply": "Apply",
+  "filePermissionRecursive": "Recursive",
+  "filePermissionOwner": "Owner (e.g. root)",
+  "filePermissionGroup": "Group (e.g. root)",
+  "filePermissionMode": "Mode (e.g. 0644, 0755)",
+  "filePermissionUpdated": "Permissions updated",
+  "recycleBinStatusTitle": "Recycle Bin Status",
+  "recycleBinTitle": "Recycle Bin",
+  "aiGpuHistoryTitle": "GPU History",
+  "aiGpuHistoryEmpty": "No GPU data",
+  "mcpServerDetailServerName": "Server Name",
+  "mcpServerDetailSyncStatus": "Sync status",
+  "mcpServerDetailSynced": "Status synced",
+  "mcpServerDetailSyncFailed": "Sync failed",
+  "mcpServerDetailTestFailed": "Test failed",
+  "aiAccountsTitle": "AI Accounts",
+  "aiAccountsEmpty": "No accounts",
+  "aiOllamaTitle": "Ollama Models",
+  "aiOllamaEmpty": "No models",
+  "aiOllamaSync": "Sync",
+  "aiOllamaSynced": "Synced",
+  "aiOllamaSyncFailed": "Sync failed",
+  "aiOllamaLoadFailed": "Load failed",
+  "aiOllamaLoading": "Loading",
+  "aiOllamaModified": "Modified",
+  "aiAgentsTitle": "AI Agents",
+  "databaseMongodbEmpty": "No databases",
+  "databaseMysqlVariablesTitle": "MySQL Variables",
+  "databaseMysqlVariablesEmpty": "No variables",
+  "databasePgPrivilegesTitle": "PostgreSQL Privileges",
+  "databasePgPrivilegesEmpty": "No privileges",
+  "databaseRedisRdbTitle": "RDB Persistence",
+  "databaseRedisRdbDesc": "RDB snapshot",
+  "databaseRedisAofTitle": "AOF Persistence",
+  "databaseRedisAofDesc": "Append-only file",
+  "databaseSlowLogTitle": "Slow Query Log",
+  "databaseSlowLogEmpty": "No slow queries",
+  "databaseSlowLogDuration": "Duration",
+  "databaseRemoteTitle": "Remote",
+  "databaseRemoteTimeoutLabel": "Timeout (s)",
+  "databaseRemoteTestBeforeSave": "Test connection before saving",
+  "containerInspectEntrypoint": "Entrypoint",
+  "containerInspectWorkingDir": "Working Dir",
+  "containerInspectGateway": "Gateway",
+  "dockerConfigTitle": "Docker Configuration",
+  "containerMaintenanceTitle": "Container Maintenance",
+  "containerMaintenanceCommitTitle": "Commit Container",
+  "containerMaintenanceCommitMessage": "Commit Message (optional)",
+  "containerMaintenanceNewImageName": "New Image Name (e.g. myimage:v1)",
+  "containerMaintenanceCommit": "Commit",
+  "containerMaintenanceCommitted": "Committed",
+  "containerMaintenanceCommitFailed": "Commit failed",
+  "containerMaintenancePruneTitle": "Prune Stopped Containers",
+  "containerMaintenancePrune": "Prune",
+  "containerMaintenancePruneFailed": "Prune failed",
+  "containerMaintenanceContainerId": "Container ID",
+  "containerFilesTitle": "Files",
+  "containerFilesEmpty": "No files",
+  "imageOpsTitle": "Image Operations",
+  "imageOpsPushImage": "Push Image",
+  "imageOpsPush": "Push",
+  "imageOpsPushStarted": "Push started",
+  "imageOpsPushFailed": "Push failed",
+  "imageOpsSaveImage": "Save Image to Tar",
+  "imageOpsImageSaved": "Image saved",
+  "imageOpsTagImage": "Tag Image",
+  "imageOpsTag": "Tag",
+  "imageOpsTagged": "Tagged",
+  "imageOpsTagFailed": "Tag failed",
+  "imageOpsSourceImage": "Source image",
+  "imageOpsTargetTag": "Target tag",
+  "imageOpsImageName": "Image name",
+  "imageOpsImageNameHint": "Image name (e.g. registry/myimage:v1)",
+  "toolboxSupervisorTitle": "Supervisor",
+  "toolboxSupervisorStatusTitle": "Supervisor Status",
+  "toolboxSupervisorEmpty": "No processes",
+  "toolboxSupervisorNotInit": "Not initialized",
+  "monitorSettingsStatus": "Monitor Status",
+  "fileHistoryTitleWith": "History: {path}",
+  "@fileHistoryTitleWith": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "filePermissionTitleWith": "Permissions ({count} files)",
+  "@filePermissionTitleWith": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "aiOllamaSizeWith": "Size: {size}",
+  "@aiOllamaSizeWith": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "aiAgentsTypeWith": "Type: {type}",
+  "@aiAgentsTypeWith": {
+    "placeholders": {
+      "type": { "type": "String" }
+    }
+  },
+  "databaseMongodbSizeWith": "Size: {size}",
+  "@databaseMongodbSizeWith": {
+    "placeholders": {
+      "size": { "type": "String" }
+    }
+  },
+  "databasePgPrivilegeWith": "Privileges: {privileges}",
+  "@databasePgPrivilegeWith": {
+    "placeholders": {
+      "privileges": { "type": "String" }
+    }
+  },
+  "databaseSlowLogTimeWith": "Time: {time}",
+  "@databaseSlowLogTimeWith": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "containerInspectIpWith": "IP: {ip}",
+  "@containerInspectIpWith": {
+    "placeholders": {
+      "ip": { "type": "String" }
+    }
+  },
+  "monitorSettingsEdit": "Edit {key}",
+  "@monitorSettingsEdit": {
+    "placeholders": {
+      "key": { "type": "String" }
+    }
+  }
+,
+  "containerInspectTitle": "Inspect"
+,
+  "orchestrationTemplates": "Templates",
+  "composeTemplateCreate": "Create Template",
+  "composeTemplateEdit": "Edit Template",
+  "composeTemplateContent": "Template Content",
+  "composeTemplateNameRequired": "Template name is required",
+  "composeTemplateEmpty": "No templates",
+  "containerTerminal": "Terminal"
+,
+  "composeTemplateDeleteConfirm": "Delete template {name}?",
+  "@composeTemplateDeleteConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  }
+,
+  "toolboxClamFilesTitle": "Config Files",
+  "toolboxClamFileContent": "File Content",
+  "toolboxClamFileReadonly": "Log Content (read-only)"
+,
+  "logsCenterTabWebsite": "Website Logs",
+  "logsWebsiteSelectorLabel": "Select Website"
+,
+  "databaseUserListTitle": "Database Users",
+  "databaseUserChangePassword": "Change Password",
+  "databaseUserDeleteConfirm": "Delete user {name}?",
+  "databaseUserNewPasswordLabel": "New Password",
+  "@databaseUserDeleteConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  }
+,
+  "aiAgentPluginsTitle": "Agent Plugins",
+  "aiAgentInstalledPlugins": "Installed Plugins",
+  "aiAgentPluginMarket": "Plugin Market",
+  "aiAgentPluginSearchHint": "Search market plugins",
+  "aiAgentPluginMarketEmpty": "Search the market to find plugins",
+  "aiAgentPluginInstallConfirm": "Install this plugin?",
+  "aiAgentPluginUninstall": "Uninstall",
+  "aiAgentPluginUpgrade": "Upgrade"
+,
+  "hostDiagnosticsTitle": "Runtime Diagnostics",
+  "hostDiagnosticsSummary": "Diagnostics Summary",
+  "hostDiagnosticsCaptureTitle": "Capture Profile",
+  "hostDiagnosticsDuration": "Duration",
+  "hostDiagnosticsCapture": "Capture",
+  "hostDiagnosticsGoroutines": "Goroutine Dump",
+  "hostDiagnosticsCaptureDone": "Profile captured"
+,
+  "toolboxClamFreshStart": "Freshclam Start",
+  "toolboxClamFreshStop": "Freshclam Stop",
+  "toolboxClamFreshRestart": "Freshclam Restart",
+  "websiteRoutingProxyStatusDelete": "Proxy Status / Delete",
+  "databaseSourceAll": "All",
+  "databaseSourceLocal": "Local",
+  "databaseSourceRemote": "Remote",
+  "databaseFormPgSuperuser": "PostgreSQL Superuser",
+  "filePreviewLoadFailed": "Failed to load file",
+  "filePreviewSaveFailed": "Failed to save file",
+  "filePreviewLoadSuccess": "File loaded"
+,
+  "dashboardRefreshInterval": "Refresh interval",
+  "dashboardInterval3s": "3 seconds",
+  "dashboardInterval5s": "5 seconds (default)",
+  "dashboardInterval10s": "10 seconds",
+  "dashboardInterval30s": "30 seconds",
+  "dashboardInterval1m": "1 minute",
+  "filePreviewLoadImageFailed": "Failed to load image",
+  "filePreviewLoadPdfFailed": "Failed to load PDF"
+
 }

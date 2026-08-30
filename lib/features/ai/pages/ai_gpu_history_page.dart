@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/ai/ai_repository.dart';
 
 /// AI GPU monitor history page.
@@ -48,7 +49,7 @@ class _AiGpuHistoryPageState extends State<AiGpuHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GPU History'),
+        title:  Text(context.l10n.aiGpuHistoryTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadGpuHistory),
         ],
@@ -64,13 +65,13 @@ class _AiGpuHistoryPageState extends State<AiGpuHistoryPage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: _loadGpuHistory,
-                        child: const Text('Retry'),
+                        child:  Text(context.l10n.commonRetry),
                       ),
                     ],
                   ),
                 )
               : _gpuData.isEmpty
-                  ? const Center(child: Text('No GPU data'))
+                  ?  Center(child: Text(context.l10n.aiGpuHistoryEmpty))
                   : ListView.builder(
                       itemCount: _gpuData.length,
                       itemBuilder: (context, index) {

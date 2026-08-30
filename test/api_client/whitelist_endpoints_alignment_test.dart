@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:onepanel_client/api/v2/ai_v2.dart';
 import 'package:onepanel_client/api/v2/command_v2.dart';
 import 'package:onepanel_client/api/v2/container_v2.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
@@ -57,23 +56,6 @@ void main() {
 
     tearDown(() async {
       await server.close(force: true);
-    });
-
-    group('AI - testAgentModelConnection', () {
-      test('aligns POST /ai/agents/models/test', () async {
-        final api = AIV2Api(client);
-        await api.testAgentModelConnection(<String, dynamic>{
-          'accountId': 1,
-          'model': 'gpt-4',
-        });
-
-        expect(requestMethod, 'POST');
-        expect(requestPath, '/api/v2/ai/agents/models/test');
-        expect(requestBody, <String, dynamic>{
-          'accountId': 1,
-          'model': 'gpt-4',
-        });
-      });
     });
 
     group('Database - whitelist endpoints', () {
@@ -147,27 +129,6 @@ void main() {
         expect(requestBody!['privileges'], <String>['SELECT', 'INSERT']);
       });
 
-      test('resetDatabasePassword aligns POST /databases/{id}/password/reset',
-          () async {
-        responseBuilder = () => <String, dynamic>{
-              'code': 200,
-              'data': <String, dynamic>{
-                'database': 'mydb',
-                'password': 'newpass',
-                'username': 'root',
-              },
-            };
-
-        final api = DatabaseV2Api(client);
-        await api.resetDatabasePassword(
-          const DatabaseResetPassword(id: 3, newPassword: 'newpass'),
-        );
-
-        expect(requestMethod, 'POST');
-        expect(requestPath, '/api/v2/databases/3/password/reset');
-        expect(requestBody, isNotNull);
-        expect(requestBody!['id'], 3);
-      });
 
       test('testDatabaseConnection aligns GET /databases/{id}/connection/test',
           () async {

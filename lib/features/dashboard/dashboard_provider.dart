@@ -114,6 +114,7 @@ class DashboardProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   void stopAutoRefresh() {
+    _autoRefreshEnabled = false;
     _refreshTimer?.cancel();
     _refreshTimer = null;
   }

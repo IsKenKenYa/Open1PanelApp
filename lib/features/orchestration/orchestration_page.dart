@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/features/containers/containers_page_create_dialogs.dart';
 import 'package:onepanel_client/features/containers/containers_page_image_dialogs.dart';
 import 'package:onepanel_client/features/orchestration/compose_page.dart';
+import 'package:onepanel_client/features/orchestration/compose_template_page.dart';
 import 'package:onepanel_client/features/orchestration/image_page.dart';
 import 'package:onepanel_client/features/orchestration/network_page.dart';
 import 'package:onepanel_client/features/orchestration/providers/compose_provider.dart';
+import 'package:onepanel_client/features/orchestration/providers/compose_template_provider.dart';
 import 'package:onepanel_client/features/orchestration/providers/image_provider.dart';
 import 'package:onepanel_client/features/orchestration/providers/network_provider.dart';
 import 'package:onepanel_client/features/orchestration/providers/volume_provider.dart';
 import 'package:onepanel_client/features/orchestration/volume_page.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/utils/error_message_utils.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/features/orchestration/widgets/compose_template_dialog.dart';
 import 'package:provider/provider.dart';
 
 class OrchestrationPage extends StatefulWidget {
@@ -26,7 +31,7 @@ class _OrchestrationPageState extends State<OrchestrationPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this)
+    _tabController = TabController(length: 5, vsync: this)
       ..addListener(() {
         if (_tabController.indexIsChanging) return;
         setState(() {});
@@ -109,8 +114,29 @@ class _OrchestrationPageState extends State<OrchestrationPage>
           icon: const Icon(Icons.add),
           label: Text(l10n.orchestrationCreateVolume),
         );
+      case 4:
+        return FloatingActionButton.extended(
+          heroTag: 'orchestration_template_fab',
+          onPressed: () => _createTemplate(context),
+          icon: const Icon(Icons.add),
+          label: Text(l10n.orchestrationCreateTemplate),
+        );
       default:
         return null;
+    }
+  }
+
+  Future<void> _createTemplate(BuildContext context) async {
+    final request = await showComposeTemplateEditDialog(context);
+    if (request == null || !context.mounted) return;
+    final provider = context.read<ComposeTemplateProvider>();
+    final ok = await provider.createTemplate(request);
+    if (!context.mounted) return;
+    if (ok) {
+      SnackBarUtils.showSuccess(context, context.l10n.commonCreateSuccess);
+    } else {
+      SnackBarUtils.showError(
+          context, ErrorMessageUtils.truncateForToast(provider.error ?? context.l10n.commonUnknownError));
     }
   }
 
@@ -143,6 +169,7 @@ class _OrchestrationPageState extends State<OrchestrationPage>
                   Tab(text: l10n.orchestrationImages),
                   Tab(text: l10n.orchestrationNetworks),
                   Tab(text: l10n.orchestrationVolumes),
+                  Tab(text: l10n.orchestrationTemplates),
                 ],
               ),
             ),
@@ -154,6 +181,7 @@ class _OrchestrationPageState extends State<OrchestrationPage>
                 ImagePage(),
                 NetworkPage(),
                 VolumePage(),
+                ComposeTemplatePage(),
               ],
             ),
           );
@@ -185,6 +213,10 @@ class _OrchestrationPageState extends State<OrchestrationPage>
     if (_missing<ComposeProvider>(context)) {
       result = ChangeNotifierProvider(
           create: (_) => ComposeProvider(), child: result);
+    }
+    if (_missing<ComposeTemplateProvider>(context)) {
+      result = ChangeNotifierProvider(
+          create: (_) => ComposeTemplateProvider(), child: result);
     }
     return result;
   }

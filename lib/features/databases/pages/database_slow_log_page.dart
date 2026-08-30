@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
-import 'package:onepanel_client/data/models/database_models.dart';
 
 /// MySQL slow query log page.
 /// Mirrors frontend's database/mysql slow-log tab.
@@ -54,7 +54,7 @@ class _DatabaseSlowLogPageState extends State<DatabaseSlowLogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Slow Query Log'),
+        title:  Text(context.l10n.databaseSlowLogTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -64,7 +64,7 @@ class _DatabaseSlowLogPageState extends State<DatabaseSlowLogPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _logs.isEmpty
-                  ? const Center(child: Text('No slow queries'))
+                  ?  Center(child: Text(context.l10n.databaseSlowLogEmpty))
                   : ListView.builder(
                       itemCount: _logs.length,
                       itemBuilder: (context, index) {
@@ -72,7 +72,7 @@ class _DatabaseSlowLogPageState extends State<DatabaseSlowLogPage> {
                         return Card(
                           child: ListTile(
                             title: Text(log['sql']?.toString() ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
-                            subtitle: Text('Time: ${log['time'] ?? 'N/A'} | Duration: ${log['duration'] ?? 'N/A'}s'),
+                            subtitle: Text('${context.l10n.databaseSlowLogTimeWith(log['time'] ?? 'N/A')} | ${context.l10n.databaseSlowLogDuration}: ${log['duration'] ?? 'N/A'}s'),
                             dense: true,
                           ),
                         );

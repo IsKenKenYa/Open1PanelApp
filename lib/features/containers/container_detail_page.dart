@@ -7,6 +7,8 @@ import 'package:onepanel_client/data/models/container_models.dart'
 import 'package:onepanel_client/features/containers/providers/container_detail_provider.dart';
 import 'package:onepanel_client/features/containers/widgets/container_logs_view.dart';
 import 'package:onepanel_client/features/containers/widgets/container_stats_view.dart';
+import 'package:onepanel_client/features/terminal/models/terminal_runtime_models.dart';
+import 'package:onepanel_client/features/terminal/terminal_page.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -61,6 +63,24 @@ class _ContainerDetailViewState extends State<_ContainerDetailView>
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.container.name),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.terminal_outlined),
+            tooltip: l10n.containerTerminal,
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => TerminalPage(
+                    launchIntentOverride: TerminalLaunchIntent.containerExec(
+                      containerId: widget.container.id,
+                      containerName: widget.container.name,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [

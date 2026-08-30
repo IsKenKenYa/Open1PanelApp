@@ -472,7 +472,7 @@ void main() {
         ),
       );
       expect(requestMethod, 'POST');
-      expect(requestPath, '/api/v2/backups/check');
+      expect(requestPath, '/api/v2/backups/conn/check');
       expect(check.data?.isOk, isTrue);
 
       responseBuilder = () => <String, dynamic>{

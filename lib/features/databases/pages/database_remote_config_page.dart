@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:onepanel_client/core/utils/snackbar_utils.dart';
-import 'package:onepanel_client/core/network/api_client_manager.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
-import 'package:onepanel_client/data/models/database_models.dart';
+import 'package:onepanel_client/core/network/api_client_manager.dart';
+import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
-/// Database remote connection configuration page.
-/// Mirrors frontend's database remote settings: per-DB-type remote connection config.
+/// Database remote connection config page (edit existing remote DB entry).
+/// Mirrors frontend `database/*/remote/operate`: load config, test connection,
+/// then submit update via /databases/db/update.
 class DatabaseRemoteConfigPage extends StatefulWidget {
   const DatabaseRemoteConfigPage({
     super.key,
@@ -22,14 +23,19 @@ class DatabaseRemoteConfigPage extends StatefulWidget {
 }
 
 class _DatabaseRemoteConfigPageState extends State<DatabaseRemoteConfigPage> {
-  Map<String, dynamic>? _config;
+  Map<String, dynamic> _config = {};
   bool _isLoading = true;
   bool _isSaving = false;
+  bool _isTesting = false;
+  bool _connOk = false;
   String? _error;
-  final _hostController = TextEditingController();
+  final _addressController = TextEditingController();
   final _portController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _versionController = TextEditingController();
+  final _timeoutController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -39,47 +45,100 @@ class _DatabaseRemoteConfigPageState extends State<DatabaseRemoteConfigPage> {
 
   @override
   void dispose() {
-    _hostController.dispose();
+    _addressController.dispose();
     _portController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _versionController.dispose();
+    _timeoutController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
+  String _field(String key) => _config[key]?.toString() ?? '';
+
   Future<void> _load() async {
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+      _connOk = false;
+    });
     try {
-      final api = DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
-      final response = await api.loadDatabase(DatabaseSearch(type: widget.databaseType, database: widget.databaseName));
-        
+      final api =
+          DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
+      final response = await api.getRemoteDatabase(widget.databaseName);
+      final data = response.data ?? <String, dynamic>{};
+      if (!mounted) return;
+      setState(() {
+        _config = data;
+        _addressController.text = _field('address');
+        _portController.text = _field('port');
+        _usernameController.text = _field('username');
+        _passwordController.text = _field('password');
+        _versionController.text = _field('version');
+        _timeoutController.text = _field('timeout');
+        _descriptionController.text = _field('description');
+        _isLoading = false;
+      });
+    } catch (e) {
       if (mounted) {
-        final data = response.data;
         setState(() {
-          _config = data is Map ? Map<String, dynamic>.from(data) : {};
-          _hostController.text = _config?['host']?.toString() ?? '';
-          _portController.text = _config?['port']?.toString() ?? '';
-          _usernameController.text = _config?['username']?.toString() ?? '';
+          _error = e.toString();
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Map<String, dynamic> _buildRequest() {
+    final request = Map<String, dynamic>.from(_config);
+    request['name'] = widget.databaseName;
+    request['type'] = widget.databaseType;
+    request['from'] = 'remote';
+    request['address'] = _addressController.text.trim();
+    request['port'] = int.tryParse(_portController.text.trim()) ?? 0;
+    request['username'] = _usernameController.text.trim();
+    request['password'] = _passwordController.text;
+    request['version'] = _versionController.text.trim();
+    request['timeout'] = int.tryParse(_timeoutController.text.trim()) ?? 30;
+    request['description'] = _descriptionController.text.trim();
+    return request;
+  }
+
+  Future<void> _testConnection() async {
+    setState(() => _isTesting = true);
+    try {
+      final api =
+          DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
+      final response = await api.checkRemoteDatabase(_buildRequest());
+      final ok = response.data ?? false;
+      if (!mounted) return;
+      setState(() => _connOk = ok);
+      if (ok) {
+        SnackBarUtils.showSuccess(context, context.l10n.commonTestPassed);
+      } else {
+        SnackBarUtils.showError(context, context.l10n.commonTestFailed);
+      }
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _isLoading = false; });
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonTestFailed);
+    } finally {
+      if (mounted) setState(() => _isTesting = false);
     }
   }
 
   Future<void> _save() async {
+    if (!_connOk) {
+      SnackBarUtils.showError(context, context.l10n.databaseRemoteTestBeforeSave);
+      return;
+    }
     setState(() => _isSaving = true);
     try {
-      final api = DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
-      // skip typed update for now
-      await api.updateDatabaseStatus({
-        'database': widget.databaseName,
-        'type': widget.databaseType,
-        'status': 'Running',
-      });
-      if (mounted) SnackBarUtils.showSuccess(context, 'Saved');
+      final api =
+          DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
+      await api.updateRemoteDatabase(_buildRequest());
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonSaveSuccess);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Save failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -89,7 +148,7 @@ class _DatabaseRemoteConfigPageState extends State<DatabaseRemoteConfigPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.databaseName} - Remote'),
+        title: Text('${widget.databaseName} - ${context.l10n.databaseRemoteTitle}'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -97,7 +156,15 @@ class _DatabaseRemoteConfigPageState extends State<DatabaseRemoteConfigPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(child: Text(_error!))
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_error!),
+                      TextButton(onPressed: _load, child:  Text(context.l10n.commonRetry)),
+                    ],
+                  ),
+                )
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
@@ -107,17 +174,21 @@ class _DatabaseRemoteConfigPageState extends State<DatabaseRemoteConfigPage> {
                         child: Column(
                           children: [
                             TextField(
-                              controller: _hostController,
-                              decoration: const InputDecoration(
-                                labelText: 'Host',
+                              controller: _addressController,
+                              onChanged: (_) =>
+                                  setState(() => _connOk = false),
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.commonAddress,
                                 border: OutlineInputBorder(),
                               ),
                             ),
                             const SizedBox(height: 12),
                             TextField(
                               controller: _portController,
-                              decoration: const InputDecoration(
-                                labelText: 'Port',
+                              onChanged: (_) =>
+                                  setState(() => _connOk = false),
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.commonPort,
                                 border: OutlineInputBorder(),
                               ),
                               keyboardType: TextInputType.number,
@@ -125,27 +196,87 @@ class _DatabaseRemoteConfigPageState extends State<DatabaseRemoteConfigPage> {
                             const SizedBox(height: 12),
                             TextField(
                               controller: _usernameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Username',
+                              onChanged: (_) =>
+                                  setState(() => _connOk = false),
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.commonUsername,
                                 border: OutlineInputBorder(),
                               ),
                             ),
                             const SizedBox(height: 12),
                             TextField(
                               controller: _passwordController,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
+                              onChanged: (_) =>
+                                  setState(() => _connOk = false),
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.commonPassword,
                                 border: OutlineInputBorder(),
                               ),
                               obscureText: true,
                             ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _versionController,
+                              onChanged: (_) =>
+                                  setState(() => _connOk = false),
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.commonVersion,
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _timeoutController,
+                              onChanged: (_) =>
+                                  setState(() => _connOk = false),
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.databaseRemoteTimeoutLabel,
+                                border: OutlineInputBorder(),
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _descriptionController,
+                              decoration:  InputDecoration(
+                                labelText: context.l10n.commonDescription,
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
                             const SizedBox(height: 16),
-                            FilledButton.icon(
-                              onPressed: _isSaving ? null : _save,
-                              icon: _isSaving
-                                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                                  : const Icon(Icons.save),
-                              label: const Text('Save'),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    onPressed: _isTesting || _isSaving
+                                        ? null
+                                        : _testConnection,
+                                    icon: _isTesting
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2))
+                                        : const Icon(Icons.network_check),
+                                    label:  Text(context.l10n.commonTestConnection),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: FilledButton.icon(
+                                    onPressed:
+                                        _isSaving || !_connOk ? null : _save,
+                                    icon: _isSaving
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2))
+                                        : const Icon(Icons.save),
+                                    label:  Text(context.l10n.commonSave),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

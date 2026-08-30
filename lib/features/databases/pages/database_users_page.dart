@@ -94,6 +94,16 @@ class _DatabaseUsersPageViewState extends State<_DatabaseUsersPageView> {
                           currentUsername: currentUsername,
                         ),
                         const SizedBox(height: AppDesignTokens.spacingMd),
+                        if (widget.item.scope == DatabaseScope.mysql) ...[
+                          DatabaseUserListCardWidget(
+                            users: state.users,
+                            onChangePassword: (user) =>
+                                _changePassword(context, provider, user),
+                            onDelete: (user) =>
+                                _deleteUser(context, provider, user),
+                          ),
+                          const SizedBox(height: AppDesignTokens.spacingMd),
+                        ],
                         DatabaseBindUserCardWidget(
                           item: widget.item,
                           usernameController: _usernameController,
@@ -143,6 +153,69 @@ class _DatabaseUsersPageViewState extends State<_DatabaseUsersPageView> {
         setState(() => _privilegeSuperUser = _bindSuperUser);
       }
     }
+  }
+
+  Future<void> _changePassword(
+    BuildContext context,
+    DatabaseUsersProvider provider,
+    Map<String, dynamic> user,
+  ) async {
+    final controller = TextEditingController();
+    final password = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.databaseUserChangePassword),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: context.l10n.databaseUserNewPasswordLabel,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(context.l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(controller.text),
+            child: Text(context.l10n.commonConfirm),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (password == null || password.isEmpty) return;
+    await provider.changeMysqlUserPassword(user: user, password: password);
+  }
+
+  Future<void> _deleteUser(
+    BuildContext context,
+    DatabaseUsersProvider provider,
+    Map<String, dynamic> user,
+  ) async {
+    final name = user['username']?.toString() ?? '';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.commonDelete),
+        content: Text(context.l10n.databaseUserDeleteConfirm(name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(context.l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(context.l10n.commonConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await provider.deleteMysqlUser(user);
   }
 
   Future<void> _submitPrivileges(

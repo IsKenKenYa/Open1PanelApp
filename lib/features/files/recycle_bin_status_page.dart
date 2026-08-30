@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/file_v2.dart';
 
@@ -44,7 +45,7 @@ class _RecycleBinStatusPageState extends State<RecycleBinStatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recycle Bin Status'),
+        title:  Text(context.l10n.recycleBinStatusTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -54,13 +55,13 @@ class _RecycleBinStatusPageState extends State<RecycleBinStatusPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _status == null
-                  ? const Center(child: Text('No data'))
+                  ?  Center(child: Text(context.l10n.commonEmpty))
                   : ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
                         Card(
                           child: ListTile(
-                            title: const Text('Recycle Bin'),
+                            title:  Text(context.l10n.recycleBinTitle),
                             subtitle: Text(
                               'Status: ${_status?['status'] ?? 'unknown'} | '
                               'Size: ${_status?['size'] ?? 'N/A'}',

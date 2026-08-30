@@ -52,7 +52,9 @@ void _logSection(
 Future<Response<Map<String, dynamic>>> _rawPost(
   DioClient client,
   String path, {
-  dynamic data,
+  // Dio 对 null body 的 POST 会发送 null 字面量，gin binding 解析 400；
+  // 默认空 JSON 对齐真实客户端行为。
+  dynamic data = const <String, dynamic>{},
 }) {
   return client.post<Map<String, dynamic>>(
     ApiConstants.buildApiPath(path),

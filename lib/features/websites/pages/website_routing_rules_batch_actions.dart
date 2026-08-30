@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 
 import '../providers/website_routing_rules_provider.dart';
 import 'website_routing_rules_single_actions.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 enum RoutingBatchAction {
   proxyStatus,
@@ -29,8 +30,7 @@ class WebsiteRoutingRulesBatchActions {
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setStateDialog) => AlertDialog(
           title: const Text('Batch Actions'),
-          content: SizedBox(
-            width: 520,
+          content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

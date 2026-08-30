@@ -15,6 +15,8 @@ import 'package:onepanel_client/features/databases/pages/database_users_page.dar
 import 'package:onepanel_client/data/models/database_models.dart';
 import 'package:onepanel_client/features/firewall/firewall_page.dart';
 import 'package:onepanel_client/features/firewall/firewall_rule_form_page.dart';
+import 'package:onepanel_client/features/ai/pages/ai_agent_plugins_page.dart';
+import 'package:onepanel_client/features/host_assets/pages/host_diagnostics_page.dart';
 import 'package:onepanel_client/features/monitoring/monitoring_page.dart';
 import 'package:onepanel_client/features/server/server_detail_page.dart';
 import 'package:onepanel_client/features/server/server_form_page.dart';
@@ -149,6 +151,36 @@ import 'package:onepanel_client/features/containers/container_create_page.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/orchestration/orchestration_page.dart';
 import 'package:onepanel_client/data/models/host_models.dart';
+import 'package:onepanel_client/features/websites/pages/website_https_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_redirect_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_cors_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_leech_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_log_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_auth_basic_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_resource_page.dart';
+import 'package:onepanel_client/features/websites/pages/website_load_balancer_page.dart';
+import 'package:onepanel_client/features/files/file_share_page.dart';
+import 'package:onepanel_client/features/files/wget_manager_page.dart';
+import 'package:onepanel_client/features/files/file_history_page.dart';
+import 'package:onepanel_client/features/files/file_permission_page.dart';
+import 'package:onepanel_client/features/files/recycle_bin_status_page.dart';
+import 'package:onepanel_client/features/ai/pages/ai_gpu_history_page.dart';
+import 'package:onepanel_client/features/ai/pages/mcp_server_detail_page.dart';
+import 'package:onepanel_client/features/ai/pages/ai_accounts_page.dart';
+import 'package:onepanel_client/features/ai/pages/ai_ollama_models_page.dart';
+import 'package:onepanel_client/features/ai/pages/ai_agents_page.dart';
+import 'package:onepanel_client/features/databases/pages/database_mongodb_page.dart';
+import 'package:onepanel_client/features/databases/pages/database_mysql_variables_page.dart';
+import 'package:onepanel_client/features/databases/pages/database_pg_privileges_page.dart';
+import 'package:onepanel_client/features/databases/pages/database_redis_persistence_page.dart';
+import 'package:onepanel_client/features/databases/pages/database_slow_log_page.dart';
+import 'package:onepanel_client/features/databases/pages/database_remote_config_page.dart';
+import 'package:onepanel_client/features/containers/pages/container_inspect_page.dart';
+import 'package:onepanel_client/features/containers/pages/docker_config_page.dart';
+import 'package:onepanel_client/features/containers/pages/container_maintenance_page.dart';
+import 'package:onepanel_client/features/containers/pages/container_files_page.dart';
+import 'package:onepanel_client/features/containers/pages/image_operations_page.dart';
+import 'package:onepanel_client/features/toolbox/pages/toolbox_supervisor_page.dart';
 
   Map<String, RouteEntry> buildRouteRegistryEntries() {
     return <String, RouteEntry>{
@@ -973,6 +1005,321 @@ import 'package:onepanel_client/data/models/host_models.dart';
               initialContent: arg['initialContent'] as String?,
             ),
           );
+        },
+      ),
+      AppRoutes.websiteHttps: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteHttps,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteHttpsPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteRedirect: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteRedirect,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteRedirectPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteCors: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteCors,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteCorsPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteLeech: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteLeech,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteLeechPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteLog: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteLog,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteLogPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteAuthBasic: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteAuthBasic,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteAuthBasicPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteResource: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteResource,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteResourcePage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.websiteLoadBalancer: shellAwareModuleEntry(
+        routeName: AppRoutes.websiteLoadBalancer,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final websiteId = arg['websiteId'] as int?;
+          if (websiteId == null) {
+            return const NotFoundPage();
+          }
+          return WebsiteLoadBalancerPage(
+            websiteId: websiteId,
+            displayName: arg['displayName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.fileShare: shellAwareModuleEntry(
+        routeName: AppRoutes.fileShare,
+        defaultBuilder: (_, __) => const FileSharePage(),
+      ),
+      AppRoutes.wgetManager: shellAwareModuleEntry(
+        routeName: AppRoutes.wgetManager,
+        defaultBuilder: (_, __) => const WgetManagerPage(),
+      ),
+      AppRoutes.fileHistory: shellAwareModuleEntry(
+        routeName: AppRoutes.fileHistory,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          return FileHistoryPage(path: arg['path']?.toString() ?? '/');
+        },
+      ),
+      AppRoutes.filePermission: shellAwareModuleEntry(
+        routeName: AppRoutes.filePermission,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final paths = (arg['paths'] as List<dynamic>? ?? const [])
+              .map((e) => e.toString())
+              .toList(growable: false);
+          if (paths.isEmpty) {
+            return const NotFoundPage();
+          }
+          return FilePermissionPage(paths: paths);
+        },
+      ),
+      AppRoutes.recycleBinStatus: shellAwareModuleEntry(
+        routeName: AppRoutes.recycleBinStatus,
+        defaultBuilder: (_, __) => const RecycleBinStatusPage(),
+      ),
+      AppRoutes.aiAccounts: shellAwareModuleEntry(
+        routeName: AppRoutes.aiAccounts,
+        defaultBuilder: (_, __) => const AiAccountsPage(),
+      ),
+      AppRoutes.aiOllamaModels: shellAwareModuleEntry(
+        routeName: AppRoutes.aiOllamaModels,
+        defaultBuilder: (_, __) => const AiOllamaModelsPage(),
+      ),
+      AppRoutes.aiAgents: shellAwareModuleEntry(
+        routeName: AppRoutes.aiAgents,
+        defaultBuilder: (_, __) => const AiAgentsPage(),
+      ),
+      AppRoutes.aiGpuHistory: shellAwareModuleEntry(
+        routeName: AppRoutes.aiGpuHistory,
+        defaultBuilder: (_, __) => const AiGpuHistoryPage(),
+      ),
+      AppRoutes.mcpServerDetail: shellAwareModuleEntry(
+        routeName: AppRoutes.mcpServerDetail,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final serverId = arg['serverId'] as int?;
+          if (serverId == null) {
+            return const NotFoundPage();
+          }
+          return McpServerDetailPage(
+            serverId: serverId,
+            serverName: arg['serverName']?.toString() ?? '',
+          );
+        },
+      ),
+      AppRoutes.databaseMongodb: shellAwareModuleEntry(
+        routeName: AppRoutes.databaseMongodb,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final databaseName = arg['databaseName'] as String?;
+          if (databaseName == null) {
+            return const NotFoundPage();
+          }
+          return DatabaseMongodbPage(
+                        databaseName: databaseName,
+          );
+        },
+      ),
+      AppRoutes.databaseMysqlVariables: shellAwareModuleEntry(
+        routeName: AppRoutes.databaseMysqlVariables,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final databaseName = arg['databaseName'] as String?;
+          if (databaseName == null) {
+            return const NotFoundPage();
+          }
+          return DatabaseMysqlVariablesPage(
+                        databaseName: databaseName,
+          );
+        },
+      ),
+      AppRoutes.databasePgPrivileges: shellAwareModuleEntry(
+        routeName: AppRoutes.databasePgPrivileges,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final databaseName = arg['databaseName'] as String?;
+          if (databaseName == null) {
+            return const NotFoundPage();
+          }
+          return DatabasePgPrivilegesPage(
+                        databaseName: databaseName,
+          );
+        },
+      ),
+      AppRoutes.databaseRedisPersistence: shellAwareModuleEntry(
+        routeName: AppRoutes.databaseRedisPersistence,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final databaseName = arg['databaseName'] as String?;
+          if (databaseName == null) {
+            return const NotFoundPage();
+          }
+          return DatabaseRedisPersistencePage(
+                        databaseName: databaseName,
+          );
+        },
+      ),
+      AppRoutes.databaseSlowLog: shellAwareModuleEntry(
+        routeName: AppRoutes.databaseSlowLog,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final databaseName = arg['databaseName'] as String?;
+          if (databaseName == null) {
+            return const NotFoundPage();
+          }
+          return DatabaseSlowLogPage(
+                        databaseName: databaseName,
+          );
+        },
+      ),
+      AppRoutes.databaseRemoteConfig: shellAwareModuleEntry(
+        routeName: AppRoutes.databaseRemoteConfig,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final databaseName = arg['databaseName'] as String?;
+          final databaseType = arg['databaseType'] as String?;
+          if (databaseName == null || databaseType == null) {
+            return const NotFoundPage();
+          }
+          return DatabaseRemoteConfigPage(
+                        databaseName: databaseName,
+            databaseType: databaseType,
+          );
+        },
+      ),
+      AppRoutes.containerInspect: shellAwareModuleEntry(
+        routeName: AppRoutes.containerInspect,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final containerId = arg['containerId'] as String?;
+          final containerName = arg['containerName'] as String?;
+          if (containerId == null || containerName == null) {
+            return const NotFoundPage();
+          }
+          return ContainerInspectPage(
+                        containerId: containerId,
+            containerName: containerName,
+          );
+        },
+      ),
+      AppRoutes.containerFiles: shellAwareModuleEntry(
+        routeName: AppRoutes.containerFiles,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final containerId = arg['containerId'] as String?;
+          final containerName = arg['containerName'] as String?;
+          if (containerId == null || containerName == null) {
+            return const NotFoundPage();
+          }
+          return ContainerFilesPage(
+                        containerId: containerId,
+            containerName: containerName,
+          );
+        },
+      ),
+      AppRoutes.containerMaintenance: shellAwareModuleEntry(
+        routeName: AppRoutes.containerMaintenance,
+        defaultBuilder: (_, __) => const ContainerMaintenancePage(),
+      ),
+      AppRoutes.dockerConfig: shellAwareModuleEntry(
+        routeName: AppRoutes.dockerConfig,
+        defaultBuilder: (_, __) => const DockerConfigPage(),
+      ),
+      AppRoutes.imageOperations: shellAwareModuleEntry(
+        routeName: AppRoutes.imageOperations,
+        defaultBuilder: (_, __) => const ImageOperationsPage(),
+      ),
+      AppRoutes.toolboxSupervisor: shellAwareModuleEntry(
+        routeName: AppRoutes.toolboxSupervisor,
+        defaultBuilder: (_, __) => const ToolboxSupervisorPage(),
+      ),
+      AppRoutes.hostDiagnostics: shellAwareModuleEntry(
+        routeName: AppRoutes.hostDiagnostics,
+        defaultBuilder: (_, __) => const HostDiagnosticsPage(),
+      ),
+      AppRoutes.aiAgentPlugins: shellAwareModuleEntry(
+        routeName: AppRoutes.aiAgentPlugins,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final agentId = arg['agentId'];
+          if (agentId == null) {
+            return const NotFoundPage();
+          }
+          return AiAgentPluginsPage(agentId: agentId.toString());
         },
       ),
       '/help': RouteEntry(

@@ -10,12 +10,14 @@ class DatabaseUsersState {
     this.isSubmitting = false,
     this.error,
     this.context,
+    this.users = const <Map<String, dynamic>>[],
   });
 
   final bool isLoading;
   final bool isSubmitting;
   final String? error;
   final DatabaseUserContext? context;
+  final List<Map<String, dynamic>> users;
 }
 
 class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
@@ -31,13 +33,21 @@ class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
   DatabaseUsersState get state => _state;
 
   Future<void> load() async {
-    _state = const DatabaseUsersState(isLoading: true);
+    _state = DatabaseUsersState(isLoading: true, users: _state.users);
     notifyListeners();
     try {
       final context = await _service.loadContext(item);
-      _state = DatabaseUsersState(context: context);
+      var users = _state.users;
+      // V2 新体系：MySQL 用户列表来自 /databases/users/search。
+      if (item.scope == DatabaseScope.mysql) {
+        users = await _service.listMysqlUsers(item);
+      }
+      _state = DatabaseUsersState(context: context, users: users);
     } catch (e) {
-      _state = DatabaseUsersState(error: ErrorMessageUtils.userFacingMessage(e));
+      _state = DatabaseUsersState(
+        error: ErrorMessageUtils.userFacingMessage(e),
+        users: _state.users,
+      );
     }
     notifyListeners();
   }
@@ -63,8 +73,53 @@ class DatabaseUsersProvider extends ChangeNotifier with SafeChangeNotifier {
         currentUsername: username,
         superUser: superUser,
       );
-      _state = DatabaseUsersState(context: nextContext);
+      _state = DatabaseUsersState(
+        context: nextContext,
+        users: item.scope == DatabaseScope.mysql
+            ? await _service.listMysqlUsers(item)
+            : _state.users,
+      );
       notifyListeners();
+    });
+  }
+
+  /// 删除 MySQL 用户（V2 新体系）。
+  Future<bool> deleteMysqlUser(Map<String, dynamic> user) async {
+    final username = user['username']?.toString() ?? '';
+    final host = user['host']?.toString() ?? '%';
+    if (username.isEmpty) return false;
+    return _runMutation(() async {
+      await _service.deleteMysqlUser(
+        item,
+        username: username,
+        host: host,
+      );
+      _state = DatabaseUsersState(
+        context: _state.context,
+        users: await _service.listMysqlUsers(item),
+      );
+    });
+  }
+
+  /// 修改 MySQL 用户密码（V2 新体系）。
+  Future<bool> changeMysqlUserPassword({
+    required Map<String, dynamic> user,
+    required String password,
+  }) async {
+    final username = user['username']?.toString() ?? '';
+    final host = user['host']?.toString() ?? '%';
+    if (username.isEmpty || password.isEmpty) return false;
+    return _runMutation(() async {
+      await _service.changeMysqlUserPassword(
+        item,
+        username: username,
+        host: host,
+        password: password,
+      );
+      _state = DatabaseUsersState(
+        context: _state.context,
+        users: await _service.listMysqlUsers(item),
+      );
     });
   }
 

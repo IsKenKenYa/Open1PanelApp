@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/file_v2.dart';
@@ -51,9 +52,9 @@ class _FileHistoryPageState extends State<FileHistoryPage> {
     try {
       final api = FileV2Api(await ApiClientManager.instance.getCurrentClient());
       await api.restoreHistory(entry);
-      if (mounted) SnackBarUtils.showSuccess(context, 'Restored');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.fileHistoryRestored);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Restore failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.fileHistoryRestoreFailed);
     }
   }
 
@@ -61,10 +62,10 @@ class _FileHistoryPageState extends State<FileHistoryPage> {
     try {
       final api = FileV2Api(await ApiClientManager.instance.getCurrentClient());
       await api.deleteHistory(entry);
-      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonDeleted);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
     }
   }
 
@@ -72,7 +73,7 @@ class _FileHistoryPageState extends State<FileHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('History: ${widget.path}'),
+        title: Text(context.l10n.fileHistoryTitleWith(widget.path)),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -82,7 +83,7 @@ class _FileHistoryPageState extends State<FileHistoryPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _history.isEmpty
-                  ? const Center(child: Text('No history'))
+                  ?  Center(child: Text(context.l10n.fileHistoryEmpty))
                   : ListView.builder(
                       itemCount: _history.length,
                       itemBuilder: (context, index) {
@@ -96,12 +97,12 @@ class _FileHistoryPageState extends State<FileHistoryPage> {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.restore),
-                                  tooltip: 'Restore',
+                                  tooltip: context.l10n.fileHistoryRestore,
                                   onPressed: () => _restore(entry),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete_outline),
-                                  tooltip: 'Delete',
+                                  tooltip: context.l10n.commonDelete,
                                   onPressed: () => _delete(entry),
                                 ),
                               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/services/file_transfer_service.dart';
 
@@ -36,10 +37,10 @@ class _WgetManagerPageState extends State<WgetManagerPage> {
   Future<void> _stopWget(String key) async {
     try {
       await _service.stopWget(key);
-      if (mounted) SnackBarUtils.showSuccess(context, 'Stopped');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.wgetStopped);
       _loadProcess();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Stop failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.wgetStopFailed);
     }
   }
 
@@ -47,7 +48,7 @@ class _WgetManagerPageState extends State<WgetManagerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('WGET Downloads'),
+        title:  Text(context.l10n.wgetTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadProcess),
         ],
@@ -57,7 +58,7 @@ class _WgetManagerPageState extends State<WgetManagerPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _processData == null || _processData!.isEmpty
-                  ? const Center(child: Text('No active downloads'))
+                  ?  Center(child: Text(context.l10n.wgetEmpty))
                   : ListView.builder(
                       itemCount: (_processData!['data'] as List?)?.length ?? 0,
                       itemBuilder: (context, index) {

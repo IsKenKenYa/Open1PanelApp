@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/host_tool_v2.dart';
@@ -49,10 +50,23 @@ class _ToolboxSupervisorPageState extends State<ToolboxSupervisorPage> {
       await api.operateSupervisorProcess(
         HostToolProcessOperateRequest(name: name, operate: operate),
       );
-      if (mounted) SnackBarUtils.showSuccess(context, '$operate $name');
+      if (mounted) SnackBarUtils.showSuccess(context, '${_operateLabel(operate)} $name');
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Operation failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonOperationFailed);
+    }
+  }
+
+  String _operateLabel(String operate) {
+    switch (operate) {
+      case 'start':
+        return context.l10n.commonStart;
+      case 'stop':
+        return context.l10n.commonStop;
+      case 'restart':
+        return context.l10n.commonRestart;
+      default:
+        return operate;
     }
   }
 
@@ -60,7 +74,7 @@ class _ToolboxSupervisorPageState extends State<ToolboxSupervisorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Supervisor'),
+        title:  Text(context.l10n.toolboxSupervisorTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -75,8 +89,8 @@ class _ToolboxSupervisorPageState extends State<ToolboxSupervisorPage> {
                       Card(
                         margin: const EdgeInsets.all(16),
                         child: ListTile(
-                          title: const Text('Supervisor Status'),
-                          subtitle: Text('Status: ${_status?.config.init ?? false ? 'Running' : 'Not initialized'}'),
+                          title:  Text(context.l10n.toolboxSupervisorStatusTitle),
+                          subtitle: Text('${context.l10n.commonStatus}: ${_status?.config.init ?? false ? context.l10n.appStatusRunning : context.l10n.toolboxSupervisorNotInit}'),
                           trailing: Icon(
                             _status?.config.init == true ? Icons.check_circle : Icons.error_outline,
                             color: _status?.config.init == true ? Colors.green : Colors.orange,
@@ -85,7 +99,7 @@ class _ToolboxSupervisorPageState extends State<ToolboxSupervisorPage> {
                       ),
                     Expanded(
                       child: _processes.isEmpty
-                          ? const Center(child: Text('No processes'))
+                          ?  Center(child: Text(context.l10n.toolboxSupervisorEmpty))
                           : ListView.builder(
                               itemCount: _processes.length,
                               itemBuilder: (context, index) {
@@ -95,7 +109,7 @@ class _ToolboxSupervisorPageState extends State<ToolboxSupervisorPage> {
                                 return Card(
                                   child: ListTile(
                                     title: Text(p['name']?.toString() ?? ''),
-                                    subtitle: Text('Status: $status | PID: ${p['pid'] ?? 'N/A'}'),
+                                    subtitle: Text('${context.l10n.commonStatus}: $status | PID: ${p['pid'] ?? 'N/A'}'),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [

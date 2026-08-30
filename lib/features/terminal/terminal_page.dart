@@ -13,6 +13,7 @@ import 'package:onepanel_client/features/terminal/services/terminal_appearance.d
 import 'package:onepanel_client/features/terminal/services/terminal_runtime_session.dart';
 import 'package:provider/provider.dart';
 import 'package:xterm/ui.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 class TerminalPage extends StatefulWidget {
   const TerminalPage({
@@ -197,8 +198,7 @@ class _TerminalWorkbenchWideLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        SizedBox(
-          width: 320,
+        SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
           child: _WorkbenchSidebar(
             provider: provider,
             onOpenHostPicker: onOpenHostPicker,

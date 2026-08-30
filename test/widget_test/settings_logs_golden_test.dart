@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:onepanel_client/core/config/api_config.dart';
@@ -37,6 +38,18 @@ class _FakeCurrentServerController extends CurrentServerController {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() {
+    // ApiTestPage 读取 secure storage（getConfigs 迁移路径），mock 通道兜底。
+    const secureChannel =
+        MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(secureChannel, (call) async {
+      if (call.method == 'read') return 'key';
+      return null;
+    });
+  });
   group('Golden baseline - settings & logs', () {
     setUpAll(() {
       registerFallbackValue(const OperationLogSearchRequest());
@@ -68,12 +81,16 @@ void main() {
           'current_api_config_id': 'server-1',
         });
 
+        // ApiTestPage 有常驻动画，不能 pumpAndSettle；固定 pump 等异步配置加载。
         await pumpOverflowHarness(
           tester,
           variant: variant,
           wrapWithScaffold: false,
+          settle: false,
           child: const ApiTestPage(),
         );
+        await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump();
 
         await expectNoFlutterExceptions(
           tester,

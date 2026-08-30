@@ -9,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:onepanel_client/core/config/api_constants.dart';
 import 'package:onepanel_client/core/platform/services/platform_system_paths.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
-import 'package:onepanel_client/data/models/file/file_wget.dart';
 import 'package:onepanel_client/data/repositories/files_repository.dart';
 
 class FileTransferService {

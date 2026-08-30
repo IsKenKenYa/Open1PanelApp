@@ -139,13 +139,6 @@ class WebsiteRepository {
     await api.batchSetWebsiteGroup(ids: ids, groupId: groupId);
   }
 
-  Future<void> batchSetHttps({
-    required List<int> ids,
-    required bool https,
-  }) async {
-    final api = await _ensureWebsiteApi();
-    await api.batchSetWebsiteHttps(ids: ids, https: https);
-  }
 
   Future<void> changeDefaultServer({required int id}) async {
     final api = await _ensureWebsiteApi();

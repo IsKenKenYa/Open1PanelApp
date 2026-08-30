@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
@@ -51,7 +52,7 @@ class _DatabasePgPrivilegesPageState extends State<DatabasePgPrivilegesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PostgreSQL Privileges'),
+        title:  Text(context.l10n.databasePgPrivilegesTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -61,7 +62,7 @@ class _DatabasePgPrivilegesPageState extends State<DatabasePgPrivilegesPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _privileges.isEmpty
-                  ? const Center(child: Text('No privileges'))
+                  ?  Center(child: Text(context.l10n.databasePgPrivilegesEmpty))
                   : ListView.builder(
                       itemCount: _privileges.length,
                       itemBuilder: (context, index) {
@@ -69,7 +70,7 @@ class _DatabasePgPrivilegesPageState extends State<DatabasePgPrivilegesPage> {
                         return Card(
                           child: ListTile(
                             title: Text(p['name']?.toString() ?? ''),
-                            subtitle: Text('Privileges: ${p['privileges'] ?? 'N/A'}'),
+                            subtitle: Text(context.l10n.databasePgPrivilegeWith(p['privileges'] ?? 'N/A')),
                           ),
                         );
                       },

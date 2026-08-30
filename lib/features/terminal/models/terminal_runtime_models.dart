@@ -147,14 +147,15 @@ class TerminalLaunchIntent extends Equatable {
   }
 
   String endpointPath() {
+    // V2 契约：WS 端点按类型拆分为 terminal/local|ssh|container 三个子路径。
     switch (kind) {
       case TerminalTargetKind.containerExec:
-        return ApiConstants.buildApiPath('/containers/exec');
+        return ApiConstants.buildApiPath('/hosts/terminal/container');
       case TerminalTargetKind.localHost:
-      case TerminalTargetKind.savedHost:
-        return ApiConstants.buildApiPath('/hosts/terminal');
       case TerminalTargetKind.workbench:
-        return ApiConstants.buildApiPath('/hosts/terminal');
+        return ApiConstants.buildApiPath('/hosts/terminal/local');
+      case TerminalTargetKind.savedHost:
+        return ApiConstants.buildApiPath('/hosts/terminal/ssh');
     }
   }
 
@@ -167,15 +168,13 @@ class TerminalLaunchIntent extends Equatable {
       'rows': '$rows',
     };
 
-    // Query params are server-protocol-specific: 'operateNode' tells the
-    // 1Panel backend which SSH target to open, 'source=container' switches
-    // to docker exec mode.
+    // Query params are server-protocol-specific: 'id' selects the saved SSH
+    // host for terminal/ssh, 'source=container' switches to docker exec mode.
     switch (kind) {
       case TerminalTargetKind.localHost:
-        query['operateNode'] = 'local';
+      case TerminalTargetKind.workbench:
         break;
       case TerminalTargetKind.savedHost:
-        query['operateNode'] = 'local';
         if (hostId != null) {
           query['id'] = '$hostId';
         }
@@ -187,9 +186,6 @@ class TerminalLaunchIntent extends Equatable {
         if (user?.isNotEmpty == true) {
           query['user'] = user!;
         }
-        break;
-      case TerminalTargetKind.workbench:
-        query['operateNode'] = 'local';
         break;
     }
     return query;

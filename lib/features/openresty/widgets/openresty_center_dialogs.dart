@@ -5,6 +5,7 @@ import 'package:onepanel_client/data/models/openresty_models.dart';
 import 'package:onepanel_client/features/openresty/providers/openresty_provider.dart';
 
 import '../../../core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 class OpenRestyCenterDialogs {
   const OpenRestyCenterDialogs._();
 
@@ -144,8 +145,7 @@ class OpenRestyCenterDialogs {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.openrestyDialogPreviewConfigTitle),
-        content: SizedBox(
-          width: 520,
+        content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
           child: TextField(
             controller: controller,
             maxLines: 16,

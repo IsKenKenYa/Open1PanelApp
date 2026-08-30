@@ -96,4 +96,15 @@ class ToolboxClamService {
   Future<void> cleanRecords(int taskId) {
     return _repository.cleanClamRecords(taskId);
   }
+
+  Future<List<ClamFileInfo>> loadClamFileLines({
+    required String name,
+    String tail = '200',
+  }) {
+    return _repository.searchClamFileLines(name: name, tail: tail);
+  }
+
+  Future<void> saveClamFile({required String name, required String file}) {
+    return _repository.updateClamFile(name: name, file: file);
+  }
 }

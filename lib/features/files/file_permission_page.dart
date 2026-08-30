@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/file_v2.dart';
@@ -46,10 +47,11 @@ class _FilePermissionPageState extends State<FilePermissionPage> {
           ));
         }
       }
-      if (mounted) SnackBarUtils.showSuccess(context, 'Permissions updated');
+      if (!mounted) return;
+      SnackBarUtils.showSuccess(context, context.l10n.filePermissionUpdated);
       Navigator.of(context).pop();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Update failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonUpdateFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -66,7 +68,7 @@ class _FilePermissionPageState extends State<FilePermissionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Permissions (${widget.paths.length} files)')),
+      appBar: AppBar(title: Text(context.l10n.filePermissionTitleWith(widget.paths.length))),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -74,30 +76,30 @@ class _FilePermissionPageState extends State<FilePermissionPage> {
           children: [
             TextField(
               controller: _modeController,
-              decoration: const InputDecoration(
-                labelText: 'Mode (e.g. 0644, 0755)',
+              decoration:  InputDecoration(
+                labelText: context.l10n.filePermissionMode,
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _ownerController,
-              decoration: const InputDecoration(
-                labelText: 'Owner (e.g. root)',
+              decoration:  InputDecoration(
+                labelText: context.l10n.filePermissionOwner,
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _groupController,
-              decoration: const InputDecoration(
-                labelText: 'Group (e.g. root)',
+              decoration:  InputDecoration(
+                labelText: context.l10n.filePermissionGroup,
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
             SwitchListTile(
-              title: const Text('Recursive'),
+              title:  Text(context.l10n.filePermissionRecursive),
               value: _recursive,
               onChanged: (v) => setState(() => _recursive = v),
             ),
@@ -107,7 +109,7 @@ class _FilePermissionPageState extends State<FilePermissionPage> {
               icon: _isSaving
                   ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.check),
-              label: const Text('Apply'),
+              label:  Text(context.l10n.filePermissionApply),
             ),
           ],
         ),

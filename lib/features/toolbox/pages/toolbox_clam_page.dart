@@ -19,20 +19,24 @@ class ToolboxClamPage extends StatefulWidget {
 class _ToolboxClamPageState extends State<ToolboxClamPage>
   with _ToolboxClamPageActionsPart {
   final TextEditingController _keywordController = TextEditingController();
+  final TextEditingController _fileController = TextEditingController();
 
   @override
   void dispose() {
     _keywordController.dispose();
+    _fileController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<ToolboxClamProvider>().load();
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final provider = context.read<ToolboxClamProvider>();
+      provider.load();
+      await provider.loadClamFile();
+      _fileController.text = provider.clamFileContent;
     });
   }
 
@@ -93,17 +97,17 @@ class _ToolboxClamPageState extends State<ToolboxClamPage>
                           child: Text(l10n.commonRestart),
                         ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'fresh-start',
-                          child: Text('Fresh start'),
+                          child: Text(l10n.toolboxClamFreshStart),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'fresh-stop',
-                          child: Text('Fresh stop'),
+                          child: Text(l10n.toolboxClamFreshStop),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'fresh-restart',
-                          child: Text('Fresh restart'),
+                          child: Text(l10n.toolboxClamFreshRestart),
                         ),
                       ],
                       child: OutlinedButton.icon(
@@ -246,6 +250,78 @@ class _ToolboxClamPageState extends State<ToolboxClamPage>
                     ),
                   ],
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          ToolboxSectionCardWidget(
+            title: l10n.toolboxClamFilesTitle,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final name in ToolboxClamProvider.clamFileNames)
+                      ChoiceChip(
+                        label: Text(name),
+                        selected: provider.selectedClamFileName == name,
+                        onSelected: provider.isLoadingFile
+                            ? null
+                            : (_) async {
+                                await provider.selectClamFile(name);
+                                _fileController.text =
+                                    provider.clamFileContent;
+                              },
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (provider.isLoadingFile)
+                  const LinearProgressIndicator()
+                else ...[
+                  TextField(
+                    controller: _fileController,
+                    maxLines: provider.isClamLogFile ? 6 : 12,
+                    readOnly: provider.isClamLogFile,
+                    style: const TextStyle(
+                        fontFamily: 'monospace', fontSize: 12),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: provider.isClamLogFile
+                          ? l10n.toolboxClamFileReadonly
+                          : l10n.toolboxClamFileContent,
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  if (!provider.isClamLogFile) ...[
+                    const SizedBox(height: 8),
+                    FilledButton.icon(
+                      onPressed: provider.isSavingFile
+                          ? null
+                          : () async {
+                              final ok = await provider.saveClamFile(
+                                _fileController.text,
+                              );
+                              if (!context.mounted) return;
+                              if (ok) {
+                                SnackBarUtils.showSuccess(
+                                  context,
+                                  l10n.commonSaveSuccess,
+                                );
+                              } else {
+                                SnackBarUtils.showError(
+                                  context,
+                                  provider.error ?? l10n.commonSaveFailed,
+                                );
+                              }
+                            },
+                      icon: const Icon(Icons.save_outlined),
+                      label: Text(l10n.commonSave),
+                    ),
+                  ],
+                ],
               ],
             ),
           ),

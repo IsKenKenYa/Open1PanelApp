@@ -12,12 +12,13 @@ class ChannelWatermarkBadgeWidget extends StatelessWidget {
     }
 
     final colorScheme = Theme.of(context).colorScheme;
+    // 左下角：避免遮挡 AppBar 右侧 actions 与右下角 FAB。
     return IgnorePointer(
       child: SafeArea(
         child: Align(
-          alignment: Alignment.topRight,
+          alignment: Alignment.bottomLeft,
           child: Padding(
-            padding: const EdgeInsets.only(top: 8, right: 8),
+            padding: const EdgeInsets.only(left: 12, bottom: 84),
             child: Transform.rotate(
               angle: -0.08,
               child: Container(

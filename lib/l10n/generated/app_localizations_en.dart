@@ -8081,4 +8081,570 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phpExtensionsLabel => 'Extensions';
+
+  @override
+  String get commonUpdated => 'Updated';
+
+  @override
+  String get commonUpdateFailed => 'Update failed';
+
+  @override
+  String get commonOperationFailed => 'Operation failed';
+
+  @override
+  String get commonDeleted => 'Deleted';
+
+  @override
+  String get commonDeleteFailed => 'Delete failed';
+
+  @override
+  String get commonTestConnection => 'Test Connection';
+
+  @override
+  String get commonTestPassed => 'Connection test passed';
+
+  @override
+  String get commonTestFailed => 'Connection test failed';
+
+  @override
+  String get commonAddress => 'Address';
+
+  @override
+  String get commonVersion => 'Version';
+
+  @override
+  String get commonStatus => 'Status';
+
+  @override
+  String get commonSize => 'Size';
+
+  @override
+  String get commonType => 'Type';
+
+  @override
+  String get commonCommand => 'Command';
+
+  @override
+  String get commonImage => 'Image';
+
+  @override
+  String get commonTimeout => 'Timeout';
+
+  @override
+  String get commonOk => 'OK';
+
+  @override
+  String get websiteHttpsUpdateFailed => 'Failed to update HTTPS config';
+
+  @override
+  String get websiteHttpsHsts => 'HSTS';
+
+  @override
+  String get websiteHttpsSslCertificate => 'SSL Certificate';
+
+  @override
+  String get websiteRedirectTitle => 'Redirect';
+
+  @override
+  String get websiteRedirectEmpty => 'No redirect rules';
+
+  @override
+  String get websiteCorsTitle => 'CORS';
+
+  @override
+  String get websiteLeechTitle => 'Anti-Leech';
+
+  @override
+  String get websiteLeechProtection => 'Anti-Leech Protection';
+
+  @override
+  String get websiteLogClear => 'Clear logs';
+
+  @override
+  String get websiteLogEmpty => 'No logs';
+
+  @override
+  String get websiteAuthBasicTitle => 'Auth';
+
+  @override
+  String get websiteAuthBasicEmpty => 'No auth users';
+
+  @override
+  String get websiteResourceTitle => 'Resource';
+
+  @override
+  String get websiteLoadBalancerTitle => 'Load Balancer';
+
+  @override
+  String get websiteLoadBalancerEmpty => 'No load balancers';
+
+  @override
+  String get fileShareTitle => 'File Shares';
+
+  @override
+  String get fileShareEmpty => 'No shares';
+
+  @override
+  String get wgetTitle => 'WGET Downloads';
+
+  @override
+  String get wgetEmpty => 'No active downloads';
+
+  @override
+  String get wgetStopFailed => 'Stop failed';
+
+  @override
+  String get wgetStopped => 'Stopped';
+
+  @override
+  String get fileHistoryEmpty => 'No history';
+
+  @override
+  String get fileHistoryRestore => 'Restore';
+
+  @override
+  String get fileHistoryRestored => 'Restored';
+
+  @override
+  String get fileHistoryRestoreFailed => 'Restore failed';
+
+  @override
+  String get filePermissionApply => 'Apply';
+
+  @override
+  String get filePermissionRecursive => 'Recursive';
+
+  @override
+  String get filePermissionOwner => 'Owner (e.g. root)';
+
+  @override
+  String get filePermissionGroup => 'Group (e.g. root)';
+
+  @override
+  String get filePermissionMode => 'Mode (e.g. 0644, 0755)';
+
+  @override
+  String get filePermissionUpdated => 'Permissions updated';
+
+  @override
+  String get recycleBinStatusTitle => 'Recycle Bin Status';
+
+  @override
+  String get recycleBinTitle => 'Recycle Bin';
+
+  @override
+  String get aiGpuHistoryTitle => 'GPU History';
+
+  @override
+  String get aiGpuHistoryEmpty => 'No GPU data';
+
+  @override
+  String get mcpServerDetailServerName => 'Server Name';
+
+  @override
+  String get mcpServerDetailSyncStatus => 'Sync status';
+
+  @override
+  String get mcpServerDetailSynced => 'Status synced';
+
+  @override
+  String get mcpServerDetailSyncFailed => 'Sync failed';
+
+  @override
+  String get mcpServerDetailTestFailed => 'Test failed';
+
+  @override
+  String get aiAccountsTitle => 'AI Accounts';
+
+  @override
+  String get aiAccountsEmpty => 'No accounts';
+
+  @override
+  String get aiOllamaTitle => 'Ollama Models';
+
+  @override
+  String get aiOllamaEmpty => 'No models';
+
+  @override
+  String get aiOllamaSync => 'Sync';
+
+  @override
+  String get aiOllamaSynced => 'Synced';
+
+  @override
+  String get aiOllamaSyncFailed => 'Sync failed';
+
+  @override
+  String get aiOllamaLoadFailed => 'Load failed';
+
+  @override
+  String get aiOllamaLoading => 'Loading';
+
+  @override
+  String get aiOllamaModified => 'Modified';
+
+  @override
+  String get aiAgentsTitle => 'AI Agents';
+
+  @override
+  String get databaseMongodbEmpty => 'No databases';
+
+  @override
+  String get databaseMysqlVariablesTitle => 'MySQL Variables';
+
+  @override
+  String get databaseMysqlVariablesEmpty => 'No variables';
+
+  @override
+  String get databasePgPrivilegesTitle => 'PostgreSQL Privileges';
+
+  @override
+  String get databasePgPrivilegesEmpty => 'No privileges';
+
+  @override
+  String get databaseRedisRdbTitle => 'RDB Persistence';
+
+  @override
+  String get databaseRedisRdbDesc => 'RDB snapshot';
+
+  @override
+  String get databaseRedisAofTitle => 'AOF Persistence';
+
+  @override
+  String get databaseRedisAofDesc => 'Append-only file';
+
+  @override
+  String get databaseSlowLogTitle => 'Slow Query Log';
+
+  @override
+  String get databaseSlowLogEmpty => 'No slow queries';
+
+  @override
+  String get databaseSlowLogDuration => 'Duration';
+
+  @override
+  String get databaseRemoteTitle => 'Remote';
+
+  @override
+  String get databaseRemoteTimeoutLabel => 'Timeout (s)';
+
+  @override
+  String get databaseRemoteTestBeforeSave => 'Test connection before saving';
+
+  @override
+  String get containerInspectEntrypoint => 'Entrypoint';
+
+  @override
+  String get containerInspectWorkingDir => 'Working Dir';
+
+  @override
+  String get containerInspectGateway => 'Gateway';
+
+  @override
+  String get dockerConfigTitle => 'Docker Configuration';
+
+  @override
+  String get containerMaintenanceTitle => 'Container Maintenance';
+
+  @override
+  String get containerMaintenanceCommitTitle => 'Commit Container';
+
+  @override
+  String get containerMaintenanceCommitMessage => 'Commit Message (optional)';
+
+  @override
+  String get containerMaintenanceNewImageName =>
+      'New Image Name (e.g. myimage:v1)';
+
+  @override
+  String get containerMaintenanceCommit => 'Commit';
+
+  @override
+  String get containerMaintenanceCommitted => 'Committed';
+
+  @override
+  String get containerMaintenanceCommitFailed => 'Commit failed';
+
+  @override
+  String get containerMaintenancePruneTitle => 'Prune Stopped Containers';
+
+  @override
+  String get containerMaintenancePrune => 'Prune';
+
+  @override
+  String get containerMaintenancePruneFailed => 'Prune failed';
+
+  @override
+  String get containerMaintenanceContainerId => 'Container ID';
+
+  @override
+  String get containerFilesTitle => 'Files';
+
+  @override
+  String get containerFilesEmpty => 'No files';
+
+  @override
+  String get imageOpsTitle => 'Image Operations';
+
+  @override
+  String get imageOpsPushImage => 'Push Image';
+
+  @override
+  String get imageOpsPush => 'Push';
+
+  @override
+  String get imageOpsPushStarted => 'Push started';
+
+  @override
+  String get imageOpsPushFailed => 'Push failed';
+
+  @override
+  String get imageOpsSaveImage => 'Save Image to Tar';
+
+  @override
+  String get imageOpsImageSaved => 'Image saved';
+
+  @override
+  String get imageOpsTagImage => 'Tag Image';
+
+  @override
+  String get imageOpsTag => 'Tag';
+
+  @override
+  String get imageOpsTagged => 'Tagged';
+
+  @override
+  String get imageOpsTagFailed => 'Tag failed';
+
+  @override
+  String get imageOpsSourceImage => 'Source image';
+
+  @override
+  String get imageOpsTargetTag => 'Target tag';
+
+  @override
+  String get imageOpsImageName => 'Image name';
+
+  @override
+  String get imageOpsImageNameHint => 'Image name (e.g. registry/myimage:v1)';
+
+  @override
+  String get toolboxSupervisorTitle => 'Supervisor';
+
+  @override
+  String get toolboxSupervisorStatusTitle => 'Supervisor Status';
+
+  @override
+  String get toolboxSupervisorEmpty => 'No processes';
+
+  @override
+  String get toolboxSupervisorNotInit => 'Not initialized';
+
+  @override
+  String get monitorSettingsStatus => 'Monitor Status';
+
+  @override
+  String fileHistoryTitleWith(String path) {
+    return 'History: $path';
+  }
+
+  @override
+  String filePermissionTitleWith(int count) {
+    return 'Permissions ($count files)';
+  }
+
+  @override
+  String aiOllamaSizeWith(String size) {
+    return 'Size: $size';
+  }
+
+  @override
+  String aiAgentsTypeWith(String type) {
+    return 'Type: $type';
+  }
+
+  @override
+  String databaseMongodbSizeWith(String size) {
+    return 'Size: $size';
+  }
+
+  @override
+  String databasePgPrivilegeWith(String privileges) {
+    return 'Privileges: $privileges';
+  }
+
+  @override
+  String databaseSlowLogTimeWith(String time) {
+    return 'Time: $time';
+  }
+
+  @override
+  String containerInspectIpWith(String ip) {
+    return 'IP: $ip';
+  }
+
+  @override
+  String monitorSettingsEdit(String key) {
+    return 'Edit $key';
+  }
+
+  @override
+  String get containerInspectTitle => 'Inspect';
+
+  @override
+  String get orchestrationTemplates => 'Templates';
+
+  @override
+  String get composeTemplateCreate => 'Create Template';
+
+  @override
+  String get composeTemplateEdit => 'Edit Template';
+
+  @override
+  String get composeTemplateContent => 'Template Content';
+
+  @override
+  String get composeTemplateNameRequired => 'Template name is required';
+
+  @override
+  String get composeTemplateEmpty => 'No templates';
+
+  @override
+  String get containerTerminal => 'Terminal';
+
+  @override
+  String composeTemplateDeleteConfirm(String name) {
+    return 'Delete template $name?';
+  }
+
+  @override
+  String get toolboxClamFilesTitle => 'Config Files';
+
+  @override
+  String get toolboxClamFileContent => 'File Content';
+
+  @override
+  String get toolboxClamFileReadonly => 'Log Content (read-only)';
+
+  @override
+  String get logsCenterTabWebsite => 'Website Logs';
+
+  @override
+  String get logsWebsiteSelectorLabel => 'Select Website';
+
+  @override
+  String get databaseUserListTitle => 'Database Users';
+
+  @override
+  String get databaseUserChangePassword => 'Change Password';
+
+  @override
+  String databaseUserDeleteConfirm(String name) {
+    return 'Delete user $name?';
+  }
+
+  @override
+  String get databaseUserNewPasswordLabel => 'New Password';
+
+  @override
+  String get aiAgentPluginsTitle => 'Agent Plugins';
+
+  @override
+  String get aiAgentInstalledPlugins => 'Installed Plugins';
+
+  @override
+  String get aiAgentPluginMarket => 'Plugin Market';
+
+  @override
+  String get aiAgentPluginSearchHint => 'Search market plugins';
+
+  @override
+  String get aiAgentPluginMarketEmpty => 'Search the market to find plugins';
+
+  @override
+  String get aiAgentPluginInstallConfirm => 'Install this plugin?';
+
+  @override
+  String get aiAgentPluginUninstall => 'Uninstall';
+
+  @override
+  String get aiAgentPluginUpgrade => 'Upgrade';
+
+  @override
+  String get hostDiagnosticsTitle => 'Runtime Diagnostics';
+
+  @override
+  String get hostDiagnosticsSummary => 'Diagnostics Summary';
+
+  @override
+  String get hostDiagnosticsCaptureTitle => 'Capture Profile';
+
+  @override
+  String get hostDiagnosticsDuration => 'Duration';
+
+  @override
+  String get hostDiagnosticsCapture => 'Capture';
+
+  @override
+  String get hostDiagnosticsGoroutines => 'Goroutine Dump';
+
+  @override
+  String get hostDiagnosticsCaptureDone => 'Profile captured';
+
+  @override
+  String get toolboxClamFreshStart => 'Freshclam Start';
+
+  @override
+  String get toolboxClamFreshStop => 'Freshclam Stop';
+
+  @override
+  String get toolboxClamFreshRestart => 'Freshclam Restart';
+
+  @override
+  String get websiteRoutingProxyStatusDelete => 'Proxy Status / Delete';
+
+  @override
+  String get databaseSourceAll => 'All';
+
+  @override
+  String get databaseSourceLocal => 'Local';
+
+  @override
+  String get databaseSourceRemote => 'Remote';
+
+  @override
+  String get databaseFormPgSuperuser => 'PostgreSQL Superuser';
+
+  @override
+  String get filePreviewLoadFailed => 'Failed to load file';
+
+  @override
+  String get filePreviewSaveFailed => 'Failed to save file';
+
+  @override
+  String get filePreviewLoadSuccess => 'File loaded';
+
+  @override
+  String get dashboardRefreshInterval => 'Refresh interval';
+
+  @override
+  String get dashboardInterval3s => '3 seconds';
+
+  @override
+  String get dashboardInterval5s => '5 seconds (default)';
+
+  @override
+  String get dashboardInterval10s => '10 seconds';
+
+  @override
+  String get dashboardInterval30s => '30 seconds';
+
+  @override
+  String get dashboardInterval1m => '1 minute';
+
+  @override
+  String get filePreviewLoadImageFailed => 'Failed to load image';
+
+  @override
+  String get filePreviewLoadPdfFailed => 'Failed to load PDF';
 }

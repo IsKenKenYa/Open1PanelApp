@@ -6,6 +6,7 @@ import 'package:onepanel_client/features/ai/widgets/ai_domain_tab_widget.dart';
 import 'package:onepanel_client/features/ai/widgets/ai_gpu_tab_widget.dart';
 import 'package:onepanel_client/features/ai/widgets/ai_mcp_tab_widget.dart';
 import 'package:onepanel_client/features/ai/widgets/ai_ollama_tab_widget.dart';
+import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 
 import 'package:provider/provider.dart';
@@ -40,19 +41,18 @@ class _AIPageState extends State<AIPage> with SingleTickerProviderStateMixin {
 
     return Consumer2<AIProvider, McpServerProvider>(
       builder: (context, provider, _, __) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.serverModuleAi),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(text: l10n.aiTabModels),
-                Tab(text: l10n.aiTabGpu),
-                Tab(text: l10n.aiTabDomain),
-                Tab(text: l10n.aiTabAgents),
-                Tab(text: l10n.aiTabMcp),
-              ],
-            ),
+        return ServerAwarePageScaffold(
+          title: l10n.serverModuleAi,
+          onServerChanged: () => provider.searchOllamaModels(),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: l10n.aiTabModels),
+              Tab(text: l10n.aiTabGpu),
+              Tab(text: l10n.aiTabDomain),
+              Tab(text: l10n.aiTabAgents),
+              Tab(text: l10n.aiTabMcp),
+            ],
           ),
           body: PartialErrorToastListener(
             errorMessage: provider.errorMessage,

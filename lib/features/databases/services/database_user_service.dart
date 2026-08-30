@@ -62,11 +62,38 @@ class DatabaseUserService {
       );
       return;
     }
-    await _repository.bindMysqlUser(
+    await _repository.createMysqlUser(
       item,
       username: username,
       password: password,
-      permission: permission,
+      host: permission,
+    );
+  }
+
+  /// V2 新体系：MySQL 用户列表/删除/改密。
+  Future<List<Map<String, dynamic>>> listMysqlUsers(DatabaseListItem item) {
+    return _repository.searchMysqlUsers(item);
+  }
+
+  Future<void> deleteMysqlUser(
+    DatabaseListItem item, {
+    required String username,
+    required String host,
+  }) {
+    return _repository.deleteMysqlUser(item, username: username, host: host);
+  }
+
+  Future<void> changeMysqlUserPassword(
+    DatabaseListItem item, {
+    required String username,
+    required String host,
+    required String password,
+  }) {
+    return _repository.changeMysqlUserPassword(
+      item,
+      username: username,
+      host: host,
+      password: password,
     );
   }
 

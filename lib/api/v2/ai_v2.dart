@@ -877,6 +877,79 @@ class AIV2Api {
   }
 
   /// 批量操作 Agent。
+  // ── Agent 插件与账户模型发现（V2 新增）──
+
+  /// 获取 Agent 插件列表。
+  Future<Response<List<Map<String, dynamic>>>> listAgentPlugins(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/plugins/list'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataList(response.data)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 搜索插件市场。
+  Future<Response<List<Map<String, dynamic>>>> searchAgentPlugins(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/agents/plugins/search'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataList(response.data)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 安装插件市场插件（package=市场包）。
+  Future<Response<void>> installAgentMarketPlugin(
+      Map<String, dynamic> request) {
+    return _client.post(
+      ApiConstants.buildApiPath('/ai/agents/plugins/install'),
+      data: request,
+    );
+  }
+
+  /// 插件操作（enable/disable/uninstall/upgrade）。
+  Future<Response<void>> operateAgentPlugin(Map<String, dynamic> request) {
+    return _client.post(
+      ApiConstants.buildApiPath('/ai/agents/plugins/operate'),
+      data: request,
+    );
+  }
+
+  /// 从账户供应商发现可用模型。
+  Future<Response<List<Map<String, dynamic>>>> discoverAgentAccountModels(
+      Map<String, dynamic> request) async {
+    final response = await _client.post(
+      ApiConstants.buildApiPath('/ai/accounts/models/discover'),
+      data: request,
+    );
+    return Response(
+      data: _unwrapDataList(response.data)
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList(),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
   Future<Response<List<Map<String, dynamic>>>> batchOperateAgent(
       Map<String, dynamic> request) async {
     final response = await _client.post(

@@ -5,6 +5,51 @@ import 'package:onepanel_client/core/config/api_config.dart';
 
 void main() {
   group('ServerConnectionService', () {
+    test('resolveConnectionFailure 透出白名单拒绝的服务端原因并附修复提示', () {
+      // 回归：1Panel IP 白名单拒绝返回 HTTP 200 + {code:401, message:...}，
+      // 客户端曾笼统报 "Invalid response from server"，掩盖真实原因。
+      final result = resolveConnectionFailure(const {
+        'code': 401,
+        'message': '调用 API 接口 IP 不在白名单',
+        'data': null,
+      }, const Duration(milliseconds: 120));
+
+      expect(result.success, isFalse);
+      expect(result.errorMessage, contains('调用 API 接口 IP 不在白名单'));
+      expect(result.errorMessage, contains('0.0.0.0/0'));
+      expect(result.responseTime, isNotNull);
+    });
+
+    test('resolveConnectionFailure 透出其他服务端 message', () {
+      final result = resolveConnectionFailure(const {
+        'code': 403,
+        'message': '时间戳校验失败',
+      }, const Duration(milliseconds: 30));
+
+      expect(result.success, isFalse);
+      expect(result.errorMessage, '时间戳校验失败');
+    });
+
+    test('resolveConnectionFailure 无 message 时回退笼统错误', () {
+      final result = resolveConnectionFailure(
+        const {'code': 500, 'message': null},
+        const Duration(milliseconds: 10),
+      );
+
+      expect(result.success, isFalse);
+      expect(result.errorMessage, 'Invalid response from server');
+    });
+
+    test('resolveConnectionFailure 处理空 data', () {
+      final result = resolveConnectionFailure(
+        null,
+        const Duration(milliseconds: 10),
+      );
+
+      expect(result.success, isFalse);
+      expect(result.errorMessage, 'Invalid response from server');
+    });
+
     test('ServerConnectionResult should be created correctly', () {
       const result = ServerConnectionResult(
         success: true,

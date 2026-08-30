@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/repositories/website_config_repository.dart';
 import 'package:onepanel_client/features/websites/widgets/website_async_state_view.dart';
@@ -47,29 +48,29 @@ class _WebsiteLeechPageState extends State<WebsiteLeechPage> {
         'enable': enable,
         ...?_config,
       });
-      if (mounted) SnackBarUtils.showSuccess(context, 'Updated');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonUpdated);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Update failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonUpdateFailed);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.displayName} - Anti-Leech')),
+      appBar: AppBar(title: Text('${widget.displayName} - ${context.l10n.websiteLeechTitle}')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,
         error: _error,
         onRetry: _load,
         child: _config == null
-            ? const Center(child: Text('No data'))
+            ?  Center(child: Text(context.l10n.commonEmpty))
             : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
                   Card(
                     child: SwitchListTile(
-                      title: const Text('Anti-Leech Protection'),
+                      title:  Text(context.l10n.websiteLeechProtection),
                       subtitle: Text(_config?['enable'] == true ? 'Enabled' : 'Disabled'),
                       value: _config?['enable'] == true,
                       onChanged: _update,

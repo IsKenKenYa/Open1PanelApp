@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/repositories/website_config_repository.dart';
 import 'package:onepanel_client/features/websites/widgets/website_async_state_view.dart';
@@ -57,13 +58,13 @@ class _WebsiteRedirectPageState extends State<WebsiteRedirectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.displayName} - Redirect')),
+      appBar: AppBar(title: Text('${widget.displayName} - ${context.l10n.websiteRedirectTitle}')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,
         error: _error,
         onRetry: _loadRules,
         child: _rules.isEmpty
-            ? const Center(child: Text('No redirect rules'))
+            ?  Center(child: Text(context.l10n.websiteRedirectEmpty))
             : ListView.builder(
                 itemCount: _rules.length,
                 itemBuilder: (context, index) {
@@ -83,7 +84,7 @@ class _WebsiteRedirectPageState extends State<WebsiteRedirectPage> {
                             _loadRules();
                           } catch (e) {
                             if (context.mounted) {
-                              SnackBarUtils.showError(context, 'Delete failed');
+                              SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
                             }
                           }
                         },

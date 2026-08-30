@@ -122,4 +122,20 @@ class OrchestrationService {
   Future<void> removeVolume(String volumeName) {
     return _repository.removeVolume(volumeName);
   }
+
+  Future<List<ContainerTemplate>> loadTemplates() {
+    return _repository.loadTemplates();
+  }
+
+  Future<void> createTemplate(ContainerTemplateOperate request) {
+    return _repository.createTemplate(request);
+  }
+
+  Future<void> updateTemplate(ContainerTemplateOperate request) {
+    return _repository.updateTemplate(request);
+  }
+
+  Future<void> deleteTemplates(List<int> ids) {
+    return _repository.deleteTemplates(ids);
+  }
 }

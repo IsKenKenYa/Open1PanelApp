@@ -70,14 +70,19 @@ class ServerConnectionService {
       stopwatch.stop();
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data as Map<String, dynamic>;
-        if (data['data'] != null) {
+        final data = response.data is Map<String, dynamic>
+            ? response.data as Map<String, dynamic>
+            : null;
+        if (data != null && data['data'] != null) {
           return ServerConnectionResult(
             success: true,
             osInfo: data['data'] as Map<String, dynamic>?,
             responseTime: stopwatch.elapsed,
           );
         }
+        // 1Panel 业务层错误（HTTP 200 + code != 200）透出服务端原因，
+        // 例如 IP 白名单拒绝：{"code":401,"message":"调用 API 接口 IP 不在白名单"}。
+        return resolveConnectionFailure(data, stopwatch.elapsed);
       }
 
       return ServerConnectionResult(
@@ -124,4 +129,35 @@ class ServerConnectionService {
       );
     }
   }
+}
+
+/// 将 1Panel 业务层错误响应解析为可诊断的失败结果。
+///
+/// 1Panel 拒绝请求时返回 HTTP 200 + 业务 code（如白名单 401），
+/// 服务端 message 是唯一可用的诊断信息，必须透出而非笼统报错。
+ServerConnectionResult resolveConnectionFailure(
+  Map<String, dynamic>? data,
+  Duration elapsed,
+) {
+  final message = data?['message']?.toString() ?? '';
+  if (message.contains('白名单') || message.toLowerCase().contains('whitelist')) {
+    return ServerConnectionResult(
+      success: false,
+      errorMessage:
+          '$message (请在面板 API 接口设置中将 IP 白名单改为 0.0.0.0/0 或添加当前出口 IP)',
+      responseTime: elapsed,
+    );
+  }
+  if (message.isNotEmpty) {
+    return ServerConnectionResult(
+      success: false,
+      errorMessage: message,
+      responseTime: elapsed,
+    );
+  }
+  return ServerConnectionResult(
+    success: false,
+    errorMessage: 'Invalid response from server',
+    responseTime: elapsed,
+  );
 }

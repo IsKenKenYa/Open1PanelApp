@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/website_v2.dart';
@@ -53,23 +54,23 @@ class _WebsiteAuthBasicPageState extends State<WebsiteAuthBasicPage> {
     try {
       final api = await _getApi();
       await api.updateWebsiteAuthConfig({'websiteId': widget.websiteId, 'id': userId, 'operate': 'delete'});
-      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonDeleted);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.displayName} - Auth')),
+      appBar: AppBar(title: Text('${widget.displayName} - ${context.l10n.websiteAuthBasicTitle}')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,
         error: _error,
         onRetry: _load,
         child: _users.isEmpty
-            ? const Center(child: Text('No auth users'))
+            ?  Center(child: Text(context.l10n.websiteAuthBasicEmpty))
             : ListView.builder(
                 itemCount: _users.length,
                 itemBuilder: (context, index) {

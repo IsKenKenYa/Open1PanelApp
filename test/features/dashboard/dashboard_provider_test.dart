@@ -9,14 +9,21 @@ class _FakeDashboardService extends DashboardService {
     this.dashboardData = const DashboardData(),
     this.cpuProcesses = const <ProcessInfo>[],
     this.memoryProcesses = const <ProcessInfo>[],
+    this.throwOnLoad = false,
   });
 
   DashboardData dashboardData;
   List<ProcessInfo> cpuProcesses;
   List<ProcessInfo> memoryProcesses;
+  bool throwOnLoad;
 
   @override
-  Future<DashboardData> loadDashboardData() async => dashboardData;
+  Future<DashboardData> loadDashboardData() async {
+    if (throwOnLoad) {
+      throw Exception('mock dashboard load failure');
+    }
+    return dashboardData;
+  }
 
   @override
   Future<({List<ProcessInfo> cpu, List<ProcessInfo> memory})>
@@ -403,6 +410,45 @@ void main() {
       final metrics = DashboardMetrics.fromJson(json);
 
       expect(metrics.uptime, equals(''));
+    });
+  });
+
+  group('DashboardProvider 行为补强（阶段3）', () {
+    test('refresh 复用 loadData 路径并保持 loaded 状态', () async {
+      final provider = DashboardProvider(
+        service: _FakeDashboardService(
+          dashboardData: const DashboardData(cpuPercent: 11.0),
+        ),
+      );
+
+      await provider.refresh();
+
+      expect(provider.status, DashboardStatus.loaded);
+      expect(provider.data.cpuPercent, 11.0);
+      expect(provider.errorMessage, isEmpty);
+    });
+
+    test('loadData 失败时进入 error 状态并记录错误信息', () async {
+      final provider = DashboardProvider(
+        service: _FakeDashboardService(throwOnLoad: true),
+      );
+
+      await provider.loadData();
+
+      expect(provider.status, DashboardStatus.error);
+      expect(provider.errorMessage, isNotEmpty);
+    });
+
+    test('toggleAutoRefresh 与 setRefreshInterval 状态一致', () async {
+      final provider = DashboardProvider(service: _FakeDashboardService());
+
+      expect(provider.autoRefreshEnabled, isFalse);
+      provider.toggleAutoRefresh(true);
+      expect(provider.autoRefreshEnabled, isTrue);
+      provider.setRefreshInterval(const Duration(seconds: 10));
+      expect(provider.refreshInterval, const Duration(seconds: 10));
+      provider.stopAutoRefresh();
+      expect(provider.autoRefreshEnabled, isFalse);
     });
   });
 }

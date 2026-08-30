@@ -431,9 +431,10 @@ class FileV2Api {
   /// @param request 文件读取请求
   /// @return 文件内容
   Future<Response<String>> readFile(FileRead request) async {
+    // V2 契约迁移：/files/read 已删除，整体读取改为 /files/content（{path, isDetail}）。
     final response = await _client.post(
-      ApiConstants.buildApiPath('/files/read'),
-      data: request.toJson(),
+      ApiConstants.buildApiPath('/files/content'),
+      data: <String, dynamic>{'path': request.path, 'isDetail': false},
     );
     return Response(
       data: response.data?.toString() ?? '',
@@ -446,8 +447,10 @@ class FileV2Api {
   Future<Response<FileReadByLineResponse>> readFileByLine(
     FileReadByLineRequest request,
   ) async {
+    // V2 契约迁移：按行读取路径参数化 -> /files/read/{type}
+    final type = Uri.encodeComponent(request.type);
     final response = await _client.post<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/files/read'),
+      ApiConstants.buildApiPath('/files/read/$type'),
       data: request.toJson(),
     );
     final wrapper = response.data ?? const <String, dynamic>{};

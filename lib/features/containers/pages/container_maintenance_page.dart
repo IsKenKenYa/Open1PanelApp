@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/container_v2.dart';
@@ -41,9 +42,9 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
         newImageName: _imageController.text,
         comment: _commitController.text,
       ));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Committed');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.containerMaintenanceCommitted);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Commit failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.containerMaintenanceCommitFailed);
     } finally {
       if (mounted) setState(() => _isCommitting = false);
     }
@@ -62,7 +63,7 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
         );
       }
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Prune failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.containerMaintenancePruneFailed);
     } finally {
       if (mounted) setState(() => _isPruning = false);
     }
@@ -71,7 +72,7 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Container Maintenance')),
+      appBar: AppBar(title:  Text(context.l10n.containerMaintenanceTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -81,29 +82,29 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Commit Container',
+                  Text(context.l10n.containerMaintenanceCommitTitle,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 12),
                   TextField(
                     controller: _containerIdController,
-                    decoration: const InputDecoration(
-                      labelText: 'Container ID',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.containerMaintenanceContainerId,
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _imageController,
-                    decoration: const InputDecoration(
-                      labelText: 'New Image Name (e.g. myimage:v1)',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.containerMaintenanceNewImageName,
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _commitController,
-                    decoration: const InputDecoration(
-                      labelText: 'Commit Message (optional)',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.containerMaintenanceCommitMessage,
                       border: OutlineInputBorder(),
                     ),
                     maxLines: 2,
@@ -117,7 +118,7 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.save),
-                    label: const Text('Commit'),
+                    label:  Text(context.l10n.containerMaintenanceCommit),
                   ),
                 ],
               ),
@@ -130,7 +131,7 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Prune Stopped Containers',
+                  Text(context.l10n.containerMaintenancePruneTitle,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   const Text(
@@ -144,7 +145,7 @@ class _ContainerMaintenancePageState extends State<ContainerMaintenancePage> {
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.cleaning_services),
-                    label: const Text('Prune'),
+                    label:  Text(context.l10n.containerMaintenancePrune),
                   ),
                 ],
               ),

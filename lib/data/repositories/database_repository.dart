@@ -373,12 +373,14 @@ class DatabaseRepository {
       });
       return;
     }
-    await api.bindMysqlUser({
+    // V2 契约迁移：/databases/bind 已删除，MySQL 用户创建走 /databases/users。
+    await api.createDatabaseUser(<String, dynamic>{
       'database': item.lookupName,
-      'db': item.name,
+      'dbs': <String>[item.name],
       'username': username,
-      'password': password,
-      'permission': '%',
+      'password': base64.encode(utf8.encode(password)),
+      'host': '%',
+      'description': '',
     });
   }
 

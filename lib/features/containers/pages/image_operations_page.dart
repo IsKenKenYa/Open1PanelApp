@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/container_v2.dart';
@@ -18,7 +19,6 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
   final _pushNameController = TextEditingController();
   final _sourceController = TextEditingController();
   final _targetController = TextEditingController();
-  bool _isBuilding = false;
   bool _isPushing = false;
   bool _isSaving = false;
   bool _isTagging = false;
@@ -42,9 +42,9 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
     try {
       final api = await _getApi();
       await api.pushImage(ImagePush(image: _pushNameController.text));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Push started');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.imageOpsPushStarted);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Push failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.imageOpsPushFailed);
     } finally {
       if (mounted) setState(() => _isPushing = false);
     }
@@ -56,9 +56,9 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
     try {
       final api = await _getApi();
       await api.saveImage(ImageSave(images: [_tagNameController.text], filePath: '/tmp/${_tagNameController.text}.tar'));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Image saved');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.imageOpsImageSaved);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Save failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonSaveFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -73,9 +73,9 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
         sourceImage: _sourceController.text,
         targetImage: _targetController.text,
       ));
-      if (mounted) SnackBarUtils.showSuccess(context, 'Tagged');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.imageOpsTagged);
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Tag failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.imageOpsTagFailed);
     } finally {
       if (mounted) setState(() => _isTagging = false);
     }
@@ -84,7 +84,7 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Image Operations')),
+      appBar: AppBar(title:  Text(context.l10n.imageOpsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -95,12 +95,12 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Push Image', style: Theme.of(context).textTheme.titleMedium),
+                  Text(context.l10n.imageOpsPushImage, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _pushNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Image name (e.g. registry/myimage:v1)',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.imageOpsImageNameHint,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -110,7 +110,7 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
                     icon: _isPushing
                         ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.upload),
-                    label: const Text('Push'),
+                    label:  Text(context.l10n.imageOpsPush),
                   ),
                 ],
               ),
@@ -124,12 +124,12 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Save Image to Tar', style: Theme.of(context).textTheme.titleMedium),
+                  Text(context.l10n.imageOpsSaveImage, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _tagNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Image name',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.imageOpsImageName,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -139,7 +139,7 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
                     icon: _isSaving
                         ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.download),
-                    label: const Text('Save'),
+                    label:  Text(context.l10n.commonSave),
                   ),
                 ],
               ),
@@ -153,20 +153,20 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Tag Image', style: Theme.of(context).textTheme.titleMedium),
+                  Text(context.l10n.imageOpsTagImage, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _sourceController,
-                    decoration: const InputDecoration(
-                      labelText: 'Source image',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.imageOpsSourceImage,
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _targetController,
-                    decoration: const InputDecoration(
-                      labelText: 'Target tag',
+                    decoration:  InputDecoration(
+                      labelText: context.l10n.imageOpsTargetTag,
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -176,7 +176,7 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
                     icon: _isTagging
                         ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.label),
-                    label: const Text('Tag'),
+                    label:  Text(context.l10n.imageOpsTag),
                   ),
                 ],
               ),

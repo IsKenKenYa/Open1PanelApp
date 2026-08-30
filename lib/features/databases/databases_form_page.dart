@@ -238,7 +238,7 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
                       SwitchListTile.adaptive(
                         value: _postgresqlSuperUser,
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('PostgreSQL Superuser'),
+                        title: Text(context.l10n.databaseFormPgSuperuser),
                         onChanged: (value) {
                           setState(() {
                             _postgresqlSuperUser = value;

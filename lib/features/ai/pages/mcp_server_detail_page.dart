@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/ai/mcp_server_service.dart';
 
@@ -51,17 +52,17 @@ class _McpServerDetailPageState extends State<McpServerDetailPage> {
         );
       }
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Test failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.mcpServerDetailTestFailed);
     }
   }
 
   Future<void> _syncStatus() async {
     try {
       await _service.syncStatus(widget.serverId);
-      if (mounted) SnackBarUtils.showSuccess(context, 'Status synced');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.mcpServerDetailSynced);
       _loadDetail();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Sync failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.mcpServerDetailSyncFailed);
     }
   }
 
@@ -73,12 +74,12 @@ class _McpServerDetailPageState extends State<McpServerDetailPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.wifi_protected_setup),
-            tooltip: 'Sync status',
+            tooltip: context.l10n.mcpServerDetailSyncStatus,
             onPressed: _syncStatus,
           ),
           IconButton(
             icon: const Icon(Icons.plagiarism_outlined),
-            tooltip: 'Test connection',
+            tooltip: context.l10n.commonTestConnection,
             onPressed: _testConnection,
           ),
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadDetail),
@@ -89,7 +90,7 @@ class _McpServerDetailPageState extends State<McpServerDetailPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _detail == null
-                  ? const Center(child: Text('No data'))
+                  ?  Center(child: Text(context.l10n.commonEmpty))
                   : ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
@@ -97,11 +98,11 @@ class _McpServerDetailPageState extends State<McpServerDetailPage> {
                           child: Column(
                             children: [
                               ListTile(
-                                title: const Text('Server Name'),
+                                title:  Text(context.l10n.mcpServerDetailServerName),
                                 subtitle: Text(_detail?['name']?.toString() ?? ''),
                               ),
                               ListTile(
-                                title: const Text('Status'),
+                                title:  Text(context.l10n.aiMcpStatusLabel),
                                 subtitle: Text(_detail?['status']?.toString() ?? 'unknown'),
                                 trailing: Icon(
                                   _detail?['status'] == 'running'
@@ -113,11 +114,11 @@ class _McpServerDetailPageState extends State<McpServerDetailPage> {
                                 ),
                               ),
                               ListTile(
-                                title: const Text('URL'),
+                                title:  Text(context.l10n.commonUrl),
                                 subtitle: Text(_detail?['url']?.toString() ?? ''),
                               ),
                               ListTile(
-                                title: const Text('Transport'),
+                                title:  Text(context.l10n.aiMcpTransportLabel),
                                 subtitle: Text(_detail?['transport']?.toString() ?? ''),
                               ),
                             ],

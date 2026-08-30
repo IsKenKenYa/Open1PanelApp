@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 class TemplateCreateDialog extends StatefulWidget {
   final ContainerTemplate? template;
@@ -45,8 +46,7 @@ class _TemplateCreateDialogState extends State<TemplateCreateDialog> {
     return AlertDialog(
       title: Text(
           isEdit ? l10n.commonEditTemplate : l10n.orchestrationCreateTemplate),
-      content: SizedBox(
-        width: 600,
+      content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,

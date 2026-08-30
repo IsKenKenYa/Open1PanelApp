@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/website_v2.dart';
@@ -46,10 +47,10 @@ class _WebsiteLoadBalancerPageState extends State<WebsiteLoadBalancerPage> {
     try {
       final api = WebsiteV2Api(await ApiClientManager.instance.getCurrentClient());
       await api.deleteWebsiteLoadBalancer({'id': id});
-      if (mounted) SnackBarUtils.showSuccess(context, 'Deleted');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonDeleted);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Delete failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonDeleteFailed);
     }
   }
 
@@ -57,7 +58,7 @@ class _WebsiteLoadBalancerPageState extends State<WebsiteLoadBalancerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.displayName} - Load Balancer'),
+        title: Text('${widget.displayName} - ${context.l10n.websiteLoadBalancerTitle}'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -67,7 +68,7 @@ class _WebsiteLoadBalancerPageState extends State<WebsiteLoadBalancerPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _balancers.isEmpty
-                  ? const Center(child: Text('No load balancers'))
+                  ?  Center(child: Text(context.l10n.websiteLoadBalancerEmpty))
                   : ListView.builder(
                       itemCount: _balancers.length,
                       itemBuilder: (context, index) {

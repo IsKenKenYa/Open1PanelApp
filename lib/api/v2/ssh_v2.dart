@@ -15,6 +15,7 @@ class SshV2Api {
   Future<Response<SshInfo>> getSshInfo() async {
     final response = await _client.post<Map<String, dynamic>>(
       ApiConstants.buildApiPath('/hosts/ssh/search'),
+      data: const <String, dynamic>{},
     );
     return Response<SshInfo>(
       data: SshInfo.fromJson(

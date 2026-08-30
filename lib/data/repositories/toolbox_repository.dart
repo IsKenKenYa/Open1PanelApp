@@ -93,6 +93,25 @@ class ToolboxRepository {
     await api.operateClam(operation);
   }
 
+  Future<List<ClamFileInfo>> searchClamFileLines({
+    required String name,
+    String tail = '200',
+  }) async {
+    final api = await _ensureApi();
+    final response = await api.searchClamFiles(
+      ClamFileReq(name: name, tail: tail),
+    );
+    return response.data?.items ?? const <ClamFileInfo>[];
+  }
+
+  Future<void> updateClamFile({
+    required String name,
+    required String file,
+  }) async {
+    final api = await _ensureApi();
+    await api.updateClamFile(ClamFileUpdateReq(name: name, file: file));
+  }
+
   Future<void> cleanClamRecords(int id) async {
     final api = await _ensureApi();
     await api.cleanClamRecords(OperateByID(id: id));

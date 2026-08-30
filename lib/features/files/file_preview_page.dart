@@ -373,7 +373,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           children: [
             Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text('Failed to load image'),
+            Text(context.l10n.filePreviewLoadImageFailed),
           ],
         ),
       );
@@ -597,7 +597,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           children: [
             Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text('Failed to load PDF'),
+            Text(context.l10n.filePreviewLoadPdfFailed),
           ],
         ),
       );

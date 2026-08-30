@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/repositories/website_config_repository.dart';
 import 'package:onepanel_client/features/websites/widgets/website_async_state_view.dart';
 
@@ -47,11 +48,11 @@ class _WebsiteLogPageState extends State<WebsiteLogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.displayName} - Logs'),
+        title: Text('${widget.displayName} - ${context.l10n.commonLogs}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.cleaning_services_outlined),
-            tooltip: 'Clear logs',
+            tooltip: context.l10n.websiteLogClear,
             onPressed: () async {
               await _repo.operateWebsiteLog({
                 'websiteId': widget.websiteId,
@@ -71,7 +72,7 @@ class _WebsiteLogPageState extends State<WebsiteLogPage> {
         error: _error,
         onRetry: _load,
         child: _logs.isEmpty
-            ? const Center(child: Text('No logs'))
+            ?  Center(child: Text(context.l10n.websiteLogEmpty))
             : ListView.builder(
                 itemCount: _logs.length,
                 itemBuilder: (context, index) {

@@ -5,6 +5,7 @@ import 'package:onepanel_client/features/ai/ai_page.dart';
 import 'package:onepanel_client/features/ai/mcp_server_provider.dart';
 import 'package:onepanel_client/features/ai/ai_provider.dart';
 import 'package:onepanel_client/l10n/generated/app_localizations.dart';
+import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -12,12 +13,15 @@ void main() {
     final navigatorKey = GlobalKey<NavigatorState>();
 
     await tester.pumpWidget(
-      MaterialApp(
-        navigatorKey: navigatorKey,
-        onGenerateRoute: AppRouter.generateRoute,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const SizedBox.shrink(),
+      ChangeNotifierProvider(
+        create: (_) => CurrentServerController(),
+        child: MaterialApp(
+          navigatorKey: navigatorKey,
+          onGenerateRoute: AppRouter.generateRoute,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const SizedBox.shrink(),
+        ),
       ),
     );
     await tester.pump();

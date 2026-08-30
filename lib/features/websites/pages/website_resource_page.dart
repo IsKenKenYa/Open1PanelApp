@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/repositories/website_config_repository.dart';
 import 'package:onepanel_client/features/websites/widgets/website_async_state_view.dart';
 
@@ -44,7 +45,7 @@ class _WebsiteResourcePageState extends State<WebsiteResourcePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.displayName} - Resource'),
+        title: Text('${widget.displayName} - ${context.l10n.websiteResourceTitle}'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -54,7 +55,7 @@ class _WebsiteResourcePageState extends State<WebsiteResourcePage> {
         error: _error,
         onRetry: _load,
         child: _resource == null
-            ? const Center(child: Text('No data'))
+            ?  Center(child: Text(context.l10n.commonEmpty))
             : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [

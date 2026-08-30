@@ -524,12 +524,8 @@ class _MonitorSettingsDialogState extends State<_MonitorSettingsDialog> {
     return AlertDialog(
       title: Text(l10n.monitorSettings),
       content: _isLoading
-          ? const SizedBox(
-              width: 300,
-              child: Center(child: CircularProgressIndicator()),
-            )
-          : SizedBox(
-              width: 400,
+          ? const Center(child: CircularProgressIndicator())
+          : SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

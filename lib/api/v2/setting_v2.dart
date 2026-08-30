@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:dio/dio.dart'
     show Response, Options, ResponseType, DioException;
 import '../../core/network/dio_client.dart';
@@ -56,24 +57,6 @@ class SettingV2Api {
     );
   }
 
-  /// 通过key获取系统设置
-  ///
-  /// 通过key获取系统设置
-  /// @param key 设置key
-  /// @return 系统设置
-  Future<Response<SettingInfo>> getSystemSettingByKey(String key) async {
-    final response = await _client.post(
-      ApiConstants.buildApiPath('/core/settings/by'),
-      data: {'key': key},
-    );
-    final data = ApiResponseParser.asMapOrNull(response.data);
-    return Response(
-      data: data != null ? SettingInfo.fromJson(data) : null,
-      statusCode: response.statusCode,
-      statusMessage: response.statusMessage,
-      requestOptions: response.requestOptions,
-    );
-  }
 
   /// 更新系统设置
   ///
@@ -320,30 +303,25 @@ class SettingV2Api {
 
   /// 处理过期
   ///
-  /// 处理系统过期
-  /// @param request 过期处理请求
-  /// @return 处理结果
-  Future<Response<void>> handleExpired(ExpiredHandle request) async {
-    return await _client.post(
-      ApiConstants.buildApiPath('/core/settings/expired/handle'),
-      data: request.toJson(),
-    );
-  }
 
   /// 生成API密钥
   ///
   /// 生成新的API密钥
   /// @return API密钥生成结果
   Future<Response<dynamic>> generateApiKey() async {
-    final response = await _client.post(
-      ApiConstants.buildApiPath('/core/settings/api/config/generate/key'),
+    // V2 契约迁移：/core/settings/api/config/generate/key 已删除。
+    // 新版 API 密钥存储于设置键 ApiKey，客户端生成随机密钥后经 settings/update 保存。
+    final key = _generateRandomApiKey();
+    return updateSystemSetting(
+      SettingUpdate(key: 'ApiKey', value: key),
     );
-    return Response(
-      data: _extractDataRaw(response.data),
-      statusCode: response.statusCode,
-      statusMessage: response.statusMessage,
-      requestOptions: response.requestOptions,
-    );
+  }
+
+  static String _generateRandomApiKey() {
+    final random = Random.secure();
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return List.generate(32, (_) => chars[random.nextInt(chars.length)]).join();
   }
 
   /// 更新API配置
@@ -351,11 +329,20 @@ class SettingV2Api {
   /// 更新API配置
   /// @param request API配置更新请求
   /// @return 更新结果
-  Future<Response<void>> updateApiConfig(ApiConfigUpdate request) async {
-    return await _client.post(
-      ApiConstants.buildApiPath('/core/settings/api/config/update'),
-      data: request.toJson(),
-    );
+  Future<void> updateApiConfig(ApiConfigUpdate request) async {
+    // V2 契约迁移：/core/settings/api/config/update 已删除，
+    // API 配置项保存为设置键（ApiInterfaceStatus/IPWhiteList/ApiKeyValidityTime）。
+    final updates = <String, String>{
+      if (request.status != null) 'ApiInterfaceStatus': request.status!,
+      if (request.ipWhiteList != null) 'IPWhiteList': request.ipWhiteList!,
+      if (request.validityTime != null)
+        'ApiKeyValidityTime': request.validityTime.toString(),
+    };
+    for (final entry in updates.entries) {
+      await updateSystemSetting(
+        SettingUpdate(key: entry.key, value: entry.value),
+      );
+    }
   }
 
   /// 获取应用商店配置

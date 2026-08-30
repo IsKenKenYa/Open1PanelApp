@@ -84,18 +84,34 @@ void main() {
       });
 
       test('ClamFileReq应该正确序列化和反序列化', () {
+        // V2 契约：{name, tail}（对齐 swagger dto.ClamFileReq）
         final model = ClamFileReq(
-          clamId: 1,
-          name: 'test.txt',
-          page: 1,
-          pageSize: 20,
+          name: 'clamd',
+          tail: '200',
         );
 
         final json = model.toJson();
         final restored = ClamFileReq.fromJson(json);
 
-        expect(restored.clamId, equals(model.clamId));
-        expect(restored.page, equals(model.page));
+        expect(restored.name, equals(model.name));
+        expect(restored.tail, equals(model.tail));
+        expect(json, equals({'name': 'clamd', 'tail': '200'}));
+      });
+
+      test('ClamFileUpdateReq应该正确序列化和反序列化', () {
+        // V2 契约：{name, file}（对齐 swagger dto.UpdateByNameAndFile）
+        final model = ClamFileUpdateReq(
+          name: 'clamd',
+          file: 'Example "/* comment */"\nMaxScanSize 100M',
+        );
+
+        final json = model.toJson();
+        final restored = ClamFileUpdateReq.fromJson(json);
+
+        expect(restored.name, equals(model.name));
+        expect(restored.file, equals(model.file));
+        expect(json.containsKey('name'), isTrue);
+        expect(json.containsKey('file'), isTrue);
       });
     });
 

@@ -95,13 +95,15 @@ void main() {
         .thenAnswer((_) async => const <String>[]);
   });
 
-  testWidgets('LogsCenterPage renders four tabs', (tester) async {
+  testWidgets('LogsCenterPage renders five tabs', (tester) async {
     await pumpPage(tester);
 
-    expect(find.text('Operation'), findsWidgets);
-    expect(find.text('Login'), findsWidgets);
-    expect(find.text('Task'), findsWidgets);
-    expect(find.text('System'), findsWidgets);
+    // 5 个 tab 超出屏宽，滚动 TabBar 尾部 tab 会被视口裁剪，需 skipOffstage。
+    expect(find.text('Operation', skipOffstage: false), findsWidgets);
+    expect(find.text('Login', skipOffstage: false), findsWidgets);
+    expect(find.text('Task', skipOffstage: false), findsWidgets);
+    expect(find.text('System', skipOffstage: false), findsWidgets);
+    expect(find.text('Website Logs', skipOffstage: false), findsWidgets);
   });
 
   testWidgets('LogsCenterPage does not load when no server is active',

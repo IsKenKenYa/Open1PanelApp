@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/container_v2.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
@@ -50,7 +51,7 @@ class _ContainerInspectPageState extends State<ContainerInspectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.containerName} - Inspect'),
+        title: Text('${widget.containerName} - ${context.l10n.containerInspectTitle}'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -60,7 +61,7 @@ class _ContainerInspectPageState extends State<ContainerInspectPage> {
           : _error != null
               ? Center(child: Text(_error!))
               : _inspectData == null
-                  ? const Center(child: Text('No data'))
+                  ?  Center(child: Text(context.l10n.commonEmpty))
                   : DefaultTabController(
                       length: 3,
                       child: Column(
@@ -92,10 +93,10 @@ class _ContainerInspectPageState extends State<ContainerInspectPage> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Card(child: ListTile(title: const Text('Image'), subtitle: Text(config['Image']?.toString() ?? ''))),
-        Card(child: ListTile(title: const Text('Command'), subtitle: Text(config['Cmd']?.toString() ?? ''))),
-        Card(child: ListTile(title: const Text('Working Dir'), subtitle: Text(config['WorkingDir']?.toString() ?? ''))),
-        Card(child: ListTile(title: const Text('Entrypoint'), subtitle: Text(config['Entrypoint']?.toString() ?? ''))),
+        Card(child: ListTile(title:  Text(context.l10n.commonImage), subtitle: Text(config[context.l10n.commonImage]?.toString() ?? ''))),
+        Card(child: ListTile(title:  Text(context.l10n.commonCommand), subtitle: Text(config['Cmd']?.toString() ?? ''))),
+        Card(child: ListTile(title:  Text(context.l10n.containerInspectWorkingDir), subtitle: Text(config['WorkingDir']?.toString() ?? ''))),
+        Card(child: ListTile(title:  Text(context.l10n.containerInspectEntrypoint), subtitle: Text(config[context.l10n.containerInspectEntrypoint]?.toString() ?? ''))),
       ],
     );
   }
@@ -110,7 +111,7 @@ class _ContainerInspectPageState extends State<ContainerInspectPage> {
         return Card(
           child: ListTile(
             title: Text(name.toString()),
-            subtitle: Text('IP: ${net['IPAddress'] ?? 'N/A'} | Gateway: ${net['Gateway'] ?? 'N/A'}'),
+            subtitle: Text('${context.l10n.containerInspectIpWith(net['IPAddress'] ?? 'N/A')} | ${context.l10n.containerInspectGateway}: ${net['Gateway'] ?? 'N/A'}'),
           ),
         );
       }).toList(),

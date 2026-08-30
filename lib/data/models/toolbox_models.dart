@@ -294,40 +294,60 @@ class ClamBaseInfo extends Equatable {
       ];
 }
 
-/// Clam文件搜索请求
+/// Clam文件搜索请求（V2 契约：{name, tail}）
 class ClamFileReq extends Equatable {
-  final int? clamId;
   final String? name;
-  final int? page;
-  final int? pageSize;
+  final String? tail;
 
   const ClamFileReq({
-    this.clamId,
     this.name,
-    this.page,
-    this.pageSize,
+    this.tail,
   });
 
   factory ClamFileReq.fromJson(Map<String, dynamic> json) {
     return ClamFileReq(
-      clamId: json['clamId'] as int?,
       name: json['name'] as String?,
-      page: json['page'] as int?,
-      pageSize: json['pageSize'] as int?,
+      tail: json['tail'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'clamId': clamId,
       'name': name,
-      'page': page,
-      'pageSize': pageSize,
+      'tail': tail,
     };
   }
 
   @override
-  List<Object?> get props => [clamId, name, page, pageSize];
+  List<Object?> get props => [name, tail];
+}
+
+/// Clam文件更新请求（V2 契约：{name, file}）
+class ClamFileUpdateReq extends Equatable {
+  final String? name;
+  final String? file;
+
+  const ClamFileUpdateReq({
+    this.name,
+    this.file,
+  });
+
+  factory ClamFileUpdateReq.fromJson(Map<String, dynamic> json) {
+    return ClamFileUpdateReq(
+      name: json['name'] as String?,
+      file: json['file'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'file': file,
+    };
+  }
+
+  @override
+  List<Object?> get props => [name, file];
 }
 
 /// Clam日志搜索请求

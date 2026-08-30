@@ -57,7 +57,7 @@ class TestRunner {
     return 'flutter';
   }
 
-  static Future<void> runTests(String testPath, {String? description}) async {
+  static Future<bool> runTests(String testPath, {String? description}) async {
     if (description != null) {
       printHeader(description);
     }
@@ -68,9 +68,10 @@ class TestRunner {
 
     if (exitCode == 0) {
       printSuccess('测试通过');
-    } else {
-      printError('测试失败 (退出码: $exitCode)');
+      return true;
     }
+    printError('测试失败 (退出码: $exitCode)');
+    return false;
   }
 
   static String get liveTestTimeout {
@@ -92,7 +93,7 @@ class TestRunner {
     return raw == 'true' || raw == '1' || raw == 'yes';
   }
 
-  static Future<void> runLiveTestWithRetry(
+  static Future<bool> runLiveTestWithRetry(
     String testPath, {
     String? description,
   }) async {
@@ -128,12 +129,20 @@ class TestRunner {
     } else {
       printError('测试失败 (重试后仍未通过)');
     }
+    return success;
   }
 
-  static Future<void> runAllTests() async {
+  static Future<bool> runAllTests() async {
     printHeader('运行全量回归测试');
     final flutter = await resolveFlutterCommand();
-    await runCommand(flutter, ['test', '--reporter=expanded']);
+    final exitCode =
+        await runCommand(flutter, ['test', '--reporter=expanded']);
+    if (exitCode == 0) {
+      printSuccess('全量测试通过');
+      return true;
+    }
+    printError('全量测试失败 (退出码: $exitCode)');
+    return false;
   }
 
   static const List<String> _uiTestExcludedPrefixes = <String>[
@@ -247,13 +256,16 @@ class TestRunner {
     return false;
   }
 
-  static Future<void> runUnitTests({String? moduleFilter}) async {
+  static Future<bool> runUnitTests({String? moduleFilter}) async {
     printHeader('运行单元测试');
     final normalizedFilter = moduleFilter?.toLowerCase();
+    var failures = 0;
 
     if (normalizedFilter == null || normalizedFilter.isEmpty) {
-      await runTests('test/api/', description: 'API单元测试');
-      await runTests('test/auth/', description: '认证单元测试');
+      final okApi = await runTests('test/api/', description: 'API单元测试');
+      final okAuth = await runTests('test/auth/', description: '认证单元测试');
+      if (!okApi) failures++;
+      if (!okAuth) failures++;
     } else {
       printInfo('已启用模块过滤: $normalizedFilter');
     }
@@ -265,7 +277,8 @@ class TestRunner {
     } else {
       for (final file in alignmentTests) {
         final name = file.split('/').last;
-        await runTests(file, description: 'API对齐测试: $name');
+        final ok = await runTests(file, description: 'API对齐测试: $name');
+        if (!ok) failures++;
       }
     }
 
@@ -281,69 +294,105 @@ class TestRunner {
             .skipWhile((e) => e != 'features')
             .toList();
         final label = name.isEmpty ? normalizedPath : name.join('/');
-        await runTests(dir, description: 'Feature单测: $label');
+        final ok = await runTests(dir, description: 'Feature单测: $label');
+        if (!ok) failures++;
       }
     }
+
+    return _reportFailures('单元测试', failures);
   }
 
-  static Future<void> runIntegrationTests({String? moduleFilter}) async {
+  static bool _reportFailures(String label, int failures) {
+    if (failures > 0) {
+      printError('$label共 $failures 个套件失败');
+      return false;
+    }
+    return true;
+  }
+
+  static Future<bool> runIntegrationTests({String? moduleFilter}) async {
     printHeader('运行集成测试');
     if (!liveApiEnabled) {
       printWarning('未开启真实API测试环境，跳过集成测试');
       printInfo('提示: 设置 RUN_LIVE_API_TESTS=true 以运行真实API测试');
-      return;
+      return true;
     }
 
+    final normalizedFilter = moduleFilter?.toLowerCase();
+    var failures = 0;
+
+    // test/api_client: 真实 API 契约测试（排除 *_alignment_test.dart 静态套件）。
     final apiDir = Directory('test/api_client');
     if (await apiDir.exists()) {
-      final normalizedFilter = moduleFilter?.toLowerCase();
       final files = await apiDir.list().toList();
       final testFiles = files
           .whereType<File>()
           .where((f) =>
               f.path.endsWith('_test.dart') &&
               !f.path.contains('_alignment_test.dart'))
-          .where((f) {
-            if (normalizedFilter == null || normalizedFilter.isEmpty) {
-              return true;
-            }
-            return f.path
-                .split('/')
-                .last
-                .toLowerCase()
-                .contains(normalizedFilter);
-          })
+          .where((f) => _matchesModuleFilter(f.path, normalizedFilter))
           .map((f) => f.path)
           .toList();
 
-      if (testFiles.isEmpty) {
-        printInfo('未找到集成测试文件');
-        return;
-      }
-
       printInfo(
-          '发现 ${testFiles.length} 个集成测试，超时时间: $liveTestTimeout，重试次数: $liveTestRetries');
+          '发现 ${testFiles.length} 个 api_client 集成测试，超时时间: $liveTestTimeout，重试次数: $liveTestRetries');
 
       for (final testFile in testFiles) {
         final name = testFile.split('/').last;
-        await runLiveTestWithRetry(testFile, description: '集成测试: $name');
+        final ok =
+            await runLiveTestWithRetry(testFile, description: '集成测试: $name');
+        if (!ok) failures++;
       }
     }
+
+    // test/integration/: 模块级真服务器套件（文件内部自带 SkipConditions 门控）。
+    final integrationDir = Directory('test/integration');
+    if (await integrationDir.exists()) {
+      final files = await integrationDir.list().toList();
+      final testFiles = files
+          .whereType<File>()
+          .where((f) => f.path.endsWith('_test.dart'))
+          .where((f) => _matchesModuleFilter(f.path, normalizedFilter))
+          .map((f) => f.path)
+          .toList()
+        ..sort();
+
+      printInfo('发现 ${testFiles.length} 个 integration 目录测试');
+
+      for (final testFile in testFiles) {
+        final name = testFile.split('/').last;
+        final ok =
+            await runLiveTestWithRetry(testFile, description: '集成测试: $name');
+        if (!ok) failures++;
+      }
+    }
+
+    return _reportFailures('集成测试', failures);
   }
 
-  static Future<void> runUiTests() async {
+  static bool _matchesModuleFilter(String path, String? normalizedFilter) {
+    if (normalizedFilter == null || normalizedFilter.isEmpty) {
+      return true;
+    }
+    return path.split('/').last.toLowerCase().contains(normalizedFilter);
+  }
+
+  static Future<bool> runUiTests() async {
     printHeader('运行UI/Widget测试');
     final uiTests = await _discoverUiTests();
     if (uiTests.isEmpty) {
       printInfo('未发现 UI/Widget 测试文件');
-      return;
+      return true;
     }
 
     printInfo('发现 ${uiTests.length} 个 UI/Widget 测试文件');
+    var failures = 0;
     for (final testFile in uiTests) {
       final name = testFile.split('/').last;
-      await runTests(testFile, description: 'UI测试: $name');
+      final ok = await runTests(testFile, description: 'UI测试: $name');
+      if (!ok) failures++;
     }
+    return _reportFailures('UI测试', failures);
   }
 }
 
@@ -380,21 +429,26 @@ ${TestRunner.cyan}环境变量:${TestRunner.reset}
     }
   }
 
+  var ok = false;
   switch (command) {
     case 'all':
-      await TestRunner.runAllTests();
+      ok = await TestRunner.runAllTests();
       break;
     case 'unit':
-      await TestRunner.runUnitTests(moduleFilter: moduleFilter);
+      ok = await TestRunner.runUnitTests(moduleFilter: moduleFilter);
       break;
     case 'integration':
-      await TestRunner.runIntegrationTests(moduleFilter: moduleFilter);
+      ok = await TestRunner.runIntegrationTests(moduleFilter: moduleFilter);
       break;
     case 'ui':
-      await TestRunner.runUiTests();
+      ok = await TestRunner.runUiTests();
       break;
     default:
       TestRunner.printError('未知的命令: $command');
       exit(1);
+  }
+
+  if (!ok) {
+    exit(1);
   }
 }

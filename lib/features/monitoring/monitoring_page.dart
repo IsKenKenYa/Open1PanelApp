@@ -11,6 +11,7 @@ import 'monitoring_provider.dart';
 import 'widgets/monitor_chart.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 part 'monitoring_page_widgets.dart';
 

@@ -76,6 +76,10 @@ void main() {
         ),
       ),
     );
+    // 等 postFrame 的 load() 完成订阅后才能 add，否则 broadcast 事件丢失。
+    // load 会启动 3s 轮询定时器，须用固定 pump 而非 pumpAndSettle。
+    await tester.pump();
+    await tester.pump();
     controller.add(const <ProcessSummary>[
       ProcessSummary(
         pid: 1,
@@ -92,9 +96,19 @@ void main() {
         memoryValue: 10,
       ),
     ]);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump();
 
-    expect(find.text('sshd'), findsOneWidget);
+    final context = tester.element(find.byType(ProcessesPage));
+    final provider = context.read<ProcessesProvider>();
+    final texts = tester
+        .widgetList<Text>(find.byType(Text, skipOffstage: false))
+        .map((t) => t.data)
+        .take(20)
+        .toList();
+    expect(find.text('sshd'), findsOneWidget,
+        reason: 'state: loading=${provider.isLoading} isEmpty=${provider.isEmpty} '
+            'error=${provider.errorMessage} texts=$texts');
   });
 
   testWidgets('ProcessesPage does not connect when no server is active',

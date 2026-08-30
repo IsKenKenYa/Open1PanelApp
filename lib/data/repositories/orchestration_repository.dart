@@ -1,4 +1,5 @@
 import 'package:onepanel_client/api/v2/compose_v2.dart';
+import 'package:onepanel_client/api/v2/container_v2.dart';
 import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/api/v2/docker_v2.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
@@ -15,6 +16,8 @@ class OrchestrationRepository {
   Future<ComposeV2Api> _getComposeApi() => _clientManager.getComposeApi();
 
   Future<DockerV2Api> _getDockerApi() => _clientManager.getDockerApi();
+
+  Future<ContainerV2Api> _getContainerApi() => _clientManager.getContainerApi();
 
   Future<List<ComposeProject>> loadComposes({
     int page = 1,
@@ -158,5 +161,26 @@ class OrchestrationRepository {
   Future<void> removeVolume(String volumeName) async {
     final api = await _getDockerApi();
     await api.removeVolume(volumeName);
+  }
+
+  Future<List<ContainerTemplate>> loadTemplates() async {
+    final api = await _getContainerApi();
+    final response = await api.getTemplates();
+    return response.data ?? const <ContainerTemplate>[];
+  }
+
+  Future<void> createTemplate(ContainerTemplateOperate request) async {
+    final api = await _getContainerApi();
+    await api.createTemplate(request);
+  }
+
+  Future<void> updateTemplate(ContainerTemplateOperate request) async {
+    final api = await _getContainerApi();
+    await api.updateTemplate(request);
+  }
+
+  Future<void> deleteTemplates(List<int> ids) async {
+    final api = await _getContainerApi();
+    await api.deleteTemplate(BatchDelete(ids: ids));
   }
 }

@@ -7871,4 +7871,569 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get phpExtensionsLabel => '扩展';
+
+  @override
+  String get commonUpdated => '更新成功';
+
+  @override
+  String get commonUpdateFailed => '更新失败';
+
+  @override
+  String get commonOperationFailed => '操作失败';
+
+  @override
+  String get commonDeleted => '删除成功';
+
+  @override
+  String get commonDeleteFailed => '删除失败';
+
+  @override
+  String get commonTestConnection => '测试连接';
+
+  @override
+  String get commonTestPassed => '连接测试通过';
+
+  @override
+  String get commonTestFailed => '连接测试失败';
+
+  @override
+  String get commonAddress => '地址';
+
+  @override
+  String get commonVersion => '版本';
+
+  @override
+  String get commonStatus => '状态';
+
+  @override
+  String get commonSize => '大小';
+
+  @override
+  String get commonType => '类型';
+
+  @override
+  String get commonCommand => '命令';
+
+  @override
+  String get commonImage => '镜像';
+
+  @override
+  String get commonTimeout => '超时';
+
+  @override
+  String get commonOk => '确定';
+
+  @override
+  String get websiteHttpsUpdateFailed => '更新 HTTPS 配置失败';
+
+  @override
+  String get websiteHttpsHsts => 'HSTS';
+
+  @override
+  String get websiteHttpsSslCertificate => 'SSL 证书';
+
+  @override
+  String get websiteRedirectTitle => '重定向';
+
+  @override
+  String get websiteRedirectEmpty => '暂无重定向规则';
+
+  @override
+  String get websiteCorsTitle => 'CORS';
+
+  @override
+  String get websiteLeechTitle => '防盗链';
+
+  @override
+  String get websiteLeechProtection => '防盗链保护';
+
+  @override
+  String get websiteLogClear => '清空日志';
+
+  @override
+  String get websiteLogEmpty => '暂无日志';
+
+  @override
+  String get websiteAuthBasicTitle => '基础认证';
+
+  @override
+  String get websiteAuthBasicEmpty => '暂无认证用户';
+
+  @override
+  String get websiteResourceTitle => '资源';
+
+  @override
+  String get websiteLoadBalancerTitle => '负载均衡';
+
+  @override
+  String get websiteLoadBalancerEmpty => '暂无负载均衡';
+
+  @override
+  String get fileShareTitle => '文件分享';
+
+  @override
+  String get fileShareEmpty => '暂无分享';
+
+  @override
+  String get wgetTitle => 'WGET 下载';
+
+  @override
+  String get wgetEmpty => '暂无下载任务';
+
+  @override
+  String get wgetStopFailed => '停止失败';
+
+  @override
+  String get wgetStopped => '已停止';
+
+  @override
+  String get fileHistoryEmpty => '暂无历史';
+
+  @override
+  String get fileHistoryRestore => '恢复';
+
+  @override
+  String get fileHistoryRestored => '恢复成功';
+
+  @override
+  String get fileHistoryRestoreFailed => '恢复失败';
+
+  @override
+  String get filePermissionApply => '应用';
+
+  @override
+  String get filePermissionRecursive => '递归';
+
+  @override
+  String get filePermissionOwner => '所有者（如 root）';
+
+  @override
+  String get filePermissionGroup => '用户组（如 root）';
+
+  @override
+  String get filePermissionMode => '权限（如 0644、0755）';
+
+  @override
+  String get filePermissionUpdated => '权限已更新';
+
+  @override
+  String get recycleBinStatusTitle => '回收站状态';
+
+  @override
+  String get recycleBinTitle => '回收站';
+
+  @override
+  String get aiGpuHistoryTitle => 'GPU 历史';
+
+  @override
+  String get aiGpuHistoryEmpty => '暂无 GPU 数据';
+
+  @override
+  String get mcpServerDetailServerName => '服务器名称';
+
+  @override
+  String get mcpServerDetailSyncStatus => '同步状态';
+
+  @override
+  String get mcpServerDetailSynced => '状态已同步';
+
+  @override
+  String get mcpServerDetailSyncFailed => '同步失败';
+
+  @override
+  String get mcpServerDetailTestFailed => '测试失败';
+
+  @override
+  String get aiAccountsTitle => 'AI 账户';
+
+  @override
+  String get aiAccountsEmpty => '暂无账户';
+
+  @override
+  String get aiOllamaTitle => 'Ollama 模型';
+
+  @override
+  String get aiOllamaEmpty => '暂无模型';
+
+  @override
+  String get aiOllamaSync => '同步';
+
+  @override
+  String get aiOllamaSynced => '同步成功';
+
+  @override
+  String get aiOllamaSyncFailed => '同步失败';
+
+  @override
+  String get aiOllamaLoadFailed => '加载失败';
+
+  @override
+  String get aiOllamaLoading => '加载中';
+
+  @override
+  String get aiOllamaModified => '修改时间';
+
+  @override
+  String get aiAgentsTitle => 'AI 智能体';
+
+  @override
+  String get databaseMongodbEmpty => '暂无数据库';
+
+  @override
+  String get databaseMysqlVariablesTitle => 'MySQL 变量';
+
+  @override
+  String get databaseMysqlVariablesEmpty => '暂无变量';
+
+  @override
+  String get databasePgPrivilegesTitle => 'PostgreSQL 权限';
+
+  @override
+  String get databasePgPrivilegesEmpty => '暂无权限';
+
+  @override
+  String get databaseRedisRdbTitle => 'RDB 持久化';
+
+  @override
+  String get databaseRedisRdbDesc => 'RDB 快照';
+
+  @override
+  String get databaseRedisAofTitle => 'AOF 持久化';
+
+  @override
+  String get databaseRedisAofDesc => '仅追加文件';
+
+  @override
+  String get databaseSlowLogTitle => '慢查询日志';
+
+  @override
+  String get databaseSlowLogEmpty => '暂无慢查询';
+
+  @override
+  String get databaseSlowLogDuration => '耗时';
+
+  @override
+  String get databaseRemoteTitle => '远程';
+
+  @override
+  String get databaseRemoteTimeoutLabel => '超时（秒）';
+
+  @override
+  String get databaseRemoteTestBeforeSave => '保存前请先测试连接';
+
+  @override
+  String get containerInspectEntrypoint => '入口点';
+
+  @override
+  String get containerInspectWorkingDir => '工作目录';
+
+  @override
+  String get containerInspectGateway => '网关';
+
+  @override
+  String get dockerConfigTitle => 'Docker 配置';
+
+  @override
+  String get containerMaintenanceTitle => '容器维护';
+
+  @override
+  String get containerMaintenanceCommitTitle => '提交容器';
+
+  @override
+  String get containerMaintenanceCommitMessage => '提交信息（可选）';
+
+  @override
+  String get containerMaintenanceNewImageName => '新镜像名（如 myimage:v1）';
+
+  @override
+  String get containerMaintenanceCommit => '提交';
+
+  @override
+  String get containerMaintenanceCommitted => '提交成功';
+
+  @override
+  String get containerMaintenanceCommitFailed => '提交失败';
+
+  @override
+  String get containerMaintenancePruneTitle => '清理已停止容器';
+
+  @override
+  String get containerMaintenancePrune => '清理';
+
+  @override
+  String get containerMaintenancePruneFailed => '清理失败';
+
+  @override
+  String get containerMaintenanceContainerId => '容器 ID';
+
+  @override
+  String get containerFilesTitle => '文件';
+
+  @override
+  String get containerFilesEmpty => '暂无文件';
+
+  @override
+  String get imageOpsTitle => '镜像操作';
+
+  @override
+  String get imageOpsPushImage => '推送镜像';
+
+  @override
+  String get imageOpsPush => '推送';
+
+  @override
+  String get imageOpsPushStarted => '推送已开始';
+
+  @override
+  String get imageOpsPushFailed => '推送失败';
+
+  @override
+  String get imageOpsSaveImage => '保存镜像为 Tar';
+
+  @override
+  String get imageOpsImageSaved => '镜像已保存';
+
+  @override
+  String get imageOpsTagImage => '标记镜像';
+
+  @override
+  String get imageOpsTag => '标记';
+
+  @override
+  String get imageOpsTagged => '标记成功';
+
+  @override
+  String get imageOpsTagFailed => '标记失败';
+
+  @override
+  String get imageOpsSourceImage => '源镜像';
+
+  @override
+  String get imageOpsTargetTag => '目标标签';
+
+  @override
+  String get imageOpsImageName => '镜像名';
+
+  @override
+  String get imageOpsImageNameHint => '镜像名（如 registry/myimage:v1）';
+
+  @override
+  String get toolboxSupervisorTitle => 'Supervisor';
+
+  @override
+  String get toolboxSupervisorStatusTitle => 'Supervisor 状态';
+
+  @override
+  String get toolboxSupervisorEmpty => '暂无进程';
+
+  @override
+  String get toolboxSupervisorNotInit => '未初始化';
+
+  @override
+  String get monitorSettingsStatus => '监控状态';
+
+  @override
+  String fileHistoryTitleWith(String path) {
+    return '历史: $path';
+  }
+
+  @override
+  String filePermissionTitleWith(int count) {
+    return '权限（$count 个文件）';
+  }
+
+  @override
+  String aiOllamaSizeWith(String size) {
+    return '大小: $size';
+  }
+
+  @override
+  String aiAgentsTypeWith(String type) {
+    return '类型: $type';
+  }
+
+  @override
+  String databaseMongodbSizeWith(String size) {
+    return '大小: $size';
+  }
+
+  @override
+  String databasePgPrivilegeWith(String privileges) {
+    return '权限: $privileges';
+  }
+
+  @override
+  String databaseSlowLogTimeWith(String time) {
+    return '时间: $time';
+  }
+
+  @override
+  String containerInspectIpWith(String ip) {
+    return 'IP: $ip';
+  }
+
+  @override
+  String monitorSettingsEdit(String key) {
+    return '编辑 $key';
+  }
+
+  @override
+  String get containerInspectTitle => '检查';
+
+  @override
+  String get orchestrationTemplates => '模版';
+
+  @override
+  String get composeTemplateCreate => '创建模版';
+
+  @override
+  String get composeTemplateEdit => '编辑模版';
+
+  @override
+  String get composeTemplateContent => '模版内容';
+
+  @override
+  String get composeTemplateNameRequired => '请输入模版名称';
+
+  @override
+  String get composeTemplateEmpty => '暂无模版';
+
+  @override
+  String get containerTerminal => '终端';
+
+  @override
+  String composeTemplateDeleteConfirm(String name) {
+    return '删除模版 $name ？';
+  }
+
+  @override
+  String get toolboxClamFilesTitle => '配置文件';
+
+  @override
+  String get toolboxClamFileContent => '文件内容';
+
+  @override
+  String get toolboxClamFileReadonly => '日志内容（只读）';
+
+  @override
+  String get logsCenterTabWebsite => '网站日志';
+
+  @override
+  String get logsWebsiteSelectorLabel => '选择网站';
+
+  @override
+  String get databaseUserListTitle => '数据库用户';
+
+  @override
+  String get databaseUserChangePassword => '修改密码';
+
+  @override
+  String databaseUserDeleteConfirm(String name) {
+    return '删除用户 $name ？';
+  }
+
+  @override
+  String get databaseUserNewPasswordLabel => '新密码';
+
+  @override
+  String get aiAgentPluginsTitle => '智能体插件';
+
+  @override
+  String get aiAgentInstalledPlugins => '已安装插件';
+
+  @override
+  String get aiAgentPluginMarket => '插件市场';
+
+  @override
+  String get aiAgentPluginSearchHint => '搜索市场插件';
+
+  @override
+  String get aiAgentPluginMarketEmpty => '搜索市场以发现插件';
+
+  @override
+  String get aiAgentPluginInstallConfirm => '安装该插件？';
+
+  @override
+  String get aiAgentPluginUninstall => '卸载';
+
+  @override
+  String get aiAgentPluginUpgrade => '升级';
+
+  @override
+  String get hostDiagnosticsTitle => '运行时诊断';
+
+  @override
+  String get hostDiagnosticsSummary => '诊断摘要';
+
+  @override
+  String get hostDiagnosticsCaptureTitle => '采集性能剖析';
+
+  @override
+  String get hostDiagnosticsDuration => '时长';
+
+  @override
+  String get hostDiagnosticsCapture => '采集';
+
+  @override
+  String get hostDiagnosticsGoroutines => 'Goroutine 转储';
+
+  @override
+  String get hostDiagnosticsCaptureDone => '剖析采集完成';
+
+  @override
+  String get toolboxClamFreshStart => 'Freshclam 启动';
+
+  @override
+  String get toolboxClamFreshStop => 'Freshclam 停止';
+
+  @override
+  String get toolboxClamFreshRestart => 'Freshclam 重启';
+
+  @override
+  String get websiteRoutingProxyStatusDelete => '代理状态 / 删除';
+
+  @override
+  String get databaseSourceAll => '全部';
+
+  @override
+  String get databaseSourceLocal => '本地';
+
+  @override
+  String get databaseSourceRemote => '远程';
+
+  @override
+  String get databaseFormPgSuperuser => 'PostgreSQL 超级用户';
+
+  @override
+  String get filePreviewLoadFailed => '文件加载失败';
+
+  @override
+  String get filePreviewSaveFailed => '文件保存失败';
+
+  @override
+  String get filePreviewLoadSuccess => '文件已加载';
+
+  @override
+  String get dashboardRefreshInterval => '刷新间隔';
+
+  @override
+  String get dashboardInterval3s => '3秒';
+
+  @override
+  String get dashboardInterval5s => '5秒 (默认)';
+
+  @override
+  String get dashboardInterval10s => '10秒';
+
+  @override
+  String get dashboardInterval30s => '30秒';
+
+  @override
+  String get dashboardInterval1m => '1分钟';
+
+  @override
+  String get filePreviewLoadImageFailed => '图片加载失败';
+
+  @override
+  String get filePreviewLoadPdfFailed => 'PDF 加载失败';
 }

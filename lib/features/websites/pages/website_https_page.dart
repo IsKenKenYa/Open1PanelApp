@@ -78,11 +78,11 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
       );
       if (mounted) {
         setState(() => _config = result);
-        SnackBarUtils.showSuccess(context, 'Updated');
+        SnackBarUtils.showSuccess(context, context.l10n.commonUpdated);
       }
     } catch (e) {
       if (mounted) {
-        SnackBarUtils.showError(context, 'Failed to update HTTPS config');
+        SnackBarUtils.showError(context, context.l10n.websiteHttpsUpdateFailed);
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -91,7 +91,6 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     return Scaffold(
       appBar: AppBar(title: Text('${widget.displayName} - HTTPS')),
       body: WebsiteAsyncStateView(
@@ -99,7 +98,7 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
         error: _error,
         onRetry: _loadConfig,
         child: _config == null
-            ? const Center(child: Text('No data'))
+            ?  Center(child: Text(context.l10n.commonEmpty))
             : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -107,7 +106,7 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
                     child: Column(
                       children: [
                         SwitchListTile(
-                          title: const Text('HTTPS'),
+                          title:  Text(context.l10n.commonHttps),
                           subtitle: Text(
                             _config?.enable == true
                                 ? 'Enabled'
@@ -120,7 +119,7 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
                         ),
                         if (_config?.enable == true) ...[
                           SwitchListTile(
-                            title: const Text('HSTS'),
+                            title:  Text(context.l10n.websiteHttpsHsts),
                             subtitle: const Text(
                                 'HTTP Strict Transport Security'),
                             value: _config?.hsts ?? false,
@@ -130,7 +129,7 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
                           ),
                           if (_config?.ssl != null)
                             ListTile(
-                              title: const Text('SSL Certificate'),
+                              title:  Text(context.l10n.websiteHttpsSslCertificate),
                               subtitle: Text(
                                 _config?.ssl?.primaryDomain ?? 'N/A',
                               ),

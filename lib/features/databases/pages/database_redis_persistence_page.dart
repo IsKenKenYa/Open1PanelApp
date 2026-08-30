@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
 import 'package:onepanel_client/api/v2/database_v2.dart';
-import 'package:onepanel_client/data/models/database_models.dart';
 
 /// Redis persistence configuration page.
 /// Mirrors frontend's database/redis persistence tab.
@@ -56,10 +56,10 @@ class _DatabaseRedisPersistencePageState
     try {
       final api = DatabaseV2Api(await ApiClientManager.instance.getCurrentClient());
       await api.updateRedisPersistenceConf(request);
-      if (mounted) SnackBarUtils.showSuccess(context, 'Updated');
+      if (mounted) SnackBarUtils.showSuccess(context, context.l10n.commonUpdated);
       _load();
     } catch (e) {
-      if (context.mounted) SnackBarUtils.showError(context, 'Update failed');
+      if (mounted) SnackBarUtils.showError(context, context.l10n.commonUpdateFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -69,7 +69,7 @@ class _DatabaseRedisPersistencePageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Redis Persistence'),
+        title:  Text(context.l10n.databaseRedisPersistenceTitle),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
         ],
@@ -79,7 +79,7 @@ class _DatabaseRedisPersistencePageState
           : _error != null
               ? Center(child: Text(_error!))
               : _config == null
-                  ? const Center(child: Text('No data'))
+                  ?  Center(child: Text(context.l10n.commonEmpty))
                   : ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
@@ -87,8 +87,8 @@ class _DatabaseRedisPersistencePageState
                           child: Column(
                             children: [
                               SwitchListTile(
-                                title: const Text('AOF Persistence'),
-                                subtitle: const Text('Append-only file'),
+                                title:  Text(context.l10n.databaseRedisAofTitle),
+                                subtitle:  Text(context.l10n.databaseRedisAofDesc),
                                 value: _config?['aofEnable'] == true,
                                 onChanged: _isSaving
                                     ? null
@@ -98,8 +98,8 @@ class _DatabaseRedisPersistencePageState
                                         }),
                               ),
                               SwitchListTile(
-                                title: const Text('RDB Persistence'),
-                                subtitle: const Text('RDB snapshot'),
+                                title:  Text(context.l10n.databaseRedisRdbTitle),
+                                subtitle:  Text(context.l10n.databaseRedisRdbDesc),
                                 value: _config?['rdbEnable'] == true,
                                 onChanged: _isSaving
                                     ? null

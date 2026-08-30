@@ -354,25 +354,6 @@ void main() {
       });
     });
 
-    group('getSystemSettingByKey - 按键获取设置', () {
-      test('应当能获取指定设置项', () async {
-        if (!canRun) {
-          appLogger.wWithPackage(_pkg, '跳过测试: ${_integrationSkipReason()}');
-          return;
-        }
-
-        try {
-          final response = await api.getSystemSettingByKey('PanelName');
-          expect(response.statusCode, equals(200));
-        } catch (error) {
-          expect(
-            error.toString(),
-            contains("Field validation for 'Key' failed on the 'oneof' tag"),
-          );
-        }
-      });
-    });
-
     group('updateMonitorSetting - 监控设置更新', () {
       test('同值回放幂等验证仅在 destructive 模式下执行', () async {
         final skipReason = TestEnvironment.skipIntegration() ??

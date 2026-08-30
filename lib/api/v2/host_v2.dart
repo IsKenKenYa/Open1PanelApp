@@ -275,6 +275,55 @@ class HostV2Api {
     );
   }
 
+  // ── 诊断与 SSH 日志清理（V2 新增）──
+
+  /// 获取诊断摘要（goroutine/内存等概览）。
+  Future<Response<Map<String, dynamic>>> getDiagnosticsSummary() async {
+    final response = await _client.get<Map<String, dynamic>>(
+      ApiConstants.buildApiPath('/hosts/diagnostics/summary'),
+    );
+    return Response<Map<String, dynamic>>(
+      data: ApiResponseParser.asMap(response.data),
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 获取 goroutine 转储。
+  Future<Response<String>> getDiagnosticsGoroutines() async {
+    final response = await _client.get<String>(
+      ApiConstants.buildApiPath('/hosts/diagnostics/goroutines'),
+    );
+    return Response<String>(
+      data: response.data?.toString() ?? '',
+      statusCode: response.statusCode,
+      statusMessage: response.statusMessage,
+      requestOptions: response.requestOptions,
+    );
+  }
+
+  /// 创建运行时性能剖析（type: heap|cpu|mutex|block|goroutine|trace）。
+  Future<Response<void>> createRuntimeProfile({
+    required String type,
+    int? duration,
+  }) {
+    return _client.post(
+      ApiConstants.buildApiPath('/hosts/diagnostics/profiles'),
+      data: <String, dynamic>{
+        'type': type,
+        if (duration != null) 'duration': duration,
+      },
+    );
+  }
+
+  /// 清理 SSH 登录日志。
+  Future<Response<void>> cleanSshLog() {
+    return _client.post(
+      ApiConstants.buildApiPath('/hosts/ssh/log/clean'),
+    );
+  }
+
   Map<String, dynamic> _mapHostPayload(HostCreate request, {int? id}) {
     final hasKeyAuth = (request.privateKey?.isNotEmpty ?? false);
     return <String, dynamic>{

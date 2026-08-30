@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:onepanel_client/config/app_router.dart';
+import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/features/security_gateway/pages/security_gateway_center_page.dart';
 import 'package:onepanel_client/features/security_gateway/providers/security_gateway_center_provider.dart';
@@ -10,9 +11,6 @@ import '../providers/website_detail_provider.dart';
 import '../widgets/website_common_widgets.dart';
 import '../widgets/website_overview_card_widget.dart';
 import '../widgets/website_workbench_card_widget.dart';
-import 'website_config_center_page.dart';
-import 'website_domain_management_page.dart';
-import 'website_routing_rules_page.dart';
 
 class WebsiteDetailPage extends StatelessWidget {
   const WebsiteDetailPage({
@@ -100,22 +98,22 @@ class _WebsiteDetailBody extends StatelessWidget {
               WebsiteWorkbenchCard(
                 websiteId: provider.websiteId,
                 website: website,
-                onOpenConfig: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => WebsiteConfigCenterPage(
-                      websiteId: provider.websiteId,
-                      displayName: website?.displayDomain,
-                    ),
+                onOpenConfig: () => openRouteRespectingShell(
+                    context,
+                    AppRoutes.websiteConfigCenter,
+                    arguments: {
+                      'websiteId': provider.websiteId,
+                      'displayName': website?.displayDomain,
+                    },
                   ),
-                ),
-                onOpenDomains: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => WebsiteDomainManagementPage(
-                      websiteId: provider.websiteId,
-                      primaryDomain: website?.primaryDomain,
-                    ),
+                onOpenDomains: () => openRouteRespectingShell(
+                    context,
+                    AppRoutes.websiteDomains,
+                    arguments: {
+                      'websiteId': provider.websiteId,
+                      'primaryDomain': website?.primaryDomain,
+                    },
                   ),
-                ),
                 onOpenSsl: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => SecurityGatewayCenterPage(
@@ -126,14 +124,14 @@ class _WebsiteDetailBody extends StatelessWidget {
                     ),
                   ),
                 ),
-                onOpenRouting: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => WebsiteRoutingRulesPage(
-                      websiteId: provider.websiteId,
-                      displayName: website?.displayDomain,
-                    ),
+                onOpenRouting: () => openRouteRespectingShell(
+                    context,
+                    AppRoutes.websiteRoutingRules,
+                    arguments: {
+                      'websiteId': provider.websiteId,
+                      'displayName': website?.displayDomain,
+                    },
                   ),
-                ),
                 onOpenOpenResty: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => SecurityGatewayCenterPage(

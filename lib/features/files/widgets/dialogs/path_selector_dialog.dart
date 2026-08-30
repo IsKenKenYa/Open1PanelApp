@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/file_models.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
+import 'package:onepanel_client/core/layout/adaptive_layout.dart';
 
 Future<String?> showPathSelectorDialog(
   BuildContext context,
@@ -19,8 +20,7 @@ Future<String?> showPathSelectorDialog(
 
         return AlertDialog(
           title: Text(l10n.filesPathSelectorTitle),
-          content: SizedBox(
-            width: 300,
+          content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
             height: 400,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
