@@ -19,6 +19,7 @@ class AppStorePage extends StatelessWidget {
         builder: (innerContext) {
           final l10n = innerContext.l10n;
           return Scaffold(
+            backgroundColor: Theme.of(innerContext).colorScheme.surface,
             appBar: AppBar(
               title: Text(l10n.appStoreTitle),
               actions: [

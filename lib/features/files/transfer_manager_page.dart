@@ -41,6 +41,7 @@ class _TransferManagerPageState extends State<TransferManagerPage> {
       child: Consumer<TransferManagerProvider>(
         builder: (context, provider, _) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(
               title: Text(l10n.transferManagerTitle),
               actions: [

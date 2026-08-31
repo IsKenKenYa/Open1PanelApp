@@ -56,6 +56,7 @@ class _WebsiteLifecycleBody extends StatelessWidget {
             ? l10n.websitesLifecycleEditTitle
             : l10n.websitesLifecycleCreateTitle;
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(title: Text(title)),
           body: WebsiteAsyncStateView(
             isLoading: state.isLoading,

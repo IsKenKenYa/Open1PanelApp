@@ -100,6 +100,7 @@ class _UploadHistoryPageState extends State<UploadHistoryPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.filesUploadHistory),
         bottom: PreferredSize(

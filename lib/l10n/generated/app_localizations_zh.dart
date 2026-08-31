@@ -2416,6 +2416,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String dashboardUptimeMinutes(int minutes) {
+    return '$minutes分钟';
+  }
+
+  @override
   String dashboardUpdatedAt(String time) {
     return '更新时间：$time';
   }
@@ -7924,6 +7929,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonOk => '确定';
 
   @override
+  String get commonAction => '操作';
+
+  @override
+  String get commonEnable => '启用';
+
+  @override
+  String get commonWebsiteIds => '网站 ID（逗号分隔）';
+
+  @override
+  String get commonTimeoutSeconds => '超时（秒）';
+
+  @override
   String get websiteHttpsUpdateFailed => '更新 HTTPS 配置失败';
 
   @override
@@ -7967,6 +7984,29 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get websiteLoadBalancerEmpty => '暂无负载均衡';
+
+  @override
+  String get routingRulesBatchActions => '批量操作';
+
+  @override
+  String get routingRulesBatchProxyStatus => '批量更新代理状态';
+
+  @override
+  String get routingRulesBatchDeleteProxy => '批量删除代理';
+
+  @override
+  String get routingRulesBatchRedirectFile => '批量保存重定向配置';
+
+  @override
+  String get routingRulesBatchLoadBalancerFile => '批量保存负载均衡配置';
+
+  @override
+  String get routingRulesBatchInvalidIds => '没有有效的网站 ID。';
+
+  @override
+  String routingRulesBatchResult(int success, int failed) {
+    return '批量操作完成：成功 $success 个，失败 $failed 个。';
+  }
 
   @override
   String get fileShareTitle => '文件分享';
@@ -8173,6 +8213,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get containerFilesEmpty => '暂无文件';
 
   @override
+  String get containerFilesDirectory => '目录';
+
+  @override
+  String containerFilesSizeBytes(String size) {
+    return '$size 字节';
+  }
+
+  @override
   String get imageOpsTitle => '镜像操作';
 
   @override
@@ -8316,6 +8364,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toolboxClamFileReadonly => '日志内容（只读）';
 
   @override
+  String get toolboxClamCronExpression => 'Cron 表达式';
+
+  @override
+  String get toolboxClamInfectedDirectory => '感染文件目录';
+
+  @override
   String get logsCenterTabWebsite => '网站日志';
 
   @override
@@ -8436,4 +8490,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get filePreviewLoadPdfFailed => 'PDF 加载失败';
+
+  @override
+  String get filePreviewVideoNotInitialized => '视频播放器未初始化';
 }

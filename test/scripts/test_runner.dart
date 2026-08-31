@@ -132,17 +132,28 @@ class TestRunner {
     return success;
   }
 
-  static Future<bool> runAllTests() async {
+  static Future<bool> runAllTests({String? moduleFilter}) async {
     printHeader('运行全量回归测试');
-    final flutter = await resolveFlutterCommand();
-    final exitCode =
-        await runCommand(flutter, ['test', '--reporter=expanded']);
-    if (exitCode == 0) {
+    // 按分档串行执行（unit -> ui -> integration），与单档门禁语义一致。
+    // 不再使用单条 `flutter test` 全目录并发跑：真服务器套件并发会触发
+    // 服务器限流/拦截页造成偶发假失败，且会覆盖分档各自的门控语义。
+    var ok = true;
+
+    final unitOk = await runUnitTests(moduleFilter: moduleFilter);
+    if (!unitOk) ok = false;
+
+    final uiOk = await runUiTests();
+    if (!uiOk) ok = false;
+
+    final integrationOk = await runIntegrationTests(moduleFilter: moduleFilter);
+    if (!integrationOk) ok = false;
+
+    if (ok) {
       printSuccess('全量测试通过');
-      return true;
+    } else {
+      printError('全量测试失败');
     }
-    printError('全量测试失败 (退出码: $exitCode)');
-    return false;
+    return ok;
   }
 
   static const List<String> _uiTestExcludedPrefixes = <String>[
@@ -246,6 +257,27 @@ class TestRunner {
     return uiTests;
   }
 
+  /// widget_test 目录下不含 testWidgets 的纯 Dart 测试文件（UI 档扫不到）。
+  static Future<List<String>> _discoverPureDartTests(String dirPath) async {
+    final dir = Directory(dirPath);
+    if (!await dir.exists()) {
+      return const <String>[];
+    }
+    final pure = <String>[];
+    await for (final entity in dir.list(recursive: true, followLinks: false)) {
+      if (entity is! File || !entity.path.endsWith('_test.dart')) {
+        continue;
+      }
+      final content = await entity.readAsString();
+      if (!content.contains('testWidgets(') &&
+          !content.contains('matchesGoldenFile(')) {
+        pure.add(entity.path);
+      }
+    }
+    pure.sort();
+    return pure;
+  }
+
   static Future<bool> _containsTestFiles(Directory directory) async {
     await for (final entity
         in directory.list(recursive: true, followLinks: false)) {
@@ -266,6 +298,21 @@ class TestRunner {
       final okAuth = await runTests('test/auth/', description: '认证单元测试');
       if (!okApi) failures++;
       if (!okAuth) failures++;
+
+      // 回归盲区收口：bugfix 回归测试、core 网络层单测、widget_test 中
+      // 纯 Dart 断言（非 testWidgets，UI 档扫不到）也纳入 unit 门禁。
+      for (final dir in const <String>['test/bugfix/', 'test/core/']) {
+        final d = Directory(dir);
+        if (!await d.exists()) continue;
+        final ok = await runTests(dir, description: '单元测试: $dir');
+        if (!ok) failures++;
+      }
+      final pureDartTests = await _discoverPureDartTests('test/widget_test');
+      for (final file in pureDartTests) {
+        final name = file.split('/').last;
+        final ok = await runTests(file, description: '单元测试: $name');
+        if (!ok) failures++;
+      }
     } else {
       printInfo('已启用模块过滤: $normalizedFilter');
     }
@@ -432,7 +479,7 @@ ${TestRunner.cyan}环境变量:${TestRunner.reset}
   var ok = false;
   switch (command) {
     case 'all':
-      ok = await TestRunner.runAllTests();
+      ok = await TestRunner.runAllTests(moduleFilter: moduleFilter);
       break;
     case 'unit':
       ok = await TestRunner.runUnitTests(moduleFilter: moduleFilter);

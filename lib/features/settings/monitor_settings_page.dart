@@ -16,6 +16,7 @@ class MonitorSettingsPage extends StatelessWidget {
     final settings = provider.data.settings;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.monitorSettingsTitle)),
       body: ListView(
         padding: AppDesignTokens.pagePadding,

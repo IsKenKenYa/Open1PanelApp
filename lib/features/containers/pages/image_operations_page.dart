@@ -84,6 +84,7 @@ class _ImageOperationsPageState extends State<ImageOperationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title:  Text(context.l10n.imageOpsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),

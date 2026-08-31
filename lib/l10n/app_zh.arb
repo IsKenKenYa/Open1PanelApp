@@ -1062,6 +1062,14 @@
       }
     }
   },
+  "dashboardUptimeMinutes": "{minutes}分钟",
+  "@dashboardUptimeMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "dashboardUpdatedAt": "更新时间：{time}",
   "@dashboardUpdatedAt": {
     "placeholders": {
@@ -3343,6 +3351,10 @@
   "commonImage": "镜像",
   "commonTimeout": "超时",
   "commonOk": "确定",
+  "commonAction": "操作",
+  "commonEnable": "启用",
+  "commonWebsiteIds": "网站 ID（逗号分隔）",
+  "commonTimeoutSeconds": "超时（秒）",
   "websiteHttpsUpdateFailed": "更新 HTTPS 配置失败",
   "websiteHttpsHsts": "HSTS",
   "websiteHttpsSslCertificate": "SSL 证书",
@@ -3358,6 +3370,23 @@
   "websiteResourceTitle": "资源",
   "websiteLoadBalancerTitle": "负载均衡",
   "websiteLoadBalancerEmpty": "暂无负载均衡",
+  "routingRulesBatchActions": "批量操作",
+  "routingRulesBatchProxyStatus": "批量更新代理状态",
+  "routingRulesBatchDeleteProxy": "批量删除代理",
+  "routingRulesBatchRedirectFile": "批量保存重定向配置",
+  "routingRulesBatchLoadBalancerFile": "批量保存负载均衡配置",
+  "routingRulesBatchInvalidIds": "没有有效的网站 ID。",
+  "routingRulesBatchResult": "批量操作完成：成功 {success} 个，失败 {failed} 个。",
+  "@routingRulesBatchResult": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
   "fileShareTitle": "文件分享",
   "fileShareEmpty": "暂无分享",
   "wgetTitle": "WGET 下载",
@@ -3426,6 +3455,15 @@
   "containerMaintenanceContainerId": "容器 ID",
   "containerFilesTitle": "文件",
   "containerFilesEmpty": "暂无文件",
+  "containerFilesDirectory": "目录",
+  "containerFilesSizeBytes": "{size} 字节",
+  "@containerFilesSizeBytes": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "imageOpsTitle": "镜像操作",
   "imageOpsPushImage": "推送镜像",
   "imageOpsPush": "推送",
@@ -3454,32 +3492,27 @@
   "databasePgPrivilegeWith": "权限: {privileges}",
   "databaseSlowLogTimeWith": "时间: {time}",
   "containerInspectIpWith": "IP: {ip}",
-  "monitorSettingsEdit": "编辑 {key}"
-,
-  "containerInspectTitle": "检查"
-,
+  "monitorSettingsEdit": "编辑 {key}",
+  "containerInspectTitle": "检查",
   "orchestrationTemplates": "模版",
   "composeTemplateCreate": "创建模版",
   "composeTemplateEdit": "编辑模版",
   "composeTemplateContent": "模版内容",
   "composeTemplateNameRequired": "请输入模版名称",
   "composeTemplateEmpty": "暂无模版",
-  "containerTerminal": "终端"
-,
-  "composeTemplateDeleteConfirm": "删除模版 {name} ？"
-,
+  "containerTerminal": "终端",
+  "composeTemplateDeleteConfirm": "删除模版 {name} ？",
   "toolboxClamFilesTitle": "配置文件",
   "toolboxClamFileContent": "文件内容",
-  "toolboxClamFileReadonly": "日志内容（只读）"
-,
+  "toolboxClamFileReadonly": "日志内容（只读）",
+  "toolboxClamCronExpression": "Cron 表达式",
+  "toolboxClamInfectedDirectory": "感染文件目录",
   "logsCenterTabWebsite": "网站日志",
-  "logsWebsiteSelectorLabel": "选择网站"
-,
+  "logsWebsiteSelectorLabel": "选择网站",
   "databaseUserListTitle": "数据库用户",
   "databaseUserChangePassword": "修改密码",
   "databaseUserDeleteConfirm": "删除用户 {name} ？",
-  "databaseUserNewPasswordLabel": "新密码"
-,
+  "databaseUserNewPasswordLabel": "新密码",
   "aiAgentPluginsTitle": "智能体插件",
   "aiAgentInstalledPlugins": "已安装插件",
   "aiAgentPluginMarket": "插件市场",
@@ -3487,16 +3520,14 @@
   "aiAgentPluginMarketEmpty": "搜索市场以发现插件",
   "aiAgentPluginInstallConfirm": "安装该插件？",
   "aiAgentPluginUninstall": "卸载",
-  "aiAgentPluginUpgrade": "升级"
-,
+  "aiAgentPluginUpgrade": "升级",
   "hostDiagnosticsTitle": "运行时诊断",
   "hostDiagnosticsSummary": "诊断摘要",
   "hostDiagnosticsCaptureTitle": "采集性能剖析",
   "hostDiagnosticsDuration": "时长",
   "hostDiagnosticsCapture": "采集",
   "hostDiagnosticsGoroutines": "Goroutine 转储",
-  "hostDiagnosticsCaptureDone": "剖析采集完成"
-,
+  "hostDiagnosticsCaptureDone": "剖析采集完成",
   "toolboxClamFreshStart": "Freshclam 启动",
   "toolboxClamFreshStop": "Freshclam 停止",
   "toolboxClamFreshRestart": "Freshclam 重启",
@@ -3507,8 +3538,7 @@
   "databaseFormPgSuperuser": "PostgreSQL 超级用户",
   "filePreviewLoadFailed": "文件加载失败",
   "filePreviewSaveFailed": "文件保存失败",
-  "filePreviewLoadSuccess": "文件已加载"
-,
+  "filePreviewLoadSuccess": "文件已加载",
   "dashboardRefreshInterval": "刷新间隔",
   "dashboardInterval3s": "3秒",
   "dashboardInterval5s": "5秒 (默认)",
@@ -3516,6 +3546,7 @@
   "dashboardInterval30s": "30秒",
   "dashboardInterval1m": "1分钟",
   "filePreviewLoadImageFailed": "图片加载失败",
-  "filePreviewLoadPdfFailed": "PDF 加载失败"
+  "filePreviewLoadPdfFailed": "PDF 加载失败",
+  "filePreviewVideoNotInitialized": "视频播放器未初始化"
 
 }

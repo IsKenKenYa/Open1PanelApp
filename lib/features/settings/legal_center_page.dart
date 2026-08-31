@@ -27,6 +27,7 @@ class LegalCenterPage extends StatelessWidget {
         locale.languageCode == 'zh' ? _privacyPolicyZhUrl : _privacyPolicyEnUrl;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.settingsLegalCenterTitle),
       ),

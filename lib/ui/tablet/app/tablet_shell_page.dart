@@ -142,12 +142,18 @@ class _TabletShellPageState extends State<TabletShellPage> {
               ),
               const VerticalDivider(thickness: 1, width: 1),
               Expanded(
-                child: AdaptiveWidthContainer(
-                  maxWidth: spec.contentMaxWidth,
-                  child: buildShellModulePage(
-                    context,
-                    module: selectedModule,
-                    serverId: currentServer.currentServerId,
+                // The outer Scaffold strips the top MediaQuery padding from
+                // its body; re-apply it so nested module Scaffolds (AppBar)
+                // do not overlap the system status bar.
+                child: SafeArea(
+                  bottom: false,
+                  child: AdaptiveWidthContainer(
+                    maxWidth: spec.contentMaxWidth,
+                    child: buildShellModulePage(
+                      context,
+                      module: selectedModule,
+                      serverId: currentServer.currentServerId,
+                    ),
                   ),
                 ),
               ),

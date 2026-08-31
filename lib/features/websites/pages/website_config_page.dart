@@ -56,6 +56,7 @@ class _WebsiteConfigBodyState extends State<_WebsiteConfigBody> {
 
         if (provider.isLoading && provider.nginxConfigFile == null) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(title)),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -63,6 +64,7 @@ class _WebsiteConfigBodyState extends State<_WebsiteConfigBody> {
 
         if (provider.error != null && provider.nginxConfigFile == null) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(title)),
             body: WebsiteErrorSection(
               message: provider.error!,
@@ -80,6 +82,7 @@ class _WebsiteConfigBodyState extends State<_WebsiteConfigBody> {
         }
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(title),
             actions: [

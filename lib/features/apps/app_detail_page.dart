@@ -175,6 +175,7 @@ class _AppDetailPageState extends State<AppDetailPage> {
     final l10n = context.l10n;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(_app.name ?? l10n.appStoreTitle),
       ),

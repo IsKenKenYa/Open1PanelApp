@@ -21,6 +21,7 @@ class OpenRestyCenterPage extends StatelessWidget {
         final l10n = context.l10n;
         if (provider.error != null && !provider.hasData) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.openrestyPageTitle)),
             body: OpenRestyErrorView(
               message: provider.error!,
@@ -36,6 +37,7 @@ class OpenRestyCenterPage extends StatelessWidget {
         }
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(l10n.openrestyPageTitle),
             actions: [

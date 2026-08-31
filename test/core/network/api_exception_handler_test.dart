@@ -107,7 +107,7 @@ void main() {
         throwsA(isA<NetworkException>().having(
           (e) => e.message,
           'message',
-          '未配置服务器连接',
+          'No server connection configured',
         )),
       );
     });
@@ -151,7 +151,7 @@ void main() {
     test('rethrows generic exceptions', () async {
       expect(
         () => ApiExceptionHandler.safeApiCallOrThrow(
-          () async => Exception('unexpected'),
+          () async => throw Exception('unexpected'),
         ),
         throwsA(isA<Exception>()),
       );

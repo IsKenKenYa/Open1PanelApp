@@ -196,6 +196,7 @@ class _ApiConfigPageState extends State<ApiConfigPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('API配置'),
       ),

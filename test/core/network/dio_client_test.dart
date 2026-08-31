@@ -47,9 +47,27 @@ void main() {
         expect(client.dio.options.headers['User-Agent'], ApiConstants.userAgent);
       });
 
-      test('adds 4 interceptors', () {
+      test('adds 4 business interceptors plus dio built-in (total 5)', () {
         final client = DioClient();
-        expect(client.dio.interceptors.length, 4);
+        // dio >= 5.9 内置 ImplyContentTypeInterceptor，
+        // 加上 DioClient 显式添加的 Auth/BusinessResponse/Logging/Retry 共 5 个。
+        expect(client.dio.interceptors.length, 5);
+        expect(
+          client.dio.interceptors.any((i) => i.runtimeType.toString() == 'AuthInterceptor'),
+          isTrue,
+        );
+        expect(
+          client.dio.interceptors.any((i) => i.runtimeType.toString() == 'BusinessResponseInterceptor'),
+          isTrue,
+        );
+        expect(
+          client.dio.interceptors.any((i) => i.runtimeType.toString() == 'LoggingInterceptor'),
+          isTrue,
+        );
+        expect(
+          client.dio.interceptors.any((i) => i.runtimeType.toString() == 'RetryInterceptor'),
+          isTrue,
+        );
       });
 
       test('exposes dio instance', () {

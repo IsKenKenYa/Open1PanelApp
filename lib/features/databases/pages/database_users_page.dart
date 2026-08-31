@@ -69,6 +69,7 @@ class _DatabaseUsersPageViewState extends State<_DatabaseUsersPageView> {
         userContext?.currentUsername ?? widget.item.username;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.databaseUsersPageTitle)),
       body: !databaseSupportsUserManagement(widget.item.scope)
           ? DatabasePageUnsupportedWidget(

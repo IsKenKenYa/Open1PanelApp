@@ -69,6 +69,7 @@ class _McpServerDetailPageState extends State<McpServerDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(widget.serverName),
         actions: [

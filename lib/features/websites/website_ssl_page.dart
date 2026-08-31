@@ -35,6 +35,7 @@ class _WebsiteSslBody extends StatelessWidget {
       builder: (context, provider, _) {
         if (provider.isLoading && provider.httpsConfig == null) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.websitesSslPageTitle)),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -42,6 +43,7 @@ class _WebsiteSslBody extends StatelessWidget {
 
         if (provider.error != null && provider.httpsConfig == null) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.websitesSslPageTitle)),
             body: ModuleErrorStateWidget(
               message: provider.error,
@@ -51,6 +53,7 @@ class _WebsiteSslBody extends StatelessWidget {
         }
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(l10n.websitesSslPageTitle),
             actions: [

@@ -22,6 +22,7 @@ class DatabaseRemotePage extends StatelessWidget {
       child: Consumer<DatabasesProvider>(
         builder: (context, provider, _) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(
               title: Text(context.l10n.databaseRemoteTab),
               actions: [

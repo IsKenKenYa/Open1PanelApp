@@ -435,7 +435,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
             Icon(Icons.video_library_outlined,
                 size: 48, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text('Video player not initialized'),
+            Text(context.l10n.filePreviewVideoNotInitialized),
           ],
         ),
       );

@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import '../core/test_config_manager.dart';
 import 'package:onepanel_client/core/network/dio_client.dart';
 
-void main() {
+Future<void> main() async {
+  // skip 参数在测试声明期同步求值，必须先初始化 TestEnvironment
+  await TestEnvironment.initialize();
   late DioClient client;
   bool hasApiKey = false;
 
@@ -21,7 +23,9 @@ void main() {
   });
 
   group('验证修复后的 /settings/update 接口', () {
-    test('1. 测试面板名称更新', () async {
+    // 安全红线：panelName/developerMode/sessionTimeout/theme/language 均为面板设置修改面，
+    // 所有 update 调用必须在 destructive 门控下默认跳过，默认仅允许只读 search。
+    test('1. 测试面板名称更新', skip: TestEnvironment.skipDestructive(), () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -76,7 +80,7 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('2. 测试开发者模式更新', () async {
+    test('2. 测试开发者模式更新', skip: TestEnvironment.skipDestructive(), () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -129,7 +133,7 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('3. 测试会话超时更新', () async {
+    test('3. 测试会话超时更新', skip: TestEnvironment.skipDestructive(), () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -182,7 +186,7 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('4. 测试主题和语言更新', () async {
+    test('4. 测试主题和语言更新', skip: TestEnvironment.skipDestructive(), () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;

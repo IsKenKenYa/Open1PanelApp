@@ -29,6 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final l10n = context.l10n;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.dashboardTitle),
         actions: [
@@ -64,7 +65,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: '刷新',
+            tooltip: l10n.commonRefresh,
             onPressed: () => context.read<DashboardProvider>().refresh(),
           ),
         ],

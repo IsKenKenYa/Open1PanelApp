@@ -171,6 +171,7 @@ class _AiAgentPluginsPageState extends State<AiAgentPluginsPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.aiAgentPluginsTitle),
         actions: [

@@ -4742,6 +4742,12 @@ abstract class AppLocalizations {
   /// **'{hours}h'**
   String dashboardUptimeHours(int hours);
 
+  /// No description provided for @dashboardUptimeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m'**
+  String dashboardUptimeMinutes(int minutes);
+
   /// No description provided for @dashboardUpdatedAt.
   ///
   /// In en, this message translates to:
@@ -15339,6 +15345,30 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get commonOk;
 
+  /// No description provided for @commonAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get commonAction;
+
+  /// No description provided for @commonEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get commonEnable;
+
+  /// No description provided for @commonWebsiteIds.
+  ///
+  /// In en, this message translates to:
+  /// **'Website IDs (comma separated)'**
+  String get commonWebsiteIds;
+
+  /// No description provided for @commonTimeoutSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout (s)'**
+  String get commonTimeoutSeconds;
+
   /// No description provided for @websiteHttpsUpdateFailed.
   ///
   /// In en, this message translates to:
@@ -15428,6 +15458,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No load balancers'**
   String get websiteLoadBalancerEmpty;
+
+  /// No description provided for @routingRulesBatchActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Actions'**
+  String get routingRulesBatchActions;
+
+  /// No description provided for @routingRulesBatchProxyStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Proxy Status'**
+  String get routingRulesBatchProxyStatus;
+
+  /// No description provided for @routingRulesBatchDeleteProxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Delete Proxy'**
+  String get routingRulesBatchDeleteProxy;
+
+  /// No description provided for @routingRulesBatchRedirectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Redirect File'**
+  String get routingRulesBatchRedirectFile;
+
+  /// No description provided for @routingRulesBatchLoadBalancerFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch Load Balancer File'**
+  String get routingRulesBatchLoadBalancerFile;
+
+  /// No description provided for @routingRulesBatchInvalidIds.
+  ///
+  /// In en, this message translates to:
+  /// **'No valid website IDs.'**
+  String get routingRulesBatchInvalidIds;
+
+  /// No description provided for @routingRulesBatchResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch done: success {success}, failed {failed}.'**
+  String routingRulesBatchResult(int success, int failed);
 
   /// No description provided for @fileShareTitle.
   ///
@@ -15837,6 +15909,18 @@ abstract class AppLocalizations {
   /// **'No files'**
   String get containerFilesEmpty;
 
+  /// No description provided for @containerFilesDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory'**
+  String get containerFilesDirectory;
+
+  /// No description provided for @containerFilesSizeBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'{size} bytes'**
+  String containerFilesSizeBytes(String size);
+
   /// No description provided for @imageOpsTitle.
   ///
   /// In en, this message translates to:
@@ -16083,6 +16167,18 @@ abstract class AppLocalizations {
   /// **'Log Content (read-only)'**
   String get toolboxClamFileReadonly;
 
+  /// No description provided for @toolboxClamCronExpression.
+  ///
+  /// In en, this message translates to:
+  /// **'Cron expression'**
+  String get toolboxClamCronExpression;
+
+  /// No description provided for @toolboxClamInfectedDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Infected directory'**
+  String get toolboxClamInfectedDirectory;
+
   /// No description provided for @logsCenterTabWebsite.
   ///
   /// In en, this message translates to:
@@ -16322,6 +16418,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load PDF'**
   String get filePreviewLoadPdfFailed;
+
+  /// No description provided for @filePreviewVideoNotInitialized.
+  ///
+  /// In en, this message translates to:
+  /// **'Video player not initialized'**
+  String get filePreviewVideoNotInitialized;
 }
 
 class _AppLocalizationsDelegate

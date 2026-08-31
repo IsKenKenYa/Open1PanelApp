@@ -64,6 +64,7 @@ class _WebsiteAuthBasicPageState extends State<WebsiteAuthBasicPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text('${widget.displayName} - ${context.l10n.websiteAuthBasicTitle}')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,

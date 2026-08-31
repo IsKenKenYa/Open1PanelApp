@@ -44,6 +44,7 @@ class _RecycleBinViewState extends State<_RecycleBinView> {
     return Consumer<RecycleBinProvider>(
       builder: (context, provider, _) {
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(l10n.filesRecycleBin),
             actions: [

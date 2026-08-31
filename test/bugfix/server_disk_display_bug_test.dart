@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:onepanel_client/features/server/server_repository.dart';
 import 'package:onepanel_client/core/config/api_config.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  // 测试环境无 SharedPreferences 插件，注入 mock 避免 MissingPluginException；
+  // 空初始值使 ApiConfigManager.getConfigs() 返回空配置，测试走跳过分支。
+  SharedPreferences.setMockInitialValues({});
 
   group('Bug Condition - Server Disk Display', () {
     test('Property 1: diskPercent should not be null when server has disk data', () async {

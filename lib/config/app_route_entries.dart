@@ -23,6 +23,8 @@ import 'package:onepanel_client/features/server/server_form_page.dart';
 import 'package:onepanel_client/features/server/server_list_page.dart';
 import 'package:onepanel_client/features/server/server_models.dart';
 import 'package:onepanel_client/features/security/security_verification_page.dart';
+import 'package:onepanel_client/features/security_gateway/pages/security_gateway_center_page.dart';
+import 'package:onepanel_client/features/security_gateway/providers/security_gateway_center_provider.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
 import 'package:onepanel_client/features/shell/module_registry.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
@@ -990,6 +992,22 @@ import 'package:onepanel_client/features/toolbox/pages/toolbox_supervisor_page.d
       AppRoutes.orchestration: shellAwareModuleEntry(
         routeName: AppRoutes.orchestration,
         defaultBuilder: (_, __) => const OrchestrationPage(),
+      ),
+      AppRoutes.securityGatewayCenter: shellAwareModuleEntry(
+        routeName: AppRoutes.securityGatewayCenter,
+        defaultBuilder: (_, settings) {
+          final arg = settings.arguments as Map<String, dynamic>? ?? const {};
+          final sectionName = arg['initialSection'] as String?;
+          final initialSection = SecurityGatewaySection.values.firstWhere(
+            (s) => s.name == sectionName,
+            orElse: () => SecurityGatewaySection.panelTls,
+          );
+          return SecurityGatewayCenterPage(
+            initialSection: initialSection,
+            initialWebsiteId: arg['websiteId'] as int?,
+            displayName: arg['displayName'] as String?,
+          );
+        },
       ),
       AppRoutes.openrestyCenter: shellAwareModuleEntry(
         routeName: AppRoutes.openrestyCenter,

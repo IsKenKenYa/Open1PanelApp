@@ -29,6 +29,7 @@ class _FeedbackCenterPageState extends State<FeedbackCenterPage> {
         : _logLevelLabel(l10n, appLogger.minLogLevel);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.settingsFeedbackCenterTitle),
       ),

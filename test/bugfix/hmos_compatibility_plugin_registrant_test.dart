@@ -41,11 +41,11 @@ void main() {
     );
     expect(
       registrant,
-      contains('new OhosPlatformPlugin()'),
+      contains('new OhosPlatformPlugin(uiAbilityContext)'),
     );
     expect(
       entryAbility,
-      contains('OhosCompatibilityPluginRegistrant.registerWith(flutterEngine)'),
+      contains('OhosCompatibilityPluginRegistrant.registerWith(flutterEngine, uiAbilityContext)'),
     );
   });
 }

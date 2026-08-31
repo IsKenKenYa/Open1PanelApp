@@ -15,6 +15,7 @@ class AppLockSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.appLockTitle)),
       body: Consumer<AppLockController>(
         builder: (context, controller, child) {

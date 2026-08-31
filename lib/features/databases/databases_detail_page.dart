@@ -44,6 +44,7 @@ class _DatabaseDetailPageView extends StatelessWidget {
     final item = provider.item;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(item.name)),
       body: provider.isLoading && detail == null
           ? const Center(child: CircularProgressIndicator())

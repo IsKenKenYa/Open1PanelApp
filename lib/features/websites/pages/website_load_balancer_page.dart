@@ -57,6 +57,7 @@ class _WebsiteLoadBalancerPageState extends State<WebsiteLoadBalancerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text('${widget.displayName} - ${context.l10n.websiteLoadBalancerTitle}'),
         actions: [

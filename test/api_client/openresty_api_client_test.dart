@@ -51,10 +51,18 @@ Future<Response<Map<String, dynamic>>> _rawPost(DioClient client, String path,
       data: data);
 }
 
+/// 服务器未安装 OpenResty（或无相关配置记录）时，所有 /openresty 端点
+/// 都会返回 envelope 业务错误 "record not found"，属于服务器状态差异。
+bool _isOpenRestyMissing(Object error) {
+  return error.toString().contains('record not found');
+}
+
 void main() {
   late DioClient client;
   late OpenRestyV2Api api;
   late WebsiteV2Api websiteApi;
+  // 存在性探测结果：服务器未安装 OpenResty 时相关端点全部软跳过
+  bool openRestyInstalled = false;
 
   setUpAll(() async {
     await TestEnvironment.initialize();
@@ -66,6 +74,16 @@ void main() {
       );
       api = OpenRestyV2Api(client);
       websiteApi = WebsiteV2Api(client);
+      try {
+        await api.getOpenRestyStatus();
+        openRestyInstalled = true;
+      } on Exception catch (e) {
+        if (_isOpenRestyMissing(e)) {
+          openRestyInstalled = false;
+        } else {
+          rethrow;
+        }
+      }
     }
   });
 
@@ -102,6 +120,11 @@ void main() {
             'test.api_client.openresty', '跳过测试: $skipReason');
         return;
       }
+      if (!openRestyInstalled) {
+        appLogger.wWithPackage('test.api_client.openresty',
+            'SKIP: 服务器未安装 OpenResty（record not found），软跳过');
+        return;
+      }
 
       final raw = await _rawGet(client, '/openresty/status');
       _logSection('✅ Raw /openresty/status',
@@ -117,6 +140,11 @@ void main() {
       if (skipReason != null) {
         appLogger.wWithPackage(
             'test.api_client.openresty', '跳过测试: $skipReason');
+        return;
+      }
+      if (!openRestyInstalled) {
+        appLogger.wWithPackage('test.api_client.openresty',
+            'SKIP: 服务器未安装 OpenResty（record not found），软跳过');
         return;
       }
 
@@ -136,6 +164,11 @@ void main() {
             'test.api_client.openresty', '跳过测试: $skipReason');
         return;
       }
+      if (!openRestyInstalled) {
+        appLogger.wWithPackage('test.api_client.openresty',
+            'SKIP: 服务器未安装 OpenResty（record not found），软跳过');
+        return;
+      }
 
       final raw = await _rawGet(client, '/openresty/https');
       _logSection('✅ Raw /openresty/https',
@@ -153,6 +186,11 @@ void main() {
             'test.api_client.openresty', '跳过测试: $skipReason');
         return;
       }
+      if (!openRestyInstalled) {
+        appLogger.wWithPackage('test.api_client.openresty',
+            'SKIP: 服务器未安装 OpenResty（record not found），软跳过');
+        return;
+      }
 
       final raw = await _rawGet(client, '/openresty');
       _logSection('✅ Raw /openresty',
@@ -167,6 +205,11 @@ void main() {
       if (skipReason != null) {
         appLogger.wWithPackage(
             'test.api_client.openresty', '跳过测试: $skipReason');
+        return;
+      }
+      if (!openRestyInstalled) {
+        appLogger.wWithPackage('test.api_client.openresty',
+            'SKIP: 服务器未安装 OpenResty（record not found），软跳过');
         return;
       }
 

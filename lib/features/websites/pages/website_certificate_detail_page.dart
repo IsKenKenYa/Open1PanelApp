@@ -38,6 +38,7 @@ class _WebsiteCertificateDetailBody extends StatelessWidget {
             : '${l10n.websitesSslInfoTitle} · ${cert!.primaryDomain}';
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(title),
             actions: [

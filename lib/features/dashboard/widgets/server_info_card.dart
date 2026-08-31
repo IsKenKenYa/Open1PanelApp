@@ -48,7 +48,7 @@ class ServerInfoCard extends StatelessWidget {
           const SizedBox(height: 8),
           _InfoRow(
             label: l10n.dashboardUptimeLabel,
-            value: _formatUptime(context, data.uptime),
+            value: _formatUptime(context, data),
           ),
           if (data.lastUpdated != null) ...[
             const SizedBox(height: 8),
@@ -88,8 +88,18 @@ class ServerInfoCard extends StatelessWidget {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}';
   }
 
-  String _formatUptime(BuildContext context, String uptime) {
-    return uptime;
+  String _formatUptime(BuildContext context, DashboardData data) {
+    final l10n = context.l10n;
+    final seconds = data.uptimeSeconds;
+    if (seconds != null) {
+      final days = seconds ~/ 86400;
+      final hours = (seconds % 86400) ~/ 3600;
+      final minutes = (seconds % 3600) ~/ 60;
+      if (days > 0) return l10n.dashboardUptimeDaysHours(days, hours);
+      if (hours > 0) return l10n.dashboardUptimeHours(hours);
+      return l10n.dashboardUptimeMinutes(minutes);
+    }
+    return data.uptime;
   }
 }
 

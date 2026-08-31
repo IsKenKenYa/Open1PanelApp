@@ -19,6 +19,7 @@ class WebsiteRoutingRulesBatchActions {
     WebsiteRoutingRulesProvider provider, {
     required int websiteId,
   }) async {
+    final l10n = context.l10n;
     final idsController = TextEditingController(text: '$websiteId');
     final nameController = TextEditingController(text: provider.proxyName);
     final contentController = TextEditingController();
@@ -29,30 +30,30 @@ class WebsiteRoutingRulesBatchActions {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setStateDialog) => AlertDialog(
-          title: const Text('Batch Actions'),
-          content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
+          title: Text(l10n.routingRulesBatchActions),
+          content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 DropdownButtonFormField<RoutingBatchAction>(
                   initialValue: action,
-                  decoration: const InputDecoration(labelText: 'Action'),
-                  items: const <DropdownMenuItem<RoutingBatchAction>>[
+                  decoration: InputDecoration(labelText: l10n.commonAction),
+                  items: <DropdownMenuItem<RoutingBatchAction>>[
                     DropdownMenuItem(
                       value: RoutingBatchAction.proxyStatus,
-                      child: Text('Batch Proxy Status'),
+                      child: Text(l10n.routingRulesBatchProxyStatus),
                     ),
                     DropdownMenuItem(
                       value: RoutingBatchAction.deleteProxy,
-                      child: Text('Batch Delete Proxy'),
+                      child: Text(l10n.routingRulesBatchDeleteProxy),
                     ),
                     DropdownMenuItem(
                       value: RoutingBatchAction.redirectFile,
-                      child: Text('Batch Redirect File'),
+                      child: Text(l10n.routingRulesBatchRedirectFile),
                     ),
                     DropdownMenuItem(
                       value: RoutingBatchAction.loadBalancerFile,
-                      child: Text('Batch Load Balancer File'),
+                      child: Text(l10n.routingRulesBatchLoadBalancerFile),
                     ),
                   ],
                   onChanged: (value) {
@@ -73,18 +74,18 @@ class WebsiteRoutingRulesBatchActions {
                 ),
                 TextField(
                   controller: idsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Website IDs (comma separated)',
+                  decoration: InputDecoration(
+                    labelText: l10n.commonWebsiteIds,
                   ),
                 ),
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(labelText: l10n.commonName),
                 ),
                 if (action == RoutingBatchAction.proxyStatus)
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Enable'),
+                    title: Text(l10n.commonEnable),
                     value: enabled,
                     onChanged: (value) => setStateDialog(() => enabled = value),
                   ),
@@ -94,9 +95,9 @@ class WebsiteRoutingRulesBatchActions {
                     controller: contentController,
                     minLines: 8,
                     maxLines: 12,
-                    decoration: const InputDecoration(
-                      labelText: 'Content',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.commonContent,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
               ],
@@ -111,7 +112,8 @@ class WebsiteRoutingRulesBatchActions {
               onPressed: () async {
                 final ids = parseWebsiteIds(idsController.text);
                 if (ids.isEmpty) {
-                  SnackBarUtils.showError(context, 'No valid website IDs.');
+                  SnackBarUtils.showError(
+                      context, l10n.routingRulesBatchInvalidIds);
                   return;
                 }
 
@@ -143,8 +145,8 @@ class WebsiteRoutingRulesBatchActions {
 
                 if (!ctx.mounted) return;
                 Navigator.of(ctx).pop();
-                final batchMsg =
-                    'Batch done: success ${result.succeeded}, failed ${result.failed}.';
+                final batchMsg = l10n.routingRulesBatchResult(
+                    result.succeeded, result.failed);
                 if (result.failed > 0) {
                   SnackBarUtils.showWarning(context, batchMsg);
                 } else {

@@ -47,6 +47,7 @@ class _WgetManagerPageState extends State<WgetManagerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title:  Text(context.l10n.wgetTitle),
         actions: [

@@ -50,6 +50,7 @@ class _ContainerInspectPageState extends State<ContainerInspectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text('${widget.containerName} - ${context.l10n.containerInspectTitle}'),
         actions: [

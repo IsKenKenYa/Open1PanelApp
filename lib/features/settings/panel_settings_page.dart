@@ -15,6 +15,7 @@ class PanelSettingsPage extends StatelessWidget {
     final settings = provider.data.systemSettings;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.panelSettingsTitle)),
       body: ListView(
         padding: AppDesignTokens.pagePadding,

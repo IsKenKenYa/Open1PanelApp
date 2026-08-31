@@ -61,6 +61,7 @@ class _OpenRestySourceEditorPageState extends State<OpenRestySourceEditorPage> {
     final isSaving = context.watch<OpenRestyProvider>().isSaving;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.openrestyTabConfig),
         actions: [

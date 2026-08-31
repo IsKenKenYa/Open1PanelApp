@@ -36,6 +36,7 @@ class _SecurityVerificationPageState extends State<SecurityVerificationPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.securityPageTitle),
         actions: [

@@ -68,6 +68,7 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
 
     if (provider.error != null && detail == null) {
       return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(title: Text(item.name)),
         body: ModuleErrorStateWidget(
           message: provider.error,
@@ -88,6 +89,7 @@ class _DatabaseRedisPageViewState extends State<_DatabaseRedisPageView> {
     _saveController.text = persistence['save']?.toString() ?? '';
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(item.name)),
       body: PartialErrorToastListener(
         errorMessage: provider.error,

@@ -68,6 +68,7 @@ class _FilePermissionPageState extends State<FilePermissionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(context.l10n.filePermissionTitleWith(widget.paths.length))),
       body: Padding(
         padding: const EdgeInsets.all(16),

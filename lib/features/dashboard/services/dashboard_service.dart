@@ -56,6 +56,7 @@ class DashboardService {
       diskUsage: diskUsage ??
           (diskPercent != null ? '${diskPercent.toStringAsFixed(1)}%' : '--'),
       uptime: uptime != null ? _formatUptime(uptime) : '--',
+      uptimeSeconds: uptime,
       lastUpdated: DateTime.now(),
     );
   }

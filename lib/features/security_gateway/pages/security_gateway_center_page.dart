@@ -59,6 +59,7 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
     return Consumer<SecurityGatewayCenterProvider>(
       builder: (context, provider, _) {
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(l10n.securityGatewayPageTitle),
             actions: [

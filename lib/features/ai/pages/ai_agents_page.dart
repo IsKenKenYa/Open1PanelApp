@@ -52,6 +52,7 @@ class _AiAgentsPageState extends State<AiAgentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title:  Text(context.l10n.aiAgentsTitle),
         actions: [

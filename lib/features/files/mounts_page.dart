@@ -48,6 +48,7 @@ class _MountsPageState extends State<MountsPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.filesMounts),
         actions: [

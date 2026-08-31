@@ -58,6 +58,7 @@ class _WebsiteLeechPageState extends State<WebsiteLeechPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text('${widget.displayName} - ${context.l10n.websiteLeechTitle}')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,

@@ -52,6 +52,7 @@ class AppRoutes {
   static const String websiteSiteSsl = '/website-site-ssl';
   static const String websiteSslCenter = '/website-ssl-center';
   static const String websiteCertificateDetail = '/website-certificate-detail';
+  static const String securityGatewayCenter = '/security-gateway';
   static const String openrestyCenter = '/openresty';
   static const String openrestySourceEditor = '/openresty-source-editor';
   static const String panelSsl = '/panel-ssl';

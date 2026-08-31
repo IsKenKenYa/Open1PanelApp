@@ -273,6 +273,7 @@ class LegacyRedirectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(),
       body: Center(
         child: Padding(
@@ -304,6 +305,7 @@ class NotFoundPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.notFoundTitle)),
       body: Center(child: Text(l10n.notFoundDesc)),
     );

@@ -17,6 +17,7 @@ class ApiKeySettingsPage extends StatelessWidget {
     final settings = provider.data.systemSettings;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.apiKeySettingsTitle)),
       body: ListView(
         padding: AppDesignTokens.pagePadding,

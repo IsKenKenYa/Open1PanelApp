@@ -78,7 +78,8 @@ Future<void> _prepareWsConfig() async {
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  // 注意：真服务器集成测试禁止 TestWidgetsFlutterBinding（会劫持 HttpClient，
+  // 所有请求返回假 400）。TestEnvironment.initialize() 仅读取 .env，无需绑定层。
   late DioClient client;
   late ProcessV2Api api;
   bool canRun = false;

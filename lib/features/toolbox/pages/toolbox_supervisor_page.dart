@@ -73,6 +73,7 @@ class _ToolboxSupervisorPageState extends State<ToolboxSupervisorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title:  Text(context.l10n.toolboxSupervisorTitle),
         actions: [

@@ -43,6 +43,7 @@ class _WebsiteDomainBody extends StatelessWidget {
       builder: (context, provider, _) {
         if (provider.isLoading && provider.domains.isEmpty) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.websitesDomainsPageTitle)),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -50,6 +51,7 @@ class _WebsiteDomainBody extends StatelessWidget {
 
         if (provider.error != null && provider.domains.isEmpty) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.websitesDomainsPageTitle)),
             body: WebsiteErrorSection(
               message: provider.error!,
@@ -59,6 +61,7 @@ class _WebsiteDomainBody extends StatelessWidget {
         }
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(l10n.websitesDomainsPageTitle),
             actions: [

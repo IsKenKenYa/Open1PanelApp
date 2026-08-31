@@ -92,6 +92,7 @@ class _WebsiteHttpsPageState extends State<WebsiteHttpsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text('${widget.displayName} - HTTPS')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,

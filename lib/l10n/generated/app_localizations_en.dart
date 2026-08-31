@@ -2500,6 +2500,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String dashboardUptimeMinutes(int minutes) {
+    return '${minutes}m';
+  }
+
+  @override
   String dashboardUpdatedAt(String time) {
     return 'Updated at $time';
   }
@@ -8134,6 +8139,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonOk => 'OK';
 
   @override
+  String get commonAction => 'Action';
+
+  @override
+  String get commonEnable => 'Enable';
+
+  @override
+  String get commonWebsiteIds => 'Website IDs (comma separated)';
+
+  @override
+  String get commonTimeoutSeconds => 'Timeout (s)';
+
+  @override
   String get websiteHttpsUpdateFailed => 'Failed to update HTTPS config';
 
   @override
@@ -8177,6 +8194,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get websiteLoadBalancerEmpty => 'No load balancers';
+
+  @override
+  String get routingRulesBatchActions => 'Batch Actions';
+
+  @override
+  String get routingRulesBatchProxyStatus => 'Batch Proxy Status';
+
+  @override
+  String get routingRulesBatchDeleteProxy => 'Batch Delete Proxy';
+
+  @override
+  String get routingRulesBatchRedirectFile => 'Batch Redirect File';
+
+  @override
+  String get routingRulesBatchLoadBalancerFile => 'Batch Load Balancer File';
+
+  @override
+  String get routingRulesBatchInvalidIds => 'No valid website IDs.';
+
+  @override
+  String routingRulesBatchResult(int success, int failed) {
+    return 'Batch done: success $success, failed $failed.';
+  }
 
   @override
   String get fileShareTitle => 'File Shares';
@@ -8384,6 +8424,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get containerFilesEmpty => 'No files';
 
   @override
+  String get containerFilesDirectory => 'Directory';
+
+  @override
+  String containerFilesSizeBytes(String size) {
+    return '$size bytes';
+  }
+
+  @override
   String get imageOpsTitle => 'Image Operations';
 
   @override
@@ -8527,6 +8575,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolboxClamFileReadonly => 'Log Content (read-only)';
 
   @override
+  String get toolboxClamCronExpression => 'Cron expression';
+
+  @override
+  String get toolboxClamInfectedDirectory => 'Infected directory';
+
+  @override
   String get logsCenterTabWebsite => 'Website Logs';
 
   @override
@@ -8647,4 +8701,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filePreviewLoadPdfFailed => 'Failed to load PDF';
+
+  @override
+  String get filePreviewVideoNotInitialized => 'Video player not initialized';
 }

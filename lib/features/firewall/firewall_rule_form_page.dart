@@ -82,6 +82,7 @@ class _FirewallRuleFormViewState extends State<_FirewallRuleFormView> {
     final isEdit = widget.arguments.rule != null;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           isEdit

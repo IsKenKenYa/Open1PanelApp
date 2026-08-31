@@ -61,6 +61,7 @@ class _WebsiteSiteSslBody extends StatelessWidget {
         : l10n.websiteSiteSslPageTitleWithDomain(displayName!);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(title),
         actions: [

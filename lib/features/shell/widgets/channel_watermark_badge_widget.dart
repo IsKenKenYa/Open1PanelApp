@@ -25,10 +25,10 @@ class ChannelWatermarkBadgeWidget extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: colorScheme.errorContainer.withValues(alpha: 0.35),
+                  color: colorScheme.errorContainer.withValues(alpha: 0.22),
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(
-                    color: colorScheme.onErrorContainer.withValues(alpha: 0.2),
+                    color: colorScheme.onErrorContainer.withValues(alpha: 0.12),
                   ),
                 ),
                 child: Text(
@@ -36,7 +36,7 @@ class ChannelWatermarkBadgeWidget extends StatelessWidget {
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
-                        color: colorScheme.onErrorContainer.withValues(alpha: 0.5),
+                        color: colorScheme.onErrorContainer.withValues(alpha: 0.36),
                       ),
                 ),
               ),

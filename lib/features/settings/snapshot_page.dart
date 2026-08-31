@@ -74,6 +74,7 @@ class _SnapshotPageState extends State<SnapshotPage> {
     final snapshots = provider.data.snapshots;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.snapshotTitle),
         actions: [

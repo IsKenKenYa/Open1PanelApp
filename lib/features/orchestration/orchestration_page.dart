@@ -158,6 +158,7 @@ class _OrchestrationPageState extends State<OrchestrationPage>
       child: Builder(
         builder: (context) {
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(
               title: Text(l10n.orchestrationTitle),
               actions: _buildActions(context),

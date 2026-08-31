@@ -23,6 +23,10 @@ class _FakeDatabaseUserService extends DatabaseUserService {
       context;
 
   @override
+  Future<List<Map<String, dynamic>>> listMysqlUsers(DatabaseListItem item) async =>
+      const <Map<String, dynamic>>[];
+
+  @override
   Future<void> bindUser(
     DatabaseListItem item, {
     required String username,

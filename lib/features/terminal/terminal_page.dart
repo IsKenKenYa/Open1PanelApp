@@ -136,6 +136,7 @@ class _TerminalPageState extends State<TerminalPage> {
         builder: (context, provider, _) {
           final l10n = context.l10n;
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(
               title: Text(_initialIntent.title(context)),
               actions: <Widget>[
@@ -423,6 +424,7 @@ class _TerminalSessionDetailPageState extends State<_TerminalSessionDetailPage> 
         }
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(session.descriptor.title),
             actions: <Widget>[

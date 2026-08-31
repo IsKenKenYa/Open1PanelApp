@@ -58,6 +58,7 @@ class _WebsiteCorsPageState extends State<WebsiteCorsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text('${widget.displayName} - CORS')),
       body: WebsiteAsyncStateView(
         isLoading: _isLoading,

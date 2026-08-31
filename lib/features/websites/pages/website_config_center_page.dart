@@ -59,6 +59,7 @@ class _WebsiteConfigCenterBody extends StatelessWidget {
         : '${l10n.websitesConfigPageTitle} · $displayName';
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(title)),
       body: Consumer<WebsiteConfigCenterProvider>(
         builder: (context, provider, _) {

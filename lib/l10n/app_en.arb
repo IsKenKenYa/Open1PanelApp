@@ -1062,6 +1062,14 @@
       }
     }
   },
+  "dashboardUptimeMinutes": "{minutes}m",
+  "@dashboardUptimeMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "dashboardUpdatedAt": "Updated at {time}",
   "@dashboardUpdatedAt": {
     "placeholders": {
@@ -3405,6 +3413,10 @@
   "commonImage": "Image",
   "commonTimeout": "Timeout",
   "commonOk": "OK",
+  "commonAction": "Action",
+  "commonEnable": "Enable",
+  "commonWebsiteIds": "Website IDs (comma separated)",
+  "commonTimeoutSeconds": "Timeout (s)",
   "websiteHttpsUpdateFailed": "Failed to update HTTPS config",
   "websiteHttpsHsts": "HSTS",
   "websiteHttpsSslCertificate": "SSL Certificate",
@@ -3420,6 +3432,23 @@
   "websiteResourceTitle": "Resource",
   "websiteLoadBalancerTitle": "Load Balancer",
   "websiteLoadBalancerEmpty": "No load balancers",
+  "routingRulesBatchActions": "Batch Actions",
+  "routingRulesBatchProxyStatus": "Batch Proxy Status",
+  "routingRulesBatchDeleteProxy": "Batch Delete Proxy",
+  "routingRulesBatchRedirectFile": "Batch Redirect File",
+  "routingRulesBatchLoadBalancerFile": "Batch Load Balancer File",
+  "routingRulesBatchInvalidIds": "No valid website IDs.",
+  "routingRulesBatchResult": "Batch done: success {success}, failed {failed}.",
+  "@routingRulesBatchResult": {
+    "placeholders": {
+      "success": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
   "fileShareTitle": "File Shares",
   "fileShareEmpty": "No shares",
   "wgetTitle": "WGET Downloads",
@@ -3488,6 +3517,15 @@
   "containerMaintenanceContainerId": "Container ID",
   "containerFilesTitle": "Files",
   "containerFilesEmpty": "No files",
+  "containerFilesDirectory": "Directory",
+  "containerFilesSizeBytes": "{size} bytes",
+  "@containerFilesSizeBytes": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
   "imageOpsTitle": "Image Operations",
   "imageOpsPushImage": "Push Image",
   "imageOpsPush": "Push",
@@ -3561,32 +3599,28 @@
     "placeholders": {
       "key": { "type": "String" }
     }
-  }
-,
-  "containerInspectTitle": "Inspect"
-,
+  },
+  "containerInspectTitle": "Inspect",
   "orchestrationTemplates": "Templates",
   "composeTemplateCreate": "Create Template",
   "composeTemplateEdit": "Edit Template",
   "composeTemplateContent": "Template Content",
   "composeTemplateNameRequired": "Template name is required",
   "composeTemplateEmpty": "No templates",
-  "containerTerminal": "Terminal"
-,
+  "containerTerminal": "Terminal",
   "composeTemplateDeleteConfirm": "Delete template {name}?",
   "@composeTemplateDeleteConfirm": {
     "placeholders": {
       "name": { "type": "String" }
     }
-  }
-,
+  },
   "toolboxClamFilesTitle": "Config Files",
   "toolboxClamFileContent": "File Content",
-  "toolboxClamFileReadonly": "Log Content (read-only)"
-,
+  "toolboxClamFileReadonly": "Log Content (read-only)",
+  "toolboxClamCronExpression": "Cron expression",
+  "toolboxClamInfectedDirectory": "Infected directory",
   "logsCenterTabWebsite": "Website Logs",
-  "logsWebsiteSelectorLabel": "Select Website"
-,
+  "logsWebsiteSelectorLabel": "Select Website",
   "databaseUserListTitle": "Database Users",
   "databaseUserChangePassword": "Change Password",
   "databaseUserDeleteConfirm": "Delete user {name}?",
@@ -3595,8 +3629,7 @@
     "placeholders": {
       "name": { "type": "String" }
     }
-  }
-,
+  },
   "aiAgentPluginsTitle": "Agent Plugins",
   "aiAgentInstalledPlugins": "Installed Plugins",
   "aiAgentPluginMarket": "Plugin Market",
@@ -3604,16 +3637,14 @@
   "aiAgentPluginMarketEmpty": "Search the market to find plugins",
   "aiAgentPluginInstallConfirm": "Install this plugin?",
   "aiAgentPluginUninstall": "Uninstall",
-  "aiAgentPluginUpgrade": "Upgrade"
-,
+  "aiAgentPluginUpgrade": "Upgrade",
   "hostDiagnosticsTitle": "Runtime Diagnostics",
   "hostDiagnosticsSummary": "Diagnostics Summary",
   "hostDiagnosticsCaptureTitle": "Capture Profile",
   "hostDiagnosticsDuration": "Duration",
   "hostDiagnosticsCapture": "Capture",
   "hostDiagnosticsGoroutines": "Goroutine Dump",
-  "hostDiagnosticsCaptureDone": "Profile captured"
-,
+  "hostDiagnosticsCaptureDone": "Profile captured",
   "toolboxClamFreshStart": "Freshclam Start",
   "toolboxClamFreshStop": "Freshclam Stop",
   "toolboxClamFreshRestart": "Freshclam Restart",
@@ -3624,8 +3655,7 @@
   "databaseFormPgSuperuser": "PostgreSQL Superuser",
   "filePreviewLoadFailed": "Failed to load file",
   "filePreviewSaveFailed": "Failed to save file",
-  "filePreviewLoadSuccess": "File loaded"
-,
+  "filePreviewLoadSuccess": "File loaded",
   "dashboardRefreshInterval": "Refresh interval",
   "dashboardInterval3s": "3 seconds",
   "dashboardInterval5s": "5 seconds (default)",
@@ -3633,6 +3663,7 @@
   "dashboardInterval30s": "30 seconds",
   "dashboardInterval1m": "1 minute",
   "filePreviewLoadImageFailed": "Failed to load image",
-  "filePreviewLoadPdfFailed": "Failed to load PDF"
+  "filePreviewLoadPdfFailed": "Failed to load PDF",
+  "filePreviewVideoNotInitialized": "Video player not initialized"
 
 }

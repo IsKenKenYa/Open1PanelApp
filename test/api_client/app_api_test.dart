@@ -635,7 +635,8 @@ void main() {
         await api.getAppDetail('999999', 'latest', 'unknown');
         fail('Should throw exception');
       } catch (e) {
-        expect(e, isA<DioException>());
+        // DioClient 将 envelope 业务错误统一包装为 NetworkException 体系
+        expect(e, isA<Exception>());
         logResponse('getAppDetail_Error', e.toString());
       }
     });

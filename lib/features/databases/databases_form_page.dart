@@ -73,6 +73,7 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
             _engineController.text = _selectedDatabaseTarget!.lookupName;
           }
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(context.l10n.commonCreate)),
             body: Padding(
               padding: AppDesignTokens.pagePadding,

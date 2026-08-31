@@ -48,6 +48,7 @@ class _DatabaseBackupPageView extends StatelessWidget {
     final l10n = context.l10n;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.databaseBackupsPageTitle)),
       body: !databaseSupportsBackups(item.scope)
           ? DatabasePageUnsupportedWidget(

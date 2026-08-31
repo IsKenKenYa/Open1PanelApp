@@ -66,6 +66,7 @@ class _ContainerCreatePageState extends State<ContainerCreatePage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.containerCreate),
       ),

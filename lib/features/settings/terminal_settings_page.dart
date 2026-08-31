@@ -72,6 +72,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           final connection = provider.data.sshConnection;
 
           return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.terminalSettingsTitle)),
             body: ListView(
               padding: AppDesignTokens.pagePadding,

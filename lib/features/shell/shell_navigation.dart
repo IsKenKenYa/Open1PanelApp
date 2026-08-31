@@ -77,6 +77,7 @@ ShellRouteTarget? shellRouteTargetForRoute(String route) {
     case AppRoutes.websiteSiteSsl:
     case AppRoutes.websiteSslCenter:
     case AppRoutes.websiteCertificateDetail:
+    case AppRoutes.securityGatewayCenter:
       return const ShellRouteTarget(
         module: ClientModule.websites,
         embedRouteInShell: true,

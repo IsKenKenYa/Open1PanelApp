@@ -42,8 +42,8 @@ mixin _ToolboxClamPageActionsPart on State<ToolboxClamPage> {
                 const SizedBox(height: 12),
                 TextField(
                   controller: specController,
-                  decoration: const InputDecoration(
-                    labelText: 'Cron expression',
+                  decoration: InputDecoration(
+                    labelText: l10n.toolboxClamCronExpression,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -56,13 +56,13 @@ mixin _ToolboxClamPageActionsPart on State<ToolboxClamPage> {
                 TextField(
                   controller: timeoutController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Timeout(s)'),
+                  decoration: InputDecoration(labelText: l10n.commonTimeoutSeconds),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: infectedDirController,
-                  decoration: const InputDecoration(
-                    labelText: 'Infected directory',
+                  decoration: InputDecoration(
+                    labelText: l10n.toolboxClamInfectedDirectory,
                   ),
                 ),
                 const SizedBox(height: 12),

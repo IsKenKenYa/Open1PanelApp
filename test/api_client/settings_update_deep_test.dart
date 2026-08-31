@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import '../core/test_config_manager.dart';
 import 'package:onepanel_client/core/network/dio_client.dart';
 
-void main() {
+Future<void> main() async {
+  // skip 参数在测试声明期同步求值，必须先初始化 TestEnvironment
+  await TestEnvironment.initialize();
   late DioClient client;
   bool hasApiKey = false;
 
@@ -22,7 +24,9 @@ void main() {
   });
 
   group('深入分析 /settings/update 接口', () {
-    test('1. 分析更新响应和实际效果', () async {
+    // 安全红线：任何对面板设置的 update 调用必须在 destructive 门控下默认跳过，
+    // 禁止在默认集成测试环境中修改面板配置。
+    test('1. 分析更新响应和实际效果', skip: TestEnvironment.skipDestructive(), () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;
@@ -139,7 +143,8 @@ void main() {
       debugPrint('========================================\n');
     });
 
-    test('4. 测试不同的value格式', () async {
+    // 安全红线：批量修改 developerMode 等设置属于修改面，必须默认跳过。
+    test('4. 测试不同的value格式', skip: TestEnvironment.skipDestructive(), () async {
       if (!hasApiKey) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
         return;

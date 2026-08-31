@@ -17,6 +17,7 @@ class ServerListPageMobile extends StatelessWidget {
     final canPop = Navigator.of(context).canPop();
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         leading: canPop
             ? IconButton(

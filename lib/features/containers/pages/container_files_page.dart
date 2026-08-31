@@ -146,13 +146,16 @@ class _ContainerFilesPageState extends State<ContainerFilesPage> {
                           return ListTile(
                             leading: Icon(
                               isDir ? Icons.folder : Icons.insert_drive_file,
-                              color: isDir ? Colors.blue : null,
+                              color: isDir
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
                             ),
                             title: Text(name),
                             subtitle: Text(
                               isDir
-                                  ? 'Directory'
-                                  : '${file['size'] ?? 'N/A'} bytes',
+                                  ? context.l10n.containerFilesDirectory
+                                  : context.l10n.containerFilesSizeBytes(
+                                      file['size']?.toString() ?? 'N/A'),
                             ),
                             onTap: isDir
                                 ? () => _navigateTo('$_currentPath$name/')

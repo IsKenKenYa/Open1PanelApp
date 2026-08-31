@@ -37,6 +37,7 @@ class _AboutPageState extends State<AboutPage> {
     final l10n = context.l10n;
     final channelLabel = _channelLabel(context);
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(l10n.aboutPageTitle),
       ),

@@ -56,6 +56,7 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
     final l10n = context.l10n;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.proxySettingsTitle)),
       body: Form(
         key: _formKey,

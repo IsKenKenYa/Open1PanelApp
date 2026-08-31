@@ -59,6 +59,7 @@ class _UpgradePageState extends State<UpgradePage> {
     final currentVersion = provider.data.systemSettings?.systemVersion ?? '-';
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(title: Text(l10n.upgradeTitle)),
       body: FutureBuilder(
         future: _upgradeInfoFuture,

@@ -101,6 +101,7 @@ class DashboardData {
     this.memoryUsage = '--',
     this.diskUsage = '--',
     this.uptime = '--',
+    this.uptimeSeconds,
     this.lastUpdated,
     this.topCpuProcesses = const [],
     this.topMemoryProcesses = const [],
@@ -118,6 +119,7 @@ class DashboardData {
   final String memoryUsage;
   final String diskUsage;
   final String uptime;
+  final int? uptimeSeconds;
   final DateTime? lastUpdated;
   final List<ProcessInfo> topCpuProcesses;
   final List<ProcessInfo> topMemoryProcesses;
@@ -135,6 +137,7 @@ class DashboardData {
     String? memoryUsage,
     String? diskUsage,
     String? uptime,
+    int? uptimeSeconds,
     DateTime? lastUpdated,
     List<ProcessInfo>? topCpuProcesses,
     List<ProcessInfo>? topMemoryProcesses,
@@ -152,6 +155,7 @@ class DashboardData {
       memoryUsage: memoryUsage ?? this.memoryUsage,
       diskUsage: diskUsage ?? this.diskUsage,
       uptime: uptime ?? this.uptime,
+      uptimeSeconds: uptimeSeconds ?? this.uptimeSeconds,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       topCpuProcesses: topCpuProcesses ?? this.topCpuProcesses,
       topMemoryProcesses: topMemoryProcesses ?? this.topMemoryProcesses,

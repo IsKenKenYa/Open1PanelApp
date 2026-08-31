@@ -55,6 +55,7 @@ class _WebsiteRoutingRulesBody extends StatelessWidget {
     return Consumer<WebsiteRoutingRulesProvider>(
       builder: (context, provider, _) {
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: AppBar(
             title: Text(title),
             actions: <Widget>[
@@ -64,7 +65,7 @@ class _WebsiteRoutingRulesBody extends StatelessWidget {
                 icon: const Icon(Icons.refresh),
               ),
               IconButton(
-                tooltip: 'Batch Actions',
+                tooltip: l10n.routingRulesBatchActions,
                 onPressed: () =>
                     WebsiteRoutingRulesBatchActions.showBatchDialog(
                   context,

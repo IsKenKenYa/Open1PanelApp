@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/data/models/ssh_settings_models.dart';
+import 'package:onepanel_client/features/settings/settings_data.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
 import 'package:onepanel_client/features/settings/settings_service.dart';
 import 'package:onepanel_client/core/services/passkey_service.dart';
