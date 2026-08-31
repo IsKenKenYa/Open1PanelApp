@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../core/config/api_constants.dart';
 import '../../core/network/dio_client.dart';
+import '../../core/network/network_exceptions.dart';
 import '../../data/models/common_models.dart';
 import '../../data/models/host_asset_models.dart';
 import '../../data/models/host_models.dart';
@@ -17,13 +18,26 @@ class HostV2Api {
   final DioClient _client;
 
   // 1Panel 2.x moved host endpoints from /hosts/* to /core/hosts/*.
-  // Older servers return 404/405 for the new paths, so we fall back.
-  bool _shouldFallbackToLegacy(DioException error) {
-    final statusCode = error.response?.statusCode;
+  // Older servers return 404/405 for the new paths, or 200 + SPA HTML
+  // fallback page (surfaced as EndpointNotFoundException by DioClient),
+  // so we fall back.
+  bool _shouldFallbackToLegacy(Object error) {
+    if (error is EndpointNotFoundException) {
+      return true;
+    }
+    int? statusCode;
+    if (error is DioException) {
+      statusCode = error.response?.statusCode;
+    } else if (error is NetworkException) {
+      // DioClient 统一将 DioException 转换为 NetworkException 子类抛出，
+      // 404/405 场景实际以 HttpException 形态到达这里。
+      statusCode = error.statusCode;
+    }
     return statusCode == 404 || statusCode == 405;
   }
 
-  /// Tries [primaryPath] first; on 404/405 retries with [legacyPath].
+  /// Tries [primaryPath] first; on 404/405 (or SPA HTML fallback) retries
+  /// with [legacyPath].
   Future<Response<T>> _postWithLegacyFallback<T>({
     required String primaryPath,
     required String legacyPath,
@@ -34,7 +48,7 @@ class HostV2Api {
         ApiConstants.buildApiPath(primaryPath),
         data: data,
       );
-    } on DioException catch (error) {
+    } catch (error) {
       if (!_shouldFallbackToLegacy(error)) {
         rethrow;
       }
@@ -53,7 +67,7 @@ class HostV2Api {
       return await _client.post<Map<String, dynamic>>(
         ApiConstants.buildApiPath('/core/hosts/test/byid/$id'),
       );
-    } on DioException catch (error) {
+    } catch (error) {
       if (!_shouldFallbackToLegacy(error)) {
         rethrow;
       }

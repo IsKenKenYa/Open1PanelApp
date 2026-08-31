@@ -1,8 +1,11 @@
 import 'package:onepanel_client/api/v2/toolbox_v2.dart';
 import 'package:onepanel_client/data/models/paged_query.dart';
 import 'package:onepanel_client/core/network/api_client_manager.dart';
+import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/data/models/common_models.dart';
 import 'package:onepanel_client/data/models/toolbox_models.dart';
+
+const String _toolboxRepoPackage = 'data.repositories.toolbox_repository';
 
 class ToolboxRepository {
   ToolboxRepository({ToolboxV2Api? apiClient}) : _api = apiClient;
@@ -19,11 +22,31 @@ class ToolboxRepository {
     return (await api.getDeviceBaseInfo()).data ?? const DeviceBaseInfo();
   }
 
+  /// 逐项获取设备配置。
+  ///
+  /// V2 契约：/toolbox/device/conf 必须按具体 name 请求（服务端仅支持
+  /// DNS/Hosts，传 'all' 会报 not support such name），逐项请求并对单项
+  /// 失败容错（失败项不进入结果，不阻塞其它项），按服务端 name 拼装返回。
   Future<Map<String, dynamic>> getDeviceConf() async {
-      final api = await _ensureApi();
-      final raw = (await api.getDeviceConf('all')).data;
-      return _normalizeToMap(raw);
+    final api = await _ensureApi();
+    final conf = <String, dynamic>{};
+    for (final name in const <String>['DNS', 'Hosts']) {
+      try {
+        final content = (await api.getDeviceConf(name)).data;
+        if (content != null && content.isNotEmpty) {
+          conf[name] = content;
+        }
+      } catch (e, stack) {
+        appLogger.wWithPackage(
+          _toolboxRepoPackage,
+          'load device conf failed: name=$name',
+          error: e,
+          stackTrace: stack,
+        );
+      }
     }
+    return conf;
+  }
 
   Future<void> updateDeviceConf(DeviceConfUpdate request) async {
     final api = await _ensureApi();
@@ -123,7 +146,7 @@ class ToolboxRepository {
   }) async {
     final api = await _ensureApi();
     final response = await api.searchClam(
-      PageRequest(page: page, pageSize: pageSize),
+      ClamSearch(page: page, pageSize: pageSize),
     );
     return response.data?.items ?? const <ClamBaseInfo>[];
   }
@@ -154,20 +177,28 @@ class ToolboxRepository {
     return (await api.loadFail2banConf()).data ?? '';
   }
 
+  /// 搜索Fail2ban记录。
+  ///
+  /// V2 契约：/toolbox/fail2ban/search 请求仅需 status（必填，默认 banned），
+  /// 响应为 IP 字符串数组；这里将其映射为 Fail2banRecord（ip + 查询状态）。
   Future<List<Fail2banRecord>> searchFail2banRecords({
     int page = 1,
     int pageSize = PagedQuery.searchPageSize,
     String? status,
   }) async {
     final api = await _ensureApi();
+    final resolvedStatus = status ?? 'banned';
     final response = await api.searchFail2ban(
       Fail2banSearch(
         page: page,
         pageSize: pageSize,
-        status: status,
+        status: resolvedStatus,
       ),
     );
-    return response.data?.items ?? const <Fail2banRecord>[];
+    final ips = response.data ?? const <String>[];
+    return <Fail2banRecord>[
+      for (final ip in ips) Fail2banRecord(ip: ip, status: resolvedStatus),
+    ];
   }
 
   Future<void> updateFail2ban(Fail2banUpdate request) async {
@@ -237,31 +268,5 @@ class ToolboxRepository {
   Future<void> operateFtp(String operation) async {
     final api = await _ensureApi();
     await api.operateFtp(operation);
-  }
-
-  Map<String, dynamic> _normalizeToMap(dynamic value) {
-    if (value is Map<String, dynamic>) {
-      return value;
-    }
-    if (value is Map) {
-      return Map<String, dynamic>.from(value);
-    }
-
-    if (value != null) {
-      try {
-        final dynamic data = value;
-        final json = data.toJson();
-        if (json is Map<String, dynamic>) {
-          return json;
-        }
-        if (json is Map) {
-          return Map<String, dynamic>.from(json);
-        }
-      } catch (_) {
-        // Ignore unknown response shape and fallback to empty map.
-      }
-    }
-
-    return const <String, dynamic>{};
   }
 }

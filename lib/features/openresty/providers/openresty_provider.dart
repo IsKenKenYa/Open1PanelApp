@@ -23,6 +23,7 @@ class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
   bool _isLoading = false;
   bool _isSaving = false;
   String? _error;
+  bool _notInstalled = false;
 
   Map<String, dynamic>? _status;
   Map<String, dynamic>? _modules;
@@ -41,6 +42,7 @@ class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
   String? get error => _error;
+  bool get notInstalled => _notInstalled;
   Map<String, dynamic>? get status => _status;
   Map<String, dynamic>? get modules => _modules;
   Map<String, dynamic>? get https => _https;
@@ -140,6 +142,7 @@ class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
   }
 
   Future<void> loadAll({bool silent = false}) async {
+    _notInstalled = false;
     if (!silent) {
       _isLoading = true;
       _error = null;
@@ -158,7 +161,17 @@ class OpenRestyProvider extends ChangeNotifier with SafeChangeNotifier {
       _configRollbackSnapshot = _snapshotStore.read(_configScope);
       _error = null;
     } catch (e) {
-      _error = ErrorMessageUtils.userFacingMessage(e);
+      final message = ErrorMessageUtils.userFacingMessage(e);
+      // OpenResty 未安装时服务端 /openresty/* 返回 500 "record not found"，
+      // 属于空态而非加载失败：置专用标志并清空错误，由页面渲染未安装引导。
+      final raw = e.toString().toLowerCase();
+      if (message.toLowerCase().contains('record not found') ||
+          raw.contains('record not found')) {
+        _notInstalled = true;
+        _error = null;
+      } else {
+        _error = message;
+      }
     } finally {
       _isLoading = false;
       notifyListeners();

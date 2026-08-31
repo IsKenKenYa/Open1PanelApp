@@ -33,7 +33,10 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
     if (settings != null) {
       setState(() {
         _enabled = settings.proxyUrl != null && settings.proxyUrl!.isNotEmpty;
-        _proxyType = settings.proxyType ?? 'http';
+        // 服务端未配置代理时 proxyType 可能是空串或未知值（非 null），
+        // 必须做白名单校验回退默认值，否则 DropdownButton value 不在 items
+        // 中会触发 "exactly one item with value" 断言崩溃。
+        _proxyType = settings.proxyType == 'https' ? 'https' : 'http';
         _hostController.text = settings.proxyUrl ?? '';
         _portController.text = settings.proxyPort ?? '';
         _userController.text = settings.proxyUser ?? '';

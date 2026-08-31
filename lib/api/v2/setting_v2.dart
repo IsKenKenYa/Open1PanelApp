@@ -29,6 +29,9 @@ class SettingV2Api {
 
   // Some endpoints moved from /settings/* to /core/settings/* in newer versions.
   bool _shouldFallbackToLegacySettingsPath(Object error) {
+    if (error is EndpointNotFoundException) {
+      return true;
+    }
     if (error is DioException) {
       final statusCode = error.response?.statusCode;
       return statusCode == 404 || statusCode == 405;
@@ -168,9 +171,14 @@ class SettingV2Api {
   }
 
   Future<Response<List<PasskeyInfo>>> listPasskeys() async {
-    final response = await _client.get<Map<String, dynamic>>(
-      ApiConstants.buildApiPath('/core/settings/passkey/list'),
-    );
+    Response<Map<String, dynamic>> response;
+    try {
+      response = await _client.get<Map<String, dynamic>>(
+        ApiConstants.buildApiPath('/core/settings/passkey/list'),
+      );
+    } on EndpointNotFoundException {
+      throw const EndpointNotFoundException('当前面板版本不支持 Passkey');
+    }
     final items = ApiResponseParser.asListOrNull(response.data) ?? const <dynamic>[];
     return Response<List<PasskeyInfo>>(
       data: items
@@ -471,10 +479,15 @@ class SettingV2Api {
   /// @param request MFA凭证请求
   /// @return MFA OTP信息
   Future<Response<MfaOtp>> loadMfaInfo(MfaLoadRequest request) async {
-    final response = await _client.post<dynamic>(
-      ApiConstants.buildApiPath('/core/settings/mfa'),
-      data: request.toJson(),
-    );
+    Response<dynamic> response;
+    try {
+      response = await _client.post<dynamic>(
+        ApiConstants.buildApiPath('/core/settings/mfa'),
+        data: request.toJson(),
+      );
+    } on EndpointNotFoundException {
+      throw const EndpointNotFoundException('当前面板版本不支持 MFA');
+    }
     final data = response.data;
     Map<String, dynamic>? payload;
     if (data is Map<String, dynamic>) {

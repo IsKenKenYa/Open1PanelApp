@@ -56,6 +56,44 @@ void main() {
       expect(image.digest, 'sha256:digest');
     });
 
+    test('DockerImage.fromJson should accept epoch seconds for created', () {
+      // 回归：上游 1Panel Docker API 的 created 是 epoch 秒（int），
+      // 旧实现 `as String?` 会抛类型转换异常导致镜像列表加载失败。
+      final image = DockerImage.fromJson({
+        'id': 'sha256:epoch',
+        'tags': <String>[],
+        'size': 1,
+        'created': 1704067200,
+      });
+
+      expect(image.created, '2024-01-01T00:00:00.000Z');
+      expect(image.createdDateTime, isNotNull);
+    });
+
+    test('DockerImage.createdDateTime should parse ISO string', () {
+      final image = DockerImage.fromJson({
+        'id': 'sha256:iso',
+        'created': '2024-01-01T00:00:00Z',
+      });
+      expect(image.createdDateTime, isNotNull);
+    });
+
+    test('DockerNetwork.fromJson should normalize literal null strings', () {
+      // 回归：Docker none 网络的 driver 字面为 "null"，空子网/网关会以
+      // 空串出现，UI 需要统一兜底展示。
+      final network = DockerNetwork.fromJson({
+        'id': 'net-null',
+        'name': 'none',
+        'driver': 'null',
+        'subnet': '',
+        'gateway': 'null',
+      });
+
+      expect(network.driver, '');
+      expect(network.subnet, isNull);
+      expect(network.gateway, isNull);
+    });
+
     test('DockerNetwork.fromJson should parse correctly', () {
       final json = {
         'id': 'net1',

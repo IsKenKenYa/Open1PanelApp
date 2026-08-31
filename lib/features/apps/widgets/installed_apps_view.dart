@@ -171,7 +171,7 @@ class _InstalledAppsViewState extends State<InstalledAppsView> {
           ),
           const SizedBox(height: 8),
           Text(
-            l10n.appStoreTitle,
+            l10n.appsInstalledEmptyDescription,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),

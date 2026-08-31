@@ -790,6 +790,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get openrestyPageTitle => 'OpenResty';
 
   @override
+  String get openrestyNotInstalledTitle => 'OpenResty 未安装';
+
+  @override
+  String get openrestyNotInstalledDescription =>
+      'OpenResty 未安装或未就绪，请先在应用商店安装 OpenResty 后再管理网站';
+
+  @override
+  String get openrestyGoStore => '前往应用商店';
+
+  @override
   String get openrestyTabStatus => '状态';
 
   @override
@@ -1426,6 +1436,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get databasePrivilegeUnavailable => '绑定用户后才可调整权限。';
 
   @override
+  String get databaseTargetInstance => '目标实例';
+
+  @override
+  String get databaseTargetInstanceRequired => '请选择目标实例';
+
+  @override
+  String get databasePermission => '权限';
+
+  @override
+  String get databaseCharsetLabel => '字符集';
+
+  @override
+  String get databaseFormatLabel => '格式';
+
+  @override
+  String get databaseDbLabel => '数据库';
+
+  @override
   String get firewallTabStatus => '状态';
 
   @override
@@ -1502,6 +1530,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get firewallSearchHint => '按描述、地址或端口搜索';
+
+  @override
+  String get firewallRulesEmptyTitle => '暂无规则';
+
+  @override
+  String get firewallRulesEmptyHint => '点击右上角添加按钮，创建端口或 IP 访问规则。';
+
+  @override
+  String get firewallIpsEmptyTitle => '暂无 IP 规则';
+
+  @override
+  String get firewallIpsEmptyHint => '点击右上角添加按钮，添加需要封禁的 IP 地址。';
+
+  @override
+  String get firewallPortsEmptyTitle => '暂无端口规则';
+
+  @override
+  String get firewallPortsEmptyHint => '点击右上角添加按钮，放行需要开放的端口。';
 
   @override
   String get firewallSelectionModeEnable => '选择';
@@ -4248,6 +4294,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appsPageTitle => '应用管理';
 
   @override
+  String get appsInstalledEmptyDescription => '尚未安装应用，前往应用商店安装。';
+
+  @override
   String get appStoreInstall => '安装';
 
   @override
@@ -5106,7 +5155,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get operationsCenterPageTitle => '运维中心';
 
   @override
-  String get operationsCenterIntro => '第一阶段新增能力会按周统一落在这里，保持服务器运维入口在移动端只有一个主链路。';
+  String get operationsCenterIntro => '服务器运维工具的统一入口，按功能分类组织。';
 
   @override
   String get operationsCenterServerEntryTitle => '运维中心';
@@ -5118,8 +5167,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get operationsCenterAutomationSectionTitle => '自动化';
 
   @override
-  String get operationsCenterAutomationSectionDescription =>
-      '命令、计划任务、脚本库和备份主链路';
+  String get operationsCenterAutomationSectionDescription => '命令、计划任务、脚本库和备份管理';
 
   @override
   String get operationsCenterRuntimeSectionTitle => '运行时与交付';
@@ -5325,7 +5373,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cronjobsEmptyTitle => '暂无计划任务';
 
   @override
-  String get cronjobsEmptyDescription => 'Week 4 主链路加载到计划任务后，会在这里展示。';
+  String get cronjobsEmptyDescription => '创建计划任务后，将在这里展示任务列表与执行记录。';
 
   @override
   String get cronjobsSpecLabel => '计划表达式';
@@ -5683,7 +5731,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get backupAccountsEmptyTitle => '暂无备份账户';
 
   @override
-  String get backupAccountsEmptyDescription => '添加备份账户后，就可以开始使用备份主链路。';
+  String get backupAccountsEmptyDescription => '添加备份账户后，即可开始备份管理。';
 
   @override
   String get backupAccountsScopePublic => '公共';
@@ -6418,11 +6466,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get runtimeFormAppStoreCreateWeek8Hint =>
-      '应用商店运行时创建留到 Week 8 的专用向导，本周只支持手动运行时骨架。';
+      '应用商店运行时请在应用商店中安装；此处用于手动创建运行环境。';
 
   @override
-  String get runtimeFormPhpCreateWeek8Hint =>
-      'PHP 创建流保留到 Week 8 的专用表单，本周先收口通用运行时骨架。';
+  String get runtimeFormPhpCreateWeek8Hint => 'PHP 运行环境同样使用此表单创建，镜像与启动命令按需填写。';
 
   @override
   String get runtimeFormNameRequired => '运行时名称不能为空。';
@@ -6903,7 +6950,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sshSessionsEmptyTitle => '暂无 SSH 会话';
 
   @override
-  String get sshSessionsEmptyDescription => 'websocket 返回活跃 SSH 会话后，会在这里展示。';
+  String get sshSessionsEmptyDescription => '活跃的 SSH 会话将在这里展示。';
 
   @override
   String get sshSessionsLoginUserLabel => '登录用户';

@@ -15,6 +15,12 @@ class NetworkCard extends StatelessWidget {
       network.name == 'host' ||
       network.name == 'none';
 
+  /// 驱动/子网/网关空值（模型层已归一 "null" 字面值）统一以 '—' 展示。
+  String get _driverDisplay => network.driver.isEmpty ? '—' : network.driver;
+
+  String _orDash(String? value) =>
+      (value == null || value.isEmpty) ? '—' : value;
+
   Future<void> _runAction(
     BuildContext context,
     NetworkProvider provider,
@@ -151,7 +157,7 @@ class NetworkCard extends StatelessWidget {
                       Chip(
                         visualDensity: VisualDensity.compact,
                         label: Text(
-                            l10n.containerNetworkDriverChip(network.driver)),
+                            l10n.containerNetworkDriverChip(_driverDisplay)),
                       ),
                       if (_isSystemNetwork)
                         Chip(
@@ -160,16 +166,14 @@ class NetworkCard extends StatelessWidget {
                         ),
                     ],
                   ),
-                  if (network.subnet != null)
-                    Text(
-                      '${l10n.containerNetworkSubnetLabel}: ${network.subnet}',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  if (network.gateway != null)
-                    Text(
-                      '${l10n.containerNetworkGatewayLabel}: ${network.gateway}',
-                      style: theme.textTheme.bodySmall,
-                    ),
+                  Text(
+                    '${l10n.containerNetworkSubnetLabel}: ${_orDash(network.subnet)}',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  Text(
+                    '${l10n.containerNetworkGatewayLabel}: ${_orDash(network.gateway)}',
+                    style: theme.textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),

@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-
 enum RuntimeType {
   java('java'),
   node('node'),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/features/openresty/pages/openresty_source_editor_page.dart';
@@ -7,6 +8,8 @@ import 'package:onepanel_client/features/openresty/widgets/openresty_center_dial
 import 'package:onepanel_client/features/openresty/widgets/openresty_center_localizations.dart';
 import 'package:onepanel_client/features/openresty/widgets/openresty_center_section_widgets.dart';
 import 'package:onepanel_client/features/openresty/widgets/openresty_error_view.dart';
+import 'package:onepanel_client/features/shell/shell_navigation.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_empty_state_widget.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/config_diff_preview_card.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +22,22 @@ class OpenRestyCenterPage extends StatelessWidget {
     return Consumer<OpenRestyProvider>(
       builder: (context, provider, _) {
         final l10n = context.l10n;
+        if (provider.notInstalled && !provider.hasData) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            appBar: AppBar(title: Text(l10n.openrestyPageTitle)),
+            body: ModuleEmptyStateWidget(
+              key: const Key('openresty-not-installed-empty'),
+              icon: Icons.route,
+              title: l10n.openrestyNotInstalledTitle,
+              description: l10n.openrestyNotInstalledDescription,
+              actionLabel: l10n.openrestyGoStore,
+              onAction: () =>
+                  openRouteRespectingShell(context, AppRoutes.appStore),
+            ),
+          );
+        }
+
         if (provider.error != null && !provider.hasData) {
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,

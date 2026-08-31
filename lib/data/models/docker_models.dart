@@ -24,11 +24,24 @@ class DockerImage extends Equatable {
       id: json['id'] as String? ?? '',
       tags: (json['tags'] as List?)?.cast<String>() ?? [],
       size: json['size'] as int? ?? 0,
-      created: json['created'] as String? ?? '',
+      created: _resolveCreated(json['created']),
       digest: json['digest'] as String?,
       isUsed: json['isUsed'] as bool? ?? false,
     );
   }
+
+  /// 上游 1Panel Docker API 的 created 可能是 epoch 秒（int）或 ISO 字符串，
+  /// 统一归一为 ISO 字符串，避免 UI 直接外露 epoch 数值。
+  static String _resolveCreated(dynamic value) {
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value * 1000, isUtc: true)
+          .toIso8601String();
+    }
+    return value as String? ?? '';
+  }
+
+  /// 解析创建时间；无法解析时返回 null（UI 需自行兜底）。
+  DateTime? get createdDateTime => DateTime.tryParse(created);
 
   Map<String, dynamic> toJson() {
     return {
@@ -69,15 +82,24 @@ class DockerNetwork extends Equatable {
 
   factory DockerNetwork.fromJson(Map<String, dynamic> json) {
     return DockerNetwork(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      driver: json['driver'] as String? ?? '',
-      scope: json['scope'] as String?,
+      id: _cleanNullableString(json['id']) ?? '',
+      name: _cleanNullableString(json['name']) ?? '',
+      // Docker none 网络的驱动名就是字面 "null"，与空值一并归一，避免 UI 外露。
+      driver: _cleanNullableString(json['driver']) ?? '',
+      scope: _cleanNullableString(json['scope']),
       internal: json['internal'] as bool?,
       attachable: json['attachable'] as bool?,
-      subnet: json['subnet'] as String?,
-      gateway: json['gateway'] as String?,
+      subnet: _cleanNullableString(json['subnet']),
+      gateway: _cleanNullableString(json['gateway']),
     );
+  }
+
+  /// 上游偶发用字面 "null" 或空串表示空值，统一归一为 null。
+  static String? _cleanNullableString(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    if (text.isEmpty || text == 'null') return null;
+    return text;
   }
 
   Map<String, dynamic> toJson() {

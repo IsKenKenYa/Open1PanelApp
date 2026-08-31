@@ -226,6 +226,7 @@ class ToolboxDeviceProvider extends ChangeNotifier with SafeChangeNotifier {
       if (keys.contains('dns')) _baseInfo.dns,
       if (keys.contains('hostname')) _baseInfo.hostname,
       if (keys.contains('ntp')) _baseInfo.ntp,
+      if (keys.contains('swap')) _swapText(),
     ];
     for (final value in baseCandidates) {
       if (value != null && value.trim().isNotEmpty) {
@@ -233,5 +234,21 @@ class ToolboxDeviceProvider extends ChangeNotifier with SafeChangeNotifier {
       }
     }
     return '-';
+  }
+
+  /// Swap 概览值来自 /toolbox/device/base 的 swapMemoryTotal（与上游
+  /// device/index.vue 的 computeSize 行为一致；/toolbox/device/conf
+  /// 服务端仅支持 DNS/Hosts，不提供 swap 块）。
+  String? _swapText() {
+    final total = _baseInfo.swapMemoryTotal;
+    if (total == null || total <= 0) {
+      return null;
+    }
+    if (total < 1024) return '$total B';
+    if (total < 1024 * 1024) return '${(total / 1024).toStringAsFixed(1)} KB';
+    if (total < 1024 * 1024 * 1024) {
+      return '${(total / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
+    return '${(total / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 }

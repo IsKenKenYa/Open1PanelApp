@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/data/models/docker_models.dart';
@@ -8,6 +9,15 @@ import 'package:onepanel_client/features/orchestration/widgets/image_card_prompt
 import 'package:onepanel_client/features/orchestration/widgets/orchestration_detail_line_widget.dart';
 
 class ImageCardDialogs {
+  /// 创建时间本地化短格式；无法解析时回退原始串（created 可能为空）。
+  static String createdLabel(DockerImage image) {
+    final parsed = image.createdDateTime;
+    if (parsed == null) {
+      return image.created.isEmpty ? '-' : image.created;
+    }
+    return DateFormat('yyyy-MM-dd HH:mm').format(parsed.toLocal());
+  }
+
   static Future<void> showDetailsSheet(
     BuildContext context, {
     required DockerImage image,
@@ -40,7 +50,7 @@ class ImageCardDialogs {
               ),
               OrchestrationDetailLineWidget(
                 label: l10n.orchestrationImageCreatedLabel,
-                value: image.created,
+                value: createdLabel(image),
                 labelWidth: 90,
               ),
               OrchestrationDetailLineWidget(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/task_log_models.dart';
 
+import '../utils/logs_l10n_helper.dart';
+
 class TaskLogCardWidget extends StatelessWidget {
   const TaskLogCardWidget({
     super.key,
@@ -29,12 +31,14 @@ class TaskLogCardWidget extends StatelessWidget {
             if ((item.type ?? '').isNotEmpty)
               Text('${l10n.logsTaskTypeLabel}: ${item.type}'),
             if ((item.status ?? '').isNotEmpty)
-              Text('${l10n.logsTaskDetailStatusLabel}: ${item.status}'),
+              Text(
+                  '${l10n.logsTaskDetailStatusLabel}: ${logsStatusLabel(l10n, item.status)}'),
             if ((item.currentStep ?? '').isNotEmpty)
               Text(
                   '${l10n.logsTaskDetailCurrentStepLabel}: ${item.currentStep}'),
             if ((item.createdAt ?? '').isNotEmpty)
-              Text('${l10n.logsTaskDetailCreatedAtLabel}: ${item.createdAt}'),
+              Text(
+                  '${l10n.logsTaskDetailCreatedAtLabel}: ${formatLogsTimestamp(item.createdAt)}'),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,

@@ -372,7 +372,7 @@ class ClamLogSearch extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
-      'clamId': clamId,
+      'clamID': clamId,
       'page': page,
       'pageSize': pageSize,
     };
@@ -380,6 +380,48 @@ class ClamLogSearch extends Equatable {
 
   @override
   List<Object?> get props => [clamId, page, pageSize];
+}
+
+/// Clam任务搜索请求（V2 契约：SearchClamWithPage 要求 orderBy/order 必填，
+/// orderBy ∈ {name,status,createdAt}，order ∈ {null,ascending,descending}，
+/// 与上游前端 clam/index.vue 的默认值一致）
+class ClamSearch extends Equatable {
+  final int page;
+  final int pageSize;
+  final String? info;
+  final String orderBy;
+  final String order;
+
+  const ClamSearch({
+    this.page = 1,
+    this.pageSize = 20,
+    this.info,
+    this.orderBy = 'createdAt',
+    this.order = 'null',
+  });
+
+  factory ClamSearch.fromJson(Map<String, dynamic> json) {
+    return ClamSearch(
+      page: json['page'] as int? ?? 1,
+      pageSize: json['pageSize'] as int? ?? 20,
+      info: json['info'] as String?,
+      orderBy: json['orderBy'] as String? ?? 'createdAt',
+      order: json['order'] as String? ?? 'null',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'page': page,
+      'pageSize': pageSize,
+      if (info != null) 'info': info,
+      'orderBy': orderBy,
+      'order': order,
+    };
+  }
+
+  @override
+  List<Object?> get props => [page, pageSize, info, orderBy, order];
 }
 
 /// Clam日志信息
@@ -473,6 +515,7 @@ class DeviceBaseInfo extends Equatable {
   final String? systemName;
   final String? systemVersion;
   final String? timeZone;
+  final int? swapMemoryTotal;
 
   const DeviceBaseInfo({
     this.dns,
@@ -484,11 +527,12 @@ class DeviceBaseInfo extends Equatable {
     this.systemName,
     this.systemVersion,
     this.timeZone,
+    this.swapMemoryTotal,
   });
 
   factory DeviceBaseInfo.fromJson(Map<String, dynamic> json) {
     return DeviceBaseInfo(
-      dns: json['dns'] as String?,
+      dns: _dnsToText(json['dns']),
       hostname: json['hostname'] as String?,
       localTime: json['localTime'] as String?,
       ntp: json['ntp'] as String?,
@@ -497,7 +541,18 @@ class DeviceBaseInfo extends Equatable {
       systemName: json['systemName'] as String?,
       systemVersion: json['systemVersion'] as String?,
       timeZone: json['timeZone'] as String?,
+      swapMemoryTotal: (json['swapMemoryTotal'] as num?)?.toInt(),
     );
+  }
+
+  /// V2 契约：DeviceBaseInfo.dns 为字符串数组（上游 dto device.go），
+  /// 这里合并为多行文本供概览展示，兼容字符串形态。
+  static String? _dnsToText(dynamic raw) {
+    if (raw is String) return raw;
+    if (raw is List && raw.isNotEmpty) {
+      return raw.map((e) => e.toString()).join('\n');
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {
@@ -511,6 +566,7 @@ class DeviceBaseInfo extends Equatable {
       'systemName': systemName,
       'systemVersion': systemVersion,
       'timeZone': timeZone,
+      'swapMemoryTotal': swapMemoryTotal,
     };
   }
 
@@ -525,6 +581,7 @@ class DeviceBaseInfo extends Equatable {
         systemName,
         systemVersion,
         timeZone,
+        swapMemoryTotal,
       ];
 }
 
@@ -612,12 +669,14 @@ class Fail2banBaseInfo extends Equatable {
 
   factory Fail2banBaseInfo.fromJson(Map<String, dynamic> json) {
     return Fail2banBaseInfo(
-      bantime: json['bantime'] as String?,
-      findtime: json['findtime'] as String?,
+      // 真实服务器可能将时长/端口字段以 int 下发（swagger 标注 string 与
+      // 真实行为不一致），统一经 toString 归一化，String 输入保持原值。
+      bantime: json['bantime']?.toString(),
+      findtime: json['findtime']?.toString(),
       isEnable: json['isEnable'] as bool?,
-      maxretry: json['maxretry'] as String?,
-      port: json['port'] as String?,
-      version: json['version'] as String?,
+      maxretry: json['maxretry']?.toString(),
+      port: json['port']?.toString(),
+      version: json['version']?.toString(),
     );
   }
 
@@ -705,18 +764,18 @@ class Fail2banSet extends Equatable {
   List<Object?> get props => [ips, operate];
 }
 
-/// Fail2ban搜索请求
+/// Fail2ban搜索请求（V2 契约：Fail2BanSearch.Status 必填且 ∈ {banned, ignore}）
 class Fail2banSearch extends Equatable {
   final String? ip;
   final int? page;
   final int? pageSize;
-  final String? status;
+  final String status;
 
   const Fail2banSearch({
     this.ip,
     this.page,
     this.pageSize,
-    this.status,
+    this.status = 'banned',
   });
 
   factory Fail2banSearch.fromJson(Map<String, dynamic> json) {
@@ -724,7 +783,7 @@ class Fail2banSearch extends Equatable {
       ip: json['ip'] as String?,
       page: json['page'] as int?,
       pageSize: json['pageSize'] as int?,
-      status: json['status'] as String?,
+      status: json['status'] as String? ?? 'banned',
     );
   }
 

@@ -13,6 +13,7 @@ import '../../data/models/firewall_models.dart';
 import 'firewall_rule_form_page.dart';
 import 'providers/firewall_rule_list_provider.dart';
 import 'widgets/firewall_rule_list_controls_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_empty_state_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 String _resolveFirewallError(String error, AppLocalizations l10n) {
@@ -81,87 +82,101 @@ class _FirewallRulesTabState extends State<FirewallRulesTab> {
 
     return RefreshIndicator(
       onRefresh: provider.refresh,
-      child: ListView.separated(
-        padding: AppDesignTokens.pagePadding,
-        itemCount: provider.items.length + 1,
-        separatorBuilder: (_, __) =>
-            const SizedBox(height: AppDesignTokens.spacingSm),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (provider.useFilterApi) ...[
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppDesignTokens.spacingSm),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              key: ValueKey('filter-chain-${provider.filterChain}'),
-                              initialValue: provider.filterChain,
-                              decoration: const InputDecoration(
-                                labelText: 'Chain',
+      child: LayoutBuilder(
+        builder: (context, constraints) => ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: AppDesignTokens.pagePadding,
+          itemCount: provider.items.length + 1,
+          separatorBuilder: (_, __) =>
+              const SizedBox(height: AppDesignTokens.spacingSm),
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (provider.useFilterApi) ...[
+                    Card(
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.all(AppDesignTokens.spacingSm),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                key: ValueKey(
+                                    'filter-chain-${provider.filterChain}'),
+                                initialValue: provider.filterChain,
+                                decoration: const InputDecoration(
+                                  labelText: 'Chain',
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: '1PANEL_INPUT',
+                                    child: Text('1PANEL_INPUT'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '1PANEL_OUTPUT',
+                                    child: Text('1PANEL_OUTPUT'),
+                                  ),
+                                ],
+                                onChanged: provider.isMutating
+                                    ? null
+                                    : (value) {
+                                        if (value != null) {
+                                          _onFilterChainChanged(value);
+                                        }
+                                      },
                               ),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: '1PANEL_INPUT',
-                                  child: Text('1PANEL_INPUT'),
-                                ),
-                                DropdownMenuItem(
-                                  value: '1PANEL_OUTPUT',
-                                  child: Text('1PANEL_OUTPUT'),
-                                ),
-                              ],
-                              onChanged: provider.isMutating
+                            ),
+                            const SizedBox(width: AppDesignTokens.spacingSm),
+                            FilledButton.tonal(
+                              onPressed: provider.isMutating
                                   ? null
-                                  : (value) {
-                                      if (value != null) {
-                                        _onFilterChainChanged(value);
-                                      }
-                                    },
+                                  : () => _toggleFilterChainBinding(provider),
+                              child: Text(
+                                provider.isFilterChainBound
+                                    ? context.l10n.firewallUnbindAction
+                                    : context.l10n.firewallBindAction,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: AppDesignTokens.spacingSm),
-                          FilledButton.tonal(
-                            onPressed: provider.isMutating
-                                ? null
-                                : () => _toggleFilterChainBinding(provider),
-                            child: Text(
-                              provider.isFilterChainBound
-                                  ? context.l10n.firewallUnbindAction
-                                  : context.l10n.firewallBindAction,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppDesignTokens.spacingSm),
-                ],
-                FirewallRuleListControls(
-                  searchController: _searchController,
-                  strategyFilter: _strategyFilter,
-                  isSelectionMode: _selectionMode,
-                  selectedCount: _selection.selectedCount,
-                  isMutating: provider.isMutating,
-                  onSearch: _loadRules,
-                  onStrategyChanged: _onStrategyChanged,
-                  onToggleSelectionMode: _toggleSelectionMode,
-                  onCreate: () => openRouteRespectingShell(
-                    context,
-                    AppRoutes.firewallRuleForm,
-                    arguments: const FirewallRuleFormArguments(
-                      kind: FirewallRuleKind.port,
+                    const SizedBox(height: AppDesignTokens.spacingSm),
+                  ],
+                  FirewallRuleListControls(
+                    searchController: _searchController,
+                    strategyFilter: _strategyFilter,
+                    isSelectionMode: _selectionMode,
+                    selectedCount: _selection.selectedCount,
+                    isMutating: provider.isMutating,
+                    onSearch: _loadRules,
+                    onStrategyChanged: _onStrategyChanged,
+                    onToggleSelectionMode: _toggleSelectionMode,
+                    onCreate: () => openRouteRespectingShell(
+                      context,
+                      AppRoutes.firewallRuleForm,
+                      arguments: const FirewallRuleFormArguments(
+                        kind: FirewallRuleKind.port,
+                      ),
                     ),
+                    onDeleteSelected: () => _deleteSelected(provider),
+                    onAcceptSelected: () => _toggleSelected(provider, 'accept'),
+                    onDropSelected: () => _toggleSelected(provider, 'drop'),
                   ),
-                  onDeleteSelected: () => _deleteSelected(provider),
-                  onAcceptSelected: () => _toggleSelected(provider, 'accept'),
-                  onDropSelected: () => _toggleSelected(provider, 'drop'),
-                ),
-              ],
-            );
+                  if (provider.items.isEmpty) ...[
+                    const SizedBox(height: AppDesignTokens.spacingMd),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.6,
+                      child: ModuleEmptyStateWidget(
+                        title: context.l10n.firewallRulesEmptyTitle,
+                        description: context.l10n.firewallRulesEmptyHint,
+                      ),
+                    ),
+                  ],
+                ],
+              );
           }
           final rule = provider.items[index - 1];
           final selected = _selection.isSelected(rule);
@@ -204,9 +219,10 @@ class _FirewallRulesTabState extends State<FirewallRulesTab> {
             onTap: _selectionMode ? () => _selection.toggle(rule) : null,
             child: _ruleDetail(rule),
           );
-        },
-      ),
-    );
+            },
+          ),
+        ),
+      );
   }
 
   Future<void> _loadRules() async {

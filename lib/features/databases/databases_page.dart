@@ -180,8 +180,8 @@ class _DatabaseScopeTabView extends StatelessWidget {
                       ),
                       initialValue: provider.state.selectedTarget?.lookupName,
                       isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Target Instance',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.databaseTargetInstance,
                       ),
                       items: [
                         for (final target in provider.state.visibleTargets)
@@ -355,7 +355,7 @@ class _DatabaseScopeTabView extends StatelessWidget {
                           return _DatabaseGridCard(
                             item: item,
                             subtitle: _subtitle(item),
-                            detail: _detail(item),
+                            detail: _detail(item, l10n),
                             onRefresh: provider.refresh,
                           );
                         },
@@ -383,7 +383,7 @@ class _DatabaseScopeTabView extends StatelessWidget {
     return parts.join(' · ');
   }
 
-  String _detail(DatabaseListItem item) {
+  String _detail(DatabaseListItem item, AppLocalizations l10n) {
     final parts = <String>[];
     if (item.instanceLabel?.isNotEmpty == true &&
         item.instanceLabel != item.lookupName &&
@@ -398,21 +398,21 @@ class _DatabaseScopeTabView extends StatelessWidget {
       parts.add(item.username!);
     }
     
-    if (item.database?.isNotEmpty == true && 
-        item.database != item.name && 
+    if (item.database?.isNotEmpty == true &&
+        item.database != item.name &&
         item.database != item.lookupName) {
-      parts.add('DB: ${item.database}');
+      parts.add('${l10n.databaseDbLabel}: ${item.database}');
     }
-    
+
     // Postgresql or MySQL specific
     final charset = item.raw['charset'] as String?;
     if (charset != null && charset.isNotEmpty) {
-      parts.add('Charset: $charset');
+      parts.add('${l10n.databaseCharsetLabel}: $charset');
     }
-    
+
     final format = item.raw['format'] as String?;
     if (format != null && format.isNotEmpty) {
-      parts.add('Format: $format');
+      parts.add('${l10n.databaseFormatLabel}: $format');
     }
 
     if (item.description?.isNotEmpty == true) {

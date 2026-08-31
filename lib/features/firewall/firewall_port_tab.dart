@@ -12,6 +12,7 @@ import 'package:onepanel_client/shared/widgets/app_card.dart';
 import 'firewall_rule_form_page.dart';
 import 'providers/firewall_rule_list_provider.dart';
 import 'widgets/firewall_rule_list_controls_widget.dart';
+import 'package:onepanel_client/shared/widgets/operations/module_empty_state_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 
 class FirewallPortTab extends StatefulWidget {
@@ -72,34 +73,53 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
 
     return RefreshIndicator(
       onRefresh: provider.refresh,
-      child: ListView.separated(
-        padding: AppDesignTokens.pagePadding,
-        itemCount: provider.items.length + 1,
-        separatorBuilder: (_, __) =>
-            const SizedBox(height: AppDesignTokens.spacingSm),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return FirewallRuleListControls(
-              searchController: _searchController,
-              strategyFilter: _strategyFilter,
-              isSelectionMode: _selectionMode,
-              selectedCount: _selection.selectedCount,
-              isMutating: provider.isMutating,
-              onSearch: _loadRules,
-              onStrategyChanged: _onStrategyChanged,
-              onToggleSelectionMode: _toggleSelectionMode,
-              onCreate: () => openRouteRespectingShell(
-                context,
-                AppRoutes.firewallRuleForm,
-                arguments: const FirewallRuleFormArguments(
-                  kind: FirewallRuleKind.port,
+      child: LayoutBuilder(
+        builder: (context, constraints) => ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: AppDesignTokens.pagePadding,
+          itemCount: provider.items.length + 1,
+          separatorBuilder: (_, __) =>
+              const SizedBox(height: AppDesignTokens.spacingSm),
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              final controls = FirewallRuleListControls(
+                searchController: _searchController,
+                strategyFilter: _strategyFilter,
+                isSelectionMode: _selectionMode,
+                selectedCount: _selection.selectedCount,
+                isMutating: provider.isMutating,
+                onSearch: _loadRules,
+                onStrategyChanged: _onStrategyChanged,
+                onToggleSelectionMode: _toggleSelectionMode,
+                onCreate: () => openRouteRespectingShell(
+                  context,
+                  AppRoutes.firewallRuleForm,
+                  arguments: const FirewallRuleFormArguments(
+                    kind: FirewallRuleKind.port,
+                  ),
                 ),
-              ),
-              onDeleteSelected: () => _deleteSelected(provider),
-              onAcceptSelected: () => _toggleSelected(provider, 'accept'),
-              onDropSelected: () => _toggleSelected(provider, 'drop'),
-            );
-          }
+                onDeleteSelected: () => _deleteSelected(provider),
+                onAcceptSelected: () => _toggleSelected(provider, 'accept'),
+                onDropSelected: () => _toggleSelected(provider, 'drop'),
+              );
+              if (provider.items.isEmpty) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    controls,
+                    const SizedBox(height: AppDesignTokens.spacingMd),
+                    SizedBox(
+                      height: constraints.maxHeight * 0.6,
+                      child: ModuleEmptyStateWidget(
+                        title: l10n.firewallPortsEmptyTitle,
+                        description: l10n.firewallPortsEmptyHint,
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return controls;
+            }
           final rule = provider.items[index - 1];
           final selected = _selection.isSelected(rule);
           return AppCard(
@@ -143,9 +163,10 @@ class _FirewallPortTabState extends State<FirewallPortTab> {
             onTap: _selectionMode ? () => _selection.toggle(rule) : null,
             child: Text('${l10n.firewallAddressLabel}: ${rule.address ?? '-'}'),
           );
-        },
-      ),
-    );
+            },
+          ),
+        ),
+      );
   }
 
   Future<void> _loadRules() async {

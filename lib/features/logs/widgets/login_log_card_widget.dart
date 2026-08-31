@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/logs_models.dart';
 
+import '../utils/logs_l10n_helper.dart';
+
 class LoginLogCardWidget extends StatelessWidget {
   const LoginLogCardWidget({
     super.key,
@@ -24,9 +26,11 @@ class LoginLogCardWidget extends StatelessWidget {
             if ((item.address ?? '').isNotEmpty) Text(item.address!),
             if ((item.agent ?? '').isNotEmpty) Text(item.agent!),
             if ((item.status ?? '').isNotEmpty)
-              Text('${l10n.logsTaskDetailStatusLabel}: ${item.status}'),
+              Text(
+                  '${l10n.logsTaskDetailStatusLabel}: ${logsStatusLabel(l10n, item.status)}'),
             if ((item.createdAt ?? '').isNotEmpty)
-              Text('${l10n.logsTaskDetailCreatedAtLabel}: ${item.createdAt}'),
+              Text(
+                  '${l10n.logsTaskDetailCreatedAtLabel}: ${formatLogsTimestamp(item.createdAt)}'),
           ],
         ),
         trailing: IconButton(

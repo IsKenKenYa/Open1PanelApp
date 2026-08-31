@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/logs_models.dart';
 
+import '../utils/logs_l10n_helper.dart';
+
 class OperationLogCardWidget extends StatelessWidget {
   const OperationLogCardWidget({
     super.key,
@@ -45,12 +47,12 @@ class OperationLogCardWidget extends StatelessWidget {
             if ((item.status ?? '').isNotEmpty)
               _buildInfoLine(
                 context,
-                '${l10n.logsTaskDetailStatusLabel}: ${item.status}',
+                '${l10n.logsTaskDetailStatusLabel}: ${logsStatusLabel(l10n, item.status)}',
               ),
             if ((item.createdAt ?? '').isNotEmpty)
               _buildInfoLine(
                 context,
-                '${l10n.logsTaskDetailCreatedAtLabel}: ${item.createdAt}',
+                '${l10n.logsTaskDetailCreatedAtLabel}: ${formatLogsTimestamp(item.createdAt)}',
               ),
             const SizedBox(height: 12),
             Align(

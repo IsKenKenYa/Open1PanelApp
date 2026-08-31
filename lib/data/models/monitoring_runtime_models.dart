@@ -19,6 +19,37 @@ class MonitorGpuInfo {
       temperature: (json['temperature'] as num?)?.toDouble(),
     );
   }
+
+  /// 从 /ai/gpu/search 的 MonitorGPUData 时间序列 Map 还原当前 GPU 状态。
+  ///
+  /// V2 契约（上游 ai.ts MonitorGPUData）：data 为 Map，gpuValue /
+  /// memoryPercent / temperatureValue 等字段均为采样点数组，而非 GPU 列表。
+  /// 这里取各序列最后一个数值型采样点作为当前值；兼容 data 为空或字段
+  /// 缺失：序列全空时返回空列表。
+  static List<MonitorGpuInfo> listFromGpuSearchData(Map<String, dynamic> data) {
+    final utilization = _lastSample(data['gpuValue']);
+    final memory = _lastSample(data['memoryPercent']);
+    final temperature = _lastSample(data['temperatureValue']);
+    if (utilization == null && memory == null && temperature == null) {
+      return const [];
+    }
+    return [
+      MonitorGpuInfo(
+        utilization: utilization,
+        memory: memory,
+        temperature: temperature,
+      ),
+    ];
+  }
+
+  static double? _lastSample(dynamic raw) {
+    if (raw is List) {
+      for (final value in raw.reversed) {
+        if (value is num) return value.toDouble();
+      }
+    }
+    return null;
+  }
 }
 
 class MonitorSetting {

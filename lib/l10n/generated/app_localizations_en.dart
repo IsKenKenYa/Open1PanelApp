@@ -803,6 +803,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openrestyPageTitle => 'OpenResty';
 
   @override
+  String get openrestyNotInstalledTitle => 'OpenResty Not Installed';
+
+  @override
+  String get openrestyNotInstalledDescription =>
+      'OpenResty is not installed or not ready. Install OpenResty from the App Store before managing websites.';
+
+  @override
+  String get openrestyGoStore => 'Go to App Store';
+
+  @override
   String get openrestyTabStatus => 'Status';
 
   @override
@@ -1462,6 +1472,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Privileges can be adjusted after a user is bound.';
 
   @override
+  String get databaseTargetInstance => 'Target Instance';
+
+  @override
+  String get databaseTargetInstanceRequired =>
+      'Please select a target instance';
+
+  @override
+  String get databasePermission => 'Permission';
+
+  @override
+  String get databaseCharsetLabel => 'Charset';
+
+  @override
+  String get databaseFormatLabel => 'Format';
+
+  @override
+  String get databaseDbLabel => 'DB';
+
+  @override
   String get firewallTabStatus => 'Status';
 
   @override
@@ -1538,6 +1567,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firewallSearchHint => 'Search by description, address, or port';
+
+  @override
+  String get firewallRulesEmptyTitle => 'No rules yet';
+
+  @override
+  String get firewallRulesEmptyHint =>
+      'Tap Add in the top toolbar to create a port or IP rule.';
+
+  @override
+  String get firewallIpsEmptyTitle => 'No IP rules yet';
+
+  @override
+  String get firewallIpsEmptyHint =>
+      'Tap Add in the top toolbar to block an IP address.';
+
+  @override
+  String get firewallPortsEmptyTitle => 'No port rules yet';
+
+  @override
+  String get firewallPortsEmptyHint =>
+      'Tap Add in the top toolbar to open a port.';
 
   @override
   String get firewallSelectionModeEnable => 'Select';
@@ -4396,6 +4446,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appsPageTitle => 'App Management';
 
   @override
+  String get appsInstalledEmptyDescription =>
+      'No apps installed yet. Visit the App Store to install one.';
+
+  @override
   String get appStoreInstall => 'Install';
 
   @override
@@ -5260,7 +5314,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get operationsCenterIntro =>
-      'Phase 1 capabilities will be delivered here week by week so server operations stay in one mobile-first entry.';
+      'A unified entry for server operations tools, organized by category.';
 
   @override
   String get operationsCenterServerEntryTitle => 'Operations Center';
@@ -5485,7 +5539,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cronjobsEmptyDescription =>
-      'Cronjobs will appear here after the Week 4 mainline flow loads data.';
+      'Your cronjobs will appear here once created.';
 
   @override
   String get cronjobsSpecLabel => 'Spec';
@@ -6598,11 +6652,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get runtimeFormAppStoreCreateWeek8Hint =>
-      'App Store runtime creation stays in the Week 8 wizard. Week 7 only supports the manual runtime skeleton.';
+      'App Store runtimes should be installed from the App Store. Use this form to create runtimes manually.';
 
   @override
   String get runtimeFormPhpCreateWeek8Hint =>
-      'PHP creation keeps its dedicated flow for Week 8. Week 7 focuses on the shared runtime skeleton.';
+      'PHP runtimes are created with this form as well. Fill in the image and startup command as needed.';
 
   @override
   String get runtimeFormNameRequired => 'Runtime name is required.';
@@ -7095,7 +7149,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sshSessionsEmptyDescription =>
-      'Active SSH sessions will appear here after the websocket feed returns data.';
+      'Active SSH sessions will appear here.';
 
   @override
   String get sshSessionsLoginUserLabel => 'Login user';

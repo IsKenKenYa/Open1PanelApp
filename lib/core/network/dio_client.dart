@@ -100,15 +100,49 @@ class DioClient {
   ) async {
     try {
       final response = await requestFunction();
+      _throwIfHtmlFallbackPage(response);
       return response;
     } on DioException catch (e) {
       _safeLog('e',
           '[network] DioException: ${e.type}, message: ${e.message}, response: ${e.response?.data}');
       throw _convertException(e);
+    } on EndpointNotFoundException {
+      rethrow;
     } catch (e) {
       _safeLog('e', '[network] Unexpected error: $e');
       throw NetworkConnectionException('请求失败: $e');
     }
+  }
+
+  /// 识别 1Panel 服务端的 SPA 回退页。
+  ///
+  /// 服务端对不存在的路由返回 HTTP 200 + index.html（content-type 为
+  /// text/html），客户端若按 JSON 信封解析会抛出 TypeError 或静默返回脏数据。
+  /// 此处仅对 /api/ 前缀、期望 JSON 的请求生效；download() 走独立路径
+  /// （文件下载/预览可能合法返回 HTML），不受影响。
+  void _throwIfHtmlFallbackPage<T>(Response<T> response) {
+    final path = response.requestOptions.uri.path;
+    if (!path.contains('/api/')) {
+      return;
+    }
+    final data = response.data;
+    if (data is! String) {
+      return;
+    }
+    final contentType =
+        response.headers.value(Headers.contentTypeHeader) ?? '';
+    final normalized = data.trimLeft().toLowerCase();
+    final looksLikeHtml = normalized.startsWith('<!doctype html') ||
+        normalized.startsWith('<html');
+    if (!looksLikeHtml && !contentType.contains('text/html')) {
+      return;
+    }
+    _safeLog('e', '[network] SPA fallback page detected for $path');
+    throw EndpointNotFoundException(
+      '当前面板版本不支持该功能',
+      requestOptions: response.requestOptions,
+      statusCode: response.statusCode,
+    );
   }
 
   /// 转换DioException为自定义异常
@@ -119,6 +153,18 @@ class DioClient {
 
     _safeLog('d',
         '[network] Converting exception: type=${e.type}, statusCode=$statusCode, message=$errorMessage');
+
+    // HTML 回退页 + Map 泛型请求：Dio 在 transform 阶段对 String body 做
+    // Map 强转即抛 TypeError（包装为 DioException.unknown 且 response 为
+    // null），来不及走 _throwIfHtmlFallbackPage，此处还原为端点不存在语义。
+    if (e.type == DioExceptionType.unknown &&
+        e.error is TypeError &&
+        e.requestOptions.uri.path.contains('/api/')) {
+      return EndpointNotFoundException(
+        '当前面板版本不支持该功能',
+        requestOptions: e.requestOptions,
+      );
+    }
 
     if (e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||

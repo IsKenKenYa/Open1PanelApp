@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onepanel_client/core/config/api_constants.dart';
@@ -183,6 +186,108 @@ void main() {
           throwsA(isA<NetworkConnectionException>()),
         );
       }, timeout: Timeout(Duration(seconds: 10)));
+    });
+
+    group('SPA fallback page detection (EndpointNotFoundException)', () {
+      const htmlPage = '<!DOCTYPE html><html><head></head><body>index</body></html>';
+      HttpServer? server;
+      String? baseUrl;
+
+      setUp(() async {
+        server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+        baseUrl = 'http://127.0.0.1:${server!.port}';
+        server!.listen((request) async {
+          final path = request.uri.path;
+          if (path == '/api/v2/core/missing') {
+            // 1Panel SPA fallback: 200 + HTML page
+            request.response.statusCode = 200;
+            request.response.headers.contentType = ContentType.html;
+            request.response.write(htmlPage);
+          } else if (path == '/api/v2/core/textonly') {
+            // 200 + text/html 但 body 非 HTML（content-type 识别路径）
+            request.response.statusCode = 200;
+            request.response.headers.contentType = ContentType.html;
+            request.response.write('fallback');
+          } else if (path == '/api/v2/core/ok') {
+            // 正常 JSON 信封响应，不应被误伤
+            request.response.statusCode = 200;
+            request.response.headers.contentType = ContentType.json;
+            request.response.write(
+              jsonEncode(<String, dynamic>{'code': 200, 'message': 'ok', 'data': 1}),
+            );
+          } else if (path == '/downloads/file') {
+            // 非 /api/ 前缀的 HTML 下载/预览，不应抛端点不存在
+            request.response.statusCode = 200;
+            request.response.headers.contentType = ContentType.html;
+            request.response.write(htmlPage);
+          } else {
+            request.response.statusCode = 404;
+          }
+          await request.response.close();
+        });
+      });
+
+      tearDown(() async {
+        await server?.close(force: true);
+        server = null;
+      });
+
+      test('get throws EndpointNotFoundException on 200 + HTML for /api/ path',
+          () async {
+        final client = DioClient(baseUrl: baseUrl);
+        await expectLater(
+          client.get<dynamic>('/api/v2/core/missing'),
+          throwsA(
+            isA<EndpointNotFoundException>().having(
+              (e) => e.message,
+              'message',
+              '当前面板版本不支持该功能',
+            ),
+          ),
+        );
+      });
+
+      test('post throws EndpointNotFoundException on 200 + HTML for /api/ path',
+          () async {
+        final client = DioClient(baseUrl: baseUrl);
+        await expectLater(
+          client.post<dynamic>('/api/v2/core/missing'),
+          throwsA(isA<EndpointNotFoundException>()),
+        );
+      });
+
+      test(
+          'typed Map<String, dynamic> request converts Dio TypeError to '
+          'EndpointNotFoundException', () async {
+        final client = DioClient(baseUrl: baseUrl);
+        await expectLater(
+          client.get<Map<String, dynamic>>('/api/v2/core/missing'),
+          throwsA(isA<EndpointNotFoundException>()),
+        );
+      });
+
+      test('text/html content-type alone triggers detection for /api/ path',
+          () async {
+        final client = DioClient(baseUrl: baseUrl);
+        await expectLater(
+          client.get<dynamic>('/api/v2/core/textonly'),
+          throwsA(isA<EndpointNotFoundException>()),
+        );
+      });
+
+      test('normal JSON envelope response is not affected', () async {
+        final client = DioClient(baseUrl: baseUrl);
+        final response = await client.get<Map<String, dynamic>>(
+          '/api/v2/core/ok',
+        );
+        expect(response.data, containsPair('code', 200));
+      });
+
+      test('non /api/ path HTML response is not affected', () async {
+        final client = DioClient(baseUrl: baseUrl);
+        final response = await client.get<String>('/downloads/file');
+        expect(response.data, contains('<!DOCTYPE html>'));
+      });
     });
   });
 }

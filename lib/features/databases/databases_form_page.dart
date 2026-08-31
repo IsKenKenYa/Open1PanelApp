@@ -139,8 +139,8 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
                           '${_scope.value}:${_selectedDatabaseKey ?? 'none'}:${provider.databaseTargets.length}',
                         ),
                         initialValue: _selectedDatabaseKey,
-                        decoration: const InputDecoration(
-                          labelText: 'Target Instance',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.databaseTargetInstance,
                         ),
                         items: [
                           for (final item in provider.databaseTargets)
@@ -171,7 +171,8 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
                         validator: (value) {
                           if (_scope == DatabaseScope.remote) return null;
                           if (value == null) {
-                            return 'Target instance is required.';
+                            return context
+                                .l10n.databaseTargetInstanceRequired;
                           }
                           return null;
                         },
@@ -218,8 +219,8 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
                     if (_scope == DatabaseScope.mysql) ...[
                       DropdownButtonFormField<String>(
                         initialValue: _mysqlPermission,
-                        decoration:
-                            const InputDecoration(labelText: 'Permission'),
+                        decoration: InputDecoration(
+                            labelText: context.l10n.databasePermission),
                         items: const [
                           DropdownMenuItem(value: '%', child: Text('%')),
                           DropdownMenuItem(

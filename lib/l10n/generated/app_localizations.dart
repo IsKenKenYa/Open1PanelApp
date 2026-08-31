@@ -1586,6 +1586,24 @@ abstract class AppLocalizations {
   /// **'OpenResty'**
   String get openrestyPageTitle;
 
+  /// No description provided for @openrestyNotInstalledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty Not Installed'**
+  String get openrestyNotInstalledTitle;
+
+  /// No description provided for @openrestyNotInstalledDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'OpenResty is not installed or not ready. Install OpenResty from the App Store before managing websites.'**
+  String get openrestyNotInstalledDescription;
+
+  /// No description provided for @openrestyGoStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to App Store'**
+  String get openrestyGoStore;
+
   /// No description provided for @openrestyTabStatus.
   ///
   /// In en, this message translates to:
@@ -2822,6 +2840,42 @@ abstract class AppLocalizations {
   /// **'Privileges can be adjusted after a user is bound.'**
   String get databasePrivilegeUnavailable;
 
+  /// No description provided for @databaseTargetInstance.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Instance'**
+  String get databaseTargetInstance;
+
+  /// No description provided for @databaseTargetInstanceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a target instance'**
+  String get databaseTargetInstanceRequired;
+
+  /// No description provided for @databasePermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission'**
+  String get databasePermission;
+
+  /// No description provided for @databaseCharsetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Charset'**
+  String get databaseCharsetLabel;
+
+  /// No description provided for @databaseFormatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get databaseFormatLabel;
+
+  /// No description provided for @databaseDbLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DB'**
+  String get databaseDbLabel;
+
   /// No description provided for @firewallTabStatus.
   ///
   /// In en, this message translates to:
@@ -2977,6 +3031,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search by description, address, or port'**
   String get firewallSearchHint;
+
+  /// No description provided for @firewallRulesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No rules yet'**
+  String get firewallRulesEmptyTitle;
+
+  /// No description provided for @firewallRulesEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add in the top toolbar to create a port or IP rule.'**
+  String get firewallRulesEmptyHint;
+
+  /// No description provided for @firewallIpsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No IP rules yet'**
+  String get firewallIpsEmptyTitle;
+
+  /// No description provided for @firewallIpsEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add in the top toolbar to block an IP address.'**
+  String get firewallIpsEmptyHint;
+
+  /// No description provided for @firewallPortsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No port rules yet'**
+  String get firewallPortsEmptyTitle;
+
+  /// No description provided for @firewallPortsEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add in the top toolbar to open a port.'**
+  String get firewallPortsEmptyHint;
 
   /// No description provided for @firewallSelectionModeEnable.
   ///
@@ -8252,6 +8342,12 @@ abstract class AppLocalizations {
   /// **'App Management'**
   String get appsPageTitle;
 
+  /// No description provided for @appsInstalledEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No apps installed yet. Visit the App Store to install one.'**
+  String get appsInstalledEmptyDescription;
+
   /// No description provided for @appStoreInstall.
   ///
   /// In en, this message translates to:
@@ -9923,7 +10019,7 @@ abstract class AppLocalizations {
   /// No description provided for @operationsCenterIntro.
   ///
   /// In en, this message translates to:
-  /// **'Phase 1 capabilities will be delivered here week by week so server operations stay in one mobile-first entry.'**
+  /// **'A unified entry for server operations tools, organized by category.'**
   String get operationsCenterIntro;
 
   /// No description provided for @operationsCenterServerEntryTitle.
@@ -10355,7 +10451,7 @@ abstract class AppLocalizations {
   /// No description provided for @cronjobsEmptyDescription.
   ///
   /// In en, this message translates to:
-  /// **'Cronjobs will appear here after the Week 4 mainline flow loads data.'**
+  /// **'Your cronjobs will appear here once created.'**
   String get cronjobsEmptyDescription;
 
   /// No description provided for @cronjobsSpecLabel.
@@ -12455,13 +12551,13 @@ abstract class AppLocalizations {
   /// No description provided for @runtimeFormAppStoreCreateWeek8Hint.
   ///
   /// In en, this message translates to:
-  /// **'App Store runtime creation stays in the Week 8 wizard. Week 7 only supports the manual runtime skeleton.'**
+  /// **'App Store runtimes should be installed from the App Store. Use this form to create runtimes manually.'**
   String get runtimeFormAppStoreCreateWeek8Hint;
 
   /// No description provided for @runtimeFormPhpCreateWeek8Hint.
   ///
   /// In en, this message translates to:
-  /// **'PHP creation keeps its dedicated flow for Week 8. Week 7 focuses on the shared runtime skeleton.'**
+  /// **'PHP runtimes are created with this form as well. Fill in the image and startup command as needed.'**
   String get runtimeFormPhpCreateWeek8Hint;
 
   /// No description provided for @runtimeFormNameRequired.
@@ -13350,7 +13446,7 @@ abstract class AppLocalizations {
   /// No description provided for @sshSessionsEmptyDescription.
   ///
   /// In en, this message translates to:
-  /// **'Active SSH sessions will appear here after the websocket feed returns data.'**
+  /// **'Active SSH sessions will appear here.'**
   String get sshSessionsEmptyDescription;
 
   /// No description provided for @sshSessionsLoginUserLabel.

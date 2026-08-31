@@ -8,6 +8,15 @@ import 'error_message_utils.dart';
 class SnackBarUtils {
   const SnackBarUtils._();
 
+  /// 内容级去重：记录当前展示中的 SnackBar 内容与展示截止时间。
+  ///
+  /// 背景（真机走查 P2-4）：多个 keep-alive 页面在轮询失败时会对同一错误
+  /// 反复 clearSnackBars + showSnackBar，导致计时不断重置、错误 Toast 跨页
+  /// "永驻"数十分钟。同内容在展示期内重复触发时直接跳过，保持原有计时。
+  static String? _currentContentKey;
+  static DateTime _currentContentExpiresAt =
+      DateTime.fromMillisecondsSinceEpoch(0);
+
   static void showSuccess(BuildContext context, String message,
       {SnackBarAction? action}) {
     _show(context,
@@ -116,6 +125,18 @@ class SnackBarUtils {
     Widget? trailing,
     Duration? duration,
   }) {
+    final effectiveDuration = duration ?? const Duration(seconds: 4);
+
+    // 同内容 Toast 仍在展示期内时跳过，避免重置计时（内容级去重）。
+    final now = DateTime.now();
+    final contentKey = '$icon|$message';
+    if (_currentContentKey == contentKey &&
+        now.isBefore(_currentContentExpiresAt)) {
+      return;
+    }
+    _currentContentKey = contentKey;
+    _currentContentExpiresAt = now.add(effectiveDuration);
+
     // Clear before showing to prevent multiple toasts stacking
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
@@ -139,7 +160,7 @@ class SnackBarUtils {
         showCloseIcon: true,
         action: action,
         // Default 4s for info/success; callers override to 5s for errors (more read time)
-        duration: duration ?? const Duration(seconds: 4),
+        duration: effectiveDuration,
       ));
   }
 }

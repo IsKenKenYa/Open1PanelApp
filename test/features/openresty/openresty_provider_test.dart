@@ -313,4 +313,78 @@ void main() {
     final result = await provider.applyHttpsDraft();
     expect(result, isFalse);
   });
+
+  test('OpenRestyProvider loadAll marks notInstalled on record not found',
+      () async {
+    // 回归：OpenResty 未安装时服务端返回 500 "record not found"，
+    // 应识别为未安装空态而非加载失败（P1-7）。
+    final service = _NotInstalledOpenRestyService(
+      Exception('服务错误: record not found'),
+    );
+    final provider = OpenRestyProvider(
+      service: service,
+      snapshotStore: SecurityGatewaySnapshotStore.instance,
+    );
+
+    await provider.loadAll();
+
+    expect(provider.notInstalled, isTrue);
+    expect(provider.error, isNull);
+    expect(provider.hasData, isFalse);
+  });
+
+  test('OpenRestyProvider loadAll resets notInstalled after successful load',
+      () async {
+    final service = _NotInstalledOpenRestyService(
+      Exception('服务错误: record not found'),
+    );
+    final provider = OpenRestyProvider(
+      service: service,
+      snapshotStore: SecurityGatewaySnapshotStore.instance,
+    );
+
+    await provider.loadAll();
+    expect(provider.notInstalled, isTrue);
+
+    service.shouldThrow = false;
+    await provider.loadAll();
+
+    expect(provider.notInstalled, isFalse);
+    expect(provider.error, isNull);
+    expect(provider.hasData, isTrue);
+  });
+
+  test('OpenRestyProvider loadAll keeps error for other failures', () async {
+    final service = _NotInstalledOpenRestyService(Exception('boom'));
+    final provider = OpenRestyProvider(
+      service: service,
+      snapshotStore: SecurityGatewaySnapshotStore.instance,
+    );
+
+    await provider.loadAll();
+
+    expect(provider.notInstalled, isFalse);
+    expect(provider.error, 'boom');
+  });
+}
+
+/// loadSnapshot 可控抛错的假服务：[shouldThrow] 为 true 时抛出 [error]。
+class _NotInstalledOpenRestyService extends OpenRestyService {
+  _NotInstalledOpenRestyService(Object this.error) : shouldThrow = true;
+
+  bool shouldThrow;
+  Object? error;
+
+  @override
+  Future<OpenRestySnapshot> loadSnapshot() async {
+    if (shouldThrow) {
+      throw error!;
+    }
+    return const OpenRestySnapshot(
+      status: <String, dynamic>{'active': 0},
+      https: <String, dynamic>{'https': false},
+      modules: <String, dynamic>{'mirror': '', 'modules': []},
+      configContent: '',
+    );
+  }
 }

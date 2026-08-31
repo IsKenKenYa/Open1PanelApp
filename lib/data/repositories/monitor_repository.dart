@@ -121,6 +121,11 @@ class MonitorRepository {
   }
 
   /// Fetches GPU information.
+  ///
+  /// V2 契约：POST /ai/gpu/search 的 data 为 MonitorGPUData Map（时间序列
+  /// 数组，见上游 frontend/src/api/interface/ai.ts MonitorGPUData），并非
+  /// GPU 列表；旧实现按 List 解析必然失败。这里取各序列最后一个采样点
+  /// 还原当前 GPU 状态，并兼容 data 为空 / 字段缺失。
   Future<List<MonitorGpuInfo>> getGPUInfo(dynamic client) async {
     try {
       final now = DateTime.now();
@@ -134,14 +139,13 @@ class MonitorRepository {
         },
       );
 
-      if (response.data != null && response.data is Map) {
-        final body = response.data as Map<String, dynamic>;
-        final dataList = body['data'] as List?;
-        if (dataList != null) {
-          return dataList
-              .map((e) => MonitorGpuInfo.fromJson(e as Map<String, dynamic>))
-              .toList();
-        }
+      if (response.data is Map) {
+        final body = Map<String, dynamic>.from(response.data as Map);
+        // 兼容信封 {code, message, data} 与已解包的 MonitorGPUData 两种形态。
+        final payload = body['data'] is Map
+            ? Map<String, dynamic>.from(body['data'] as Map)
+            : body;
+        return MonitorGpuInfo.listFromGpuSearchData(payload);
       }
       return [];
     } catch (e, stack) {

@@ -3,6 +3,7 @@ import '../../core/network/dio_client.dart';
 import '../../core/config/api_constants.dart';
 import '../../data/models/toolbox_models.dart';
 import '../../data/models/common_models.dart';
+import 'api_response_parser.dart';
 
 class ToolboxV2Api {
   final DioClient _client;
@@ -25,7 +26,9 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/clam/base'),
     );
     return Response(
-      data: ClamBaseInfo.fromJson(response.data),
+      data: ClamBaseInfo.fromJson(
+        ApiResponseParser.asMap(response.data, fallbackToRootMap: true),
+      ),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -49,7 +52,7 @@ class ToolboxV2Api {
     );
     return Response(
       data: PageResult.fromJson(
-        response.data,
+        ApiResponseParser.asMap(response.data),
         (json) => ClamFileInfo.fromJson(json as Map<String, dynamic>),
       ),
       statusCode: response.statusCode,
@@ -99,7 +102,7 @@ class ToolboxV2Api {
     );
     return Response(
       data: PageResult.fromJson(
-        response.data,
+        ApiResponseParser.asMap(response.data),
         (json) => ClamLogInfo.fromJson(json as Map<String, dynamic>),
       ),
       statusCode: response.statusCode,
@@ -108,16 +111,16 @@ class ToolboxV2Api {
     );
   }
 
-  /// 搜索Clam扫描任务
+  /// 搜索Clam扫描任务（V2 契约：orderBy/order 必填）
   Future<Response<PageResult<ClamBaseInfo>>> searchClam(
-      PageRequest request) async {
+      ClamSearch request) async {
     final response = await _client.post(
       ApiConstants.buildApiPath('/toolbox/clam/search'),
       data: request.toJson(),
     );
     return Response(
       data: PageResult.fromJson(
-        response.data,
+        ApiResponseParser.asMap(response.data),
         (json) => ClamBaseInfo.fromJson(json as Map<String, dynamic>),
       ),
       statusCode: response.statusCode,
@@ -158,8 +161,9 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/clean/data'),
     );
     return Response(
-      data: (response.data as List<dynamic>)
-          .map((e) => CleanData.fromJson(e as Map<String, dynamic>))
+      data: ApiResponseParser.asList(response.data)
+          .whereType<Map<String, dynamic>>()
+          .map((e) => CleanData.fromJson(e))
           .toList(),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
@@ -176,7 +180,7 @@ class ToolboxV2Api {
     );
     return Response(
       data: PageResult.fromJson(
-        response.data,
+        ApiResponseParser.asMap(response.data),
         (json) => CleanLog.fromJson(json as Map<String, dynamic>),
       ),
       statusCode: response.statusCode,
@@ -191,8 +195,9 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/clean/tree'),
     );
     return Response(
-      data: (response.data as List<dynamic>)
-          .map((e) => CleanTree.fromJson(e as Map<String, dynamic>))
+      data: ApiResponseParser.asList(response.data)
+          .whereType<Map<String, dynamic>>()
+          .map((e) => CleanTree.fromJson(e))
           .toList(),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
@@ -208,7 +213,9 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/device/base'),
     );
     return Response(
-      data: DeviceBaseInfo.fromJson(response.data),
+      data: DeviceBaseInfo.fromJson(
+        ApiResponseParser.asMap(response.data, fallbackToRootMap: true),
+      ),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -224,13 +231,16 @@ class ToolboxV2Api {
   }
 
   /// 获取设备配置
-  Future<Response<List<String>>> getDeviceConf(String name) async {
+  ///
+  /// V2 契约：必须按具体 name 逐项请求（服务端仅支持 DNS/Hosts），
+  /// 返回对应配置文件内容字符串；传 'all' 会被服务端拒绝。
+  Future<Response<String>> getDeviceConf(String name) async {
     final response = await _client.post(
       ApiConstants.buildApiPath('/toolbox/device/conf'),
       data: <String, dynamic>{'name': name},
     );
     return Response(
-      data: (response.data as List<dynamic>).map((e) => e as String).toList(),
+      data: ApiResponseParser.asPrimitive<String>(response.data) ?? '',
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -283,7 +293,8 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/device/users'),
     );
     return Response(
-      data: (response.data as List<dynamic>).map((e) => e as String).toList(),
+      data:
+          ApiResponseParser.asList(response.data).map((e) => e.toString()).toList(),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -296,7 +307,8 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/device/zone/options'),
     );
     return Response(
-      data: (response.data as List<dynamic>).map((e) => e as String).toList(),
+      data:
+          ApiResponseParser.asList(response.data).map((e) => e.toString()).toList(),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -311,7 +323,9 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/fail2ban/base'),
     );
     return Response(
-      data: Fail2banBaseInfo.fromJson(response.data),
+      data: Fail2banBaseInfo.fromJson(
+        ApiResponseParser.asMap(response.data, fallbackToRootMap: true),
+      ),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -324,7 +338,7 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/fail2ban/load/conf'),
     );
     return Response(
-      data: response.data as String,
+      data: ApiResponseParser.asPrimitive<String>(response.data) ?? '',
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -348,17 +362,19 @@ class ToolboxV2Api {
   }
 
   /// 搜索Fail2ban记录
-  Future<Response<PageResult<Fail2banRecord>>> searchFail2ban(
+  ///
+  /// V2 契约：请求仅需 status（必填 ∈ {banned, ignore}），响应为 IP
+  /// 字符串数组（非分页结构）。
+  Future<Response<List<String>>> searchFail2ban(
       Fail2banSearch request) async {
     final response = await _client.post(
       ApiConstants.buildApiPath('/toolbox/fail2ban/search'),
       data: request.toJson(),
     );
     return Response(
-      data: PageResult.fromJson(
-        response.data,
-        (json) => Fail2banRecord.fromJson(json as Map<String, dynamic>),
-      ),
+      data: ApiResponseParser.asList(response.data)
+          .map((e) => e.toString())
+          .toList(),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -397,7 +413,9 @@ class ToolboxV2Api {
       ApiConstants.buildApiPath('/toolbox/ftp/base'),
     );
     return Response(
-      data: FtpBaseInfo.fromJson(response.data),
+      data: FtpBaseInfo.fromJson(
+        ApiResponseParser.asMap(response.data, fallbackToRootMap: true),
+      ),
       statusCode: response.statusCode,
       statusMessage: response.statusMessage,
       requestOptions: response.requestOptions,
@@ -421,7 +439,7 @@ class ToolboxV2Api {
     );
     return Response(
       data: PageResult.fromJson(
-        response.data,
+        ApiResponseParser.asMap(response.data),
         (json) => json as Map<String, dynamic>,
       ),
       statusCode: response.statusCode,
@@ -446,7 +464,7 @@ class ToolboxV2Api {
     );
     return Response(
       data: PageResult.fromJson(
-        response.data,
+        ApiResponseParser.asMap(response.data),
         (json) => FtpInfo.fromJson(json as Map<String, dynamic>),
       ),
       statusCode: response.statusCode,

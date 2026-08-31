@@ -1,10 +1,10 @@
 // Barrel export for all runtime model classes.
 //
 // Previously this file used `part`/`part of` directives to share a single
-/// library scope across 25 files. Since none of the parts shared private
-/// members, they have been converted to standalone importable files with
-/// `export` re-exports for backward compatibility (architecture review
-/// candidate ⑱ -- part-of假 seam elimination).
+// library scope across 25 files. Since none of the parts shared private
+// members, they have been converted to standalone importable files with
+// `export` re-exports for backward compatibility (architecture review
+// candidate ⑱ -- part-of假 seam elimination).
 export 'runtime/runtime_type_model.dart';
 export 'runtime/runtime_create_model.dart';
 export 'runtime/runtime_info_model.dart';

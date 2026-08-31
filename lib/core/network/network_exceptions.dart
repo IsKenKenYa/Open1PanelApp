@@ -50,3 +50,16 @@ class ServerException extends NetworkException {
     super.statusCode,
   });
 }
+
+/// 端点不存在异常
+///
+/// 1Panel 服务端对不存在的路由返回 HTTP 200 + index.html（SPA 回退页），
+/// DioClient 识别到该回退页时抛出此异常，供上层做 legacy 回退或
+/// "当前面板版本不支持" 降级提示。
+class EndpointNotFoundException extends NetworkException {
+  const EndpointNotFoundException(
+    super.message, {
+    super.requestOptions,
+    super.statusCode,
+  });
+}

@@ -64,7 +64,8 @@ class ImageCard extends StatelessWidget {
                         style: theme.textTheme.bodySmall,
                       ),
                       Text(
-                        '${l10n.orchestrationImageCreatedLabel}: ${image.created}',
+                        '${l10n.orchestrationImageCreatedLabel}: '
+                        '${ImageCardDialogs.createdLabel(image)}',
                         style: theme.textTheme.bodySmall,
                       ),
                     ],
