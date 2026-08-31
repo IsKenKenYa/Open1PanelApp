@@ -5,6 +5,7 @@ import 'package:onepanel_client/core/config/api_config.dart';
 import 'package:onepanel_client/features/operations_center/pages/operations_center_page.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/l10n/generated/app_localizations.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class FakeCurrentServerController extends CurrentServerController {
   final ApiConfig _config = ApiConfig(
@@ -88,7 +89,7 @@ void main() {
     expect(find.byKey(toolboxEntryKey), findsOneWidget);
   });
 
-  testWidgets('OperationsCenterPage uses grid layout on wide screens',
+  testWidgets('OperationsCenterPage renders standardized entry lists on wide screens',
       (tester) async {
     tester.view.physicalSize = const Size(1440, 1200);
     tester.view.devicePixelRatio = 1.0;
@@ -108,6 +109,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(GridView), findsWidgets);
+    // 运维中心已收敛为 SectionEntryList 标准入口列表（禁止大卡片网格）。
+    expect(find.byType(SectionEntryList), findsWidgets);
   });
 }

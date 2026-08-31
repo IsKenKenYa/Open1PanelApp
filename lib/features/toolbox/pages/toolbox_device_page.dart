@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/features/toolbox/providers/toolbox_device_provider.dart';
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_device_info_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 part 'toolbox_device_page_actions_part.dart';
@@ -47,8 +48,9 @@ class _ToolboxDevicePageState extends State<ToolboxDevicePage>
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          ToolboxDeviceSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxDeviceOverviewTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 ToolboxDeviceInfoRowWidget(
@@ -72,8 +74,9 @@ class _ToolboxDevicePageState extends State<ToolboxDevicePage>
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxDeviceSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxDeviceConfigTitle,
+            padding: const EdgeInsets.all(16),
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -110,8 +113,9 @@ class _ToolboxDevicePageState extends State<ToolboxDevicePage>
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxDeviceSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxDeviceUsersTitle,
+            padding: const EdgeInsets.all(16),
             child: provider.users.isEmpty
                 ? Text(l10n.commonEmpty)
                 : Wrap(
@@ -124,8 +128,9 @@ class _ToolboxDevicePageState extends State<ToolboxDevicePage>
                   ),
           ),
           const SizedBox(height: 12),
-          ToolboxDeviceSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxDeviceZoneOptionsTitle,
+            padding: const EdgeInsets.all(16),
             child: provider.zoneOptions.isEmpty
                 ? Text(l10n.commonEmpty)
                 : Wrap(

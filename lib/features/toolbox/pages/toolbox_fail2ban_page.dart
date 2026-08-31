@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/features/toolbox/providers/toolbox_fail2ban_provider.dart';
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 part 'toolbox_fail2ban_page_actions_part.dart';
@@ -48,8 +49,9 @@ class _ToolboxFail2banPageState extends State<ToolboxFail2banPage>
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxCommonOverviewTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 ToolboxInfoRowWidget(
@@ -119,8 +121,9 @@ class _ToolboxFail2banPageState extends State<ToolboxFail2banPage>
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxFail2banConfigTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -142,8 +145,9 @@ class _ToolboxFail2banPageState extends State<ToolboxFail2banPage>
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxCommonRecentRecordsTitle,
+            padding: const EdgeInsets.all(16),
             child: provider.records.isEmpty
                 ? Text(l10n.commonEmpty)
                 : Column(

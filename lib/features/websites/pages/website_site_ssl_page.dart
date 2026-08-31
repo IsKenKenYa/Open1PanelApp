@@ -13,6 +13,7 @@ import 'package:onepanel_client/shared/security_gateway/utils/security_gateway_u
 import 'package:onepanel_client/shared/security_gateway/widgets/config_diff_preview_card.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/security_status_chip.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 class WebsiteSiteSslPage extends StatelessWidget {
@@ -91,8 +92,9 @@ class _WebsiteSiteSslBody extends StatelessWidget {
               children: [
                 RiskNoticeBanner(notices: localizeWebsiteSiteSslRiskNotices(context, notices), title: l10n.websiteSiteSslRiskNoticesTitle),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _SectionCard(
+                SectionCard(
                   title: l10n.websiteSiteSslCurrentCertSection,
+                  padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -138,8 +140,9 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _SectionCard(
+                SectionCard(
                   title: l10n.websiteSiteSslStrategySection,
+                  padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -204,8 +207,9 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _SectionCard(
+                SectionCard(
                   title: l10n.websiteSiteSslCertActionsSection,
+                  padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -260,8 +264,9 @@ class _WebsiteSiteSslBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _SectionCard(
+                SectionCard(
                   title: l10n.websiteSiteSslAdvancedSection,
+                  padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -412,39 +417,6 @@ class _WebsiteSiteSslBody extends StatelessWidget {
       case CertificateHealthStatus.unknown:
         return l10n.websitesSslHealthUnknown;
     }
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.title,
-    required this.child,
-  });
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            child,
-          ],
-        ),
-      ),
-    );
   }
 }
 

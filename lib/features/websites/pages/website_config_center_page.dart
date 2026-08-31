@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 import '../providers/website_config_center_provider.dart';
 import '../widgets/website_async_state_view.dart';
-import '../widgets/website_section_card.dart';
 import '../website_config_page.dart';
 import 'website_basic_config_page.dart';
 import 'website_cors_page.dart';
@@ -70,140 +70,144 @@ class _WebsiteConfigCenterBody extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                WebsiteSectionCard(
-                  title: l10n.websitesBasicConfigTitle,
-                  subtitle: provider.website?.sitePath ??
-                      l10n.websitesConfigPageSubtitle,
-                  icon: Icons.dashboard_customize_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteBasicConfigPage(
-                        websiteId: websiteId,
-                        displayName: displayName,
-                        provider: provider,
+                SectionEntryList(
+                  items: [
+                    SectionEntryItem(
+                      title: l10n.websitesBasicConfigTitle,
+                      subtitle: provider.website?.sitePath ??
+                          l10n.websitesConfigPageSubtitle,
+                      icon: Icons.dashboard_customize_outlined,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteBasicConfigPage(
+                            websiteId: websiteId,
+                            displayName: displayName,
+                            provider: provider,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title:
-                      '${l10n.websitesTabProxy} / ${l10n.websitesTabRewrite}',
-                  subtitle: l10n.websitesConfigScopeTitle,
-                  icon: Icons.alt_route,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteRoutingRulesPage(
-                        websiteId: websiteId,
-                        displayName: displayName,
+                    SectionEntryItem(
+                      title:
+                          '${l10n.websitesTabProxy} / ${l10n.websitesTabRewrite}',
+                      subtitle: l10n.websitesConfigScopeTitle,
+                      icon: Icons.alt_route,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteRoutingRulesPage(
+                            websiteId: websiteId,
+                            displayName: displayName,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: l10n.securitySettingsAccessControl,
-                  subtitle: l10n.websitesConfigPageSubtitle,
-                  icon: Icons.shield_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteSecurityAccessPage(
-                        websiteId: websiteId,
-                        displayName: displayName,
+                    SectionEntryItem(
+                      title: l10n.securitySettingsAccessControl,
+                      subtitle: l10n.websitesConfigPageSubtitle,
+                      icon: Icons.shield_outlined,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteSecurityAccessPage(
+                            websiteId: websiteId,
+                            displayName: displayName,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: l10n.websitesPhpVersionTitle,
-                  subtitle: provider.website?.runtimeName ??
-                      l10n.websitesConfigPageSubtitle,
-                  icon: Icons.code_off,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteConfigPage(
-                        websiteId: websiteId,
-                        displayName: displayName,
+                    SectionEntryItem(
+                      title: l10n.websitesPhpVersionTitle,
+                      subtitle: provider.website?.runtimeName ??
+                          l10n.websitesConfigPageSubtitle,
+                      icon: Icons.code_off,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteConfigPage(
+                            websiteId: websiteId,
+                            displayName: displayName,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: l10n.websitesConfigEditorTitle,
-                  subtitle: provider.configFile?.path ??
-                      l10n.websitesConfigPageSubtitle,
-                  icon: Icons.code,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteConfigPage(
-                        websiteId: websiteId,
-                        displayName: displayName,
+                    SectionEntryItem(
+                      title: l10n.websitesConfigEditorTitle,
+                      subtitle: provider.configFile?.path ??
+                          l10n.websitesConfigPageSubtitle,
+                      icon: Icons.code,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteConfigPage(
+                            websiteId: websiteId,
+                            displayName: displayName,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: 'HTTPS',
-                  subtitle: 'SSL/TLS configuration',
-                  icon: Icons.lock_outline,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteHttpsPage(
-                        websiteId: websiteId,
-                        displayName: displayName ?? '',
+                    SectionEntryItem(
+                      title: 'HTTPS',
+                      subtitle: 'SSL/TLS configuration',
+                      icon: Icons.lock_outline,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteHttpsPage(
+                            websiteId: websiteId,
+                            displayName: displayName ?? '',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: 'Redirect',
-                  subtitle: 'URL redirect rules',
-                  icon: Icons.shuffle,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteRedirectPage(
-                        websiteId: websiteId,
-                        displayName: displayName ?? '',
+                    SectionEntryItem(
+                      title: 'Redirect',
+                      subtitle: 'URL redirect rules',
+                      icon: Icons.shuffle,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteRedirectPage(
+                            websiteId: websiteId,
+                            displayName: displayName ?? '',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: 'CORS',
-                  subtitle: 'Cross-origin resource sharing',
-                  icon: Icons.sync_alt,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteCorsPage(
-                        websiteId: websiteId,
-                        displayName: displayName ?? '',
+                    SectionEntryItem(
+                      title: 'CORS',
+                      subtitle: 'Cross-origin resource sharing',
+                      icon: Icons.sync_alt,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteCorsPage(
+                            websiteId: websiteId,
+                            displayName: displayName ?? '',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: 'Anti-Leech',
-                  subtitle: 'Hotlink protection',
-                  icon: Icons.block,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteLeechPage(
-                        websiteId: websiteId,
-                        displayName: displayName ?? '',
+                    SectionEntryItem(
+                      title: 'Anti-Leech',
+                      subtitle: 'Hotlink protection',
+                      icon: Icons.block,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteLeechPage(
+                            websiteId: websiteId,
+                            displayName: displayName ?? '',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                WebsiteSectionCard(
-                  title: 'Logs',
-                  subtitle: 'Access & error logs',
-                  icon: Icons.article_outlined,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => WebsiteLogPage(
-                        websiteId: websiteId,
-                        displayName: displayName ?? '',
+                    SectionEntryItem(
+                      title: 'Logs',
+                      subtitle: 'Access & error logs',
+                      icon: Icons.article_outlined,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => WebsiteLogPage(
+                            websiteId: websiteId,
+                            displayName: displayName ?? '',
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

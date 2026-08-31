@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/features/operations_center/widgets/server_operation_entry_card_widget.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class OperationsCenterPage extends StatelessWidget {
   const OperationsCenterPage({super.key});
@@ -112,67 +112,38 @@ class OperationsCenterPage extends StatelessWidget {
 
     return ServerAwarePageScaffold(
       title: l10n.operationsCenterPageTitle,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final availableWidth = constraints.maxWidth;
-          final columns = switch (availableWidth) {
-            >= 1280 => 3,
-            >= 760 => 2,
-            _ => 1,
-          };
-          return ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    l10n.operationsCenterIntro,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                l10n.operationsCenterIntro,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 16),
-              for (final section in sections) ...[
-                Text(
-                  key: Key('operations-section-${section.id}'),
-                  section.title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  section.description,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-                const SizedBox(height: 12),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: section.entries.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    mainAxisExtent: 108,
+            ),
+          ),
+          const SizedBox(height: 16),
+          for (final section in sections) ...[
+            SectionEntryList(
+              titleKey: Key('operations-section-${section.id}'),
+              title: section.title,
+              description: section.description,
+              items: [
+                for (final entry in section.entries)
+                  SectionEntryItem(
+                    key: Key('operations-entry-${entry.routeId}'),
+                    title: entry.title,
+                    icon: entry.icon,
+                    onTap: () =>
+                        openRouteRespectingShell(context, entry.route),
                   ),
-                  itemBuilder: (context, index) {
-                    final entry = section.entries[index];
-                    return ServerOperationEntryCardWidget(
-                      key: Key('operations-entry-${entry.routeId}'),
-                      title: entry.title,
-                      icon: entry.icon,
-                      onTap: () =>
-                          openRouteRespectingShell(context, entry.route),
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
               ],
-            ],
-          );
-        },
+            ),
+            const SizedBox(height: 20),
+          ],
+        ],
       ),
     );
   }

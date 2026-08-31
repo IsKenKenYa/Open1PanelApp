@@ -4,7 +4,7 @@ import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/toolbox_models.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/features/toolbox/providers/toolbox_clam_provider.dart';
-import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 part 'toolbox_clam_page_actions_part.dart';
@@ -60,8 +60,9 @@ class _ToolboxClamPageState extends State<ToolboxClamPage>
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxClamTasksTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -209,8 +210,9 @@ class _ToolboxClamPageState extends State<ToolboxClamPage>
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxClamRecordsTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -254,8 +256,9 @@ class _ToolboxClamPageState extends State<ToolboxClamPage>
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxClamFilesTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

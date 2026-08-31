@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/features/operations_center/widgets/server_operation_entry_card_widget.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class ToolboxCenterPage extends StatelessWidget {
   const ToolboxCenterPage({super.key});
@@ -26,52 +26,52 @@ class ToolboxCenterPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ServerOperationEntryCardWidget(
-            title: l10n.toolboxClamTitle,
-            subtitle: l10n.toolboxClamCardSubtitle,
-            icon: Icons.security_outlined,
-            onTap: () =>
-                openRouteRespectingShell(context, AppRoutes.toolboxClam),
-          ),
-          const SizedBox(height: 12),
-          ServerOperationEntryCardWidget(
-            title: l10n.toolboxFail2banTitle,
-            subtitle: l10n.toolboxFail2banCardSubtitle,
-            icon: Icons.gpp_bad_outlined,
-            onTap: () =>
-                openRouteRespectingShell(context, AppRoutes.toolboxFail2ban),
-          ),
-          const SizedBox(height: 12),
-          ServerOperationEntryCardWidget(
-            title: l10n.toolboxFtpTitle,
-            subtitle: l10n.toolboxFtpCardSubtitle,
-            icon: Icons.folder_shared_outlined,
-            onTap: () =>
-                openRouteRespectingShell(context, AppRoutes.toolboxFtp),
-          ),
-          const SizedBox(height: 12),
-          ServerOperationEntryCardWidget(
-            title: l10n.toolboxDeviceTitle,
-            subtitle: l10n.toolboxDeviceCardSubtitle,
-            icon: Icons.developer_board_outlined,
-            onTap: () =>
-                openRouteRespectingShell(context, AppRoutes.toolboxDevice),
-          ),
-          const SizedBox(height: 12),
-          ServerOperationEntryCardWidget(
-            title: l10n.toolboxDiskTitle,
-            subtitle: l10n.toolboxDiskCardSubtitle,
-            icon: Icons.storage_outlined,
-            onTap: () =>
-                openRouteRespectingShell(context, AppRoutes.toolboxDisk),
-          ),
-          const SizedBox(height: 12),
-          ServerOperationEntryCardWidget(
-            title: l10n.toolboxHostToolTitle,
-            subtitle: l10n.toolboxHostToolCardSubtitle,
-            icon: Icons.settings_applications_outlined,
-            onTap: () =>
-                openRouteRespectingShell(context, AppRoutes.toolboxHostTool),
+          SectionEntryList(
+            title: l10n.toolboxCenterTitle,
+            items: [
+              SectionEntryItem(
+                title: l10n.toolboxClamTitle,
+                subtitle: l10n.toolboxClamCardSubtitle,
+                icon: Icons.security_outlined,
+                onTap: () =>
+                    openRouteRespectingShell(context, AppRoutes.toolboxClam),
+              ),
+              SectionEntryItem(
+                title: l10n.toolboxFail2banTitle,
+                subtitle: l10n.toolboxFail2banCardSubtitle,
+                icon: Icons.gpp_bad_outlined,
+                onTap: () => openRouteRespectingShell(
+                    context, AppRoutes.toolboxFail2ban),
+              ),
+              SectionEntryItem(
+                title: l10n.toolboxFtpTitle,
+                subtitle: l10n.toolboxFtpCardSubtitle,
+                icon: Icons.folder_shared_outlined,
+                onTap: () =>
+                    openRouteRespectingShell(context, AppRoutes.toolboxFtp),
+              ),
+              SectionEntryItem(
+                title: l10n.toolboxDeviceTitle,
+                subtitle: l10n.toolboxDeviceCardSubtitle,
+                icon: Icons.developer_board_outlined,
+                onTap: () => openRouteRespectingShell(
+                    context, AppRoutes.toolboxDevice),
+              ),
+              SectionEntryItem(
+                title: l10n.toolboxDiskTitle,
+                subtitle: l10n.toolboxDiskCardSubtitle,
+                icon: Icons.storage_outlined,
+                onTap: () =>
+                    openRouteRespectingShell(context, AppRoutes.toolboxDisk),
+              ),
+              SectionEntryItem(
+                title: l10n.toolboxHostToolTitle,
+                subtitle: l10n.toolboxHostToolCardSubtitle,
+                icon: Icons.settings_applications_outlined,
+                onTap: () => openRouteRespectingShell(
+                    context, AppRoutes.toolboxHostTool),
+              ),
+            ],
           ),
         ],
       ),

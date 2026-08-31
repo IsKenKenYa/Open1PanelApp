@@ -6,7 +6,7 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/features/server/server_models.dart';
 import 'package:onepanel_client/features/server/server_provider.dart';
 import 'package:onepanel_client/features/server/widgets/server_detail_header_card.dart';
-import 'package:onepanel_client/features/server/widgets/server_detail_section_card.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/controllers/pinned_modules_controller.dart';
 import 'package:onepanel_client/features/shell/models/client_module.dart';
@@ -59,7 +59,7 @@ class ServerDetailPage extends StatelessWidget {
               onRefresh: () => _refreshServer(context),
             ),
             const SizedBox(height: AppDesignTokens.spacingLg),
-            ServerDetailSectionCard(
+            SectionEntryList(
               title: l10n.shellPinnedModulesTitle,
               description: l10n.shellPinnedModulesDescription,
               action: TextButton.icon(
@@ -74,7 +74,7 @@ class ServerDetailPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppDesignTokens.spacingLg),
-            ServerDetailSectionCard(
+            SectionEntryList(
               title: l10n.serverModulesTitle,
               items: [
                 for (final module in kPinnableClientModules)
@@ -83,7 +83,7 @@ class ServerDetailPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppDesignTokens.spacingLg),
-            ServerDetailSectionCard(
+            SectionEntryList(
               title: l10n.commonMore,
               items: _buildServerModuleItems(context),
             ),
@@ -102,52 +102,52 @@ class ServerDetailPage extends StatelessWidget {
     SnackBarUtils.showSuccess(context, l10n.commonRefresh);
   }
 
-  ServerDetailSectionItem _buildClientModuleItem(
+  SectionEntryItem _buildClientModuleItem(
     BuildContext context,
     ClientModule module,
   ) {
-    return ServerDetailSectionItem(
+    return SectionEntryItem(
       title: module.label(context.l10n),
       icon: module.icon,
       onTap: () => _openRoute(context, _routeForClientModule(module)),
     );
   }
 
-  List<ServerDetailSectionItem> _buildServerModuleItems(BuildContext context) {
+  List<SectionEntryItem> _buildServerModuleItems(BuildContext context) {
     final l10n = context.l10n;
     return [
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.operationsCenterServerEntryTitle,
         icon: Icons.space_dashboard_outlined,
         subtitle: l10n.operationsCenterServerEntrySubtitle,
         onTap: () => _openRoute(context, AppRoutes.operations),
       ),
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.serverModuleDatabases,
         icon: Icons.storage_outlined,
         onTap: () => _openRoute(context, AppRoutes.databases),
       ),
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.serverModuleFirewall,
         icon: Icons.shield_outlined,
         onTap: () => _openRoute(context, AppRoutes.firewall),
       ),
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.serverModuleTerminal,
         icon: Icons.terminal_outlined,
         onTap: () => _openRoute(context, AppRoutes.terminal),
       ),
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.serverModuleMonitoring,
         icon: Icons.monitor_heart_outlined,
         onTap: () => _openRoute(context, AppRoutes.monitoring),
       ),
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.openrestyPageTitle,
         icon: Icons.tune_outlined,
         onTap: () => _openRoute(context, AppRoutes.openrestyCenter),
       ),
-      ServerDetailSectionItem(
+      SectionEntryItem(
         title: l10n.serverModuleSystemSettings,
         icon: Icons.settings_applications_outlined,
         onTap: () => _openRoute(context, AppRoutes.systemSettings),

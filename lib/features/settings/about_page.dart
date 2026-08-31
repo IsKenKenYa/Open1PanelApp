@@ -7,6 +7,7 @@ import 'package:onepanel_client/core/config/release_channel_config.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -50,8 +51,9 @@ class _AboutPageState extends State<AboutPage> {
             children: [
               _HeroCard(packageInfo: packageInfo),
               const SizedBox(height: AppDesignTokens.spacingLg),
-              _SectionCard(
+              SectionCard(
                 title: l10n.aboutBuildSectionTitle,
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     _InfoRow(
@@ -126,8 +128,9 @@ class _AboutPageState extends State<AboutPage> {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingLg),
-              _SectionCard(
+              SectionCard(
                 title: l10n.aboutProjectSectionTitle,
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -157,8 +160,9 @@ class _AboutPageState extends State<AboutPage> {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingLg),
-              _SectionCard(
+              SectionCard(
                 title: l10n.aboutRepositorySectionTitle,
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     _LinkRow(
@@ -258,30 +262,6 @@ class _HeroCard extends StatelessWidget {
                     color: colorScheme.primary,
                   ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({required this.title, required this.child});
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            child,
           ],
         ),
       ),

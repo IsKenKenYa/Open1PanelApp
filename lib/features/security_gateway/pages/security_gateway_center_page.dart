@@ -9,6 +9,7 @@ import 'package:onepanel_client/features/websites/pages/website_site_ssl_page.da
 import 'package:onepanel_client/features/websites/pages/website_ssl_center_page.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 class SecurityGatewayCenterPage extends StatelessWidget {
@@ -79,8 +80,9 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                       context, provider.riskNotices),
                   title: l10n.securityGatewayUnifiedSummaryTitle),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              _SectionCard(
+              SectionCard(
                 title: l10n.securityGatewaySummarySection,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -111,8 +113,9 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              _SectionCard(
+              SectionCard(
                 title: l10n.securityGatewayQuickActionsSection,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Wrap(
                   spacing: AppDesignTokens.spacingSm,
                   runSpacing: AppDesignTokens.spacingSm,
@@ -162,8 +165,9 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              _SectionCard(
+              SectionCard(
                 title: l10n.securityGatewayPanelTlsSection,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -204,8 +208,9 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              _SectionCard(
+              SectionCard(
                 title: l10n.securityGatewayWebsiteCertsSection,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -248,8 +253,9 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              _SectionCard(
+              SectionCard(
                 title: l10n.securityGatewayOpenRestyGatewaySection,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -297,39 +303,6 @@ class _SecurityGatewayCenterBody extends StatelessWidget {
       case SecurityGatewaySection.openresty:
         return l10n.securityGatewayEntryOpenResty;
     }
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.title,
-    required this.child,
-  });
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            child,
-          ],
-        ),
-      ),
-    );
   }
 }
 

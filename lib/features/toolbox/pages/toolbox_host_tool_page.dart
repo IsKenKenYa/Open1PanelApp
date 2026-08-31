@@ -4,6 +4,7 @@ import 'package:onepanel_client/data/models/host_tool_models.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/features/toolbox/providers/toolbox_host_tool_provider.dart';
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/utils/snackbar_utils.dart';
@@ -51,8 +52,9 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxHostToolServiceSectionTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -121,8 +123,9 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxHostToolConfigSectionTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -143,8 +146,9 @@ class _ToolboxHostToolPageState extends State<ToolboxHostToolPage> {
             ),
           ),
           const SizedBox(height: 12),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxHostToolProcessSectionTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

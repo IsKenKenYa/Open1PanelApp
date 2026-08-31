@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/process_detail_models.dart';
 import 'package:onepanel_client/features/processes/providers/process_detail_provider.dart';
-import 'package:onepanel_client/features/processes/widgets/process_detail_section_card_widget.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 class ProcessDetailPage extends StatefulWidget {
@@ -88,8 +88,9 @@ class _ProcessDetailPageState extends State<ProcessDetailPage> {
 
   Widget _overviewSection(BuildContext context, ProcessDetail detail) {
     final l10n = context.l10n;
-    return ProcessDetailSectionCardWidget(
+    return SectionCard(
       title: l10n.processDetailOverviewSectionTitle,
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
           _detailRow('PID', detail.pid.toString()),
@@ -111,8 +112,9 @@ class _ProcessDetailPageState extends State<ProcessDetailPage> {
 
   Widget _memorySection(BuildContext context, ProcessDetail detail) {
     final l10n = context.l10n;
-    return ProcessDetailSectionCardWidget(
+    return SectionCard(
       title: l10n.processDetailMemorySectionTitle,
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
           _detailRow('RSS', detail.rss),
@@ -134,8 +136,9 @@ class _ProcessDetailPageState extends State<ProcessDetailPage> {
 
   Widget _openFilesSection(BuildContext context, ProcessDetail detail) {
     final l10n = context.l10n;
-    return ProcessDetailSectionCardWidget(
+    return SectionCard(
       title: l10n.processDetailOpenFilesSectionTitle,
+      padding: const EdgeInsets.all(16),
       child: detail.openFiles.isEmpty
           ? Text(l10n.processDetailNoOpenFiles)
           : Column(
@@ -148,8 +151,9 @@ class _ProcessDetailPageState extends State<ProcessDetailPage> {
 
   Widget _connectionsSection(BuildContext context, ProcessDetail detail) {
     final l10n = context.l10n;
-    return ProcessDetailSectionCardWidget(
+    return SectionCard(
       title: l10n.processDetailConnectionsSectionTitle,
+      padding: const EdgeInsets.all(16),
       child: detail.connections.isEmpty
           ? Text(l10n.processDetailNoConnections)
           : Column(
@@ -166,8 +170,9 @@ class _ProcessDetailPageState extends State<ProcessDetailPage> {
 
   Widget _environmentSection(BuildContext context, ProcessDetail detail) {
     final l10n = context.l10n;
-    return ProcessDetailSectionCardWidget(
+    return SectionCard(
       title: l10n.processDetailEnvironmentSectionTitle,
+      padding: const EdgeInsets.all(16),
       child: detail.envs.isEmpty
           ? Text(l10n.processDetailNoEnvironment)
           : SelectableText(

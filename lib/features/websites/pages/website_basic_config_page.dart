@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 
 import 'package:onepanel_client/config/app_router.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 import '../providers/website_config_center_provider.dart';
 import '../widgets/website_async_state_view.dart';
-import '../widgets/website_section_card.dart';
 
 class WebsiteBasicConfigPage extends StatelessWidget {
   const WebsiteBasicConfigPage({
@@ -66,40 +66,44 @@ class _WebsiteBasicConfigBody extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                WebsiteSectionCard(
-                  title: l10n.websitesSitePathLabel,
-                  subtitle: website?.sitePath ?? website?.siteDir ?? '-',
-                  icon: Icons.folder_outlined,
-                  trailing: null,
-                ),
-                WebsiteSectionCard(
-                  title: l10n.websitesRuntimeLabel,
-                  subtitle:
-                      website?.runtimeName ?? website?.runtimeTypeName ?? '-',
-                  icon: Icons.data_object_outlined,
-                  trailing: null,
-                ),
-                WebsiteSectionCard(
-                  title: l10n.websitesBasicConfigDatabaseTitle,
-                  subtitle: website?.dbType ?? '-',
-                  icon: Icons.storage_outlined,
-                  trailing: null,
-                ),
-                WebsiteSectionCard(
-                  title: l10n.websitesHttpsConfigTitle,
-                  subtitle: provider.httpsSummary?.toString() ?? '-',
-                  icon: Icons.lock_outline,
-                  trailing: null,
-                ),
-                WebsiteSectionCard(
-                  title: l10n.websitesRemarkLabel,
-                  subtitle: website?.remark ?? '-',
-                  icon: Icons.edit_note_outlined,
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    AppRoutes.websiteEdit,
-                    arguments: {'websiteId': websiteId},
-                  ),
+                SectionEntryList(
+                  items: [
+                    SectionEntryItem(
+                      title: l10n.websitesSitePathLabel,
+                      subtitle: website?.sitePath ?? website?.siteDir ?? '-',
+                      icon: Icons.folder_outlined,
+                      trailing: null,
+                    ),
+                    SectionEntryItem(
+                      title: l10n.websitesRuntimeLabel,
+                      subtitle:
+                          website?.runtimeName ?? website?.runtimeTypeName ?? '-',
+                      icon: Icons.data_object_outlined,
+                      trailing: null,
+                    ),
+                    SectionEntryItem(
+                      title: l10n.websitesBasicConfigDatabaseTitle,
+                      subtitle: website?.dbType ?? '-',
+                      icon: Icons.storage_outlined,
+                      trailing: null,
+                    ),
+                    SectionEntryItem(
+                      title: l10n.websitesHttpsConfigTitle,
+                      subtitle: provider.httpsSummary?.toString() ?? '-',
+                      icon: Icons.lock_outline,
+                      trailing: null,
+                    ),
+                    SectionEntryItem(
+                      title: l10n.websitesRemarkLabel,
+                      subtitle: website?.remark ?? '-',
+                      icon: Icons.edit_note_outlined,
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        AppRoutes.websiteEdit,
+                        arguments: {'websiteId': websiteId},
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

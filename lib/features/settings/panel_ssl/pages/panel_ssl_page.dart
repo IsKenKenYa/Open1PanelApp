@@ -7,6 +7,7 @@ import 'package:onepanel_client/features/settings/panel_ssl/providers/panel_ssl_
 import 'package:onepanel_client/shared/security_gateway/models/security_gateway_models.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/security_status_chip.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 class PanelSslPage extends StatelessWidget {
@@ -60,8 +61,9 @@ class _PanelSslBody extends StatelessWidget {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          _SectionCard(
+          SectionCard(
             title: l10n.panelTlsOverviewTitle,
+            padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -93,8 +95,9 @@ class _PanelSslBody extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _SectionCard(
+          SectionCard(
             title: l10n.panelTlsCertificateTitle,
+            padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -146,8 +149,9 @@ class _PanelSslBody extends StatelessWidget {
             title: l10n.panelTlsRiskTitle,
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _SectionCard(
+          SectionCard(
             title: l10n.panelTlsHistoryTitle,
+            padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -465,39 +469,6 @@ class _PanelSslBody extends StatelessWidget {
       case CertificateHealthStatus.unknown:
         return Theme.of(context).colorScheme.secondary;
     }
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.title,
-    required this.child,
-  });
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            child,
-          ],
-        ),
-      ),
-    );
   }
 }
 

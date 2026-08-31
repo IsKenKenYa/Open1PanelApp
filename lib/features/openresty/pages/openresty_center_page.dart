@@ -10,6 +10,7 @@ import 'package:onepanel_client/features/openresty/widgets/openresty_center_sect
 import 'package:onepanel_client/features/openresty/widgets/openresty_error_view.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_empty_state_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/config_diff_preview_card.dart';
 import 'package:onepanel_client/shared/security_gateway/widgets/risk_notice_banner.dart';
 import 'package:provider/provider.dart';
@@ -83,9 +84,10 @@ class OpenRestyCenterPage extends StatelessWidget {
                 title: l10n.openrestyRiskBannerTitle,
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              OpenRestySectionCard(
-                sectionKey: const Key('openresty-section-status'),
+              SectionCard(
+                titleKey: const Key('openresty-section-status'),
                 title: l10n.openrestyTabStatus,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -108,9 +110,10 @@ class OpenRestyCenterPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              OpenRestySectionCard(
-                sectionKey: const Key('openresty-section-https'),
+              SectionCard(
+                titleKey: const Key('openresty-section-https'),
                 title: l10n.openrestyTabHttps,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -165,9 +168,10 @@ class OpenRestyCenterPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              OpenRestySectionCard(
-                sectionKey: const Key('openresty-section-modules'),
+              SectionCard(
+                titleKey: const Key('openresty-section-modules'),
                 title: l10n.openrestyTabModules,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -206,9 +210,10 @@ class OpenRestyCenterPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              OpenRestySectionCard(
-                sectionKey: const Key('openresty-section-config'),
+              SectionCard(
+                titleKey: const Key('openresty-section-config'),
                 title: l10n.openrestyTabConfig,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -279,9 +284,10 @@ class OpenRestyCenterPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDesignTokens.spacingMd),
-              OpenRestySectionCard(
-                sectionKey: const Key('openresty-section-build'),
+              SectionCard(
+                titleKey: const Key('openresty-section-build'),
                 title: l10n.openrestyTabBuild,
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

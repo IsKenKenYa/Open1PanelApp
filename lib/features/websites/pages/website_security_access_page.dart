@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
-import '../widgets/website_section_card.dart';
 import '../website_config_page.dart';
 
 class WebsiteSecurityAccessPage extends StatelessWidget {
@@ -27,23 +27,27 @@ class WebsiteSecurityAccessPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          WebsiteSectionCard(
-            title: l10n.securitySettingsAllowIPs,
-            subtitle: l10n.securitySettingsTitle,
-            icon: Icons.security,
-            onTap: () => _openAdvanced(context),
-          ),
-          WebsiteSectionCard(
-            title: l10n.securitySettingsBindDomain,
-            subtitle: l10n.websitesDomainsPageSubtitle,
-            icon: Icons.domain_outlined,
-            onTap: () => _openAdvanced(context),
-          ),
-          WebsiteSectionCard(
-            title: l10n.websitesNginxAdvancedTitle,
-            subtitle: l10n.websitesConfigPageSubtitle,
-            icon: Icons.shield_moon_outlined,
-            onTap: () => _openAdvanced(context),
+          SectionEntryList(
+            items: [
+              SectionEntryItem(
+                title: l10n.securitySettingsAllowIPs,
+                subtitle: l10n.securitySettingsTitle,
+                icon: Icons.security,
+                onTap: () => _openAdvanced(context),
+              ),
+              SectionEntryItem(
+                title: l10n.securitySettingsBindDomain,
+                subtitle: l10n.websitesDomainsPageSubtitle,
+                icon: Icons.domain_outlined,
+                onTap: () => _openAdvanced(context),
+              ),
+              SectionEntryItem(
+                title: l10n.websitesNginxAdvancedTitle,
+                subtitle: l10n.websitesConfigPageSubtitle,
+                icon: Icons.shield_moon_outlined,
+                onTap: () => _openAdvanced(context),
+              ),
+            ],
           ),
         ],
       ),

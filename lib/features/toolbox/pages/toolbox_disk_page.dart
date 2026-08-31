@@ -5,6 +5,7 @@ import 'package:onepanel_client/data/models/disk_management_models.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
 import 'package:onepanel_client/features/toolbox/providers/toolbox_disk_provider.dart';
 import 'package:onepanel_client/features/toolbox/widgets/toolbox_sections_widget.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/utils/snackbar_utils.dart';
@@ -52,8 +53,9 @@ class _ToolboxDiskPageState extends State<ToolboxDiskPage> {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
-          ToolboxSectionCardWidget(
+          SectionCard(
             title: l10n.toolboxDiskOverviewTitle,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -324,8 +326,9 @@ class _DiskSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return ToolboxSectionCardWidget(
+    return SectionCard(
       title: title,
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: items.map((DiskInfo disk) {
           final rows = disk.partitions.isNotEmpty
