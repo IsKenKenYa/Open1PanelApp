@@ -56,7 +56,11 @@ void main() {
           find.byType(TextFormField).first,
           'Production',
         );
-        await tester.tap(find.widgetWithText(OutlinedButton, l10n.serverFormTest));
+        final testButton =
+            find.widgetWithText(OutlinedButton, l10n.serverFormTest);
+        await tester.ensureVisible(testButton);
+        await tester.pumpAndSettle();
+        await tester.tap(testButton);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 250));
 

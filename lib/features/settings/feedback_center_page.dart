@@ -11,6 +11,7 @@ import 'package:onepanel_client/core/services/logger/log_level.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/features/settings/about_page.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class FeedbackCenterPage extends StatefulWidget {
   const FeedbackCenterPage({super.key});
@@ -64,68 +65,49 @@ class _FeedbackCenterPageState extends State<FeedbackCenterPage> {
             ),
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          Text(
-            l10n.settingsFeedback,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppDesignTokens.spacingSm),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.feedback_outlined),
-                  title: Text(l10n.aboutFeedbackAction),
-                  subtitle: Text(l10n.settingsFeedbackIssueSubtitle),
-                  trailing: const Icon(Icons.open_in_new),
-                  onTap: () => _openIssues(context),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.content_copy_outlined),
-                  title: Text(l10n.settingsFeedbackCopyTemplate),
-                  subtitle: Text(l10n.settingsFeedbackTemplateHint),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _copyTemplate(context),
-                ),
-              ],
-            ),
+          SectionEntryList(
+            title: l10n.settingsFeedback,
+            items: [
+              SectionEntryItem(
+                icon: Icons.feedback_outlined,
+                title: l10n.aboutFeedbackAction,
+                subtitle: l10n.settingsFeedbackIssueSubtitle,
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => _openIssues(context),
+              ),
+              SectionEntryItem(
+                icon: Icons.content_copy_outlined,
+                title: l10n.settingsFeedbackCopyTemplate,
+                subtitle: l10n.settingsFeedbackTemplateHint,
+                onTap: () => _copyTemplate(context),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          Text(
-            l10n.settingsFeedbackLogsTitle,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppDesignTokens.spacingSm),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.filter_alt_outlined),
-                  title: Text(l10n.systemSettingsAppLogsLevelTitle),
-                  subtitle: Text(logLevelSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => isLogLevelLocked
-                      ? _showLogLevelLockedHint(context)
-                      : _selectAppLogLevel(context),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.download_outlined),
-                  title: Text(l10n.commonExport),
-                  subtitle: Text(l10n.systemSettingsAppLogsExportSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _exportAppLogs(context),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.delete_sweep_outlined),
-                  title: Text(l10n.commonClear),
-                  subtitle: Text(l10n.systemSettingsAppLogsClearSubtitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _clearAppLogs(context),
-                ),
-              ],
-            ),
+          SectionEntryList(
+            title: l10n.settingsFeedbackLogsTitle,
+            items: [
+              SectionEntryItem(
+                icon: Icons.filter_alt_outlined,
+                title: l10n.systemSettingsAppLogsLevelTitle,
+                subtitle: logLevelSubtitle,
+                onTap: () => isLogLevelLocked
+                    ? _showLogLevelLockedHint(context)
+                    : _selectAppLogLevel(context),
+              ),
+              SectionEntryItem(
+                icon: Icons.download_outlined,
+                title: l10n.commonExport,
+                subtitle: l10n.systemSettingsAppLogsExportSubtitle,
+                onTap: () => _exportAppLogs(context),
+              ),
+              SectionEntryItem(
+                icon: Icons.delete_sweep_outlined,
+                title: l10n.commonClear,
+                subtitle: l10n.systemSettingsAppLogsClearSubtitle,
+                onTap: () => _clearAppLogs(context),
+              ),
+            ],
           ),
         ],
       ),

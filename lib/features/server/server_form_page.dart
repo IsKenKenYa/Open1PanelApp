@@ -4,6 +4,8 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/server/server_repository.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/config/app_router.dart';
 import 'server_connection_service.dart';
@@ -134,164 +136,173 @@ class _ServerFormPageState extends State<ServerFormPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(title: Text(l10n.serverFormTitle)),
+    return AppFormScaffold(
+      title: l10n.serverFormTitle,
+      isSaving: _saving,
+      saveLabel: l10n.serverFormSaveConnect,
+      onSave: _save,
       body: SingleChildScrollView(
         padding: AppDesignTokens.pagePadding,
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverFormName,
-                  hintText: l10n.serverFormNameHint,
-                ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? l10n.serverFormRequired
-                    : null,
-              ),
-              const SizedBox(height: AppDesignTokens.spacingLg),
-              TextFormField(
-                controller: _urlController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverFormUrl,
-                  hintText: l10n.serverFormUrlHint,
-                ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? l10n.serverFormRequired
-                    : null,
-              ),
-              const SizedBox(height: AppDesignTokens.spacingLg),
-              TextFormField(
-                controller: _apiKeyController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverFormApiKey,
-                  hintText: l10n.serverFormApiKeyHint,
-                ),
-                validator: (value) => (value == null || value.trim().isEmpty)
-                    ? l10n.serverFormRequired
-                    : null,
-              ),
-              const SizedBox(height: AppDesignTokens.spacingLg),
-              TextFormField(
-                controller: _tokenValidityController,
-                decoration: InputDecoration(
-                  labelText: l10n.serverTokenValidity,
-                  hintText: l10n.serverTokenValidityHint,
-                  suffixText: l10n.serverFormMinutes,
-                ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: AppDesignTokens.spacingSm),
-              SwitchListTile.adaptive(
-                contentPadding: EdgeInsets.zero,
-                value: _allowInsecureTls,
-                onChanged: (value) {
-                  setState(() {
-                    _allowInsecureTls = value;
-                  });
-                },
-                title: Text(l10n.serverFormAllowInsecureTls),
-                subtitle: Text(l10n.serverFormAllowInsecureTlsHint),
-              ),
-              const SizedBox(height: AppDesignTokens.spacingLg),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: _testing ? null : _testConnection,
-                  child: _testing
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(
-                              height: 16,
-                              width: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(l10n.serverTestTesting),
-                          ],
-                        )
-                      : Text(l10n.serverFormTest),
-                ),
-              ),
-              if (_testResult != null) ...[
-                const SizedBox(height: AppDesignTokens.spacingMd),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: _testResult!.success
-                        ? Colors.green.withValues(alpha: 0.1)
-                        : Colors.red.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: _testResult!.success
-                          ? Colors.green.withValues(alpha: 0.3)
-                          : Colors.red.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            _testResult!.success
-                                ? Icons.check_circle
-                                : Icons.error,
-                            color: _testResult!.success
-                                ? Colors.green
-                                : Colors.red,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _testResult!.success
-                                ? l10n.serverTestSuccess
-                                : l10n.serverTestFailed,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: _testResult!.success
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
-                          ),
-                        ],
+              SectionCard(
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
+                title: l10n.serverFormBasicSectionTitle,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        labelText: l10n.serverFormName,
+                        hintText: l10n.serverFormNameHint,
                       ),
-                      if (_testResult!.osInfo != null) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'OS: ${_testResult!.osInfo!['os'] ?? 'Unknown'}',
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                      if (_testResult!.errorMessage != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          _testResult!.errorMessage!,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    ],
-                  ),
+                      validator: (value) =>
+                          (value == null || value.trim().isEmpty)
+                              ? l10n.serverFormRequired
+                              : null,
+                    ),
+                    const SizedBox(height: AppDesignTokens.spacingLg),
+                    TextFormField(
+                      controller: _urlController,
+                      decoration: InputDecoration(
+                        labelText: l10n.serverFormUrl,
+                        hintText: l10n.serverFormUrlHint,
+                      ),
+                      validator: (value) =>
+                          (value == null || value.trim().isEmpty)
+                              ? l10n.serverFormRequired
+                              : null,
+                    ),
+                    const SizedBox(height: AppDesignTokens.spacingLg),
+                    TextFormField(
+                      controller: _apiKeyController,
+                      decoration: InputDecoration(
+                        labelText: l10n.serverFormApiKey,
+                        hintText: l10n.serverFormApiKeyHint,
+                      ),
+                      validator: (value) =>
+                          (value == null || value.trim().isEmpty)
+                              ? l10n.serverFormRequired
+                              : null,
+                    ),
+                  ],
                 ),
-              ],
-              const SizedBox(height: AppDesignTokens.spacingMd),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _saving ? null : _save,
-                  child: _saving
-                      ? const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(l10n.serverFormSaveConnect),
+              ),
+              const SizedBox(height: AppDesignTokens.spacingLg),
+              SectionCard(
+                padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
+                title: l10n.serverFormConnectionSectionTitle,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _tokenValidityController,
+                      decoration: InputDecoration(
+                        labelText: l10n.serverTokenValidity,
+                        hintText: l10n.serverTokenValidityHint,
+                        suffixText: l10n.serverFormMinutes,
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: AppDesignTokens.spacingSm),
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      value: _allowInsecureTls,
+                      onChanged: (value) {
+                        setState(() {
+                          _allowInsecureTls = value;
+                        });
+                      },
+                      title: Text(l10n.serverFormAllowInsecureTls),
+                      subtitle: Text(l10n.serverFormAllowInsecureTlsHint),
+                    ),
+                    const SizedBox(height: AppDesignTokens.spacingLg),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: _testing ? null : _testConnection,
+                        child: _testing
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    height: 16,
+                                    width: 16,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(l10n.serverTestTesting),
+                                ],
+                              )
+                            : Text(l10n.serverFormTest),
+                      ),
+                    ),
+                    if (_testResult != null) ...[
+                      const SizedBox(height: AppDesignTokens.spacingMd),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _testResult!.success
+                              ? Colors.green.withValues(alpha: 0.1)
+                              : Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: _testResult!.success
+                                ? Colors.green.withValues(alpha: 0.3)
+                                : Colors.red.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  _testResult!.success
+                                      ? Icons.check_circle
+                                      : Icons.error,
+                                  color: _testResult!.success
+                                      ? Colors.green
+                                      : Colors.red,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  _testResult!.success
+                                      ? l10n.serverTestSuccess
+                                      : l10n.serverTestFailed,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: _testResult!.success
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (_testResult!.osInfo != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                'OS: ${_testResult!.osInfo!['os'] ?? 'Unknown'}',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                            if (_testResult!.errorMessage != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                _testResult!.errorMessage!,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],

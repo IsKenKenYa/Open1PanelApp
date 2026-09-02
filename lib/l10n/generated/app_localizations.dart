@@ -2624,6 +2624,18 @@ abstract class AppLocalizations {
   /// **'Database Scope'**
   String get databaseScopeLabel;
 
+  /// No description provided for @databaseFormBasicSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Configuration'**
+  String get databaseFormBasicSectionTitle;
+
+  /// No description provided for @databaseFormAdvancedSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Settings'**
+  String get databaseFormAdvancedSectionTitle;
+
   /// No description provided for @databaseEngineLabel.
   ///
   /// In en, this message translates to:
@@ -3116,6 +3128,12 @@ abstract class AppLocalizations {
   /// **'Create IP Rule'**
   String get firewallCreateIpRuleAction;
 
+  /// No description provided for @firewallRuleSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rule Configuration'**
+  String get firewallRuleSectionTitle;
+
   /// No description provided for @firewallToggleStrategyAction.
   ///
   /// In en, this message translates to:
@@ -3295,6 +3313,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save and continue'**
   String get serverFormSaveConnect;
+
+  /// No description provided for @serverFormBasicSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Configuration'**
+  String get serverFormBasicSectionTitle;
+
+  /// No description provided for @serverFormConnectionSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get serverFormConnectionSectionTitle;
 
   /// No description provided for @serverFormTest.
   ///
@@ -9907,6 +9937,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Container'**
   String get containerCreate;
+
+  /// No description provided for @containerCreateBasicSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Configuration'**
+  String get containerCreateBasicSectionTitle;
 
   /// No description provided for @containerEmptyTitle.
   ///

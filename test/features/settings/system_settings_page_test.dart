@@ -123,6 +123,8 @@ void main() {
       240,
       scrollable: find.byType(Scrollable).first,
     );
+    await tester.ensureVisible(networkTile.first);
+    await tester.pumpAndSettle();
     await tester.tap(networkTile.first);
     await _pumpWithFrameCap(tester);
 

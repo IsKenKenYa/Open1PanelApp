@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/database_models.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 import 'databases_provider.dart';
 
@@ -72,209 +74,261 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
             _selectedDatabaseKey = _databaseItemKey(_selectedDatabaseTarget!);
             _engineController.text = _selectedDatabaseTarget!.lookupName;
           }
-          return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            appBar: AppBar(title: Text(context.l10n.commonCreate)),
+          return AppFormScaffold(
+            title: context.l10n.commonCreate,
+            isSaving: provider.isSubmitting,
+            onSave: _submit,
             body: Padding(
               padding: AppDesignTokens.pagePadding,
               child: Form(
                 key: _formKey,
                 child: ListView(
                   children: [
-                    DropdownButtonFormField<DatabaseScope>(
-                      initialValue: _scope,
-                      decoration: InputDecoration(
-                          labelText: context.l10n.databaseScopeLabel),
-                      items: [
-                        for (final scope in _creatableScopes)
-                          DropdownMenuItem(
-                            value: scope,
-                            child: Text(scope.value),
+                    SectionCard(
+                      padding:
+                          const EdgeInsets.all(AppDesignTokens.spacingLg),
+                      title: context.l10n.databaseFormBasicSectionTitle,
+                      child: Column(
+                        children: [
+                          DropdownButtonFormField<DatabaseScope>(
+                            initialValue: _scope,
+                            decoration: InputDecoration(
+                                labelText: context.l10n.databaseScopeLabel),
+                            items: [
+                              for (final scope in _creatableScopes)
+                                DropdownMenuItem(
+                                  value: scope,
+                                  child: Text(scope.value),
+                                ),
+                            ],
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setState(() {
+                                _scope = value;
+                                _selectedDatabaseTarget = null;
+                                _selectedDatabaseKey = null;
+                                _engineController.clear();
+                                if (value == DatabaseScope.mysql) {
+                                  _mysqlPermission = '%';
+                                }
+                                if (value == DatabaseScope.postgresql) {
+                                  _postgresqlSuperUser = true;
+                                }
+                              });
+                              context
+                                  .read<DatabaseFormProvider>()
+                                  .loadDatabaseTargets(value);
+                            },
                           ),
-                      ],
-                      onChanged: (value) {
-                        if (value == null) return;
-                        setState(() {
-                          _scope = value;
-                          _selectedDatabaseTarget = null;
-                          _selectedDatabaseKey = null;
-                          _engineController.clear();
-                          if (value == DatabaseScope.mysql) {
-                            _mysqlPermission = '%';
-                          }
-                          if (value == DatabaseScope.postgresql) {
-                            _postgresqlSuperUser = true;
-                          }
-                        });
-                        context
-                            .read<DatabaseFormProvider>()
-                            .loadDatabaseTargets(value);
-                      },
-                    ),
-                    const SizedBox(height: AppDesignTokens.spacingMd),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration:
-                          InputDecoration(labelText: context.l10n.commonName),
-                      validator: (value) => _requiredValidator(
-                        value,
-                        context.l10n.commonName,
-                      ),
-                    ),
-                    const SizedBox(height: AppDesignTokens.spacingMd),
-                    if (_scope == DatabaseScope.remote) ...[
-                      TextFormField(
-                        controller: _engineController,
-                        decoration: InputDecoration(
-                            labelText: context.l10n.databaseEngineLabel),
-                        validator: (value) => _requiredValidator(
-                          value,
-                          context.l10n.databaseEngineLabel,
-                        ),
-                      ),
-                      const SizedBox(height: AppDesignTokens.spacingMd),
-                    ] else ...[
-                      DropdownButtonFormField<String>(
-                        key: ValueKey(
-                          '${_scope.value}:${_selectedDatabaseKey ?? 'none'}:${provider.databaseTargets.length}',
-                        ),
-                        initialValue: _selectedDatabaseKey,
-                        decoration: InputDecoration(
-                          labelText: context.l10n.databaseTargetInstance,
-                        ),
-                        items: [
-                          for (final item in provider.databaseTargets)
-                            DropdownMenuItem<String>(
-                              value: _databaseItemKey(item),
-                              child: Text(
-                                '${item.lookupName} [${item.instanceLabel ?? item.name}]',
+                          const SizedBox(height: AppDesignTokens.spacingMd),
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                                labelText: context.l10n.commonName),
+                            validator: (value) => _requiredValidator(
+                              value,
+                              context.l10n.commonName,
+                            ),
+                          ),
+                          const SizedBox(height: AppDesignTokens.spacingMd),
+                          if (_scope == DatabaseScope.remote) ...[
+                            TextFormField(
+                              controller: _engineController,
+                              decoration: InputDecoration(
+                                  labelText:
+                                      context.l10n.databaseEngineLabel),
+                              validator: (value) => _requiredValidator(
+                                value,
+                                context.l10n.databaseEngineLabel,
                               ),
                             ),
-                        ],
-                        onChanged: provider.isLoadingOptions
-                            ? null
-                            : (value) {
-                                DatabaseListItem? selected;
-                                for (final item in provider.databaseTargets) {
-                                  if (_databaseItemKey(item) == value) {
-                                    selected = item;
-                                    break;
-                                  }
+                          ] else ...[
+                            DropdownButtonFormField<String>(
+                              key: ValueKey(
+                                '${_scope.value}:${_selectedDatabaseKey ?? 'none'}:${provider.databaseTargets.length}',
+                              ),
+                              initialValue: _selectedDatabaseKey,
+                              decoration: InputDecoration(
+                                labelText:
+                                    context.l10n.databaseTargetInstance,
+                              ),
+                              items: [
+                                for (final item in provider.databaseTargets)
+                                  DropdownMenuItem<String>(
+                                    value: _databaseItemKey(item),
+                                    child: Text(
+                                      '${item.lookupName} [${item.instanceLabel ?? item.name}]',
+                                    ),
+                                  ),
+                              ],
+                              onChanged: provider.isLoadingOptions
+                                  ? null
+                                  : (value) {
+                                      DatabaseListItem? selected;
+                                      for (final item
+                                          in provider.databaseTargets) {
+                                        if (_databaseItemKey(item) == value) {
+                                          selected = item;
+                                          break;
+                                        }
+                                      }
+                                      setState(() {
+                                        _selectedDatabaseKey = value;
+                                        _selectedDatabaseTarget = selected;
+                                        _engineController.text =
+                                            selected?.lookupName ?? '';
+                                      });
+                                    },
+                              validator: (value) {
+                                if (_scope == DatabaseScope.remote) {
+                                  return null;
                                 }
+                                if (value == null) {
+                                  return context
+                                      .l10n.databaseTargetInstanceRequired;
+                                }
+                                return null;
+                              },
+                            ),
+                            if (provider.isLoadingOptions) ...[
+                              const SizedBox(
+                                  height: AppDesignTokens.spacingSm),
+                              const LinearProgressIndicator(minHeight: 2),
+                            ],
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppDesignTokens.spacingLg),
+                    SectionCard(
+                      padding:
+                          const EdgeInsets.all(AppDesignTokens.spacingLg),
+                      title: context.l10n.databaseFormAdvancedSectionTitle,
+                      child: Column(
+                        children: [
+                          if (_scope == DatabaseScope.remote) ...[
+                            TextFormField(
+                              controller: _addressController,
+                              decoration: InputDecoration(
+                                  labelText:
+                                      context.l10n.databaseAddressLabel),
+                              validator: (value) => _requiredValidator(
+                                value,
+                                context.l10n.databaseAddressLabel,
+                              ),
+                            ),
+                            const SizedBox(
+                                height: AppDesignTokens.spacingMd),
+                            TextFormField(
+                              controller: _portController,
+                              decoration: InputDecoration(
+                                  labelText:
+                                      context.l10n.databasePortLabel),
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                final required = _requiredValidator(
+                                  value,
+                                  context.l10n.databasePortLabel,
+                                );
+                                if (required != null) {
+                                  return required;
+                                }
+                                final port = int.tryParse(value!.trim());
+                                if (port == null || port <= 0) {
+                                  return '${context.l10n.databasePortLabel} is invalid.';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(
+                                height: AppDesignTokens.spacingMd),
+                          ],
+                          if (_scope == DatabaseScope.mysql) ...[
+                            DropdownButtonFormField<String>(
+                              initialValue: _mysqlPermission,
+                              decoration: InputDecoration(
+                                  labelText:
+                                      context.l10n.databasePermission),
+                              items: const [
+                                DropdownMenuItem(
+                                    value: '%', child: Text('%')),
+                                DropdownMenuItem(
+                                    value: 'localhost',
+                                    child: Text('localhost')),
+                                DropdownMenuItem(
+                                    value: 'ip', child: Text('IP')),
+                              ],
+                              onChanged: (value) {
+                                if (value == null) return;
                                 setState(() {
-                                  _selectedDatabaseKey = value;
-                                  _selectedDatabaseTarget = selected;
-                                  _engineController.text =
-                                      selected?.lookupName ?? '';
+                                  _mysqlPermission = value;
                                 });
                               },
-                        validator: (value) {
-                          if (_scope == DatabaseScope.remote) return null;
-                          if (value == null) {
-                            return context
-                                .l10n.databaseTargetInstanceRequired;
-                          }
-                          return null;
-                        },
-                      ),
-                      if (provider.isLoadingOptions) ...[
-                        const SizedBox(height: AppDesignTokens.spacingSm),
-                        const LinearProgressIndicator(minHeight: 2),
-                      ],
-                      const SizedBox(height: AppDesignTokens.spacingMd),
-                    ],
-                    if (_scope == DatabaseScope.remote) ...[
-                      TextFormField(
-                        controller: _addressController,
-                        decoration: InputDecoration(
-                            labelText: context.l10n.databaseAddressLabel),
-                        validator: (value) => _requiredValidator(
-                          value,
-                          context.l10n.databaseAddressLabel,
-                        ),
-                      ),
-                      const SizedBox(height: AppDesignTokens.spacingMd),
-                      TextFormField(
-                        controller: _portController,
-                        decoration: InputDecoration(
-                            labelText: context.l10n.databasePortLabel),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          final required = _requiredValidator(
-                            value,
-                            context.l10n.databasePortLabel,
-                          );
-                          if (required != null) {
-                            return required;
-                          }
-                          final port = int.tryParse(value!.trim());
-                          if (port == null || port <= 0) {
-                            return '${context.l10n.databasePortLabel} is invalid.';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: AppDesignTokens.spacingMd),
-                    ],
-                    if (_scope == DatabaseScope.mysql) ...[
-                      DropdownButtonFormField<String>(
-                        initialValue: _mysqlPermission,
-                        decoration: InputDecoration(
-                            labelText: context.l10n.databasePermission),
-                        items: const [
-                          DropdownMenuItem(value: '%', child: Text('%')),
-                          DropdownMenuItem(
-                              value: 'localhost', child: Text('localhost')),
-                          DropdownMenuItem(value: 'ip', child: Text('IP')),
+                            ),
+                            const SizedBox(
+                                height: AppDesignTokens.spacingMd),
+                          ],
+                          if (_scope == DatabaseScope.postgresql) ...[
+                            SwitchListTile.adaptive(
+                              value: _postgresqlSuperUser,
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(
+                                  context.l10n.databaseFormPgSuperuser),
+                              onChanged: (value) {
+                                setState(() {
+                                  _postgresqlSuperUser = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(
+                                height: AppDesignTokens.spacingSm),
+                          ],
+                          TextFormField(
+                            controller: _usernameController,
+                            decoration: InputDecoration(
+                                labelText:
+                                    context.l10n.databaseUsernameLabel),
+                            validator: (value) => _requiredValidator(
+                              value,
+                              context.l10n.databaseUsernameLabel,
+                            ),
+                          ),
+                          const SizedBox(height: AppDesignTokens.spacingMd),
+                          TextFormField(
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                                labelText:
+                                    context.l10n.databasePasswordLabel),
+                            obscureText: true,
+                            validator: (value) => _requiredValidator(
+                              value,
+                              context.l10n.databasePasswordLabel,
+                            ),
+                          ),
+                          const SizedBox(height: AppDesignTokens.spacingMd),
+                          TextFormField(
+                            controller: _descriptionController,
+                            decoration: InputDecoration(
+                                labelText: context.l10n.commonDescription),
+                            maxLines: 3,
+                          ),
+                          if (_scope == DatabaseScope.remote) ...[
+                            const SizedBox(
+                                height: AppDesignTokens.spacingLg),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: provider.isSubmitting
+                                    ? null
+                                    : () => provider
+                                        .testRemote(_buildInput()),
+                                child: Text(context
+                                    .l10n.databaseTestConnectionAction),
+                              ),
+                            ),
+                          ],
                         ],
-                        onChanged: (value) {
-                          if (value == null) return;
-                          setState(() {
-                            _mysqlPermission = value;
-                          });
-                        },
                       ),
-                      const SizedBox(height: AppDesignTokens.spacingMd),
-                    ],
-                    if (_scope == DatabaseScope.postgresql) ...[
-                      SwitchListTile.adaptive(
-                        value: _postgresqlSuperUser,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(context.l10n.databaseFormPgSuperuser),
-                        onChanged: (value) {
-                          setState(() {
-                            _postgresqlSuperUser = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: AppDesignTokens.spacingSm),
-                    ],
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                          labelText: context.l10n.databaseUsernameLabel),
-                      validator: (value) => _requiredValidator(
-                        value,
-                        context.l10n.databaseUsernameLabel,
-                      ),
-                    ),
-                    const SizedBox(height: AppDesignTokens.spacingMd),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                          labelText: context.l10n.databasePasswordLabel),
-                      obscureText: true,
-                      validator: (value) => _requiredValidator(
-                        value,
-                        context.l10n.databasePasswordLabel,
-                      ),
-                    ),
-                    const SizedBox(height: AppDesignTokens.spacingMd),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration: InputDecoration(
-                          labelText: context.l10n.commonDescription),
-                      maxLines: 3,
                     ),
                     if (provider.errorMessages.isNotEmpty) ...[
                       const SizedBox(height: AppDesignTokens.spacingMd),
@@ -319,50 +373,6 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: AppDesignTokens.spacingLg),
-                    Row(
-                      children: [
-                        if (_scope == DatabaseScope.remote)
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: provider.isSubmitting
-                                  ? null
-                                  : () => provider.testRemote(_buildInput()),
-                              child: Text(
-                                  context.l10n.databaseTestConnectionAction),
-                            ),
-                          ),
-                        if (_scope == DatabaseScope.remote)
-                          const SizedBox(width: AppDesignTokens.spacingSm),
-                        Expanded(
-                          child: FilledButton(
-                            onPressed: provider.isSubmitting
-                                ? null
-                                : () async {
-                                    final isValid =
-                                        _formKey.currentState?.validate() ??
-                                            false;
-                                    if (!isValid) {
-                                      return;
-                                    }
-                                    final navigator = Navigator.of(context);
-                                    final ok =
-                                        await provider.submit(_buildInput());
-                                    if (!mounted || !ok) return;
-                                    navigator.pop(true);
-                                  },
-                            child: provider.isSubmitting
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  )
-                                : Text(context.l10n.commonSave),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -371,6 +381,18 @@ class _DatabaseFormPageState extends State<DatabaseFormPage> {
         },
       ),
     );
+  }
+
+  Future<void> _submit() async {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid) {
+      return;
+    }
+    final navigator = Navigator.of(context);
+    final provider = context.read<DatabaseFormProvider>();
+    final ok = await provider.submit(_buildInput());
+    if (!mounted || !ok) return;
+    navigator.pop(true);
   }
 
   DatabaseFormInput _buildInput() {

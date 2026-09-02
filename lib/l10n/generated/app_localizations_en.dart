@@ -1358,6 +1358,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get databaseScopeLabel => 'Database Scope';
 
   @override
+  String get databaseFormBasicSectionTitle => 'Basic Configuration';
+
+  @override
+  String get databaseFormAdvancedSectionTitle => 'Advanced Settings';
+
+  @override
   String get databaseEngineLabel => 'Engine';
 
   @override
@@ -1616,6 +1622,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get firewallCreateIpRuleAction => 'Create IP Rule';
 
   @override
+  String get firewallRuleSectionTitle => 'Rule Configuration';
+
+  @override
   String get firewallToggleStrategyAction => 'Toggle Strategy';
 
   @override
@@ -1708,6 +1717,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serverFormSaveConnect => 'Save and continue';
+
+  @override
+  String get serverFormBasicSectionTitle => 'Basic Configuration';
+
+  @override
+  String get serverFormConnectionSectionTitle => 'Connection';
 
   @override
   String get serverFormTest => 'Test connection';
@@ -5255,6 +5270,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get containerCreate => 'Create Container';
+
+  @override
+  String get containerCreateBasicSectionTitle => 'Basic Configuration';
 
   @override
   String get containerEmptyTitle => 'No containers';

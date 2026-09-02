@@ -7,6 +7,7 @@ import 'package:onepanel_client/features/ssh/providers/ssh_certs_provider.dart';
 import 'package:onepanel_client/features/ssh/widgets/ssh_cert_card_widget.dart';
 import 'package:onepanel_client/features/ssh/widgets/ssh_cert_form_sheet_widget.dart';
 import 'package:onepanel_client/features/ssh/widgets/ssh_section_nav_widget.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_sheet.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
@@ -98,13 +99,10 @@ class _SshCertsPageState extends State<SshCertsPage> {
   }
 
   Future<void> _openCreateSheet() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
+    await showAppFormSheet<void>(
+      context,
+      title: context.l10n.sshCertCreateTitle,
       builder: (_) => SshCertFormSheetWidget(
-        title: context.l10n.sshCertCreateTitle,
         onSubmit: (request) =>
             context.read<SshCertsProvider>().createCert(request),
       ),
@@ -112,13 +110,10 @@ class _SshCertsPageState extends State<SshCertsPage> {
   }
 
   Future<void> _openEditSheet(SshCertInfo item) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
+    await showAppFormSheet<void>(
+      context,
+      title: context.l10n.sshCertEditTitle,
       builder: (_) => SshCertFormSheetWidget(
-        title: context.l10n.sshCertEditTitle,
         initialValue: SshCertOperate(
           id: item.id,
           name: item.name,

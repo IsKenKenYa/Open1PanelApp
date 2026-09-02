@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
 import 'package:onepanel_client/core/layout/adaptive_layout.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_dialog.dart';
 
 class TemplateCreateDialog extends StatefulWidget {
   final ContainerTemplate? template;
@@ -19,6 +20,7 @@ class _TemplateCreateDialogState extends State<TemplateCreateDialog> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _contentController;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -43,10 +45,11 @@ class _TemplateCreateDialogState extends State<TemplateCreateDialog> {
     final l10n = context.l10n;
     final isEdit = widget.template != null;
 
-    return AlertDialog(
-      title: Text(
-          isEdit ? l10n.commonEditTemplate : l10n.orchestrationCreateTemplate),
-      content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth, 
+    return AppFormDialog(
+      title:
+          isEdit ? l10n.commonEditTemplate : l10n.orchestrationCreateTemplate,
+      isSaving: _saving,
+      content: SizedBox(width: AdaptiveLayoutSpec.of(context).dialogConstraints.maxWidth,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -98,36 +101,31 @@ class _TemplateCreateDialogState extends State<TemplateCreateDialog> {
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              final navigator = Navigator.of(context);
-              final request = ContainerTemplateOperate(
-                id: widget.template?.id,
-                name: _nameController.text,
-                description: _descriptionController.text,
-                content: _contentController.text,
-              );
+      onConfirm: () async {
+        if (!_formKey.currentState!.validate()) {
+          return;
+        }
+        setState(() => _saving = true);
+        final navigator = Navigator.of(context);
+        final request = ContainerTemplateOperate(
+          id: widget.template?.id,
+          name: _nameController.text,
+          description: _descriptionController.text,
+          content: _contentController.text,
+        );
 
-              final provider = context.read<ContainersProvider>();
-              final success = isEdit
-                  ? await provider.updateTemplate(request)
-                  : await provider.createTemplate(request);
+        final provider = context.read<ContainersProvider>();
+        final success = isEdit
+            ? await provider.updateTemplate(request)
+            : await provider.createTemplate(request);
 
-              if (!context.mounted) return;
-              if (success) {
-                navigator.pop(true);
-              }
-            }
-          },
-          child: Text(l10n.commonConfirm),
-        ),
-      ],
+        if (!context.mounted) return;
+        if (success) {
+          navigator.pop(true);
+        } else {
+          setState(() => _saving = false);
+        }
+      },
     );
   }
 }

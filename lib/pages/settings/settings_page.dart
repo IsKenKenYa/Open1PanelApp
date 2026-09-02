@@ -14,6 +14,7 @@ import 'package:onepanel_client/features/settings/screens/theme_settings_page.da
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
 import 'package:onepanel_client/features/shell/widgets/shell_drawer_scope.dart';
 import 'package:onepanel_client/pages/settings/cache_settings_page.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 import '../../core/utils/snackbar_utils.dart';
 class SettingsPage extends StatelessWidget {
@@ -112,216 +113,177 @@ class _SettingsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return ListView(
-      padding: AdaptiveLayoutSpec.of(context).pagePadding,
-      children: [
-        Text(l10n.settingsGeneral,
-            style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppDesignTokens.spacingSm),
-        Card(
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.color_lens_outlined),
-                title: Text(l10n.settingsTheme),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ThemeSettingsPage(),
-                    ),
-                  );
-                },
-              ),
-              const Divider(height: 1),
-              Consumer<AppSettingsController>(
-                builder: (context, settings, _) {
-                  return ListTile(
-                    leading: const Icon(Icons.language_outlined),
-                    title: Text(l10n.settingsLanguage),
-                    subtitle: Text(
-                      _languageLabel(context, settings.locale),
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    // openRouteRespectingShell handles navigation both inside
-                    // the shell (module switch) and standalone (push).
-                    onTap: () => openRouteRespectingShell(
+    return Consumer<AppSettingsController>(
+      builder: (context, settings, _) {
+        return ListView(
+          padding: AdaptiveLayoutSpec.of(context).pagePadding,
+          children: [
+            SectionEntryList(
+              title: l10n.settingsGeneral,
+              items: [
+                SectionEntryItem(
+                  icon: Icons.color_lens_outlined,
+                  title: l10n.settingsTheme,
+                  onTap: () {
+                    Navigator.push(
                       context,
-                      AppRoutes.settingsLanguage,
-                    ),
-                  );
-                },
-              ),
-              const Divider(height: 1),
-              Consumer<AppSettingsController>(
-                builder: (context, settings, _) {
-                  return ListTile(
-                    leading: const Icon(Icons.design_services_outlined),
-                    title: Text(l10n.settingsUIRenderMode),
-                    subtitle: Text(
-                      settings.uiRenderMode == UIRenderMode.native
-                          ? l10n.settingsUIRenderModeNative
-                          : l10n.settingsUIRenderModeMD3,
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text(l10n.settingsUIRenderMode),
-                            content: RadioGroup<UIRenderMode>(
-                              groupValue: settings.uiRenderMode,
-                              onChanged: (value) {
-                                if (value == null) {
-                                  return;
-                                }
-                                settings.updateUIRenderMode(value);
-                                Navigator.pop(context);
-                                SnackBarUtils.showSuccess(context, l10n
-                                          .settingsUIRenderModeRestartHint);
-                              },
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (UIRenderPolicy.canSelectNativeMode())
-                                    RadioListTile<UIRenderMode>(
-                                      title:
-                                          Text(l10n.settingsUIRenderModeNative),
-                                      value: UIRenderMode.native,
-                                    ),
+                      MaterialPageRoute(
+                        builder: (context) => const ThemeSettingsPage(),
+                      ),
+                    );
+                  },
+                ),
+                SectionEntryItem(
+                  icon: Icons.language_outlined,
+                  title: l10n.settingsLanguage,
+                  subtitle: _languageLabel(context, settings.locale),
+                  // openRouteRespectingShell handles navigation both inside
+                  // the shell (module switch) and standalone (push).
+                  onTap: () => openRouteRespectingShell(
+                    context,
+                    AppRoutes.settingsLanguage,
+                  ),
+                ),
+                SectionEntryItem(
+                  icon: Icons.design_services_outlined,
+                  title: l10n.settingsUIRenderMode,
+                  subtitle: settings.uiRenderMode == UIRenderMode.native
+                      ? l10n.settingsUIRenderModeNative
+                      : l10n.settingsUIRenderModeMD3,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(l10n.settingsUIRenderMode),
+                          content: RadioGroup<UIRenderMode>(
+                            groupValue: settings.uiRenderMode,
+                            onChanged: (value) {
+                              if (value == null) {
+                                return;
+                              }
+                              settings.updateUIRenderMode(value);
+                              Navigator.pop(context);
+                              SnackBarUtils.showSuccess(context, l10n
+                                        .settingsUIRenderModeRestartHint);
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (UIRenderPolicy.canSelectNativeMode())
                                   RadioListTile<UIRenderMode>(
-                                    title: Text(l10n.settingsUIRenderModeMD3),
-                                    value: UIRenderMode.md3,
+                                    title:
+                                        Text(l10n.settingsUIRenderModeNative),
+                                    value: UIRenderMode.native,
                                   ),
-                                ],
-                              ),
+                                RadioListTile<UIRenderMode>(
+                                  title: Text(l10n.settingsUIRenderModeMD3),
+                                  value: UIRenderMode.md3,
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.lock_person_outlined),
-                title: Text(l10n.settingsAppLock),
-                subtitle: Text(l10n.settingsAppLockDesc),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AppLockSettingsPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppDesignTokens.spacingLg),
-        Text(l10n.settingsStorage,
-            style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppDesignTokens.spacingSm),
-        Card(
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.cached_outlined),
-                title: Text(l10n.settingsCacheTitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CacheSettingsPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppDesignTokens.spacingLg),
-        Text(l10n.settingsSupport,
-            style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppDesignTokens.spacingSm),
-        Card(
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.feedback_outlined),
-                title: Text(l10n.settingsFeedbackCenterTitle),
-                subtitle: Text(l10n.settingsFeedbackCenterSubtitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => openRouteRespectingShell(
-                  context,
-                  AppRoutes.settingsFeedbackCenter,
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.policy_outlined),
-                title: Text(l10n.settingsLegalCenterTitle),
-                subtitle: Text(l10n.settingsLegalCenterSubtitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => openRouteRespectingShell(
-                  context,
-                  AppRoutes.settingsLegalCenter,
+                SectionEntryItem(
+                  icon: Icons.lock_person_outlined,
+                  title: l10n.settingsAppLock,
+                  subtitle: l10n.settingsAppLockDesc,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AppLockSettingsPage(),
+                      ),
+                    );
+                  },
                 ),
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.info_outline),
-                title: Text(l10n.settingsAbout),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  Navigator.push(
+              ],
+            ),
+            const SizedBox(height: AppDesignTokens.spacingLg),
+            SectionEntryList(
+              title: l10n.settingsStorage,
+              items: [
+                SectionEntryItem(
+                  icon: Icons.cached_outlined,
+                  title: l10n.settingsCacheTitle,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CacheSettingsPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesignTokens.spacingLg),
+            SectionEntryList(
+              title: l10n.settingsSupport,
+              items: [
+                SectionEntryItem(
+                  icon: Icons.feedback_outlined,
+                  title: l10n.settingsFeedbackCenterTitle,
+                  subtitle: l10n.settingsFeedbackCenterSubtitle,
+                  onTap: () => openRouteRespectingShell(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const AboutPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppDesignTokens.spacingLg),
-        Text(l10n.settingsAppSectionTitle,
-            style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppDesignTokens.spacingSm),
-        Card(
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.dns_outlined),
-                title: Text(l10n.settingsServerManagement),
-                subtitle: Text(l10n.settingsServerManagementSubtitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () =>
-                    openRouteRespectingShell(context, AppRoutes.server),
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.slideshow_outlined),
-                title: Text(l10n.settingsResetOnboarding),
-                onTap: () async {
-                  await OnboardingService().resetAll();
-                  if (!context.mounted) {
-                    return;
-                  }
-                  SnackBarUtils.showSuccess(context, l10n.settingsResetOnboardingDone);
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
+                    AppRoutes.settingsFeedbackCenter,
+                  ),
+                ),
+                SectionEntryItem(
+                  icon: Icons.policy_outlined,
+                  title: l10n.settingsLegalCenterTitle,
+                  subtitle: l10n.settingsLegalCenterSubtitle,
+                  onTap: () => openRouteRespectingShell(
+                    context,
+                    AppRoutes.settingsLegalCenter,
+                  ),
+                ),
+                SectionEntryItem(
+                  icon: Icons.info_outline,
+                  title: l10n.settingsAbout,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AboutPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesignTokens.spacingLg),
+            SectionEntryList(
+              title: l10n.settingsAppSectionTitle,
+              items: [
+                SectionEntryItem(
+                  icon: Icons.dns_outlined,
+                  title: l10n.settingsServerManagement,
+                  subtitle: l10n.settingsServerManagementSubtitle,
+                  onTap: () =>
+                      openRouteRespectingShell(context, AppRoutes.server),
+                ),
+                SectionEntryItem(
+                  icon: Icons.slideshow_outlined,
+                  title: l10n.settingsResetOnboarding,
+                  onTap: () async {
+                    await OnboardingService().resetAll();
+                    if (!context.mounted) {
+                      return;
+                    }
+                    SnackBarUtils.showSuccess(context, l10n.settingsResetOnboardingDone);
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

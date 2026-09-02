@@ -18,6 +18,7 @@ import 'package:onepanel_client/features/settings/proxy_settings_page.dart';
 import 'package:onepanel_client/features/settings/backup_account_page.dart';
 import 'package:onepanel_client/features/settings/widgets/system_settings_tiles.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:onepanel_client/features/monitoring/monitoring_provider.dart';
 import 'package:onepanel_client/core/services/logger/log_level.dart';
 import 'package:onepanel_client/core/services/logger/log_export_service.dart';
@@ -131,113 +132,98 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
           _buildInfoCard(context, settings, theme, l10n),
           const SizedBox(height: AppDesignTokens.spacingMd),
         ],
-        _buildSectionTitle(context, l10n.systemSettingsPanelSection, theme),
-        Card(
-          child: Column(
-            children: [
-              _buildSettingTile(
-                context,
-                icon: Icons.dns_outlined,
-                title: l10n.systemSettingsPanelConfig,
-                subtitle: l10n.systemSettingsPanelConfigDesc,
-                onTap: () => _navigateTo(context, const PanelSettingsPage()),
+        SectionEntryList(
+          title: l10n.systemSettingsPanelSection,
+          items: [
+            SectionEntryItem(
+              icon: Icons.dns_outlined,
+              title: l10n.systemSettingsPanelConfig,
+              subtitle: l10n.systemSettingsPanelConfigDesc,
+              onTap: () => _navigateTo(context, const PanelSettingsPage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.terminal_outlined,
+              title: l10n.systemSettingsTerminal,
+              subtitle: l10n.systemSettingsTerminalDesc,
+              onTap: () => _navigateTo(context, const TerminalSettingsPage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.vpn_lock_outlined,
+              title: l10n.proxySettingsTitle,
+              subtitle:
+                  settings?.proxyUrl != null && settings!.proxyUrl!.isNotEmpty
+                      ? l10n.systemSettingsEnabled
+                      : l10n.systemSettingsDisabled,
+              onTap: () => _navigateTo(context, const ProxySettingsPage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.storefront_outlined,
+              title: l10n.appStoreTitle,
+              subtitle: _extractAppStoreUrl(provider.data.appStoreConfig) ??
+                  l10n.systemSettingsNotSet,
+              onTap: () => _showAppStoreConfigDialog(context, provider, l10n),
+            ),
+            SectionEntryItem(
+              icon: Icons.settings_ethernet_outlined,
+              title: l10n.operationsSshTitle,
+              subtitle: _formatSshConnectionSummary(
+                provider.data.sshConnection,
+                l10n,
               ),
-              _buildSettingTile(
-                context,
-                icon: Icons.terminal_outlined,
-                title: l10n.systemSettingsTerminal,
-                subtitle: l10n.systemSettingsTerminalDesc,
-                onTap: () => _navigateTo(context, const TerminalSettingsPage()),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.vpn_lock_outlined,
-                title: l10n.proxySettingsTitle,
-                subtitle:
-                    settings?.proxyUrl != null && settings!.proxyUrl!.isNotEmpty
-                        ? l10n.systemSettingsEnabled
-                        : l10n.systemSettingsDisabled,
-                onTap: () => _navigateTo(context, const ProxySettingsPage()),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.storefront_outlined,
-                title: l10n.appStoreTitle,
-                subtitle: _extractAppStoreUrl(provider.data.appStoreConfig) ??
-                    l10n.systemSettingsNotSet,
-                onTap: () => _showAppStoreConfigDialog(context, provider, l10n),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.settings_ethernet_outlined,
-                title: l10n.operationsSshTitle,
-                subtitle: _formatSshConnectionSummary(
-                  provider.data.sshConnection,
-                  l10n,
-                ),
-                onTap: () => _showSshConnectionDialog(context, provider, l10n),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.device_hub_outlined,
-                title: l10n.sshSettingsNetworkSectionTitle,
-                subtitle: _formatNetworkInterfacesSummary(
-                    provider.data.networkInterfaces, l10n),
-                onTap: () =>
-                    _showNetworkInterfacesDialog(context, provider, l10n),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.view_sidebar_outlined,
-                title: l10n.menuSettingsTitle,
-                subtitle: l10n.menuSettingsDescription,
-                onTap: () =>
-                    openRouteRespectingShell(context, AppRoutes.menuSettings),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.sticky_note_2_outlined,
-                title: l10n.systemSettingsDashboardMemo,
-                subtitle: _formatMemoSummary(provider.data.dashboardMemo, l10n),
-                onTap: () => _showDashboardMemoDialog(context, provider, l10n),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.preview_outlined,
-                title: l10n.systemSettingsAppLogsPreviewButton,
-                subtitle: l10n.systemSettingsAppLogsPreviewSubtitle,
-                onTap: () => _previewAppLogs(context),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.download_outlined,
-                title: l10n.commonExport,
-                subtitle: l10n.systemSettingsAppLogsExportSubtitle,
-                onTap: () => _exportAppLogs(context),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.filter_alt_outlined,
-                title: l10n.systemSettingsAppLogsLevelTitle,
-                subtitle: logLevelSubtitle,
-                onTap: () => isLogLevelLocked
-                    ? _showLogLevelLockedHint(context)
-                    : _selectAppLogLevel(context),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.delete_sweep_outlined,
-                title: l10n.commonClear,
-                subtitle: l10n.systemSettingsAppLogsClearSubtitle,
-                onTap: () => _clearAppLogs(context),
-              ),
-            ],
-          ),
+              onTap: () => _showSshConnectionDialog(context, provider, l10n),
+            ),
+            SectionEntryItem(
+              icon: Icons.device_hub_outlined,
+              title: l10n.sshSettingsNetworkSectionTitle,
+              subtitle: _formatNetworkInterfacesSummary(
+                  provider.data.networkInterfaces, l10n),
+              onTap: () =>
+                  _showNetworkInterfacesDialog(context, provider, l10n),
+            ),
+            SectionEntryItem(
+              icon: Icons.view_sidebar_outlined,
+              title: l10n.menuSettingsTitle,
+              subtitle: l10n.menuSettingsDescription,
+              onTap: () =>
+                  openRouteRespectingShell(context, AppRoutes.menuSettings),
+            ),
+            SectionEntryItem(
+              icon: Icons.sticky_note_2_outlined,
+              title: l10n.systemSettingsDashboardMemo,
+              subtitle: _formatMemoSummary(provider.data.dashboardMemo, l10n),
+              onTap: () => _showDashboardMemoDialog(context, provider, l10n),
+            ),
+            SectionEntryItem(
+              icon: Icons.preview_outlined,
+              title: l10n.systemSettingsAppLogsPreviewButton,
+              subtitle: l10n.systemSettingsAppLogsPreviewSubtitle,
+              onTap: () => _previewAppLogs(context),
+            ),
+            SectionEntryItem(
+              icon: Icons.download_outlined,
+              title: l10n.commonExport,
+              subtitle: l10n.systemSettingsAppLogsExportSubtitle,
+              onTap: () => _exportAppLogs(context),
+            ),
+            SectionEntryItem(
+              icon: Icons.filter_alt_outlined,
+              title: l10n.systemSettingsAppLogsLevelTitle,
+              subtitle: logLevelSubtitle,
+              onTap: () => isLogLevelLocked
+                  ? _showLogLevelLockedHint(context)
+                  : _selectAppLogLevel(context),
+            ),
+            SectionEntryItem(
+              icon: Icons.delete_sweep_outlined,
+              title: l10n.commonClear,
+              subtitle: l10n.systemSettingsAppLogsClearSubtitle,
+              onTap: () => _clearAppLogs(context),
+            ),
+          ],
         ),
         const SizedBox(height: AppDesignTokens.spacingMd),
-        _buildSectionTitle(
-            context, l10n.systemSettingsFileExportSection, theme),
-        Card(
+        SectionCard(
+          title: l10n.systemSettingsFileExportSection,
           child: Column(
             children: [
               FilePickerToggleTile(
@@ -259,84 +245,71 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
           ),
         ),
         const SizedBox(height: AppDesignTokens.spacingMd),
-        _buildSectionTitle(context, l10n.systemSettingsSecuritySection, theme),
-        Card(
-          child: Column(
-            children: [
-              _buildSettingTile(
-                context,
-                icon: Icons.security_outlined,
-                title: l10n.systemSettingsSecurityConfig,
-                subtitle: l10n.systemSettingsSecurityConfigDesc,
-                onTap: () => _navigateTo(context, const SecuritySettingsPage()),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.key_outlined,
-                title: l10n.systemSettingsApiKey,
-                subtitle: _isEnabled(settings?.apiInterfaceStatus)
-                    ? l10n.systemSettingsEnabled
-                    : l10n.systemSettingsDisabled,
-                onTap: () => _navigateTo(context, const ApiKeySettingsPage()),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.lock_outlined,
-                title: l10n.sslSettingsTitle,
-                subtitle: _isEnabled(settings?.ssl)
-                    ? l10n.systemSettingsEnabled
-                    : l10n.systemSettingsDisabled,
-                onTap: () => _navigateTo(context, const SslSettingsPage()),
-              ),
-            ],
-          ),
+        SectionEntryList(
+          title: l10n.systemSettingsSecuritySection,
+          items: [
+            SectionEntryItem(
+              icon: Icons.security_outlined,
+              title: l10n.systemSettingsSecurityConfig,
+              subtitle: l10n.systemSettingsSecurityConfigDesc,
+              onTap: () => _navigateTo(context, const SecuritySettingsPage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.key_outlined,
+              title: l10n.systemSettingsApiKey,
+              subtitle: _isEnabled(settings?.apiInterfaceStatus)
+                  ? l10n.systemSettingsEnabled
+                  : l10n.systemSettingsDisabled,
+              onTap: () => _navigateTo(context, const ApiKeySettingsPage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.lock_outlined,
+              title: l10n.sslSettingsTitle,
+              subtitle: _isEnabled(settings?.ssl)
+                  ? l10n.systemSettingsEnabled
+                  : l10n.systemSettingsDisabled,
+              onTap: () => _navigateTo(context, const SslSettingsPage()),
+            ),
+          ],
         ),
         const SizedBox(height: AppDesignTokens.spacingMd),
-        _buildSectionTitle(context, l10n.systemSettingsSystemSection, theme),
-        Card(
-          child: Column(
-            children: [
-              _buildSettingTile(
+        SectionEntryList(
+          title: l10n.systemSettingsSystemSection,
+          items: [
+            SectionEntryItem(
+              icon: Icons.system_update_outlined,
+              title: l10n.systemSettingsUpgrade,
+              subtitle: settings?.systemVersion ?? '-',
+              onTap: () => _navigateTo(context, const UpgradePage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.monitor_heart_outlined,
+              title: l10n.monitorSettingsTitle,
+              subtitle: l10n.monitorSettings,
+              onTap: () => _navigateToWithProvider<MonitoringProvider>(
                 context,
-                icon: Icons.system_update_outlined,
-                title: l10n.systemSettingsUpgrade,
-                subtitle: settings?.systemVersion ?? '-',
-                onTap: () => _navigateTo(context, const UpgradePage()),
+                const MonitorSettingsPage(),
               ),
-              _buildSettingTile(
-                context,
-                icon: Icons.monitor_heart_outlined,
-                title: l10n.monitorSettingsTitle,
-                subtitle: l10n.monitorSettings,
-                onTap: () => _navigateToWithProvider<MonitoringProvider>(
-                  context,
-                  const MonitorSettingsPage(),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         const SizedBox(height: AppDesignTokens.spacingMd),
-        _buildSectionTitle(context, l10n.systemSettingsBackupSection, theme),
-        Card(
-          child: Column(
-            children: [
-              _buildSettingTile(
-                context,
-                icon: Icons.backup_outlined,
-                title: l10n.systemSettingsSnapshot,
-                subtitle: l10n.systemSettingsSnapshotDesc,
-                onTap: () => _navigateTo(context, const SnapshotPage()),
-              ),
-              _buildSettingTile(
-                context,
-                icon: Icons.cloud_outlined,
-                title: l10n.systemSettingsBackupAccountTitle,
-                subtitle: l10n.systemSettingsBackupAccountDesc,
-                onTap: () => _navigateTo(context, const BackupAccountPage()),
-              ),
-            ],
-          ),
+        SectionEntryList(
+          title: l10n.systemSettingsBackupSection,
+          items: [
+            SectionEntryItem(
+              icon: Icons.backup_outlined,
+              title: l10n.systemSettingsSnapshot,
+              subtitle: l10n.systemSettingsSnapshotDesc,
+              onTap: () => _navigateTo(context, const SnapshotPage()),
+            ),
+            SectionEntryItem(
+              icon: Icons.cloud_outlined,
+              title: l10n.systemSettingsBackupAccountTitle,
+              subtitle: l10n.systemSettingsBackupAccountDesc,
+              onTap: () => _navigateTo(context, const BackupAccountPage()),
+            ),
+          ],
         ),
         if (lastUpdated != null) ...[
           const SizedBox(height: AppDesignTokens.spacingMd),
@@ -406,38 +379,6 @@ class _SystemSettingsPageState extends State<SystemSettingsPage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(
-      BuildContext context, String title, ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDesignTokens.spacingSm),
-      child: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.primary,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingTile(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    Widget? trailing,
-    VoidCallback? onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(subtitle),
-      trailing:
-          trailing ?? (onTap != null ? const Icon(Icons.chevron_right) : null),
-      onTap: onTap,
     );
   }
 

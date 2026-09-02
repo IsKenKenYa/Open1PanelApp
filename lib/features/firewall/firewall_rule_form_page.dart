@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/firewall_models.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 import 'providers/firewall_rule_list_provider.dart';
 
@@ -81,157 +83,153 @@ class _FirewallRuleFormViewState extends State<_FirewallRuleFormView> {
     final l10n = context.l10n;
     final isEdit = widget.arguments.rule != null;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          isEdit
-              ? l10n.commonEdit
-              : (_isPort
-                  ? l10n.firewallCreatePortRuleAction
-                  : l10n.firewallCreateIpRuleAction),
-        ),
-      ),
-      body: Padding(
+    return AppFormScaffold(
+      title: isEdit
+          ? l10n.commonEdit
+          : (_isPort
+              ? l10n.firewallCreatePortRuleAction
+              : l10n.firewallCreateIpRuleAction),
+      isSaving: provider.isSubmitting,
+      onSave: _submit,
+      body: ListView(
         padding: AppDesignTokens.pagePadding,
-        child: ListView(
-          children: [
-            if (_isPort) ...[
-              DropdownButtonFormField<String>(
-                initialValue: _protocol,
-                decoration: InputDecoration(
-                  labelText: l10n.firewallProtocolLabel,
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'tcp', child: Text('tcp')),
-                  DropdownMenuItem(value: 'udp', child: Text('udp')),
-                  DropdownMenuItem(value: 'tcp/udp', child: Text('tcp/udp')),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => _protocol = value);
-                  }
-                },
-              ),
-              const SizedBox(height: AppDesignTokens.spacingMd),
-              TextField(
-                controller: _portController,
-                decoration: InputDecoration(
-                  labelText: l10n.firewallPortLabel,
-                ),
-              ),
-              const SizedBox(height: AppDesignTokens.spacingMd),
-              DropdownButtonFormField<String>(
-                initialValue: _source,
-                decoration: InputDecoration(
-                  labelText: l10n.firewallSourceLabel,
-                ),
-                items: [
-                  DropdownMenuItem(
-                    value: 'anyWhere',
-                    child: Text(l10n.firewallSourceAnywhere),
+        children: [
+          SectionCard(
+            padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
+            title: l10n.firewallRuleSectionTitle,
+            child: Column(
+              children: [
+                if (_isPort) ...[
+                  DropdownButtonFormField<String>(
+                    initialValue: _protocol,
+                    decoration: InputDecoration(
+                      labelText: l10n.firewallProtocolLabel,
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: 'tcp', child: Text('tcp')),
+                      DropdownMenuItem(value: 'udp', child: Text('udp')),
+                      DropdownMenuItem(
+                          value: 'tcp/udp', child: Text('tcp/udp')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _protocol = value);
+                      }
+                    },
                   ),
-                  DropdownMenuItem(
-                    value: 'address',
-                    child: Text(l10n.firewallSourceAddress),
+                  const SizedBox(height: AppDesignTokens.spacingMd),
+                  TextField(
+                    controller: _portController,
+                    decoration: InputDecoration(
+                      labelText: l10n.firewallPortLabel,
+                    ),
                   ),
+                  const SizedBox(height: AppDesignTokens.spacingMd),
+                  DropdownButtonFormField<String>(
+                    initialValue: _source,
+                    decoration: InputDecoration(
+                      labelText: l10n.firewallSourceLabel,
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: 'anyWhere',
+                        child: Text(l10n.firewallSourceAnywhere),
+                      ),
+                      DropdownMenuItem(
+                        value: 'address',
+                        child: Text(l10n.firewallSourceAddress),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _source = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: AppDesignTokens.spacingMd),
                 ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => _source = value);
-                  }
-                },
-              ),
-              const SizedBox(height: AppDesignTokens.spacingMd),
-            ],
-            TextField(
-              controller: _addressController,
-              enabled: !_isPort || _source == 'address',
-              decoration: InputDecoration(
-                labelText: l10n.firewallAddressLabel,
-              ),
-              minLines: _isPort ? 1 : 3,
-              maxLines: _isPort ? 1 : 5,
-            ),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            DropdownButtonFormField<String>(
-              initialValue: _strategy,
-              decoration: InputDecoration(
-                labelText: l10n.firewallStrategyLabel,
-              ),
-              items: [
-                DropdownMenuItem(
-                  value: 'accept',
-                  child: Text(l10n.firewallStrategyAccept),
+                TextField(
+                  controller: _addressController,
+                  enabled: !_isPort || _source == 'address',
+                  decoration: InputDecoration(
+                    labelText: l10n.firewallAddressLabel,
+                  ),
+                  minLines: _isPort ? 1 : 3,
+                  maxLines: _isPort ? 1 : 5,
                 ),
-                DropdownMenuItem(
-                  value: 'drop',
-                  child: Text(l10n.firewallStrategyDrop),
+                const SizedBox(height: AppDesignTokens.spacingMd),
+                DropdownButtonFormField<String>(
+                  initialValue: _strategy,
+                  decoration: InputDecoration(
+                    labelText: l10n.firewallStrategyLabel,
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 'accept',
+                      child: Text(l10n.firewallStrategyAccept),
+                    ),
+                    DropdownMenuItem(
+                      value: 'drop',
+                      child: Text(l10n.firewallStrategyDrop),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => _strategy = value);
+                    }
+                  },
+                ),
+                const SizedBox(height: AppDesignTokens.spacingMd),
+                TextField(
+                  controller: _descriptionController,
+                  decoration:
+                      InputDecoration(labelText: l10n.commonDescription),
                 ),
               ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() => _strategy = value);
-                }
-              },
             ),
+          ),
+          if (provider.error != null) ...[
             const SizedBox(height: AppDesignTokens.spacingMd),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: l10n.commonDescription),
-            ),
-            if (provider.error != null) ...[
-              const SizedBox(height: AppDesignTokens.spacingMd),
-              Text(
-                provider.error!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ],
-            if (_validationError != null) ...[
-              const SizedBox(height: AppDesignTokens.spacingMd),
-              Text(
-                _validationError!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ],
-            const SizedBox(height: AppDesignTokens.spacingLg),
-            FilledButton(
-              onPressed: provider.isSubmitting
-                  ? null
-                  : () async {
-                      final validationError = _validate(l10n);
-                      if (validationError != null) {
-                        setState(() => _validationError = validationError);
-                        return;
-                      }
-                      setState(() => _validationError = null);
-                      final navigator = Navigator.of(context);
-                      final ok = _isPort
-                          ? await provider.submitPort(
-                              payload: _buildPortPayload('add'),
-                              oldRule:
-                                  isEdit ? _buildPortPayload('remove') : null,
-                            )
-                          : await provider.submitIp(
-                              payload: _buildIpPayload('add'),
-                              oldRule:
-                                  isEdit ? _buildIpPayload('remove') : null,
-                            );
-                      if (!mounted || !ok) return;
-                      navigator.pop(true);
-                    },
-              child: provider.isSubmitting
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l10n.commonSave),
+            Text(
+              provider.error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ],
-        ),
+          if (_validationError != null) ...[
+            const SizedBox(height: AppDesignTokens.spacingMd),
+            Text(
+              _validationError!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ],
+        ],
       ),
     );
+  }
+
+  Future<void> _submit() async {
+    final l10n = context.l10n;
+    final provider = context.read<FirewallRuleFormProvider>();
+    final isEdit = widget.arguments.rule != null;
+
+    final validationError = _validate(l10n);
+    if (validationError != null) {
+      setState(() => _validationError = validationError);
+      return;
+    }
+    setState(() => _validationError = null);
+    final navigator = Navigator.of(context);
+    final ok = _isPort
+        ? await provider.submitPort(
+            payload: _buildPortPayload('add'),
+            oldRule: isEdit ? _buildPortPayload('remove') : null,
+          )
+        : await provider.submitIp(
+            payload: _buildIpPayload('add'),
+            oldRule: isEdit ? _buildIpPayload('remove') : null,
+          );
+    if (!mounted || !ok) return;
+    navigator.pop(true);
   }
 
   FirewallPortRulePayload _buildPortPayload(String operation) {

@@ -107,21 +107,37 @@ class AppTheme {
           borderSide: BorderSide(color: scheme.outlineVariant),
         ),
       ),
+      // M3 Expressive：按钮 full-round（pill）形状。
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
-          ),
+          shape: const StadiumBorder(),
           minimumSize: const Size(0, 44),
           elevation: isDesktop ? 0 : null,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
-          ),
+          shape: const StadiumBorder(),
           minimumSize: const Size(0, 44),
+        ),
+      ),
+      // M3 Expressive：弹层统一大圆角（28dp）与低层级表面色。
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.surfaceContainerLow,
+        surfaceTintColor: Colors.transparent,
+        elevation: isDesktop ? 0 : 1,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppDesignTokens.radiusXl),
+          ),
+        ),
+        showDragHandle: true,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: scheme.surfaceContainerLow,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDesignTokens.radiusXl),
         ),
       ),
       chipTheme: ChipThemeData(

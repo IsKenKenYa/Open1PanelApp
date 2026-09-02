@@ -8,12 +8,10 @@ import 'package:onepanel_client/data/models/ssh_cert_models.dart';
 class SshCertFormSheetWidget extends StatefulWidget {
   const SshCertFormSheetWidget({
     super.key,
-    required this.title,
     required this.onSubmit,
     this.initialValue,
   });
 
-  final String title;
   final SshCertOperate? initialValue;
   final Future<bool> Function(SshCertOperate request) onSubmit;
 
@@ -61,121 +59,110 @@ class _SshCertFormSheetWidgetState extends State<SshCertFormSheetWidget> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 8,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(widget.title, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: l10n.commonName),
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _encryptionMode,
-                decoration:
-                    InputDecoration(labelText: l10n.sshCertEncryptionModeLabel),
-                items: const <DropdownMenuItem<String>>[
-                  DropdownMenuItem(value: 'ed25519', child: Text('ED25519')),
-                  DropdownMenuItem(value: 'ecdsa', child: Text('ECDSA')),
-                  DropdownMenuItem(value: 'rsa', child: Text('RSA')),
-                  DropdownMenuItem(value: 'dsa', child: Text('DSA')),
-                ],
-                onChanged: (value) {
-                  if (value != null) setState(() => _encryptionMode = value);
-                },
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _passPhraseController,
-                decoration:
-                    InputDecoration(labelText: l10n.sshCertPassPhraseLabel),
-              ),
-              if (widget.initialValue == null) ...<Widget>[
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: _mode,
-                  decoration: InputDecoration(labelText: l10n.sshCertModeLabel),
-                  items: <DropdownMenuItem<String>>[
-                    DropdownMenuItem(
-                      value: 'generate',
-                      child: Text(l10n.sshCertModeGenerate),
-                    ),
-                    DropdownMenuItem(
-                      value: 'input',
-                      child: Text(l10n.sshCertModeInput),
-                    ),
-                    DropdownMenuItem(
-                      value: 'import',
-                      child: Text(l10n.sshCertModeImport),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _mode = value);
-                  },
-                ),
-              ],
-              if (_mode != 'generate') ...<Widget>[
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _publicKeyController,
-                  minLines: 4,
-                  maxLines: 8,
-                  style: const TextStyle(fontFamily: 'monospace'),
-                  decoration:
-                      InputDecoration(labelText: l10n.sshCertPublicKeyLabel),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _privateKeyController,
-                  minLines: 4,
-                  maxLines: 8,
-                  style: const TextStyle(fontFamily: 'monospace'),
-                  decoration:
-                      InputDecoration(labelText: l10n.sshCertPrivateKeyLabel),
-                ),
-              ],
-              if (_mode == 'import') ...<Widget>[
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  children: <Widget>[
-                    OutlinedButton(
-                      onPressed: _pickPublicKey,
-                      child: Text(l10n.commonUpload),
-                    ),
-                    OutlinedButton(
-                      onPressed: _pickPrivateKey,
-                      child: Text(l10n.commonImport),
-                    ),
-                  ],
-                ),
-              ],
-              const SizedBox(height: 12),
-              TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: l10n.commonDescription),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _isSaving ? null : _submit,
-                  child: Text(l10n.commonSave),
-                ),
-              ),
-            ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TextField(
+            controller: _nameController,
+            decoration: InputDecoration(labelText: l10n.commonName),
           ),
-        ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<String>(
+            initialValue: _encryptionMode,
+            decoration:
+                InputDecoration(labelText: l10n.sshCertEncryptionModeLabel),
+            items: const <DropdownMenuItem<String>>[
+              DropdownMenuItem(value: 'ed25519', child: Text('ED25519')),
+              DropdownMenuItem(value: 'ecdsa', child: Text('ECDSA')),
+              DropdownMenuItem(value: 'rsa', child: Text('RSA')),
+              DropdownMenuItem(value: 'dsa', child: Text('DSA')),
+            ],
+            onChanged: (value) {
+              if (value != null) setState(() => _encryptionMode = value);
+            },
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _passPhraseController,
+            decoration:
+                InputDecoration(labelText: l10n.sshCertPassPhraseLabel),
+          ),
+          if (widget.initialValue == null) ...<Widget>[
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: _mode,
+              decoration: InputDecoration(labelText: l10n.sshCertModeLabel),
+              items: <DropdownMenuItem<String>>[
+                DropdownMenuItem(
+                  value: 'generate',
+                  child: Text(l10n.sshCertModeGenerate),
+                ),
+                DropdownMenuItem(
+                  value: 'input',
+                  child: Text(l10n.sshCertModeInput),
+                ),
+                DropdownMenuItem(
+                  value: 'import',
+                  child: Text(l10n.sshCertModeImport),
+                ),
+              ],
+              onChanged: (value) {
+                if (value != null) setState(() => _mode = value);
+              },
+            ),
+          ],
+          if (_mode != 'generate') ...<Widget>[
+            const SizedBox(height: 12),
+            TextField(
+              controller: _publicKeyController,
+              minLines: 4,
+              maxLines: 8,
+              style: const TextStyle(fontFamily: 'monospace'),
+              decoration:
+                  InputDecoration(labelText: l10n.sshCertPublicKeyLabel),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _privateKeyController,
+              minLines: 4,
+              maxLines: 8,
+              style: const TextStyle(fontFamily: 'monospace'),
+              decoration:
+                  InputDecoration(labelText: l10n.sshCertPrivateKeyLabel),
+            ),
+          ],
+          if (_mode == 'import') ...<Widget>[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: <Widget>[
+                OutlinedButton(
+                  onPressed: _pickPublicKey,
+                  child: Text(l10n.commonUpload),
+                ),
+                OutlinedButton(
+                  onPressed: _pickPrivateKey,
+                  child: Text(l10n.commonImport),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 12),
+          TextField(
+            controller: _descriptionController,
+            decoration: InputDecoration(labelText: l10n.commonDescription),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: _isSaving ? null : _submit,
+              child: Text(l10n.commonSave),
+            ),
+          ),
+        ],
       ),
     );
   }

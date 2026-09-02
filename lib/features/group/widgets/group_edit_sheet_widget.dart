@@ -5,14 +5,12 @@ import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_w
 class GroupEditSheetWidget extends StatefulWidget {
   const GroupEditSheetWidget({
     super.key,
-    required this.title,
     this.initialName,
     this.canDelete = false,
     required this.onSave,
     this.onDelete,
   });
 
-  final String title;
   final String? initialName;
   final bool canDelete;
   final Future<void> Function(String name) onSave;
@@ -44,21 +42,11 @@ class _GroupEditSheetWidgetState extends State<GroupEditSheetWidget> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
-      padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 8,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.title,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
           TextField(
             controller: _controller,
             enabled: !_submitting,

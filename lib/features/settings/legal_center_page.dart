@@ -5,6 +5,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/shell/shell_navigation.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class LegalCenterPage extends StatelessWidget {
   const LegalCenterPage({super.key});
@@ -41,71 +42,57 @@ class LegalCenterPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          Text(
-            l10n.settingsLegalDocumentsTitle,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppDesignTokens.spacingSm),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.privacy_tip_outlined),
-                  title: Text(l10n.settingsLegalPrivacyPolicy),
-                  trailing: const Icon(Icons.open_in_new),
-                  onTap: () => _openExternal(context, privacyUrl),
+          SectionEntryList(
+            title: l10n.settingsLegalDocumentsTitle,
+            items: [
+              SectionEntryItem(
+                icon: Icons.privacy_tip_outlined,
+                title: l10n.settingsLegalPrivacyPolicy,
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => _openExternal(context, privacyUrl),
+              ),
+              SectionEntryItem(
+                icon: Icons.gavel_outlined,
+                title: l10n.settingsLegalTermsOfService,
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => _openExternal(context, _termsUrl),
+              ),
+              SectionEntryItem(
+                icon: Icons.copyright_outlined,
+                title: l10n.settingsLegalThirdPartyNotices,
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => _openExternal(context, _thirdPartyNoticesUrl),
+              ),
+              SectionEntryItem(
+                icon: Icons.description_outlined,
+                title: l10n.settingsLegalOpenSourceLicense,
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => _openExternal(context, _openSourceLicenseUrl),
+              ),
+              SectionEntryItem(
+                icon: Icons.library_books_outlined,
+                title: l10n.settingsLegalFlutterPackages,
+                onTap: () => showLicensePage(
+                  context: context,
+                  applicationName: l10n.appName,
                 ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.gavel_outlined),
-                  title: Text(l10n.settingsLegalTermsOfService),
-                  trailing: const Icon(Icons.open_in_new),
-                  onTap: () => _openExternal(context, _termsUrl),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.copyright_outlined),
-                  title: Text(l10n.settingsLegalThirdPartyNotices),
-                  trailing: const Icon(Icons.open_in_new),
-                  onTap: () => _openExternal(context, _thirdPartyNoticesUrl),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.description_outlined),
-                  title: Text(l10n.settingsLegalOpenSourceLicense),
-                  trailing: const Icon(Icons.open_in_new),
-                  onTap: () => _openExternal(context, _openSourceLicenseUrl),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.library_books_outlined),
-                  title: Text(l10n.settingsLegalFlutterPackages),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => showLicensePage(
-                    context: context,
-                    applicationName: l10n.appName,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          Text(
-            l10n.settingsMainlandSdkDisclosureTitle,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppDesignTokens.spacingSm),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.developer_board_outlined),
-              title: Text(l10n.settingsMainlandSdkDisclosureTitle),
-              subtitle: Text(l10n.settingsMainlandSdkDisclosureSubtitle),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => openRouteRespectingShell(
-                context,
-                AppRoutes.settingsMainlandSdkDisclosure,
+          SectionEntryList(
+            title: l10n.settingsMainlandSdkDisclosureTitle,
+            items: [
+              SectionEntryItem(
+                icon: Icons.developer_board_outlined,
+                title: l10n.settingsMainlandSdkDisclosureTitle,
+                subtitle: l10n.settingsMainlandSdkDisclosureSubtitle,
+                onTap: () => openRouteRespectingShell(
+                  context,
+                  AppRoutes.settingsMainlandSdkDisclosure,
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

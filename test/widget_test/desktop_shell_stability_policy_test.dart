@@ -13,8 +13,11 @@ void main() {
       isTrue,
     );
     expect(source.contains('backgroundColor: scheme.surface'), isTrue);
+    // 守卫语义：宿主表面背景色不得透明。
+    // （surfaceTintColor: Colors.transparent 是禁用 M3 surface tint 染色，
+    // 不影响表面不透明性，允许使用。）
     expect(
-      source.contains('Colors.transparent'),
+      RegExp(r'backgroundColor:\s*Colors\.transparent').hasMatch(source),
       isFalse,
       reason: 'desktop host surfaces must not be transparent',
     );

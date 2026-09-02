@@ -5,13 +5,13 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class ApiKeySettingsPage extends StatelessWidget {
   const ApiKeySettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
     final provider = context.watch<SettingsProvider>();
     final settings = provider.data.systemSettings;
@@ -22,115 +22,77 @@ class ApiKeySettingsPage extends StatelessWidget {
       body: ListView(
         padding: AppDesignTokens.pagePadding,
         children: [
-          _buildSectionTitle(context, l10n.apiKeySettingsStatus, theme),
-          Card(
-            child: Column(
-              children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.key_outlined),
-                  title: Text(l10n.apiKeySettingsEnabled),
-                  subtitle: Text(
-                    _isEnabled(settings?.apiInterfaceStatus)
-                        ? l10n.systemSettingsEnabled
-                        : l10n.systemSettingsDisabled,
-                  ),
-                  value: _isEnabled(settings?.apiInterfaceStatus),
-                  onChanged: (value) =>
-                      _toggleApiKey(context, provider, l10n, value),
-                ),
-              ],
+          SectionCard(
+            title: l10n.apiKeySettingsStatus,
+            child: SwitchListTile(
+              secondary: const Icon(Icons.key_outlined),
+              title: Text(l10n.apiKeySettingsEnabled),
+              subtitle: Text(
+                _isEnabled(settings?.apiInterfaceStatus)
+                    ? l10n.systemSettingsEnabled
+                    : l10n.systemSettingsDisabled,
+              ),
+              value: _isEnabled(settings?.apiInterfaceStatus),
+              onChanged: (value) =>
+                  _toggleApiKey(context, provider, l10n, value),
             ),
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(context, l10n.apiKeySettingsInfo, theme),
-          Card(
-            child: Column(
-              children: [
-                _buildCopyListTile(
-                  context,
-                  title: l10n.apiKeySettingsKey,
-                  value: settings?.apiKey ?? '-',
-                  icon: Icons.vpn_key_outlined,
+          SectionEntryList(
+            title: l10n.apiKeySettingsInfo,
+            items: [
+              SectionEntryItem(
+                icon: Icons.vpn_key_outlined,
+                title: l10n.apiKeySettingsKey,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      settings?.apiKey ?? '-',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.copy_outlined, size: 18),
+                      onPressed: () {
+                        Clipboard.setData(
+                            ClipboardData(text: settings?.apiKey ?? ''));
+                        SnackBarUtils.showSuccess(
+                            context, context.l10n.commonCopied);
+                      },
+                    ),
+                  ],
                 ),
-                _buildInfoListTile(
-                  title: l10n.apiKeySettingsIpWhitelist,
-                  value: settings?.ipWhiteList ?? '-',
-                  icon: Icons.list_alt_outlined,
+              ),
+              SectionEntryItem(
+                icon: Icons.list_alt_outlined,
+                title: l10n.apiKeySettingsIpWhitelist,
+                trailing: Text(
+                  settings?.ipWhiteList ?? '-',
+                  style: const TextStyle(color: Colors.grey),
                 ),
-                _buildInfoListTile(
-                  title: l10n.apiKeySettingsValidityTime,
-                  value: settings?.apiKeyValidityTime ?? '-',
-                  icon: Icons.timer_outlined,
+              ),
+              SectionEntryItem(
+                icon: Icons.timer_outlined,
+                title: l10n.apiKeySettingsValidityTime,
+                trailing: Text(
+                  settings?.apiKeyValidityTime ?? '-',
+                  style: const TextStyle(color: Colors.grey),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(context, l10n.apiKeySettingsActions, theme),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.refresh_outlined),
-                  title: Text(l10n.apiKeySettingsRegenerate),
-                  subtitle: Text(l10n.apiKeySettingsRegenerateDesc),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _regenerateApiKey(context, provider, l10n),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(
-      BuildContext context, String title, ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDesignTokens.spacingSm),
-      child: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.primary,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoListTile({
-    required String title,
-    required String value,
-    required IconData icon,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: Text(value, style: const TextStyle(color: Colors.grey)),
-    );
-  }
-
-  Widget _buildCopyListTile(
-    BuildContext context, {
-    required String title,
-    required String value,
-    required IconData icon,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(value, style: const TextStyle(color: Colors.grey)),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.copy_outlined, size: 18),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: value));
-              SnackBarUtils.showSuccess(context, context.l10n.commonCopied);
-            },
+          SectionEntryList(
+            title: l10n.apiKeySettingsActions,
+            items: [
+              SectionEntryItem(
+                icon: Icons.refresh_outlined,
+                title: l10n.apiKeySettingsRegenerate,
+                subtitle: l10n.apiKeySettingsRegenerateDesc,
+                onTap: () => _regenerateApiKey(context, provider, l10n),
+              ),
+            ],
           ),
         ],
       ),

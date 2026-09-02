@@ -8,6 +8,7 @@ import 'package:onepanel_client/features/ssh/providers/ssh_settings_provider.dar
 import 'package:onepanel_client/features/ssh/widgets/ssh_raw_file_editor_widget.dart';
 import 'package:onepanel_client/features/ssh/widgets/ssh_section_nav_widget.dart';
 import 'package:onepanel_client/features/ssh/widgets/ssh_settings_status_card_widget.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_sheet.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/confirm_action_sheet_widget.dart';
 import 'package:provider/provider.dart';
@@ -240,36 +241,25 @@ class _SshSettingsPageState extends State<SshSettingsPage> {
     required String currentValue,
   }) async {
     final controller = TextEditingController(text: currentValue);
-    final newValue = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 8,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(label, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              TextField(controller: controller),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () =>
-                      Navigator.of(context).pop(controller.text.trim()),
-                  child: Text(context.l10n.commonConfirm),
-                ),
+    final newValue = await showAppFormSheet<String>(
+      context,
+      title: label,
+      builder: (_) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextField(controller: controller),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () =>
+                    Navigator.of(context).pop(controller.text.trim()),
+                child: Text(context.l10n.commonConfirm),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_dialog.dart';
 
 class RepoCreateDialog extends StatefulWidget {
   final ContainerRepo? repo;
@@ -20,6 +21,7 @@ class _RepoCreateDialogState extends State<RepoCreateDialog> {
   late TextEditingController _userController;
   late TextEditingController _passwordController;
   bool _isObscure = true;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -46,8 +48,9 @@ class _RepoCreateDialogState extends State<RepoCreateDialog> {
     final l10n = context.l10n;
     final isEdit = widget.repo != null;
 
-    return AlertDialog(
-      title: Text(isEdit ? l10n.commonEdit : l10n.commonCreate),
+    return AppFormDialog(
+      title: isEdit ? l10n.commonEdit : l10n.commonCreate,
+      isSaving: _saving,
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -112,40 +115,35 @@ class _RepoCreateDialogState extends State<RepoCreateDialog> {
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              final navigator = Navigator.of(context);
-              final request = ContainerRepoOperate(
-                id: widget.repo?.id,
-                name: _nameController.text,
-                downloadUrl: _urlController.text,
-                username:
-                    _userController.text.isEmpty ? null : _userController.text,
-                password: _passwordController.text.isEmpty
-                    ? null
-                    : _passwordController.text,
-              );
+      onConfirm: () async {
+        if (!_formKey.currentState!.validate()) {
+          return;
+        }
+        setState(() => _saving = true);
+        final navigator = Navigator.of(context);
+        final request = ContainerRepoOperate(
+          id: widget.repo?.id,
+          name: _nameController.text,
+          downloadUrl: _urlController.text,
+          username:
+              _userController.text.isEmpty ? null : _userController.text,
+          password: _passwordController.text.isEmpty
+              ? null
+              : _passwordController.text,
+        );
 
-              final provider = context.read<ContainersProvider>();
-              final success = isEdit
-                  ? await provider.updateRepo(request)
-                  : await provider.createRepo(request);
+        final provider = context.read<ContainersProvider>();
+        final success = isEdit
+            ? await provider.updateRepo(request)
+            : await provider.createRepo(request);
 
-              if (!context.mounted) return;
-              if (success) {
-                navigator.pop(true);
-              }
-            }
-          },
-          child: Text(l10n.commonConfirm),
-        ),
-      ],
+        if (!context.mounted) return;
+        if (success) {
+          navigator.pop(true);
+        } else {
+          setState(() => _saving = false);
+        }
+      },
     );
   }
 }

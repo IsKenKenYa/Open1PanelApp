@@ -4,6 +4,7 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 class SecuritySettingsPage extends StatefulWidget {
@@ -25,7 +26,6 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = context.l10n;
     final provider = context.watch<SettingsProvider>();
     final settings = provider.data.systemSettings;
@@ -36,97 +36,86 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
       body: ListView(
         padding: AppDesignTokens.pagePadding,
         children: [
-          _buildSectionTitle(
-              context, l10n.securitySettingsPasswordSection, theme),
-          Card(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.lock_outline),
-                  title: Text(l10n.securitySettingsChangePassword),
-                  subtitle: Text(l10n.securitySettingsChangePasswordDesc),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _showPasswordDialog(context, provider, l10n),
-                ),
-              ],
+          SectionEntryList(
+            title: l10n.securitySettingsPasswordSection,
+            items: [
+              SectionEntryItem(
+                icon: Icons.lock_outline,
+                title: l10n.securitySettingsChangePassword,
+                subtitle: l10n.securitySettingsChangePasswordDesc,
+                onTap: () => _showPasswordDialog(context, provider, l10n),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesignTokens.spacingMd),
+          SectionCard(
+            title: l10n.securitySettingsMfaSection,
+            child: SwitchListTile(
+              secondary: const Icon(Icons.security_outlined),
+              title: Text(l10n.securitySettingsMfaStatus),
+              subtitle: Text(
+                _isEnabled(settings?.mfaStatus)
+                    ? l10n.systemSettingsEnabled
+                    : l10n.systemSettingsDisabled,
+              ),
+              value: _isEnabled(settings?.mfaStatus),
+              onChanged: (value) =>
+                  _showMfaToggleDialog(context, provider, l10n, value),
             ),
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(context, l10n.securitySettingsMfaSection, theme),
-          Card(
-            child: Column(
-              children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.security_outlined),
-                  title: Text(l10n.securitySettingsMfaStatus),
-                  subtitle: Text(
-                    _isEnabled(settings?.mfaStatus)
-                        ? l10n.systemSettingsEnabled
-                        : l10n.systemSettingsDisabled,
-                  ),
-                  value: _isEnabled(settings?.mfaStatus),
-                  onChanged: (value) =>
-                      _showMfaToggleDialog(context, provider, l10n, value),
-                ),
-              ],
-            ),
+          SectionCard(
+            title: l10n.securitySettingsPasskeySection,
+            child: _buildPasskeyContent(context, provider, l10n),
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(
-              context, l10n.securitySettingsPasskeySection, theme),
-          _buildPasskeyCard(context, provider, l10n),
-          const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(
-              context, l10n.securitySettingsAccessControl, theme),
-          Card(
-            child: Column(
-              children: [
-                _buildInfoListTile(
+          SectionEntryList(
+            title: l10n.securitySettingsAccessControl,
+            items: [
+              _buildInfoEntry(
+                title: l10n.securitySettingsSecurityEntrance,
+                value: settings?.securityEntrance ?? '-',
+                icon: Icons.login_outlined,
+                onTap: () => _showSystemSettingEditDialog(
+                  context,
+                  provider,
+                  l10n,
                   title: l10n.securitySettingsSecurityEntrance,
-                  value: settings?.securityEntrance ?? '-',
-                  icon: Icons.login_outlined,
-                  onTap: () => _showSystemSettingEditDialog(
-                    context,
-                    provider,
-                    l10n,
-                    title: l10n.securitySettingsSecurityEntrance,
-                    settingKey: 'SecurityEntrance',
-                    currentValue: settings?.securityEntrance ?? '',
-                  ),
+                  settingKey: 'SecurityEntrance',
+                  currentValue: settings?.securityEntrance ?? '',
                 ),
-                _buildInfoListTile(
+              ),
+              _buildInfoEntry(
+                title: l10n.securitySettingsBindDomain,
+                value: settings?.bindDomain ?? '-',
+                icon: Icons.domain_outlined,
+                onTap: () => _showSystemSettingEditDialog(
+                  context,
+                  provider,
+                  l10n,
                   title: l10n.securitySettingsBindDomain,
-                  value: settings?.bindDomain ?? '-',
-                  icon: Icons.domain_outlined,
-                  onTap: () => _showSystemSettingEditDialog(
-                    context,
-                    provider,
-                    l10n,
-                    title: l10n.securitySettingsBindDomain,
-                    settingKey: 'BindDomain',
-                    currentValue: settings?.bindDomain ?? '',
-                  ),
+                  settingKey: 'BindDomain',
+                  currentValue: settings?.bindDomain ?? '',
                 ),
-                _buildInfoListTile(
+              ),
+              _buildInfoEntry(
+                title: l10n.securitySettingsAllowIPs,
+                value: settings?.allowIPs ?? '-',
+                icon: Icons.list_alt_outlined,
+                onTap: () => _showSystemSettingEditDialog(
+                  context,
+                  provider,
+                  l10n,
                   title: l10n.securitySettingsAllowIPs,
-                  value: settings?.allowIPs ?? '-',
-                  icon: Icons.list_alt_outlined,
-                  onTap: () => _showSystemSettingEditDialog(
-                    context,
-                    provider,
-                    l10n,
-                    title: l10n.securitySettingsAllowIPs,
-                    settingKey: 'AllowIPs',
-                    currentValue: settings?.allowIPs ?? '',
-                  ),
+                  settingKey: 'AllowIPs',
+                  currentValue: settings?.allowIPs ?? '',
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesignTokens.spacingMd),
-          _buildSectionTitle(
-              context, l10n.securitySettingsPasswordPolicy, theme),
-          Card(
+          SectionCard(
+            title: l10n.securitySettingsPasswordPolicy,
             child: Column(
               children: [
                 SwitchListTile(
@@ -145,6 +134,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                     value: value,
                   ),
                 ),
+                const Divider(height: 1),
                 _buildInfoListTile(
                   title: l10n.securitySettingsExpirationDays,
                   value: settings?.expirationDays ?? '-',
@@ -167,7 +157,7 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     );
   }
 
-  Widget _buildPasskeyCard(
+  Widget _buildPasskeyContent(
     BuildContext context,
     SettingsProvider provider,
     AppLocalizations l10n,
@@ -175,89 +165,118 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     final data = provider.data;
     final deletingId = data.passkeyDeletingId;
 
-    return Card(
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.phonelink_lock_outlined),
-            title: Text(l10n.securitySettingsPasskeyRegister),
-            subtitle: Text(
-              data.isPasskeySupported
-                  ? l10n.securitySettingsPasskeyRegisterDesc
-                  : (data.passkeyUnsupportedReason ??
-                      l10n.securitySettingsPasskeyUnsupported),
-            ),
-            trailing: data.isPasskeyRegistering
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.add),
-            onTap: data.isPasskeySupported && !data.isPasskeyRegistering
-                ? () => _showPasskeyRegisterDialog(context, provider, l10n)
-                : null,
+    return Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.phonelink_lock_outlined),
+          title: Text(l10n.securitySettingsPasskeyRegister),
+          subtitle: Text(
+            data.isPasskeySupported
+                ? l10n.securitySettingsPasskeyRegisterDesc
+                : (data.passkeyUnsupportedReason ??
+                    l10n.securitySettingsPasskeyUnsupported),
           ),
-          if (data.isPasskeysLoading)
-            const Padding(
-              padding: EdgeInsets.all(12),
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            )
-          else if (!data.isPasskeySupported)
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(l10n.securitySettingsPasskeyUnsupported),
-              subtitle: Text(
-                data.passkeyUnsupportedReason ??
-                    l10n.securitySettingsPasskeyUnsupportedDesc,
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.refresh_outlined),
-                onPressed: () => provider.loadPasskeys(),
-                tooltip: l10n.systemSettingsRefresh,
-              ),
-            )
-          else if (data.passkeys.isEmpty)
-            ListTile(
-              leading: const Icon(Icons.key_off_outlined),
-              title: Text(l10n.securitySettingsPasskeyEmpty),
-              trailing: IconButton(
-                icon: const Icon(Icons.refresh_outlined),
-                onPressed: () => provider.loadPasskeys(),
-                tooltip: l10n.systemSettingsRefresh,
-              ),
-            )
-          else
-            ...data.passkeys.map(
-              (item) => ListTile(
-                leading: const Icon(Icons.key_outlined),
-                title: Text(item.name?.trim().isNotEmpty == true
-                    ? item.name!
-                    : (item.id ?? '-')),
-                subtitle: Text(_formatPasskeySubtitle(item, l10n)),
-                trailing: deletingId == item.id
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: item.id == null
-                            ? null
-                            : () => _showDeletePasskeyDialog(
-                                  context,
-                                  provider,
-                                  l10n,
-                                  item,
-                                ),
-                      ),
-              ),
+          trailing: data.isPasskeyRegistering
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.add),
+          onTap: data.isPasskeySupported && !data.isPasskeyRegistering
+              ? () => _showPasskeyRegisterDialog(context, provider, l10n)
+              : null,
+        ),
+        if (data.isPasskeysLoading)
+          const Padding(
+            padding: EdgeInsets.all(12),
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
             ),
+          )
+        else if (!data.isPasskeySupported)
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.securitySettingsPasskeyUnsupported),
+            subtitle: Text(
+              data.passkeyUnsupportedReason ??
+                  l10n.securitySettingsPasskeyUnsupportedDesc,
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.refresh_outlined),
+              onPressed: () => provider.loadPasskeys(),
+              tooltip: l10n.systemSettingsRefresh,
+            ),
+          )
+        else if (data.passkeys.isEmpty)
+          ListTile(
+            leading: const Icon(Icons.key_off_outlined),
+            title: Text(l10n.securitySettingsPasskeyEmpty),
+            trailing: IconButton(
+              icon: const Icon(Icons.refresh_outlined),
+              onPressed: () => provider.loadPasskeys(),
+              tooltip: l10n.systemSettingsRefresh,
+            ),
+          )
+        else
+          ...data.passkeys.map(
+            (item) => ListTile(
+              leading: const Icon(Icons.key_outlined),
+              title: Text(item.name?.trim().isNotEmpty == true
+                  ? item.name!
+                  : (item.id ?? '-')),
+              subtitle: Text(_formatPasskeySubtitle(item, l10n)),
+              trailing: deletingId == item.id
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: item.id == null
+                          ? null
+                          : () => _showDeletePasskeyDialog(
+                                context,
+                                provider,
+                                l10n,
+                                item,
+                              ),
+                    ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// 访问控制节条目：值 + 编辑图标（覆盖默认 chevron）。
+  SectionEntryItem _buildInfoEntry({
+    required String title,
+    required String value,
+    required IconData icon,
+    VoidCallback? onTap,
+  }) {
+    return SectionEntryItem(
+      icon: icon,
+      title: title,
+      onTap: onTap,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 160),
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.grey),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (onTap != null) ...[
+            const SizedBox(width: 8),
+            const Icon(Icons.edit_outlined, size: 18, color: Colors.grey),
+          ],
         ],
       ),
     );
@@ -268,23 +287,6 @@ class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
     final lastUsedAt = item.lastUsedAt ?? '-';
     return '${l10n.securitySettingsPasskeyCreatedAt}: $createdAt\n'
         '${l10n.securitySettingsPasskeyLastUsedAt}: $lastUsedAt';
-  }
-
-  Widget _buildSectionTitle(
-    BuildContext context,
-    String title,
-    ThemeData theme,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDesignTokens.spacingSm),
-      child: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.primary,
-        ),
-      ),
-    );
   }
 
   Widget _buildInfoListTile({

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_dialog.dart';
 import '../../../data/models/container_models.dart';
 
 class ComposeCreateDialog extends StatefulWidget {
@@ -28,8 +29,8 @@ class _ComposeCreateDialogState extends State<ComposeCreateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AlertDialog(
-      title: Text(l10n.orchestrationComposeCreateTitle),
+    return AppFormDialog(
+      title: l10n.orchestrationComposeCreateTitle,
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -87,28 +88,20 @@ class _ComposeCreateDialogState extends State<ComposeCreateDialog> {
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              final request = ContainerComposeCreate(
-                from: 'edit',
-                name: _nameController.text,
-                path:
-                    _pathController.text.isEmpty ? null : _pathController.text,
-                file: _contentController.text,
-                env: _envController.text.isEmpty ? null : _envController.text,
-              );
-              Navigator.of(context).pop(request);
-            }
-          },
-          child: Text(l10n.commonCreate),
-        ),
-      ],
+      confirmLabel: l10n.commonCreate,
+      onConfirm: () async {
+        if (_formKey.currentState!.validate()) {
+          final request = ContainerComposeCreate(
+            from: 'edit',
+            name: _nameController.text,
+            path:
+                _pathController.text.isEmpty ? null : _pathController.text,
+            file: _contentController.text,
+            env: _envController.text.isEmpty ? null : _envController.text,
+          );
+          Navigator.of(context).pop(request);
+        }
+      },
     );
   }
 }

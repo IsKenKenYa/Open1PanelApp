@@ -4,6 +4,7 @@ import 'package:onepanel_client/data/models/system_group_models.dart';
 import 'package:onepanel_client/features/group/providers/group_options_provider.dart';
 import 'package:onepanel_client/features/group/widgets/group_edit_sheet_widget.dart';
 import 'package:onepanel_client/features/group/widgets/group_selector_list_widget.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_sheet.dart';
 import 'package:onepanel_client/shared/widgets/operations/async_state_page_body_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -126,15 +127,12 @@ class GroupSelectorSheetWidget extends StatelessWidget {
     GroupInfo? group,
   }) async {
     final l10n = context.l10n;
-    final changed = await showModalBottomSheet<bool>(
-      context: context,
-      useSafeArea: true,
-      isScrollControlled: true,
-      showDragHandle: true,
+    final changed = await showAppFormSheet<bool>(
+      context,
+      title: group == null
+          ? l10n.operationsGroupCreateTitle
+          : l10n.operationsGroupRenameTitle,
       builder: (_) => GroupEditSheetWidget(
-        title: group == null
-            ? l10n.operationsGroupCreateTitle
-            : l10n.operationsGroupRenameTitle,
         initialName: group?.name,
         canDelete: group != null,
         onSave: (name) async {

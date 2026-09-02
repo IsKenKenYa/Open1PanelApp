@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/data/models/container_models.dart';
 import 'package:onepanel_client/features/containers/containers_provider.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 
 class ContainerCreatePage extends StatefulWidget {
   const ContainerCreatePage({super.key});
@@ -65,52 +68,52 @@ class _ContainerCreatePageState extends State<ContainerCreatePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(l10n.containerCreate),
-      ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.containerInfoName,
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return l10n.serverFormRequired;
-                  }
-                  return null;
-                },
+    return AppFormScaffold(
+      title: l10n.containerCreate,
+      isSaving: _submitting,
+      saveLabel: l10n.containerCreate,
+      onSave: _submit,
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            SectionCard(
+              padding: const EdgeInsets.all(AppDesignTokens.spacingLg),
+              title: l10n.containerCreateBasicSectionTitle,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: l10n.containerInfoName,
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.serverFormRequired;
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _imageController,
+                    decoration: InputDecoration(
+                      labelText: l10n.containerInfoImage,
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return l10n.serverFormRequired;
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _imageController,
-                decoration: InputDecoration(
-                  labelText: l10n.containerInfoImage,
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return l10n.serverFormRequired;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: _submitting ? null : _submit,
-                icon: const Icon(Icons.add),
-                label: Text(l10n.containerCreate),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

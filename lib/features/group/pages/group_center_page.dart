@@ -5,6 +5,7 @@ import 'package:onepanel_client/data/repositories/group_repository.dart';
 import 'package:onepanel_client/features/group/providers/group_center_provider.dart';
 import 'package:onepanel_client/features/group/widgets/group_edit_sheet_widget.dart';
 import 'package:onepanel_client/features/shell/widgets/server_aware_page_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_sheet.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_empty_state_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -180,13 +181,12 @@ class _GroupCenterPageState extends State<GroupCenterPage> {
     GroupCenterProvider provider, {
     GroupInfo? existing,
   }) async {
-    await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
+    await showAppFormSheet<bool>(
+      context,
+      title: existing == null
+          ? context.l10n.operationsGroupCreateTitle
+          : context.l10n.operationsGroupRenameTitle,
       builder: (_) => GroupEditSheetWidget(
-        title: existing == null
-            ? context.l10n.operationsGroupCreateTitle
-            : context.l10n.operationsGroupRenameTitle,
         initialName: existing?.name,
         canDelete: existing?.id != null && existing?.isDefault != true,
         onSave: (String name) async {

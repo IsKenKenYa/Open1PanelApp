@@ -6,6 +6,7 @@ import 'package:onepanel_client/core/theme/app_design_tokens.dart';
 import 'package:onepanel_client/data/models/setting_models.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
 import 'package:onepanel_client/features/terminal/services/terminal_appearance.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:provider/provider.dart';
 
 class TerminalSettingsPage extends StatefulWidget {
@@ -71,6 +72,25 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           final terminal = provider.data.terminalSettings ?? const TerminalInfo();
           final connection = provider.data.sshConnection;
 
+          Widget? colorSwatchTrailing(Color? swatch) => swatch == null
+              ? null
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 18,
+                      height: 18,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: swatch,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right),
+                  ],
+                );
+
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
             appBar: AppBar(title: Text(l10n.terminalSettingsTitle)),
@@ -80,198 +100,180 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                 _buildSectionTitle(context, l10n.terminalSettingsPreview, theme),
                 _PreviewCard(settings: terminal),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _buildSectionTitle(context, l10n.terminalSettingsDisplay, theme),
-                Card(
-                  child: Column(
-                    children: [
-                      _buildActionTile(
-                        context,
-                        title: l10n.terminalSettingsCursorStyle,
-                        value: _cursorStyleLabel(context, terminal.cursorStyle),
-                        icon: Icons.arrow_right_alt_outlined,
-                        onTap: () => _showCursorStyleSheet(provider, terminal),
-                      ),
-                      SwitchListTile.adaptive(
-                        secondary: const Icon(Icons.flash_on_outlined),
-                        title: Text(l10n.terminalSettingsCursorBlink),
-                        value: (terminal.cursorBlink ?? 'Enable')
-                                .toLowerCase() ==
-                            'enable',
-                        onChanged: (value) async {
-                          final success = await provider.updateTerminalSettings(
-                            cursorBlink: value ? 'Enable' : 'Disable',
-                          );
-                          if (context.mounted) {
-                            if (success) {
-                              SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
-                            } else {
-                              SnackBarUtils.showError(context, l10n.commonSaveFailed);
-                            }
-                          }
-                        },
-                      ),
-                      _buildActionTile(
+                SectionEntryList(
+                  title: l10n.terminalSettingsDisplay,
+                  items: [
+                    SectionEntryItem(
+                      icon: Icons.arrow_right_alt_outlined,
+                      title: l10n.terminalSettingsCursorStyle,
+                      subtitle: _cursorStyleLabel(context, terminal.cursorStyle),
+                      onTap: () => _showCursorStyleSheet(provider, terminal),
+                    ),
+                    SectionEntryItem(
+                      icon: Icons.format_size_outlined,
+                      title: l10n.terminalSettingsFontSize,
+                      subtitle: terminal.fontSize ?? '14',
+                      onTap: () => _showNumericSettingSheet(
                         context,
                         title: l10n.terminalSettingsFontSize,
-                        value: terminal.fontSize ?? '14',
-                        icon: Icons.format_size_outlined,
-                        onTap: () => _showNumericSettingSheet(
-                          context,
-                          title: l10n.terminalSettingsFontSize,
-                          initial: double.tryParse(terminal.fontSize ?? '') ?? 14,
-                          min: 12,
-                          max: 24,
-                          step: 1,
-                          display: (value) => value.toStringAsFixed(0),
-                          onSave: (value) => provider.updateTerminalSettings(
-                            fontSize: value.toStringAsFixed(0),
-                          ),
+                        initial: double.tryParse(terminal.fontSize ?? '') ?? 14,
+                        min: 12,
+                        max: 24,
+                        step: 1,
+                        display: (value) => value.toStringAsFixed(0),
+                        onSave: (value) => provider.updateTerminalSettings(
+                          fontSize: value.toStringAsFixed(0),
                         ),
                       ),
-                      _buildActionTile(
-                        context,
-                        title: l10n.terminalSettingsFontFamily,
-                        value: terminal.fontFamily ?? 'Monaco, Menlo, Consolas',
-                        icon: Icons.font_download_outlined,
-                        onTap: () => _showFontFamilySheet(provider, terminal),
-                      ),
-                      _buildActionTile(
+                    ),
+                    SectionEntryItem(
+                      icon: Icons.font_download_outlined,
+                      title: l10n.terminalSettingsFontFamily,
+                      subtitle: terminal.fontFamily ?? 'Monaco, Menlo, Consolas',
+                      onTap: () => _showFontFamilySheet(provider, terminal),
+                    ),
+                    SectionEntryItem(
+                      icon: Icons.format_color_fill_outlined,
+                      title: l10n.terminalSettingsBackgroundColor,
+                      subtitle: terminal.backgroundColor ?? '#000000',
+                      trailing: colorSwatchTrailing(_parseColor(
+                          terminal.backgroundColor, const Color(0xFF000000))),
+                      onTap: () => _showColorPickerDialog(
                         context,
                         title: l10n.terminalSettingsBackgroundColor,
-                        value: terminal.backgroundColor ?? '#000000',
-                        icon: Icons.format_color_fill_outlined,
-                        trailingSwatch:
+                        initialColor:
                             _parseColor(terminal.backgroundColor, const Color(0xFF000000)),
-                        onTap: () => _showColorPickerDialog(
-                          context,
-                          title: l10n.terminalSettingsBackgroundColor,
-                          initialColor:
-                              _parseColor(terminal.backgroundColor, const Color(0xFF000000)),
-                          onSave: (color) => provider.updateTerminalSettings(
-                            backgroundColor: _toHex(color),
-                          ),
+                        onSave: (color) => provider.updateTerminalSettings(
+                          backgroundColor: _toHex(color),
                         ),
                       ),
-                      _buildActionTile(
+                    ),
+                    SectionEntryItem(
+                      icon: Icons.format_color_text_outlined,
+                      title: l10n.terminalSettingsForegroundColor,
+                      subtitle: terminal.foregroundColor ?? '#f5f5f5',
+                      trailing: colorSwatchTrailing(_parseColor(
+                          terminal.foregroundColor, const Color(0xFFF5F5F5))),
+                      onTap: () => _showColorPickerDialog(
                         context,
                         title: l10n.terminalSettingsForegroundColor,
-                        value: terminal.foregroundColor ?? '#f5f5f5',
-                        icon: Icons.format_color_text_outlined,
-                        trailingSwatch:
+                        initialColor:
                             _parseColor(terminal.foregroundColor, const Color(0xFFF5F5F5)),
-                        onTap: () => _showColorPickerDialog(
-                          context,
-                          title: l10n.terminalSettingsForegroundColor,
-                          initialColor:
-                              _parseColor(terminal.foregroundColor, const Color(0xFFF5F5F5)),
-                          onSave: (color) => provider.updateTerminalSettings(
-                            foregroundColor: _toHex(color),
-                          ),
+                        onSave: (color) => provider.updateTerminalSettings(
+                          foregroundColor: _toHex(color),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                SectionCard(
+                  child: SwitchListTile.adaptive(
+                    secondary: const Icon(Icons.flash_on_outlined),
+                    title: Text(l10n.terminalSettingsCursorBlink),
+                    value: (terminal.cursorBlink ?? 'Enable').toLowerCase() ==
+                        'enable',
+                    onChanged: (value) async {
+                      final success = await provider.updateTerminalSettings(
+                        cursorBlink: value ? 'Enable' : 'Disable',
+                      );
+                      if (context.mounted) {
+                        if (success) {
+                          SnackBarUtils.showSuccess(context, l10n.commonSaveSuccess);
+                        } else {
+                          SnackBarUtils.showError(context, l10n.commonSaveFailed);
+                        }
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _buildSectionTitle(context, l10n.terminalSettingsScroll, theme),
-                Card(
-                  child: Column(
-                    children: [
-                      _buildActionTile(
+                SectionEntryList(
+                  title: l10n.terminalSettingsScroll,
+                  items: [
+                    SectionEntryItem(
+                      icon: Icons.history_outlined,
+                      title: l10n.terminalSettingsScrollback,
+                      subtitle: terminal.scrollback ?? '1000',
+                      onTap: () => _showNumericSettingSheet(
                         context,
                         title: l10n.terminalSettingsScrollback,
-                        value: terminal.scrollback ?? '1000',
-                        icon: Icons.history_outlined,
-                        onTap: () => _showNumericSettingSheet(
-                          context,
-                          title: l10n.terminalSettingsScrollback,
-                          initial:
-                              double.tryParse(terminal.scrollback ?? '') ?? 1000,
-                          min: 100,
-                          max: 10000,
-                          step: 100,
-                          display: (value) => value.toStringAsFixed(0),
-                          onSave: (value) => provider.updateTerminalSettings(
-                            scrollback: value.toStringAsFixed(0),
-                          ),
+                        initial:
+                            double.tryParse(terminal.scrollback ?? '') ?? 1000,
+                        min: 100,
+                        max: 10000,
+                        step: 100,
+                        display: (value) => value.toStringAsFixed(0),
+                        onSave: (value) => provider.updateTerminalSettings(
+                          scrollback: value.toStringAsFixed(0),
                         ),
                       ),
-                      _buildActionTile(
+                    ),
+                    SectionEntryItem(
+                      icon: Icons.swipe_outlined,
+                      title: l10n.terminalSettingsScrollSensitivity,
+                      subtitle: terminal.scrollSensitivity ?? '6',
+                      onTap: () => _showNumericSettingSheet(
                         context,
                         title: l10n.terminalSettingsScrollSensitivity,
-                        value: terminal.scrollSensitivity ?? '6',
-                        icon: Icons.swipe_outlined,
-                        onTap: () => _showNumericSettingSheet(
-                          context,
-                          title: l10n.terminalSettingsScrollSensitivity,
-                          initial:
-                              double.tryParse(terminal.scrollSensitivity ?? '') ??
-                                  6,
-                          min: 0,
-                          max: 16,
-                          step: 1,
-                          display: (value) => value.toStringAsFixed(0),
-                          onSave: (value) => provider.updateTerminalSettings(
-                            scrollSensitivity: value.toStringAsFixed(0),
-                          ),
+                        initial:
+                            double.tryParse(terminal.scrollSensitivity ?? '') ??
+                                6,
+                        min: 0,
+                        max: 16,
+                        step: 1,
+                        display: (value) => value.toStringAsFixed(0),
+                        onSave: (value) => provider.updateTerminalSettings(
+                          scrollSensitivity: value.toStringAsFixed(0),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _buildSectionTitle(context, l10n.terminalSettingsStyle, theme),
-                Card(
-                  child: Column(
-                    children: [
-                      _buildActionTile(
+                SectionEntryList(
+                  title: l10n.terminalSettingsStyle,
+                  items: [
+                    SectionEntryItem(
+                      icon: Icons.format_line_spacing_outlined,
+                      title: l10n.terminalSettingsLineHeight,
+                      subtitle: terminal.lineHeight ?? '1.2',
+                      onTap: () => _showNumericSettingSheet(
                         context,
                         title: l10n.terminalSettingsLineHeight,
-                        value: terminal.lineHeight ?? '1.2',
-                        icon: Icons.format_line_spacing_outlined,
-                        onTap: () => _showNumericSettingSheet(
-                          context,
-                          title: l10n.terminalSettingsLineHeight,
-                          initial:
-                              double.tryParse(terminal.lineHeight ?? '') ?? 1.2,
-                          min: 1.0,
-                          max: 2.0,
-                          step: 0.1,
-                          display: (value) => value.toStringAsFixed(1),
-                          onSave: (value) => provider.updateTerminalSettings(
-                            lineHeight: value.toStringAsFixed(1),
-                          ),
+                        initial:
+                            double.tryParse(terminal.lineHeight ?? '') ?? 1.2,
+                        min: 1.0,
+                        max: 2.0,
+                        step: 0.1,
+                        display: (value) => value.toStringAsFixed(1),
+                        onSave: (value) => provider.updateTerminalSettings(
+                          lineHeight: value.toStringAsFixed(1),
                         ),
                       ),
-                      _buildActionTile(
+                    ),
+                    SectionEntryItem(
+                      icon: Icons.space_bar_outlined,
+                      title: l10n.terminalSettingsLetterSpacing,
+                      subtitle: terminal.letterSpacing ?? '0',
+                      onTap: () => _showNumericSettingSheet(
                         context,
                         title: l10n.terminalSettingsLetterSpacing,
-                        value: terminal.letterSpacing ?? '0',
-                        icon: Icons.space_bar_outlined,
-                        onTap: () => _showNumericSettingSheet(
-                          context,
-                          title: l10n.terminalSettingsLetterSpacing,
-                          initial:
-                              double.tryParse(terminal.letterSpacing ?? '') ?? 0,
-                          min: 0,
-                          max: 3.5,
-                          step: 0.5,
-                          display: (value) => value.toStringAsFixed(1),
-                          onSave: (value) => provider.updateTerminalSettings(
-                            letterSpacing: value.toStringAsFixed(1),
-                          ),
+                        initial:
+                            double.tryParse(terminal.letterSpacing ?? '') ?? 0,
+                        min: 0,
+                        max: 3.5,
+                        step: 0.5,
+                        display: (value) => value.toStringAsFixed(1),
+                        onSave: (value) => provider.updateTerminalSettings(
+                          letterSpacing: value.toStringAsFixed(1),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppDesignTokens.spacingMd),
-                _buildSectionTitle(
-                  context,
-                  l10n.terminalSettingsDefaultLocalConnection,
-                  theme,
-                ),
-                Card(
+                SectionCard(
+                  title: l10n.terminalSettingsDefaultLocalConnection,
                   child: Column(
                     children: [
                       SwitchListTile.adaptive(
@@ -328,43 +330,6 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           color: theme.colorScheme.primary,
         ),
       ),
-    );
-  }
-
-  Widget _buildActionTile(
-    BuildContext context, {
-    required String title,
-    required String value,
-    required IconData icon,
-    required VoidCallback onTap,
-    Color? trailingSwatch,
-  }) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: Text(
-        value,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (trailingSwatch != null)
-            Container(
-              width: 18,
-              height: 18,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: trailingSwatch,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.black12),
-              ),
-            ),
-          const Icon(Icons.chevron_right),
-        ],
-      ),
-      onTap: onTap,
     );
   }
 

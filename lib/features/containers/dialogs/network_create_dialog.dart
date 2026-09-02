@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_dialog.dart';
 
 class NetworkCreateDialog extends StatefulWidget {
   const NetworkCreateDialog({super.key});
@@ -38,8 +39,8 @@ class _NetworkCreateDialogState extends State<NetworkCreateDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AlertDialog(
-      title: Text(l10n.orchestrationCreateNetwork),
+    return AppFormDialog(
+      title: l10n.orchestrationCreateNetwork,
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -120,27 +121,19 @@ class _NetworkCreateDialogState extends State<NetworkCreateDialog> {
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              Navigator.of(context).pop({
-                'name': _nameController.text,
-                'driver': _selectedDriver,
-                'subnet': _subnetController.text,
-                'gateway': _gatewayController.text,
-                'enableIPv6': _enableIPv6,
-                'labels': _labelsController.text,
-              });
-            }
-          },
-          child: Text(l10n.commonCreate),
-        ),
-      ],
+      confirmLabel: l10n.commonCreate,
+      onConfirm: () async {
+        if (_formKey.currentState!.validate()) {
+          Navigator.of(context).pop({
+            'name': _nameController.text,
+            'driver': _selectedDriver,
+            'subnet': _subnetController.text,
+            'gateway': _gatewayController.text,
+            'enableIPv6': _enableIPv6,
+            'labels': _labelsController.text,
+          });
+        }
+      },
     );
   }
 }

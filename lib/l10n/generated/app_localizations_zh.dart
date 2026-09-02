@@ -1328,6 +1328,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get databaseScopeLabel => '数据库范围';
 
   @override
+  String get databaseFormBasicSectionTitle => '基本配置';
+
+  @override
+  String get databaseFormAdvancedSectionTitle => '高级设置';
+
+  @override
   String get databaseEngineLabel => '引擎';
 
   @override
@@ -1576,6 +1582,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get firewallCreateIpRuleAction => '创建 IP 规则';
 
   @override
+  String get firewallRuleSectionTitle => '规则配置';
+
+  @override
   String get firewallToggleStrategyAction => '切换策略';
 
   @override
@@ -1664,6 +1673,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get serverFormSaveConnect => '保存并继续';
+
+  @override
+  String get serverFormBasicSectionTitle => '基本配置';
+
+  @override
+  String get serverFormConnectionSectionTitle => '连接配置';
 
   @override
   String get serverFormTest => '测试连接';
@@ -5097,6 +5112,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get containerCreate => '创建容器';
+
+  @override
+  String get containerCreateBasicSectionTitle => '基本配置';
 
   @override
   String get containerEmptyTitle => '暂无容器';
