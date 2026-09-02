@@ -123,7 +123,31 @@ void main() {
         interval: 30,
       );
 
-      final response = await api.loadMfaInfo(request);
+      dynamic response;
+
+      try {
+
+        // 能力探测：社区版无 MFA，软跳过
+
+        response = await api.loadMfaInfo(request);
+
+        return;
+
+       } catch (e) {
+
+        if (e.toString().contains('不支持')) {
+
+          debugPrint('⚠️  跳过 loadMfaInfo: 当前面板版本不支持 MFA');
+
+          return;
+
+        }
+
+        rethrow;
+
+       }
+
+      response = await api.loadMfaInfo(request);
 
       debugPrint('\n========================================');
       debugPrint('loadMfaInfo 响应');

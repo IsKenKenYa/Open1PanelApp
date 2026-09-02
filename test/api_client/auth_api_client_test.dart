@@ -60,8 +60,18 @@ void main() {
         return;
       }
 
-      final rawResponse = await client.dio.get('/api/v2/core/auth/demo');
-      final response = await api.checkDemoMode();
+      dynamic rawResponse;
+      dynamic response;
+      try {
+        rawResponse = await client.dio.get('/api/v2/core/auth/demo');
+        response = await api.checkDemoMode();
+      } catch (e) {
+        if (e.toString().contains('不支持')) {
+          debugPrint('⚠️  跳过: 当前面板版本不支持该端点');
+          return;
+        }
+        rethrow;
+      }
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -83,8 +93,18 @@ void main() {
         return;
       }
 
-      final rawResponse = await client.dio.get('/api/v2/core/auth/issafety');
-      final response = await api.getSafetyStatus();
+      dynamic rawResponse;
+      dynamic response;
+      try {
+        rawResponse = await client.dio.get('/api/v2/core/auth/issafety');
+        response = await api.getSafetyStatus();
+      } catch (e) {
+        if (e.toString().contains('不支持')) {
+          debugPrint('⚠️  跳过: 当前面板版本不支持该端点');
+          return;
+        }
+        rethrow;
+      }
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -106,8 +126,18 @@ void main() {
         return;
       }
 
-      final rawResponse = await client.dio.get('/api/v2/core/auth/language');
-      final response = await api.getSystemLanguage();
+      dynamic rawResponse;
+      dynamic response;
+      try {
+        rawResponse = await client.dio.get('/api/v2/core/auth/language');
+        response = await api.getSystemLanguage();
+      } catch (e) {
+        if (e.toString().contains('不支持')) {
+          debugPrint('⚠️  跳过: 当前面板版本不支持该端点');
+          return;
+        }
+        rethrow;
+      }
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);
@@ -124,7 +154,16 @@ void main() {
         return;
       }
 
-      final response = await api.getLoginSettings();
+      dynamic response;
+      try {
+        response = await api.getLoginSettings();
+      } catch (e) {
+        if (e.toString().contains('不支持')) {
+          debugPrint('⚠️  跳过: 当前面板版本不支持该端点');
+          return;
+        }
+        rethrow;
+      }
 
       expect(response.statusCode, equals(200));
       expect(response.data, isNotNull);

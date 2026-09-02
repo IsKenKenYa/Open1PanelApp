@@ -13,6 +13,8 @@ void main() {
   late DioClient client;
   late SettingV2Api api;
   bool canRun = false;
+  // 服务器版本能力探测：MFA 在社区版不可用，相关用例软跳过。
+  bool mfaUnsupported = false;
 
   setUpAll(() async {
     await TestEnvironment.initialize();
@@ -25,6 +27,13 @@ void main() {
         apiKey: TestEnvironment.apiKey,
       );
       api = SettingV2Api(client);
+      try {
+        await client.get('/api/v2/core/settings/mfa/status');
+      } catch (e) {
+        if (e.toString().contains('不支持')) {
+          mfaUnsupported = true;
+        }
+      }
     }
   });
 
@@ -32,6 +41,10 @@ void main() {
     test('capture real mfa status and load responses', () async {
       if (!canRun) {
         debugPrint('⚠️  跳过测试: API密钥未配置');
+        return;
+      }
+      if (mfaUnsupported) {
+        debugPrint('⚠️  跳过测试: 当前面板版本不支持 MFA');
         return;
       }
 

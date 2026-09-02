@@ -41,6 +41,7 @@ import 'package:onepanel_client/features/files/widgets/dialogs/upload_dialog.dar
 import 'package:onepanel_client/features/files/widgets/dialogs/wget_dialog.dart';
 import 'package:onepanel_client/features/shell/controllers/current_server_controller.dart';
 import 'package:onepanel_client/features/shell/widgets/shell_drawer_scope.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_sheet.dart';
 import 'package:onepanel_client/features/shell/widgets/server_switcher_action.dart';
 
 export 'models/models.dart' show WgetDownloadState;

@@ -155,8 +155,9 @@ void main() {
               expect(parsed.lastUsedAt, equals(item['lastUsedAt']));
             }
           }
-        } on Exception catch (e) {
-          if (e.toString().contains('is not a subtype of type')) {
+        } catch (e) {
+          if (e.toString().contains('is not a subtype of type') ||
+              e.toString().contains('不支持')) {
             // 服务器对该端点可能返回 "Access Temporarily Unavailable" HTML 拦截页
             // （响应体为 String 导致 Map 泛型 cast 失败），属于服务器状态差异，软跳过
             appLogger.wWithPackage(
@@ -342,7 +343,17 @@ void main() {
           interval: 30,
         );
 
-        final response = await api.loadMfaInfo(request);
+        dynamic response;
+        try {
+          response = await api.loadMfaInfo(request);
+        } catch (e) {
+          if (e.toString().contains('不支持')) {
+            appLogger.wWithPackage(
+                _pkg, 'SKIP: 当前面板版本不支持 MFA');
+            return;
+          }
+          rethrow;
+        }
 
         expect(response.statusCode, equals(200));
         expect(response.data, isNotNull);

@@ -18,7 +18,10 @@ Future<T?> showAppFormSheet<T>(
   return showModalBottomSheet<T>(
     context: context,
     isScrollControlled: true,
-    constraints: BoxConstraints(maxHeight: maxHeightFactor),
+    // maxHeightFactor 为屏高比例（0-1]，换算为像素约束。
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height * maxHeightFactor,
+    ),
     builder: (sheetContext) {
       return Padding(
         padding:

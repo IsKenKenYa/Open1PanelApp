@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
-import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/shared/widgets/operations/module_error_state_widget.dart';
 import 'package:onepanel_client/shared/widgets/operations/partial_error_toast_listener.dart';
 import 'package:onepanel_client/features/containers/dialogs/repo_create_dialog.dart';

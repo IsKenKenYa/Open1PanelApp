@@ -3,6 +3,7 @@ import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_dialog.dart';
 
 void showDeleteConfirmDialog(
   BuildContext context,
@@ -11,38 +12,30 @@ void showDeleteConfirmDialog(
 ) {
   appLogger.dWithPackage('delete_confirm_dialog',
       'showDeleteConfirmDialog: 打开删除确认对话框, 选中${provider.data.selectionCount}个文件');
-  showDialog(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: Text(l10n.filesDeleteTitle),
-      content: Text(l10n.filesDeleteConfirm(provider.data.selectionCount)),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: Text(l10n.commonCancel),
-        ),
-        FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: Colors.red),
-          onPressed: () async {
-            appLogger.dWithPackage(
-                'delete_confirm_dialog', 'showDeleteConfirmDialog: 用户确认删除');
-            Navigator.pop(dialogContext);
-            try {
-              await provider.deleteSelected();
-              appLogger.iWithPackage(
-                  'delete_confirm_dialog', 'showDeleteConfirmDialog: 删除成功');
-            } catch (e, stackTrace) {
-              appLogger.eWithPackage(
-                  'delete_confirm_dialog', 'showDeleteConfirmDialog: 删除失败',
-                  error: e, stackTrace: stackTrace);
-              if (context.mounted) {
-                SnackBarUtils.showErrorWithDebugDetails(context, l10n.filesDeleteFailed, error: e, stackTrace: stackTrace);
-              }
-            }
-          },
-          child: Text(l10n.commonDelete),
-        ),
-      ],
-    ),
+  showAppFormDialog(
+    context,
+    title: l10n.filesDeleteTitle,
+    confirmLabel: l10n.commonDelete,
+    destructive: true,
+    content: Text(l10n.filesDeleteConfirm(provider.data.selectionCount)),
+    onConfirm: () async {
+      appLogger.dWithPackage(
+          'delete_confirm_dialog', 'showDeleteConfirmDialog: 用户确认删除');
+      try {
+        await provider.deleteSelected();
+        appLogger.iWithPackage(
+            'delete_confirm_dialog', 'showDeleteConfirmDialog: 删除成功');
+      } catch (e, stackTrace) {
+        appLogger.eWithPackage(
+            'delete_confirm_dialog', 'showDeleteConfirmDialog: 删除失败',
+            error: e, stackTrace: stackTrace);
+        if (context.mounted) {
+          SnackBarUtils.showErrorWithDebugDetails(
+              context, l10n.filesDeleteFailed,
+              error: e, stackTrace: stackTrace);
+        }
+        rethrow;
+      }
+    },
   );
 }

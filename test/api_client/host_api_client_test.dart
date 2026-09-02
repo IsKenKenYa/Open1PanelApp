@@ -85,7 +85,14 @@ Future<HostInfo?> _firstHost(HostV2Api api) async {
 /// Unavailable" HTML 拦截页，此时响应体为 String，导致 DioClient 的
 /// Map 泛型 cast 失败。属于服务器状态差异，统一软跳过。
 bool _isServerBlocked(Object error) {
-  return error.toString().contains('is not a subtype of type');
+  // HTML 拦截页 -> Dio 以 DioException.unknown 包装 TypeError（error 字段），
+  // toString() 不含子类型文本，需解开检查。
+  final inner = error is DioException ? (error.error ?? error) : error;
+  final text = '${error.toString()} ${inner.toString()}';
+  return text.contains('is not a subtype of type') ||
+      text.contains('Unexpected character') ||
+      text.contains('<!DOCTYPE') ||
+      text.contains('当前面板版本不支持该功能');
 }
 
 void main() {
@@ -111,7 +118,8 @@ void main() {
           '/core/hosts/search',
           data: const HostSearchRequest(page: 1, pageSize: 1).toJson(),
         );
-      } on Exception catch (e) {
+      } catch (e) {
+        // HTML 拦截页会让 Dio 包装出 TypeError（非 Exception），用裸 catch。
         if (_isServerBlocked(e)) {
           hostsBlocked = true;
         } else {

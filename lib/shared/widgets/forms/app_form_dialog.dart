@@ -17,6 +17,7 @@ class AppFormDialog extends StatelessWidget {
     this.isSaving = false,
     this.confirmLabel,
     this.confirmButtonKey,
+    this.destructive = false,
   });
 
   final String title;
@@ -25,6 +26,9 @@ class AppFormDialog extends StatelessWidget {
   final bool isSaving;
   final String? confirmLabel;
   final Key? confirmButtonKey;
+
+  /// 破坏性操作（删除等）：确认按钮使用 error 色（M3 语义）。
+  final bool destructive;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,10 @@ class AppFormDialog extends StatelessWidget {
         ),
         FilledButton(
           key: confirmButtonKey,
+          style: destructive
+              ? FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error)
+              : null,
           onPressed: isSaving ? null : () => onConfirm(),
           child: SizedBox(
             height: 24,
@@ -61,27 +69,42 @@ class AppFormDialog extends StatelessWidget {
 }
 
 /// [AppFormDialog] 的便捷 helper：确认后 pop(true)，取消 pop(false)。
+///
+/// [onConfirm] 执行期间自动进入防重态（确认/取消按钮禁用 + spinner），
+/// 完成后自动 pop(true)；抛异常时保持打开（由调用方 Snackbar 反馈）。
 Future<bool> showAppFormDialog(
   BuildContext context, {
   required String title,
   required Widget content,
   required Future<void> Function() onConfirm,
-  bool isSaving = false,
   String? confirmLabel,
   Key? confirmButtonKey,
+  bool destructive = false,
 }) async {
   final result = await showDialog<bool>(
     context: context,
-    builder: (dialogContext) => AppFormDialog(
-      title: title,
-      content: content,
-      onConfirm: () async {
-        await onConfirm();
-        if (dialogContext.mounted) Navigator.of(dialogContext).pop(true);
+    builder: (dialogContext) => StatefulBuilder(
+      builder: (dialogContext, setDialogState) {
+        var saving = false;
+        return AppFormDialog(
+          title: title,
+          content: content,
+          isSaving: saving,
+          confirmLabel: confirmLabel,
+          confirmButtonKey: confirmButtonKey,
+          onConfirm: () async {
+            setDialogState(() => saving = true);
+            try {
+              await onConfirm();
+              if (dialogContext.mounted) Navigator.of(dialogContext).pop(true);
+            } catch (_) {
+              // 保持对话框打开并复位防重态；错误反馈由调用方负责
+              // （Snackbar 等）。吞掉异常避免按钮闭包成为未捕获 zone 错误。
+              if (dialogContext.mounted) setDialogState(() => saving = false);
+            }
+          },
+        );
       },
-      isSaving: isSaving,
-      confirmLabel: confirmLabel,
-      confirmButtonKey: confirmButtonKey,
     ),
   );
   return result ?? false;

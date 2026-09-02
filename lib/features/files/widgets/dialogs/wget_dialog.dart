@@ -5,6 +5,7 @@ import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/files/files_provider.dart';
 import 'package:onepanel_client/features/files/models/models.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_dialog.dart';
 
 void showWgetDialog(BuildContext context, FilesProvider provider) {
   appLogger.dWithPackage('wget_dialog', 'showWgetDialog: 打开wget下载对话框');
@@ -13,130 +14,115 @@ void showWgetDialog(BuildContext context, FilesProvider provider) {
   final urlController = TextEditingController();
   final nameController = TextEditingController();
 
-  showDialog(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: Text(l10n.filesActionWgetDownload),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: urlController,
-              decoration: InputDecoration(
-                labelText: l10n.filesWgetUrl,
-                hintText: l10n.filesWgetUrlHint,
-                prefixIcon: const Icon(Icons.link),
+  showAppFormDialog(
+    context,
+    title: l10n.filesActionWgetDownload,
+    confirmLabel: l10n.filesWgetDownload,
+    content: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: urlController,
+            decoration: InputDecoration(
+              labelText: l10n.filesWgetUrl,
+              hintText: l10n.filesWgetUrlHint,
+              prefixIcon: const Icon(Icons.link),
+            ),
+            autofocus: true,
+            keyboardType: TextInputType.url,
+            onChanged: (value) {
+              if (nameController.text.isEmpty && value.isNotEmpty) {
+                try {
+                  final uri = Uri.parse(value);
+                  final pathSegments = uri.pathSegments;
+                  if (pathSegments.isNotEmpty) {
+                    nameController.text = pathSegments.last;
+                  }
+                } catch (_) {}
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '${l10n.filesTargetPath}: ${provider.data.currentPath}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: nameController,
+            decoration: InputDecoration(
+              labelText: l10n.filesWgetFilename,
+              hintText: l10n.filesWgetFilenameHint,
+              prefixIcon: const Icon(Icons.insert_drive_file_outlined),
+            ),
+          ),
+        ],
+      ),
+    ),
+    onConfirm: () async {
+      final url = urlController.text.trim();
+      final name = nameController.text.trim();
+      if (url.isEmpty || name.isEmpty) {
+        // helper 无独立校验通道：空输入视为未就绪，保持打开。
+        throw const WgetSilentValidation();
+      }
+      appLogger.dWithPackage('wget_dialog', 'showWgetDialog: url=$url, name=$name');
+
+      try {
+        await provider.wgetDownload(url: url, name: name);
+
+        if (context.mounted) {
+          final status = provider.data.wgetStatus;
+          if (status != null && status.state == WgetDownloadState.success) {
+            SnackBarUtils.showSuccess(
+              context,
+              status.message ?? l10n.filesWgetSuccess(status.filePath ?? ''),
+              action: SnackBarAction(
+                label: l10n.commonConfirm,
+                onPressed: () {},
               ),
-              autofocus: true,
-              keyboardType: TextInputType.url,
-              onChanged: (value) {
-                if (nameController.text.isEmpty && value.isNotEmpty) {
-                  try {
-                    final uri = Uri.parse(value);
-                    final pathSegments = uri.pathSegments;
-                    if (pathSegments.isNotEmpty) {
-                      nameController.text = pathSegments.last;
-                    }
-                  } catch (_) {}
-                }
+            );
+          } else if (status != null && status.state == WgetDownloadState.error) {
+            SnackBarUtils.showError(
+              context,
+              status.message ?? l10n.filesWgetFailed,
+              action: SnackBarAction(
+                label: l10n.commonConfirm,
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: status.message ?? ''));
+                  SnackBarUtils.showInfo(context, l10n.commonCopied);
+                },
+              ),
+            );
+          }
+        }
+        appLogger.iWithPackage('wget_dialog', 'showWgetDialog: wget下载完成');
+      } catch (e, stackTrace) {
+        appLogger.eWithPackage('wget_dialog', 'showWgetDialog: wget下载失败',
+            error: e, stackTrace: stackTrace);
+        if (context.mounted) {
+          SnackBarUtils.showError(
+            context,
+            e.toString(),
+            action: SnackBarAction(
+              label: l10n.commonConfirm,
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: e.toString()));
+                SnackBarUtils.showInfo(context, l10n.commonCopied);
               },
             ),
-            const SizedBox(height: 16),
-            Text(
-              '${l10n.filesTargetPath}: ${provider.data.currentPath}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: l10n.filesWgetFilename,
-                hintText: l10n.filesWgetFilenameHint,
-                prefixIcon: const Icon(Icons.insert_drive_file_outlined),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: Text(l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () async {
-            if (urlController.text.isEmpty || nameController.text.isEmpty) {
-              return;
-            }
-
-            final url = urlController.text.trim();
-            final name = nameController.text.trim();
-
-            appLogger.dWithPackage(
-                'wget_dialog', 'showWgetDialog: url=$url, name=$name');
-            Navigator.pop(dialogContext);
-
-            try {
-              await provider.wgetDownload(
-                url: url,
-                name: name,
-              );
-
-              if (context.mounted) {
-                final status = provider.data.wgetStatus;
-                if (status != null &&
-                    status.state == WgetDownloadState.success) {
-                  SnackBarUtils.showSuccess(
-                    context,
-                    status.message ??
-                        l10n.filesWgetSuccess(status.filePath ?? ''),
-                    action: SnackBarAction(
-                      label: l10n.commonConfirm,
-                      onPressed: () {},
-                    ),
-                  );
-                } else if (status != null &&
-                    status.state == WgetDownloadState.error) {
-                  SnackBarUtils.showError(
-                    context,
-                    status.message ?? l10n.filesWgetFailed,
-                    action: SnackBarAction(
-                      label: l10n.commonConfirm,
-                      onPressed: () {
-                        Clipboard.setData(
-                            ClipboardData(text: status.message ?? ''));
-                        SnackBarUtils.showInfo(context, l10n.commonCopied);
-                      },
-                    ),
-                  );
-                }
-              }
-              appLogger.iWithPackage('wget_dialog', 'showWgetDialog: wget下载完成');
-            } catch (e, stackTrace) {
-              appLogger.eWithPackage('wget_dialog', 'showWgetDialog: wget下载失败',
-                  error: e, stackTrace: stackTrace);
-              if (context.mounted) {
-                SnackBarUtils.showError(
-                  context,
-                  e.toString(),
-                  action: SnackBarAction(
-                    label: l10n.commonConfirm,
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: e.toString()));
-                      SnackBarUtils.showInfo(context, l10n.commonCopied);
-                    },
-                  ),
-                );
-              }
-            }
-          },
-          child: Text(l10n.filesWgetDownload),
-        ),
-      ],
-    ),
+          );
+        }
+        rethrow;
+      }
+    },
   );
+}
+
+class WgetSilentValidation implements Exception {
+  const WgetSilentValidation();
 }

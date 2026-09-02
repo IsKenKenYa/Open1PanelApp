@@ -145,6 +145,90 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppDesignTokens.radiusSm),
         ),
       ),
+      // ── M3 Expressive 强化批：形状/层级/动效统一 ──
+      // FAB：M3E 使用 rounded-square 大圆角（20dp），与 pill 按钮区分层级。
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDesignTokens.radiusLg),
+        ),
+        elevation: isDesktop ? 0 : 3,
+      ),
+      // SnackBar：浮动圆角 16 + inverse 表面（M3E 表达式反馈）。
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: scheme.inverseSurface,
+        contentTextStyle: TextStyle(color: scheme.onInverseSurface),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
+        ),
+      ),
+      // TabBar：胶囊形主色指示器（M3E rounded indicator）。
+      tabBarTheme: TabBarThemeData(
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: scheme.outlineVariant.withValues(alpha: 0.5),
+        labelColor: scheme.primary,
+        unselectedLabelColor: scheme.onSurfaceVariant,
+      ),
+      // 菜单/弹出层统一 16dp 圆角。
+      popupMenuTheme: PopupMenuThemeData(
+        color: scheme.surfaceContainerLow,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
+        ),
+      ),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(
+              scheme.surfaceContainerLow),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
+            ),
+          ),
+        ),
+      ),
+      // 列表项统一圆角按压反馈（M3E state layer 形状）。
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
+        ),
+      ),
+      // 进度指示统一圆头与主色。
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: scheme.primary,
+        linearTrackColor: scheme.surfaceContainerHighest,
+        circularTrackColor: scheme.surfaceContainerHighest,
+      ),
+      // 分段按钮：M3E selected 层级增强。
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDesignTokens.radiusSm),
+            ),
+          ),
+          side: WidgetStateProperty.resolveWith((states) => BorderSide(
+                color: states.contains(WidgetState.selected)
+                    ? scheme.primary
+                    : scheme.outlineVariant,
+              )),
+        ),
+      ),
+      // 下拉菜单（DropdownButtonFormField 用）统一圆角。
+      dropdownMenuTheme: DropdownMenuThemeData(
+        menuStyle: MenuStyle(
+          backgroundColor:
+              WidgetStatePropertyAll(scheme.surfaceContainerLow),
+          surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDesignTokens.radiusMd),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

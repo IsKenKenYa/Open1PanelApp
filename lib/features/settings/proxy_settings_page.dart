@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:onepanel_client/core/theme/app_design_tokens.dart';
+import 'package:onepanel_client/shared/widgets/forms/app_form_scaffold.dart';
+import 'package:onepanel_client/shared/widgets/section_card.dart';
 import 'package:onepanel_client/core/i18n/l10n_x.dart';
 import 'package:onepanel_client/core/utils/snackbar_utils.dart';
 import 'package:onepanel_client/features/settings/settings_provider.dart';
@@ -19,6 +21,7 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _enabled = false;
+  bool _saving = false;
   String _proxyType = 'http';
 
   @override
@@ -58,15 +61,16 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(title: Text(l10n.proxySettingsTitle)),
+    return AppFormScaffold(
+      title: l10n.proxySettingsTitle,
+      isSaving: _saving,
+      onSave: _saveSettings,
       body: Form(
         key: _formKey,
         child: ListView(
           padding: AppDesignTokens.pagePadding,
           children: [
-            Card(
+            SectionCard(
               child: SwitchListTile(
                 secondary: const Icon(Icons.vpn_lock_outlined),
                 title: Text(l10n.proxySettingsEnable),
@@ -79,7 +83,8 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
               ),
             ),
             const SizedBox(height: AppDesignTokens.spacingMd),
-            Card(
+            SectionCard(
+              title: l10n.proxySettingsTitle,
               child: Column(
                 children: [
                   ListTile(
@@ -169,12 +174,6 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
                 ],
               ),
             ),
-            const SizedBox(height: AppDesignTokens.spacingMd),
-            FilledButton.icon(
-              onPressed: _enabled ? _saveSettings : null,
-              icon: const Icon(Icons.save_outlined),
-              label: Text(l10n.commonSave),
-            ),
           ],
         ),
       ),
@@ -183,6 +182,8 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
 
   Future<void> _saveSettings() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_saving) return;
+    setState(() => _saving = true);
 
     final provider = context.read<SettingsProvider>();
     final l10n = context.l10n;
@@ -193,6 +194,7 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
     );
 
     if (mounted) {
+      setState(() => _saving = false);
       if (success) {
         SnackBarUtils.showSuccess(context, l10n.proxySettingsSaved);
       } else {

@@ -3,46 +3,46 @@ part of 'package:onepanel_client/features/files/files_page.dart';
 extension _FilesViewSheets on _FilesViewState {
   void _showCreateOptions(BuildContext context) {
     final provider = context.read<FilesProvider>();
-    showModalBottomSheet(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.create_new_folder_outlined),
-              title: Text(context.l10n.filesActionNewFolder),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                showCreateDirectoryDialog(context, provider);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.note_add_outlined),
-              title: Text(context.l10n.filesActionNewFile),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                showCreateFileDialog(context, provider);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.upload_file_outlined),
-              title: Text(context.l10n.filesActionUpload),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                showUploadDialog(context, provider);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.cloud_download_outlined),
-              title: Text(context.l10n.filesActionWgetDownload),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                showWgetDialog(context, provider);
-              },
-            ),
-          ],
-        ),
+    showAppFormSheet<void>(
+      context,
+      title: context.l10n.filesActionNew,
+      showCloseButton: true,
+      builder: (sheetContext) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.create_new_folder_outlined),
+            title: Text(context.l10n.filesActionNewFolder),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              showCreateDirectoryDialog(context, provider);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.note_add_outlined),
+            title: Text(context.l10n.filesActionNewFile),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              showCreateFileDialog(context, provider);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.upload_file_outlined),
+            title: Text(context.l10n.filesActionUpload),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              showUploadDialog(context, provider);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.cloud_download_outlined),
+            title: Text(context.l10n.filesActionWgetDownload),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              showWgetDialog(context, provider);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -50,13 +50,14 @@ extension _FilesViewSheets on _FilesViewState {
   void _showMoreOptions(BuildContext context) {
     final provider = context.read<FilesProvider>();
     final transferManager = context.read<TransferManager>();
-    showModalBottomSheet(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
+    showAppFormSheet<void>(
+      context,
+      title: context.l10n.commonMore,
+      showCloseButton: true,
+      builder: (sheetContext) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
               leading: Stack(
                 children: [
                   const Icon(Icons.swap_vert),
@@ -150,7 +151,6 @@ extension _FilesViewSheets on _FilesViewState {
               },
             ),
           ],
-        ),
       ),
     );
   }
