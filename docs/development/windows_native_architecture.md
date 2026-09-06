@@ -100,6 +100,7 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
 | toggleContainerState / deleteContainer | C# -> Dart | 写 | 容器启停 / 删除 |
 | toggleWebsiteStatus / deleteWebsite | C# -> Dart | 写 | 网站启停 / 删除 |
+| createWebsite | C# -> Dart | 写 | 新建网站（参数 `primaryDomain` / `alias?` / `port?` 默认 80 / `type?` 默认 deployment / `remark?`，返回 `{success: bool}`；deployment 缺省路径，preCheck+create 与 Flutter 向导同序） |
 | createFolder / deleteFile | C# -> Dart | 写 | 文件系统新建目录 / 删除 |
 | addFirewallRule / deleteFirewallRule | C# -> Dart | 写 | 防火墙规则新增 / 删除 |
 | deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
