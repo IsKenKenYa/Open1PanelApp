@@ -36,6 +36,9 @@ public static class WindowsBridge
         "getSshInfo",
         "getSshConfig",
         "getDeviceSnapshot",
+        "getOperationLogs",
+        "getLoginLogs",
+        "getOpenrestySnapshot",
     };
 
     public static void Initialize(IntPtr messengerHandle)
@@ -391,6 +394,41 @@ public static class WindowsBridge
     {
         var result = await InvokeAsync("recreateAIModel",
             new Dictionary<string, object?> { ["name"] = name });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetOperationLogsAsync()
+    {
+        return await InvokeWithRetryAsync("getOperationLogs");
+    }
+
+    public static async Task<JsonElement?> GetLoginLogsAsync()
+    {
+        return await InvokeWithRetryAsync("getLoginLogs");
+    }
+
+    /// <summary>系统日志文件内容（fileName 必填）。</summary>
+    public static async Task<JsonElement?> GetSystemLogContentAsync(
+        string fileName, bool useCoreLogs)
+    {
+        var result = await InvokeAsync("getSystemLogContent", new Dictionary<string, object?>
+        {
+            ["fileName"] = fileName,
+            ["useCoreLogs"] = useCoreLogs,
+        });
+        return result;
+    }
+
+    public static async Task<JsonElement?> GetOpenrestySnapshotAsync()
+    {
+        return await InvokeWithRetryAsync("getOpenrestySnapshot");
+    }
+
+    /// <summary>保存 OpenResty 配置源文本。</summary>
+    public static async Task<bool> UpdateOpenrestyConfigAsync(string content)
+    {
+        var result = await InvokeAsync("updateOpenrestyConfig",
+            new Dictionary<string, object?> { ["content"] = content });
         return IsSuccess(result);
     }
 

@@ -66,6 +66,14 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelReadHandlers.getUIRenderMode();
 
       // ── Read: 新增 ─────────────────────────────────────────────────────
+      case 'getOperationLogs':
+        return NativeChannelReadHandlers.getOperationLogs(arguments);
+      case 'getLoginLogs':
+        return NativeChannelReadHandlers.getLoginLogs(arguments);
+      case 'getSystemLogContent':
+        return NativeChannelReadHandlers.getSystemLogContent(arguments);
+      case 'getOpenrestySnapshot':
+        return NativeChannelReadHandlers.getOpenrestySnapshot(arguments);
       case 'getSshInfo':
         return NativeChannelReadHandlers.getSshInfo(arguments);
       case 'getSshConfig':
@@ -126,6 +134,8 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.createFolder(arguments);
 
       // ── Write: 主机/工具箱 ──────────────────────────────────────────────
+      case 'updateOpenrestyConfig':
+        return NativeChannelWriteHandlers.updateOpenrestyConfig(arguments);
       case 'operateSsh':
         return NativeChannelWriteHandlers.operateSsh(arguments);
       case 'saveSshConfig':

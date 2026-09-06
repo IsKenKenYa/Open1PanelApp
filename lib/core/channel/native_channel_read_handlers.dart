@@ -13,6 +13,9 @@ import '../../features/dashboard/services/dashboard_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../features/files/services/file_browser_service.dart';
 import '../../features/firewall/firewall_service.dart';
+import '../../features/logs/services/logs_service.dart';
+import '../../data/models/logs_models.dart';
+import '../../features/openresty/services/openresty_service.dart';
 import '../../features/ssh/services/ssh_service.dart';
 import '../../features/toolbox/services/toolbox_device_service.dart';
 import '../../features/monitoring/monitoring_service.dart';
@@ -287,6 +290,98 @@ class NativeChannelReadHandlers {
         appLogger.i('getDeviceSnapshot skipped: No active server configured.');
       } else {
         appLogger.e('Failed to get device snapshot for native: $e');
+      }
+      return <String, dynamic>{};
+    }
+  }
+
+
+  // ── 日志（B16，只读）────────────────────────────────────────────────────
+
+  /// 操作日志分页列表。参数：`{page?: int, pageSize?: int}`
+  static Future<dynamic> getOperationLogs(dynamic arguments) async {
+    try {
+      final service = LogsService();
+      final page = await service.searchOperationLogs(OperationLogSearchRequest(
+        page: int.tryParse('${arguments?['page'] ?? 1}') ?? 1,
+        pageSize: int.tryParse('${arguments?['pageSize'] ?? 20}') ?? 20,
+      ));
+      return page.items
+          .map((e) => {
+                'id': e.id ?? 0,
+                'source': e.source ?? '',
+                'ip': e.ip ?? '',
+                'path': e.path ?? '',
+                'method': e.method ?? '',
+                'status': e.status ?? '',
+                'message': e.message ?? '',
+              })
+          .toList();
+    } catch (e) {
+      appLogger.e('Failed to get operation logs for native: $e');
+      return [];
+    }
+  }
+
+  /// 登录日志分页列表。参数：`{page?: int, pageSize?: int}`
+  static Future<dynamic> getLoginLogs(dynamic arguments) async {
+    try {
+      final service = LogsService();
+      final page = await service.searchLoginLogs(LoginLogSearchRequest(
+        page: int.tryParse('${arguments?['page'] ?? 1}') ?? 1,
+        pageSize: int.tryParse('${arguments?['pageSize'] ?? 20}') ?? 20,
+      ));
+      return page.items
+          .map((e) => {
+                'id': e.id ?? 0,
+                'ip': e.ip ?? '',
+                'address': e.address ?? '',
+                'status': e.status ?? '',
+                'message': e.message ?? '',
+                'createdAt': e.createdAt ?? '',
+              })
+          .toList();
+    } catch (e) {
+      appLogger.e('Failed to get login logs for native: $e');
+      return [];
+    }
+  }
+
+  /// 系统日志文件内容。参数：`{fileName: String 必填, useCoreLogs?: bool}`
+  static Future<dynamic> getSystemLogContent(dynamic arguments) async {
+    try {
+      final fileName = (arguments?['fileName'] as String? ?? '').trim();
+      if (fileName.isEmpty) {
+        return '';
+      }
+      final response = await LogsService().loadSystemLogContent(
+        fileName: fileName,
+        useCoreLogs: arguments?['useCoreLogs'] == true,
+      );
+      return {'lines': response.lines, 'totalLines': response.totalLines};
+    } catch (e) {
+      appLogger.e('Failed to get system log content for native: $e');
+      return {'lines': <String>[], 'totalLines': 0};
+    }
+  }
+
+  // ── OpenResty（B16）─────────────────────────────────────────────────────
+
+  /// OpenResty 快照（状态/模块/HTTPS/配置源文本）。
+  static Future<dynamic> getOpenrestySnapshot(dynamic arguments) async {
+    try {
+      final snapshot = await OpenRestyService().loadSnapshot();
+      return {
+        'status': snapshot.status,
+        'modules': snapshot.modules,
+        'https': snapshot.https,
+        'configContent': snapshot.configContent,
+      };
+    } catch (e) {
+      if (e.toString().contains('No API config available')) {
+        appLogger.i('getOpenrestySnapshot skipped: No active server configured.');
+      } else {
+        appLogger.e('Failed to get openresty snapshot for native: $e');
       }
       return <String, dynamic>{};
     }

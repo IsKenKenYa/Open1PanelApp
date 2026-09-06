@@ -4,6 +4,7 @@ import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../features/ssh/services/ssh_service.dart';
+import '../../features/openresty/services/openresty_service.dart';
 import '../../features/toolbox/services/toolbox_device_service.dart';
 import '../../data/models/cronjob_list_models.dart';
 import '../../data/repositories/cronjob_repository.dart';
@@ -449,6 +450,24 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('verifyToolboxDns failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── OpenResty（B16）─────────────────────────────────────────────────────
+
+  /// 保存 OpenResty 配置源文本。参数：`{content: String 非空}`
+  static Future<Map<String, dynamic>> updateOpenrestyConfig(
+      dynamic arguments) async {
+    try {
+      final content = arguments['content'] as String? ?? '';
+      if (content.trim().isEmpty) {
+        return {'success': false, 'error': 'content is required'};
+      }
+      await OpenRestyService().updateConfigSource(content);
+      return _ok();
+    } catch (e) {
+      appLogger.e('updateOpenrestyConfig failed: $e');
       return _err(e);
     }
   }
