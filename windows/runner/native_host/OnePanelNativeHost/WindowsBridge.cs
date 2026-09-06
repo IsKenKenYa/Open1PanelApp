@@ -13,7 +13,8 @@ namespace OnePanelNativeHost;
 
 public static class WindowsBridge
 {
-    private const string ChannelName = "com.openpanel.windows/shell_bridge";
+    // 与 Dart 侧 NativeChannelManager 同一通道（iOS/macOS 原生轨道共用）。
+    private const string ChannelName = "com.onepanel.client/method";
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
     private const int MaxRetries = 2;
 
@@ -23,9 +24,15 @@ public static class WindowsBridge
     private static readonly HashSet<string> RetryableMethods = new()
     {
         "getServers",
-        "getCurrentServer",
         "getFiles",
-        "getSettingsSummary",
+        "getSettings",
+        "getContainers",
+        "getApps",
+        "getWebsites",
+        "getFirewallRules",
+        "getAIModels",
+        "getDashboard",
+        "getMonitoring",
     };
 
     public static void Initialize(IntPtr messengerHandle)
@@ -74,23 +81,12 @@ public static class WindowsBridge
         return await InvokeWithRetryAsync("getServers");
     }
 
-    public static async Task<JsonElement?> GetCurrentServerAsync()
-    {
-        return await InvokeWithRetryAsync("getCurrentServer");
-    }
-
+    /// <summary>切换当前服务器（Dart 侧方法名 connectServer）。</summary>
     public static async Task<bool> SwitchServerAsync(string serverId)
     {
-        var result = await InvokeAsync("switchServer", new Dictionary<string, object?> { ["id"] = serverId });
-        if (result == null) return false;
-        try
-        {
-            return bool.TryParse(result, out var ok) && ok;
-        }
-        catch
-        {
-            return false;
-        }
+        var result = await InvokeWithRetryAsync(
+            "connectServer", new Dictionary<string, object?> { ["id"] = serverId });
+        return IsSuccess(result);
     }
 
     public static async Task<JsonElement?> GetFilesAsync(string path)
@@ -98,18 +94,179 @@ public static class WindowsBridge
         return await InvokeWithRetryAsync("getFiles", new Dictionary<string, object?> { ["path"] = path });
     }
 
-    public static async Task<JsonElement?> GetSettingsSummaryAsync()
+    public static async Task<JsonElement?> GetSettingsAsync()
     {
-        return await InvokeWithRetryAsync("getSettingsSummary");
+        return await InvokeWithRetryAsync("getSettings");
     }
 
+    /// <summary>写客户端偏好（renderMode/language 等，Dart 侧 updateSetting）。</summary>
     public static async Task<bool> UpdateSettingAsync(string key, object? value)
     {
-        var result = await InvokeAsync("updateSetting", new Dictionary<string, object?> { ["key"] = key, ["value"] = value });
-        if (result == null) return false;
+        var result = await InvokeAsync(
+            "updateSetting", new Dictionary<string, object?> { ["key"] = key, ["value"] = value });
+        return IsSuccess(result);
+    }
+
+    // ── 模块数据方法集（C# Presentation 层专用，全部经 Dart 业务核心） ──────
+
+    public static async Task<JsonElement?> GetDashboardAsync()
+    {
+        return await InvokeWithRetryAsync("getDashboard");
+    }
+
+    public static async Task<JsonElement?> GetMonitoringAsync()
+    {
+        return await InvokeWithRetryAsync("getMonitoring");
+    }
+
+    public static async Task<JsonElement?> GetContainersAsync()
+    {
+        return await InvokeWithRetryAsync("getContainers");
+    }
+
+    public static async Task<bool> ToggleContainerStateAsync(string id, string state)
+    {
+        var result = await InvokeAsync("toggleContainerState",
+            new Dictionary<string, object?> { ["id"] = id, ["state"] = state });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> RestartContainerAsync(string id)
+    {
+        var result = await InvokeAsync("restartContainer",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> DeleteContainerAsync(string id)
+    {
+        var result = await InvokeAsync("deleteContainer",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetAppsAsync()
+    {
+        return await InvokeWithRetryAsync("getApps");
+    }
+
+    public static async Task<bool> StartAppAsync(string appId)
+    {
+        var result = await InvokeAsync("startApp",
+            new Dictionary<string, object?> { ["appId"] = appId });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> StopAppAsync(string appId)
+    {
+        var result = await InvokeAsync("stopApp",
+            new Dictionary<string, object?> { ["appId"] = appId });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> UninstallAppAsync(string appId)
+    {
+        var result = await InvokeAsync("uninstallApp",
+            new Dictionary<string, object?> { ["appId"] = appId });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetWebsitesAsync()
+    {
+        return await InvokeWithRetryAsync("getWebsites");
+    }
+
+    public static async Task<bool> ToggleWebsiteStatusAsync(long id, string currentStatus)
+    {
+        var result = await InvokeAsync("toggleWebsiteStatus",
+            new Dictionary<string, object?> { ["id"] = id, ["currentStatus"] = currentStatus });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> DeleteWebsiteAsync(long id)
+    {
+        var result = await InvokeAsync("deleteWebsite",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetFirewallRulesAsync()
+    {
+        return await InvokeWithRetryAsync("getFirewallRules");
+    }
+
+    public static async Task<bool> AddFirewallRuleAsync(
+        string port, string protocol, string address, string strategy)
+    {
+        var result = await InvokeAsync("addFirewallRule", new Dictionary<string, object?>
+        {
+            ["port"] = port,
+            ["protocol"] = protocol,
+            ["address"] = address,
+            ["strategy"] = strategy,
+        });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> DeleteFirewallRuleAsync(
+        string port, string protocol, string address, string strategy)
+    {
+        var result = await InvokeAsync("deleteFirewallRule", new Dictionary<string, object?>
+        {
+            ["port"] = port,
+            ["protocol"] = protocol,
+            ["address"] = address,
+            ["strategy"] = strategy,
+        });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetAIModelsAsync()
+    {
+        return await InvokeWithRetryAsync("getAIModels");
+    }
+
+    public static async Task<bool> DeleteAIModelAsync(long id)
+    {
+        var result = await InvokeAsync("deleteAIModel",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> AddServerAsync(string name, string url, string apiKey)
+    {
+        var result = await InvokeAsync("addServer", new Dictionary<string, object?>
+        {
+            ["name"] = name,
+            ["url"] = url,
+            ["apiKey"] = apiKey,
+        });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> DeleteServerAsync(string id)
+    {
+        var result = await InvokeAsync("deleteServer",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    private static bool IsSuccess(JsonElement? result)
+    {
+        return result?.ValueKind == JsonValueKind.Object &&
+               result.Value.TryGetProperty("success", out var ok) &&
+               ok.ValueKind == JsonValueKind.True;
+    }
+
+    private static bool IsSuccess(string? json)
+    {
+        if (json == null) return false;
         try
         {
-            return bool.TryParse(result, out var ok) && ok;
+            using var doc = JsonDocument.Parse(json);
+            return doc.RootElement.ValueKind == JsonValueKind.Object &&
+                   doc.RootElement.TryGetProperty("success", out var ok) &&
+                   ok.ValueKind == JsonValueKind.True;
         }
         catch
         {
@@ -148,7 +305,7 @@ public static class WindowsBridge
         return null;
     }
 
-    private static object? PrepareArgs(object? args)
+    internal static object? PrepareArgs(object? args)
     {
         if (args == null) return null;
         if (args is IDictionary dict) return ConvertDictionary(dict);
@@ -175,7 +332,8 @@ public static class WindowsBridge
             JsonValueKind.Null => null,
             JsonValueKind.True => true,
             JsonValueKind.False => false,
-            JsonValueKind.Number => element.TryGetInt64(out var l) ? l : element.GetDouble(),
+            // (object?) 防止三元分支把 long 统一成 double
+            JsonValueKind.Number => element.TryGetInt64(out var l) ? (object?)l : element.GetDouble(),
             JsonValueKind.String => element.GetString(),
             JsonValueKind.Array => element.EnumerateArray().Select(ConvertJsonElement).ToList(),
             JsonValueKind.Object => element.EnumerateObject()
@@ -286,7 +444,7 @@ public static class WindowsBridge
         FlutterDesktopBinaryReply callback,
         IntPtr userData);
 
-    private static class Codec
+    internal static class Codec
     {
         private const byte TypeNull = 0;
         private const byte TypeTrue = 1;
@@ -297,11 +455,11 @@ public static class WindowsBridge
         private const byte TypeString = 7;
         private const byte TypeUInt8List = 8;
         private const byte TypeInt32List = 9;
-        private const byte TypeFloat64List = 10;
-        private const byte TypeList = 11;
-        private const byte TypeMap = 12;
+        private const byte TypeInt64List = 10;
+        private const byte TypeFloat64List = 11;
+        private const byte TypeList = 12;
+        private const byte TypeMap = 13;
 
-        private const byte EnvelopeCall = 0;
         private const byte EnvelopeSuccess = 0;
         private const byte EnvelopeError = 1;
         private const byte EnvelopeNotImplemented = 2;
@@ -310,7 +468,6 @@ public static class WindowsBridge
         {
             using var stream = new MemoryStream();
             using var writer = new BinaryWriter(stream);
-            writer.Write(EnvelopeCall);
             WriteValue(writer, method);
             WriteValue(writer, args);
             return stream.ToArray();
@@ -351,30 +508,56 @@ public static class WindowsBridge
                     break;
                 case int i:
                     writer.Write(TypeInt32);
-                    writer.Write(BigEndian(i));
+                    writer.Write(i);
                     break;
                 case long l:
                     writer.Write(TypeInt64);
-                    writer.Write(BigEndian(l));
+                    writer.Write(l);
                     break;
                 case double d:
                     writer.Write(TypeFloat64);
-                    writer.Write(BigEndian(d));
+                    WriteAlignment(writer, 8);
+                    writer.Write(d);
                     break;
                 case string s:
                     writer.Write(TypeString);
                     var bytes = Encoding.UTF8.GetBytes(s);
-                    writer.Write(BigEndian(bytes.Length));
+                    WriteSize(writer, bytes.Length);
                     writer.Write(bytes);
                     break;
                 case byte[] arr:
                     writer.Write(TypeUInt8List);
-                    writer.Write(BigEndian(arr.Length));
+                    WriteSize(writer, arr.Length);
                     writer.Write(arr);
+                    break;
+                case int[] intArray:
+                    writer.Write(TypeInt32List);
+                    WriteSize(writer, intArray.Length);
+                    foreach (var item in intArray)
+                    {
+                        writer.Write(item);
+                    }
+                    break;
+                case long[] longArray:
+                    writer.Write(TypeInt64List);
+                    WriteSize(writer, longArray.Length);
+                    foreach (var item in longArray)
+                    {
+                        writer.Write(item);
+                    }
+                    break;
+                case double[] doubleArray:
+                    writer.Write(TypeFloat64List);
+                    WriteSize(writer, doubleArray.Length);
+                    WriteAlignment(writer, 8);
+                    foreach (var item in doubleArray)
+                    {
+                        writer.Write(item);
+                    }
                     break;
                 case IDictionary<string, object?> dict:
                     writer.Write(TypeMap);
-                    writer.Write(BigEndian(dict.Count));
+                    WriteSize(writer, dict.Count);
                     foreach (var kvp in dict)
                     {
                         WriteValue(writer, kvp.Key);
@@ -383,7 +566,7 @@ public static class WindowsBridge
                     break;
                 case IDictionary dict:
                     writer.Write(TypeMap);
-                    writer.Write(BigEndian(dict.Count));
+                    WriteSize(writer, dict.Count);
                     foreach (DictionaryEntry entry in dict)
                     {
                         WriteValue(writer, entry.Key?.ToString());
@@ -392,7 +575,7 @@ public static class WindowsBridge
                     break;
                 case IList list:
                     writer.Write(TypeList);
-                    writer.Write(BigEndian(list.Count));
+                    WriteSize(writer, list.Count);
                     foreach (var item in list)
                     {
                         WriteValue(writer, item);
@@ -406,11 +589,6 @@ public static class WindowsBridge
 
         private static object? ReadValue(BinaryReader reader)
         {
-            if (reader.BaseStream.Position >= reader.BaseStream.Length)
-            {
-                return null;
-            }
-
             var type = reader.ReadByte();
             switch (type)
             {
@@ -421,37 +599,45 @@ public static class WindowsBridge
                 case TypeFalse:
                     return false;
                 case TypeInt32:
-                    return ReadInt32BigEndian(reader);
+                    return reader.ReadInt32();
                 case TypeInt64:
-                    return ReadInt64BigEndian(reader);
+                    return reader.ReadInt64();
                 case TypeFloat64:
-                    return ReadFloat64BigEndian(reader);
+                    ReadAlignment(reader, 8);
+                    return reader.ReadDouble();
                 case TypeString:
-                    var strLen = ReadInt32BigEndian(reader);
+                    var strLen = ReadSize(reader);
                     return Encoding.UTF8.GetString(reader.ReadBytes(strLen));
                 case TypeUInt8List:
-                    var byteLen = ReadInt32BigEndian(reader);
+                    var byteLen = ReadSize(reader);
                     return reader.ReadBytes(byteLen);
                 case TypeInt32List:
-                    var intLen = ReadInt32BigEndian(reader);
+                    var intLen = ReadSize(reader);
                     var ints = new int[intLen];
                     for (int i = 0; i < intLen; i++)
-                        ints[i] = ReadInt32BigEndian(reader);
+                        ints[i] = reader.ReadInt32();
                     return ints;
+                case TypeInt64List:
+                    var longLen = ReadSize(reader);
+                    var longs = new long[longLen];
+                    for (int i = 0; i < longLen; i++)
+                        longs[i] = reader.ReadInt64();
+                    return longs;
                 case TypeFloat64List:
-                    var doubleLen = ReadInt32BigEndian(reader);
+                    var doubleLen = ReadSize(reader);
+                    ReadAlignment(reader, 8);
                     var doubles = new double[doubleLen];
                     for (int i = 0; i < doubleLen; i++)
-                        doubles[i] = ReadFloat64BigEndian(reader);
+                        doubles[i] = reader.ReadDouble();
                     return doubles;
                 case TypeList:
-                    var listLen = ReadInt32BigEndian(reader);
+                    var listLen = ReadSize(reader);
                     var list = new List<object?>(listLen);
                     for (int i = 0; i < listLen; i++)
                         list.Add(ReadValue(reader));
                     return list;
                 case TypeMap:
-                    var mapLen = ReadInt32BigEndian(reader);
+                    var mapLen = ReadSize(reader);
                     var map = new Dictionary<string, object?>(mapLen);
                     for (int i = 0; i < mapLen; i++)
                     {
@@ -474,52 +660,61 @@ public static class WindowsBridge
                     kvp => kvp.Key,
                     kvp => ToJsonSerializable(kvp.Value)),
                 IDictionary dict => dict.Keys.Cast<object?>()
-                    .ToDictionary(k => k?.ToString() ?? "", k => ToJsonSerializable(dict[k])),
+                    .ToDictionary(k => k?.ToString() ?? "", k => ToJsonSerializable(dict[k!])),
                 IList list => list.Cast<object?>().Select(ToJsonSerializable).ToList(),
                 _ => value,
             };
         }
 
-        private static byte[] BigEndian(int value)
+        // 对齐 Dart StandardMessageCodec 的字节布局：size 为变长编码
+        // （<254 单字节；0xFE+uint16；0xFF+uint32），int32/int64/float64 为小端，
+        // float64 按 8 字节对齐流位置。
+        private static void WriteSize(BinaryWriter writer, int size)
         {
-            var bytes = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-            return bytes;
+            if (size < 254)
+            {
+                writer.Write((byte)size);
+            }
+            else if (size <= 0xFFFF)
+            {
+                writer.Write((byte)254);
+                writer.Write((ushort)size);
+            }
+            else
+            {
+                writer.Write((byte)255);
+                writer.Write((uint)size);
+            }
         }
 
-        private static byte[] BigEndian(long value)
+        private static int ReadSize(BinaryReader reader)
         {
-            var bytes = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-            return bytes;
+            var marker = reader.ReadByte();
+            if (marker < 254)
+            {
+                return marker;
+            }
+            if (marker == 254)
+            {
+                return reader.ReadUInt16();
+            }
+            return checked((int)reader.ReadUInt32());
         }
 
-        private static byte[] BigEndian(double value)
+        private static void WriteAlignment(BinaryWriter writer, int alignment)
         {
-            var bytes = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-            return bytes;
+            while (writer.BaseStream.Position % alignment != 0)
+            {
+                writer.Write((byte)0);
+            }
         }
 
-        private static int ReadInt32BigEndian(BinaryReader reader)
+        private static void ReadAlignment(BinaryReader reader, int alignment)
         {
-            var bytes = reader.ReadBytes(4);
-            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-            return BitConverter.ToInt32(bytes, 0);
-        }
-
-        private static long ReadInt64BigEndian(BinaryReader reader)
-        {
-            var bytes = reader.ReadBytes(8);
-            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-            return BitConverter.ToInt64(bytes, 0);
-        }
-
-        private static double ReadFloat64BigEndian(BinaryReader reader)
-        {
-            var bytes = reader.ReadBytes(8);
-            if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
-            return BitConverter.ToDouble(bytes, 0);
+            while (reader.BaseStream.Position % alignment != 0)
+            {
+                reader.ReadByte();
+            }
         }
     }
 }
