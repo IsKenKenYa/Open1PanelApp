@@ -411,12 +411,17 @@ public static class WindowsBridge
     public static async Task<JsonElement?> GetSystemLogContentAsync(
         string fileName, bool useCoreLogs)
     {
-        var result = await InvokeAsync("getSystemLogContent", new Dictionary<string, object?>
+        var json = await InvokeAsync("getSystemLogContent", new Dictionary<string, object?>
         {
             ["fileName"] = fileName,
             ["useCoreLogs"] = useCoreLogs,
         });
-        return result;
+        if (json == null)
+        {
+            return null;
+        }
+        using var doc = JsonDocument.Parse(json);
+        return doc.RootElement.Clone();
     }
 
     public static async Task<JsonElement?> GetOpenrestySnapshotAsync()
