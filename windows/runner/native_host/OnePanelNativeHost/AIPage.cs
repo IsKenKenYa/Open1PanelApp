@@ -12,7 +12,8 @@ namespace OnePanelNativeHost;
 /// <summary>
 /// Native AI module page: local model list (Ollama).
 /// Mirrors upstream 1Panel AI model list semantics (name, size, modified
-/// date, delete with confirmation naming the model).
+/// date, create by model name, recreate of an existing model, delete with
+/// confirmation naming the model).
 /// </summary>
 public sealed class AIPage : ModulePageBase
 {
@@ -116,6 +117,14 @@ public sealed class AIPage : ModulePageBase
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
+        // Create model (upstream add-model drawer): opens the create dialog.
+        var createButton = new AppBarButton
+        {
+            Icon = new FontIcon { Glyph = "\uE710" },
+            Label = "Create model",
+        };
+        createButton.Click += (s, e) => _ = ShowCreateModelDialogAsync();
+
         var refreshButton = new AppBarButton
         {
             Icon = new FontIcon { Glyph = "\uE72C" },
@@ -128,6 +137,7 @@ public sealed class AIPage : ModulePageBase
             DefaultLabelPosition = CommandBarDefaultLabelPosition.Right,
             Margin = new Thickness(4, 0, 4, 0),
         };
+        commandBar.PrimaryCommands.Add(createButton);
         commandBar.PrimaryCommands.Add(refreshButton);
         Grid.SetRow(commandBar, 0);
         root.Children.Add(commandBar);
@@ -235,20 +245,47 @@ public sealed class AIPage : ModulePageBase
             grid.Children.Add(modifiedBlock);
         }
 
-        // Row action: destructive delete with model name in the confirmation.
-        var deleteButton = new Button
+        // Row actions: "more" menu holding recreate (re-pull, upstream row
+        // retry) and the destructive delete, mirroring the upstream row
+        // buttons ordering (retry before delete).
+        var moreButton = new Button
         {
-            Content = new FontIcon { Glyph = "\uE74D", FontSize = 14 },
+            Content = new FontIcon { Glyph = "\uE712", FontSize = 14 },
+            Background = null,
+            BorderThickness = new Thickness(0),
             Padding = new Thickness(8, 4, 8, 4),
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(16, 0, 0, 0),
         };
-        ToolTipService.SetToolTip(deleteButton, "Delete model");
-        deleteButton.Click += async (s, e) => await DeleteModelAsync(model);
-        Grid.SetColumn(deleteButton, 4);
-        grid.Children.Add(deleteButton);
+        ToolTipService.SetToolTip(moreButton, "Model actions");
+        moreButton.Flyout = BuildRowFlyout(model);
+        Grid.SetColumn(moreButton, 4);
+        grid.Children.Add(moreButton);
 
         return grid;
+    }
+
+    private MenuFlyout BuildRowFlyout(AIModelEntry model)
+    {
+        var flyout = new MenuFlyout();
+
+        var recreateItem = new MenuFlyoutItem
+        {
+            Text = "Recreate",
+            Icon = new FontIcon { Glyph = "\uE72C" },
+        };
+        recreateItem.Click += (s, e) => _ = RecreateModelAsync(model);
+        flyout.Items.Add(recreateItem);
+
+        var deleteItem = new MenuFlyoutItem
+        {
+            Text = "Delete",
+            Icon = new FontIcon { Glyph = "\uE74D" },
+        };
+        deleteItem.Click += (s, e) => _ = DeleteModelAsync(model);
+        flyout.Items.Add(deleteItem);
+
+        return flyout;
     }
 
     private async System.Threading.Tasks.Task DeleteModelAsync(AIModelEntry model)
@@ -283,6 +320,169 @@ public sealed class AIPage : ModulePageBase
         finally
         {
             _isBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Recreates (re-pulls) an existing model. Non-destructive confirmation
+    /// naming the model, matching the upstream per-row retry action; success
+    /// silently refreshes the list.
+    /// </summary>
+    private async System.Threading.Tasks.Task RecreateModelAsync(AIModelEntry model)
+    {
+        if (_isBusy) return;
+
+        // Non-destructive confirmation; the message carries the model name
+        // and states that the model will be rebuilt.
+        var confirmed = await ConfirmDialog.ShowAsync(
+            XamlRoot,
+            "Recreate AI Model",
+            $"Are you sure you want to recreate model \"{model.Name}\"?\nThe model will be pulled again and rebuilt.",
+            "Recreate",
+            "Cancel",
+            isDestructive: false);
+
+        if (!confirmed) return;
+
+        _isBusy = true;
+        try
+        {
+            var success = await WindowsBridge.RecreateAIModelAsync(model.Name);
+            if (success)
+            {
+                await LoadModelsAsync(showLoadingState: false);
+            }
+            else
+            {
+                _errorToast.Show($"Failed to recreate \"{model.Name}\".");
+            }
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Create-model form dialog, mirroring the upstream add-model drawer: a
+    /// single required "Ollama model name" input (e.g. llama3:8b). _isBusy is
+    /// held across the whole dialog lifetime so the CommandBar button cannot
+    /// open a second dialog and row operations stay blocked. The dialog stays
+    /// open while the bridge call runs and only closes on success; on failure
+    /// the toast shows and the form stays editable.
+    /// </summary>
+    private async System.Threading.Tasks.Task ShowCreateModelDialogAsync()
+    {
+        if (_isBusy) return;
+        _isBusy = true;
+
+        try
+        {
+            var nameBox = new TextBox
+            {
+                Header = "Ollama model name",
+                PlaceholderText = "llama3:8b",
+            };
+
+            var errorText = new TextBlock
+            {
+                FontSize = 12,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = TryGetThemeBrush("SystemFillColorCriticalBrush", Microsoft.UI.Colors.Red),
+                Visibility = Visibility.Collapsed,
+            };
+
+            // Any edit clears the pending inline validation error.
+            nameBox.TextChanged += (s, e) => SetFormError(errorText, null);
+
+            var form = new StackPanel { Orientation = Orientation.Vertical, Spacing = 12 };
+            form.Children.Add(nameBox);
+            form.Children.Add(errorText);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Create model",
+                Content = form,
+                PrimaryButtonText = "Create",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = XamlRoot,
+            };
+
+            bool submitting = false;
+            bool createSucceeded = false;
+
+            async System.Threading.Tasks.Task SubmitCreateAsync()
+            {
+                var success = await WindowsBridge.CreateAIModelAsync(nameBox.Text.Trim());
+                if (success)
+                {
+                    createSucceeded = true;
+                    dialog.Hide(); // Closing lets this programmatic close pass.
+                }
+                else
+                {
+                    submitting = false;
+                    _errorToast.Show("Failed to create model.");
+                    SetFormError(errorText, "Create failed. Adjust the input and try again.");
+                }
+            }
+
+            dialog.Closing += (s, args) =>
+            {
+                // Programmatic close after a successful create passes through.
+                if (createSucceeded) return;
+
+                // Swallow every close attempt while the bridge call is in
+                // flight so the dialog cannot outlive the submit result.
+                if (submitting)
+                {
+                    args.Cancel = true;
+                    return;
+                }
+
+                if (args.Result != ContentDialogResult.Primary) return;
+
+                // Inline validation: on an empty name cancel the close so the
+                // dialog stays open and the error shows next to the field.
+                if (string.IsNullOrWhiteSpace(nameBox.Text))
+                {
+                    args.Cancel = true;
+                    SetFormError(errorText, "Model name is required.");
+                    return;
+                }
+
+                // Keep the dialog open during submission; close only on success.
+                args.Cancel = true;
+                submitting = true;
+                _ = SubmitCreateAsync();
+            };
+
+            await dialog.ShowAsync();
+            if (!createSucceeded) return;
+
+            // The dialog is closed; release the dialog-lifetime guard so the
+            // _isBusy-guarded silent refresh below can actually run.
+            _isBusy = false;
+            await LoadModelsAsync(showLoadingState: false);
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    private static void SetFormError(TextBlock target, string? message)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            target.Text = string.Empty;
+            target.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            target.Text = message;
+            target.Visibility = Visibility.Visible;
         }
     }
 
