@@ -132,6 +132,12 @@ class NativeChannelManager implements NativeChannelPort {
       // ── Write: 定时任务 ─────────────────────────────────────────────────
       case 'toggleCronJobStatus':
         return NativeChannelWriteHandlers.toggleCronJobStatus(arguments);
+      case 'createCronJob':
+        return NativeChannelWriteHandlers.createCronJob(arguments);
+      case 'updateCronJob':
+        return NativeChannelWriteHandlers.updateCronJob(arguments);
+      case 'handleCronJobOnce':
+        return NativeChannelWriteHandlers.handleCronJobOnce(arguments);
       case 'deleteCronJob':
         return NativeChannelWriteHandlers.deleteCronJob(arguments);
 

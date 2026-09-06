@@ -5,6 +5,8 @@ import '../../features/containers/container_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../data/models/cronjob_list_models.dart';
 import '../../data/repositories/cronjob_repository.dart';
+import '../../data/repositories/cronjob_form_repository.dart';
+import '../../data/models/cronjob_form_request_models.dart';
 import '../../features/files/services/file_browser_service.dart';
 import '../../features/firewall/firewall_service.dart';
 import '../../features/server/server_repository.dart';
@@ -258,6 +260,71 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('deleteCronJob failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 定时任务（建/改/执行一次，shell 类型最小集） ─────────────────────────
+
+  static CronjobOperateRequest _buildCronjobRequest(dynamic arguments, {int? id}) {
+    final name = (arguments['name'] as String? ?? '').trim();
+    final spec = (arguments['spec'] as String? ?? '').trim();
+    if (name.isEmpty || spec.isEmpty) {
+      throw ArgumentError('name and spec are required');
+    }
+    final script = arguments['script'] as String? ?? '';
+    return CronjobOperateRequest(
+      id: id,
+      name: name,
+      groupID: int.tryParse('${arguments['groupID'] ?? 0}') ?? 0,
+      type: 'shell',
+      specCustom: true,
+      spec: spec,
+      script: script,
+    );
+  }
+
+  /// 新建 shell 定时任务。参数：
+  /// `{name: String, spec: String(cron 表达式), script?: String, groupID?: int}`
+  static Future<Map<String, dynamic>> createCronJob(dynamic arguments) async {
+    try {
+      final request = _buildCronjobRequest(arguments);
+      await CronjobFormRepository().createCronjob(request);
+      return _ok();
+    } catch (e) {
+      appLogger.e('createCronJob failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 编辑 shell 定时任务。参数：`{id: int} + 同 createCronJob`
+  static Future<Map<String, dynamic>> updateCronJob(dynamic arguments) async {
+    try {
+      final id = int.tryParse('${arguments['id'] ?? ''}');
+      if (id == null) {
+        return {'success': false, 'error': 'id is required'};
+      }
+      final request = _buildCronjobRequest(arguments, id: id);
+      await CronjobFormRepository().updateCronjob(request);
+      return _ok();
+    } catch (e) {
+      appLogger.e('updateCronJob failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 立即执行一次。参数：`{id: int}`
+  static Future<Map<String, dynamic>> handleCronJobOnce(
+      dynamic arguments) async {
+    try {
+      final id = int.tryParse('${arguments['id'] ?? ''}');
+      if (id == null) {
+        return {'success': false, 'error': 'id is required'};
+      }
+      await CronjobRepository().handleOnce(id);
+      return _ok();
+    } catch (e) {
+      appLogger.e('handleCronJobOnce failed: $e');
       return _err(e);
     }
   }
