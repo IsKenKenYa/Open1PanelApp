@@ -280,6 +280,12 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    /// <summary>数据库列表（Dart 侧 getDatabases 合并所有 scope）。</summary>
+    public static async Task<JsonElement?> GetDatabasesAsync()
+    {
+        return await InvokeWithRetryAsync("getDatabases");
+    }
+
     public static async Task<JsonElement?> GetFirewallRulesAsync()
     {
         return await InvokeWithRetryAsync("getFirewallRules");
