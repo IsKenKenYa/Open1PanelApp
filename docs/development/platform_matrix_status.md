@@ -11,7 +11,7 @@
 | Android | MDUI3 | 已完成 | 已完成 | 已完成 | 已完成 |
 | iOS | Native/MDUI3 | 已完成 | 已完成（只读） | 部分完成 | 待 xcodebuild 验证 |
 | macOS | Native/MDUI3 | 已完成 | 已完成 | 部分完成 | 待 xcodebuild 验证 |
-| Windows | Native/MDUI3 双模式 | 已完成（单例页面直赋，导航 13 项） | 已完成（13 页（+BackupsPage）） | 已完成（CRUD） | 已完成（dotnet build 0 错误 + xUnit 26/26） |
+| Windows | Native/MDUI3 双模式 | 已完成（单例页面直赋，导航 15 项） | 已完成（15 页（+HostPage/ToolboxPage）） | 已完成（CRUD） | 已完成（dotnet build 0 错误 + xUnit 26/26） |
 | Linux | MDUI3 | 已完成 | 已完成 | 已完成 | 已完成 |
 | HarmonyOS | 占位 | 占位 | 占位 | 占位 | 未启动 |
 
@@ -37,6 +37,7 @@
 - 定时任务模块（B12）已接入：任务列表（含上次/下次执行预览）、新建/编辑（shell 类型最小集）、启停、删除、立即执行；导航 12 项。
 - 备份模块（B13）已接入：备份记录列表（含恢复上下文字段）、恢复（危险确认）、删除（危险确认）；下载到本地属桌面交互后续批次；导航 13 项。
 - AI 模块扩展（B14）已接入：模型创建（拉取）/重建/删除生命周期；AI 域名绑定需 appInstallID 发现流属后续批次；导航项数不变（AI 已在第 10 项）。
+- 主机与工具箱模块（B15）已接入：SSH 状态/服务操作/配置编辑、设备快照卡、DNS 校验；Terminal（websocket 双向）登记范围外；导航 15 项。
 
 ## 构建门禁命令
 

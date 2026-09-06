@@ -36,12 +36,16 @@ NavigationView 菜单项与 1Panel 模块一一对应：
 | Apps | Library | 是 |
 | Websites | World | 是 |
 | Databases | FontIcon Glyph EDA2 (HardDrive) | 是（B11） |
+| CronJobs | FontIcon Glyph E823 (Recent) | 是（B12） |
+| Backups | FontIcon Glyph E777 (UpdateRestore) | 是（B13） |
+| Host | FontIcon Glyph E7F8 (DeviceLaptopNoPic) | 是（B15） |
+| Toolbox | FontIcon Glyph E90F (Repair) | 是（B15） |
 | Monitoring | FontIcon Glyph EC4A (SpeedHigh) | 是（B10） |
 | AI | PreviewLink | 是 |
 | Security | FontIcon Glyph E72E | 是 |
 | Settings | Setting（Footer 组） | 是 |
 
-全部 11 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
+全部 15 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
 
 ### 内容路由
 
@@ -58,6 +62,8 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     { "Databases", () => new DatabasePage() },
     { "CronJobs", () => new CronJobsPage() },
     { "Backups", () => new BackupsPage() },
+    { "Host", () => new HostPage() },
+    { "Toolbox", () => new ToolboxPage() },
     { "Monitoring", () => new MonitoringPage() },
     { "Files", () => new FilesPage() },
     { "Containers", () => new ContainersPage() },
@@ -104,6 +110,9 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | getDashboard | C# -> Dart | 读 | 获取仪表盘数据 |
 | getMonitoring | C# -> Dart | 读 | 获取监控数据 |
 | getBackups | C# -> Dart | 读 | 获取备份记录列表（返回含 detailName/fileName/fileDir/downloadAccountID 恢复所需字段） |
+| getSshInfo | C# -> Dart | 读 | 获取 SSH 状态（返回键值：isActive/autoStart/port/listenAddress/passwordAuthentication/pubkeyAuthentication/permitRootLogin/useDNS 等） |
+| getSshConfig | C# -> Dart | 读 | 获取 SSH 配置（返回原始配置文本） |
+| getDeviceSnapshot | C# -> Dart | 读 | 获取设备快照（返回键值：hostname/systemName/systemVersion/localTime/timeZone/ntp/dns/swapMemoryTotal 等 + users 列表） |
 | connectServer | C# -> Dart | 写 | 连接指定服务器（`id` 参数） |
 | addServer / deleteServer | C# -> Dart | 写 | 服务器新增 / 删除 |
 | updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
@@ -124,8 +133,12 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
 | deleteBackup | C# -> Dart | 写 | 删除备份记录（{id, name, type, status}；返回 {success: bool}） |
 | restoreBackup | C# -> Dart | 写 | 恢复备份记录（{id, name, type 必填, detailName?, fileName 必填, fileDir?, downloadAccountID?=0}，file=fileDir/fileName 拼接；返回 {success: bool}） |
+| operateSsh | C# -> Dart | 写 | SSH 服务操作（{operation ∈ start/stop/restart}；返回 {success: bool}） |
+| saveSshConfig | C# -> Dart | 写 | 保存 SSH 配置（{value 非空}；返回 {success: bool}） |
+| verifyToolboxDns | C# -> Dart | 写 | 校验 DNS 可用性（{dns 非空}；返回 {success: bool}） |
 
 > 备注：AI 域名绑定（bindDomain）需 appInstallID 发现流，属后续批次。
+> 备注：Terminal 走 websocket 双向通道，属范围外（EventChannel 明确不做），登记后续批次。
 
 ### Codec 锁定
 
@@ -258,7 +271,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 11 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 13 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -273,6 +286,8 @@ ModulePageBase : Page
 | SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
 | SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
 | BackupsPage | ModulePageBase | 备份记录列表 + 恢复/删除 |
+| HostPage | ModulePageBase | SSH 状态/服务操作/配置查看编辑 |
+| ToolboxPage | ModulePageBase | 设备快照卡 + DNS 校验 |
 
 ### 状态控件
 
@@ -322,7 +337,7 @@ flutter test test/core/channel/ test/core/platform/
 ### 导航功能
 
 - NavigationView 菜单切换经单例页面 + `Frame.Content` 直赋显示对应页面
-- 11 项导航模块均显示实际内容页面
+- 15 项导航模块均显示实际内容页面
 - 页面切换时实例保留（`_pageCache` 单例缓存），`ActivatePage()` 触发数据刷新
 
 ### 四态切换
@@ -377,7 +392,7 @@ OnePanelNativeHost.exe（单进程）
 │     ├── MainWindow（NavigationView / Frame.Content 直赋）
 │     ├── WindowsBridge（持有 AddRef 后的 messenger，
 │     │    MethodChannel 调用编解码均在此线程发起）
-│     └── 11 项导航模块页（ModulePageBase 四态）
+│     └── 15 项导航模块页（ModulePageBase 四态）
 └── Flutter 引擎 platform 线程（flutter_headless_host 内创建）
       ├── Dart task runner：NativeChannelManager handler 分发
       │    -> Provider/Service/Repository -> API/Infra
