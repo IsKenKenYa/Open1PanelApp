@@ -78,20 +78,6 @@ void main() async {
   final prefs = AppPreferencesService();
   var uiRenderMode = await prefs.loadUIRenderMode();
 
-  if (windowsNativeHostActive) {
-    // headless 引擎寄生在宿主进程内，应用支持目录必须与 Flutter runner
-    // 对齐，否则服务器配置等数据读不到（见 RunnerDataPath 文档）。
-    final runnerSupportDir = RunnerDataPath.resolveRunnerSupportDirectory(
-      appDataDir: Platform.environment['APPDATA'],
-    );
-    if (runnerSupportDir != null) {
-      RunnerDataPath.alignAllPathProviders(
-        fallback: PathProviderPlatform.instance,
-        supportPath: runnerSupportDir,
-      );
-    }
-  }
-
   if (!kIsWeb &&
       Platform.isWindows &&
       uiRenderMode == UIRenderMode.native &&

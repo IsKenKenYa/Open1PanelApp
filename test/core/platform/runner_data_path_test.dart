@@ -60,6 +60,55 @@ void main() {
       expect(identical(provider.getTemporaryPath, fallback.getTemporaryPath),
           isFalse);
     });
+
+    test('getApplicationDocumentsPath 委托 fallback（Hive 共享契约）', () async {
+      // hive_flutter 的 Hive.initFlutter 固定取文档目录（进程无关）。
+      // 对齐实现必须保持委托，使引擎与 runner 解析到同一文档目录；
+      // 若误返回 supportPath 会与 runner 侧 Hive 分叉。
+      final provider = RunnerAlignedPathProvider(
+        fallback: const _FakePathProvider(),
+        supportPath: r'C:\support',
+      );
+
+      expect(
+        await provider.getApplicationDocumentsPath(),
+        r'C:\Users\u\Documents',
+      );
+    });
+  });
+
+  group('alignAllPathProviders 重复对齐', () {
+    test('重复调用结果稳定，不产生包装链叠加', () async {
+      final originalInstance = PathProviderPlatform.instance;
+      final store = SharedPreferencesWindows();
+      final originalStoreProvider = store.pathProvider;
+      try {
+        // 复刻 main() 若重复对齐的序列：第二次对齐会把第一次的
+        // RunnerAlignedPathProvider 捕获为 fallback。
+        RunnerDataPath.alignAllPathProviders(
+          fallback: PathProviderPlatform.instance,
+          supportPath: r'C:\one',
+          store: store,
+        );
+        RunnerDataPath.alignAllPathProviders(
+          fallback: PathProviderPlatform.instance,
+          supportPath: r'C:\two',
+          store: store,
+        );
+
+        expect(
+          await PathProviderPlatform.instance.getApplicationSupportPath(),
+          r'C:\two',
+        );
+        expect(
+          await store.pathProvider.getApplicationSupportPath(),
+          r'C:\two',
+        );
+      } finally {
+        PathProviderPlatform.instance = originalInstance;
+        store.pathProvider = originalStoreProvider;
+      }
+    });
   });
 }
 
@@ -70,6 +119,9 @@ class _FakePathProvider implements PathProviderPlatform {
   dynamic noSuchMethod(Invocation invocation) {
     if (invocation.memberName == #getTemporaryPath) {
       return Future<String?>.value('tmp');
+    }
+    if (invocation.memberName == #getApplicationDocumentsPath) {
+      return Future<String?>.value(r'C:\Users\u\Documents');
     }
     return null;
   }
