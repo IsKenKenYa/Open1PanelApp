@@ -43,13 +43,25 @@
                         PaneDisplayMode="Left"
                         IsSettingsVisible="False">
             <NavigationView.MenuItems>
-                <!-- Workspace groups aligned with the 1Panel web sidebar semantics. -->
+                <!-- Workspace groups aligned with the 1Panel web sidebar semantics
+                     (dashboard is the first entry, mirroring the web home page). -->
+                <NavigationViewItem Content="Dashboard">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemSeparator />
                 <NavigationViewItem Content="Servers" Icon="Globe" />
                 <NavigationViewItem Content="Files" Icon="Folder" />
                 <NavigationViewItemSeparator />
                 <NavigationViewItem Content="Containers" Icon="AllApps" />
                 <NavigationViewItem Content="Apps" Icon="Library" />
                 <NavigationViewItem Content="Websites" Icon="World" />
+                <NavigationViewItem Content="Monitoring">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC4A;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemSeparator />
                 <NavigationViewItem Content="AI" Icon="PreviewLink" />
                 <NavigationViewItem Content="Security">

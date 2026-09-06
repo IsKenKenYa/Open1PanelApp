@@ -8,11 +8,13 @@ public sealed partial class MainWindow : Window
 {
     private static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     {
+        { "Dashboard", () => new DashboardPage() },
         { "Servers", () => new ServersPage() },
         { "Files", () => new FilesPage() },
         { "Containers", () => new ContainersPage() },
         { "Apps", () => new AppsPage() },
         { "Websites", () => new WebsitesPage() },
+        { "Monitoring", () => new MonitoringPage() },
         { "AI", () => new AIPage() },
         { "Security", () => new SecurityPage() },
         { "Settings", () => new SettingsPage() },
