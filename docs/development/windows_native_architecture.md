@@ -2,7 +2,7 @@
 
 ## 1. 首批模块范围
 
-> 本节为首批（Servers/Files/Settings）立项时的范围记录。当前批次已扩展为 8 页全部接入真实数据与 CRUD（见第 2、6 节），范围登记以 `docs/development/modules/阶段总计划.md` 批次台账为准。
+> 本节为首批（Servers/Files/Settings）立项时的范围记录。当前已扩展为 11 项导航全部接入真实数据与 CRUD（Dashboard/Servers/Files/Containers/Apps/Websites/Databases/Monitoring/AI/Security/Settings，见第 2、6 节），范围登记以 `docs/development/modules/阶段总计划.md` 批次台账为准。
 
 | 模块 | 功能 | 说明 |
 |------|------|------|
@@ -27,18 +27,21 @@
 
 NavigationView 菜单项与 1Panel 模块一一对应：
 
-| 菜单项 | Icon | 首批实现 |
+| 菜单项 | Icon | 已接入 |
 |--------|------|----------|
+| Dashboard | FontIcon Glyph E80F (Home) | 是（B10） |
 | Servers | Globe | 是 |
 | Files | Folder | 是 |
 | Containers | AllApps | 是 |
 | Apps | Library | 是 |
 | Websites | World | 是 |
+| Databases | FontIcon Glyph EDA2 (HardDrive) | 是（B11） |
+| Monitoring | FontIcon Glyph EC4A (SpeedHigh) | 是（B10） |
 | AI | PreviewLink | 是 |
 | Security | FontIcon Glyph E72E | 是 |
-| Settings | Setting | 是 |
+| Settings | Setting（Footer 组） | 是 |
 
-全部 8 个模块页均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
+全部 11 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
 
 ### 内容路由
 
@@ -50,7 +53,10 @@ NavigationView 菜单项与 1Panel 模块一一对应：
 ```csharp
 static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 {
+    { "Dashboard", () => new DashboardPage() },
     { "Servers", () => new ServersPage() },
+    { "Databases", () => new DatabasePage() },
+    { "Monitoring", () => new MonitoringPage() },
     { "Files", () => new FilesPage() },
     { "Containers", () => new ContainersPage() },
     { "Apps", () => new AppsPage() },
@@ -101,6 +107,10 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | toggleContainerState / deleteContainer | C# -> Dart | 写 | 容器启停 / 删除 |
 | toggleWebsiteStatus / deleteWebsite | C# -> Dart | 写 | 网站启停 / 删除 |
 | createWebsite | C# -> Dart | 写 | 新建网站（参数 `primaryDomain` / `alias?` / `port?` 默认 80 / `type?` 默认 deployment / `remark?`，返回 `{success: bool}`；deployment 缺省路径，preCheck+create 与 Flutter 向导同序） |
+| createDatabase | C# -> Dart | 写 | 新建数据库（name 必填；type 默认 mysql；description 可选；remote 形态加 address/port/username/password；返回 {success: bool}） |
+| deleteDatabase | C# -> Dart | 写 | 删除数据库（{id}，OperateByID 链路；返回 {success: bool}） |
+| updateDatabaseDescription | C# -> Dart | 写 | 修改描述（{scope, lookupName?|name, engine?, source?, id?, description}，Dart 侧重建最小条目覆盖各引擎分支；返回 {success: bool}） |
+| changeDatabasePassword | C# -> Dart | 写 | 修改密码（同上字段 + password 必填；返回 {success: bool}） |
 | createFolder / deleteFile | C# -> Dart | 写 | 文件系统新建目录 / 删除 |
 | addFirewallRule / deleteFirewallRule | C# -> Dart | 写 | 防火墙规则新增 / 删除 |
 | deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
@@ -236,7 +246,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 8 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 9 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -245,6 +255,7 @@ ModulePageBase : Page
 | ContainersPage | ModulePageBase | 容器列表 + 启停/删除 |
 | AppsPage | ModulePageBase | 应用列表 |
 | WebsitesPage | ModulePageBase | 网站列表 + 启停/删除 |
+| DatabasePage | ModulePageBase | 数据库列表 + 新建/删除/改描述/改密码 |
 | AIPage | ModulePageBase | AI 模型列表 + 删除 |
 | SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
 | SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
@@ -297,7 +308,7 @@ flutter test test/core/channel/ test/core/platform/
 ### 导航功能
 
 - NavigationView 菜单切换经单例页面 + `Frame.Content` 直赋显示对应页面
-- 8 个模块页均显示实际内容页面
+- 11 项导航模块均显示实际内容页面
 - 页面切换时实例保留（`_pageCache` 单例缓存），`ActivatePage()` 触发数据刷新
 
 ### 四态切换
@@ -352,7 +363,7 @@ OnePanelNativeHost.exe（单进程）
 │     ├── MainWindow（NavigationView / Frame.Content 直赋）
 │     ├── WindowsBridge（持有 AddRef 后的 messenger，
 │     │    MethodChannel 调用编解码均在此线程发起）
-│     └── 8 个模块页（ModulePageBase 四态）
+│     └── 11 项导航模块页（ModulePageBase 四态）
 └── Flutter 引擎 platform 线程（flutter_headless_host 内创建）
       ├── Dart task runner：NativeChannelManager handler 分发
       │    -> Provider/Service/Repository -> API/Infra
