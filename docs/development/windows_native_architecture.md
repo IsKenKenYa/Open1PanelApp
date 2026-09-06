@@ -56,6 +56,8 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     { "Dashboard", () => new DashboardPage() },
     { "Servers", () => new ServersPage() },
     { "Databases", () => new DatabasePage() },
+    { "CronJobs", () => new CronJobsPage() },
+    { "Backups", () => new BackupsPage() },
     { "Monitoring", () => new MonitoringPage() },
     { "Files", () => new FilesPage() },
     { "Containers", () => new ContainersPage() },
@@ -101,6 +103,7 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | getAIModels | C# -> Dart | 读 | 获取 AI 模型列表 |
 | getDashboard | C# -> Dart | 读 | 获取仪表盘数据 |
 | getMonitoring | C# -> Dart | 读 | 获取监控数据 |
+| getBackups | C# -> Dart | 读 | 获取备份记录列表（返回含 detailName/fileName/fileDir/downloadAccountID 恢复所需字段） |
 | connectServer | C# -> Dart | 写 | 连接指定服务器（`id` 参数） |
 | addServer / deleteServer | C# -> Dart | 写 | 服务器新增 / 删除 |
 | updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
@@ -117,6 +120,8 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | createFolder / deleteFile | C# -> Dart | 写 | 文件系统新建目录 / 删除 |
 | addFirewallRule / deleteFirewallRule | C# -> Dart | 写 | 防火墙规则新增 / 删除 |
 | deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
+| deleteBackup | C# -> Dart | 写 | 删除备份记录（{id, name, type, status}；返回 {success: bool}） |
+| restoreBackup | C# -> Dart | 写 | 恢复备份记录（{id, name, type 必填, detailName?, fileName 必填, fileDir?, downloadAccountID?=0}，file=fileDir/fileName 拼接；返回 {success: bool}） |
 
 ### Codec 锁定
 
@@ -249,7 +254,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 10 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 11 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -263,6 +268,7 @@ ModulePageBase : Page
 | AIPage | ModulePageBase | AI 模型列表 + 删除 |
 | SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
 | SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
+| BackupsPage | ModulePageBase | 备份记录列表 + 恢复/删除 |
 
 ### 状态控件
 
