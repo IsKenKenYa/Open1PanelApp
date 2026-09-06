@@ -43,9 +43,11 @@ NavigationView 菜单项与 1Panel 模块一一对应：
 | Monitoring | FontIcon Glyph EC4A (SpeedHigh) | 是（B10） |
 | AI | PreviewLink | 是 |
 | Security | FontIcon Glyph E72E | 是 |
+| Logs | FontIcon Glyph E9D9 (Diagnostic) | 是（B16） |
+| OpenResty | FontIcon Glyph E968 (Network) | 是（B16） |
 | Settings | Setting（Footer 组） | 是 |
 
-全部 15 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
+全部 17 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
 
 ### 内容路由
 
@@ -71,6 +73,8 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     { "Websites", () => new WebsitesPage() },
     { "AI", () => new AIPage() },
     { "Security", () => new SecurityPage() },
+    { "Logs", () => new LogsPage() },
+    { "OpenResty", () => new OpenRestyPage() },
     { "Settings", () => new SettingsPage() },
 };
 ```
@@ -113,6 +117,10 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | getSshInfo | C# -> Dart | 读 | 获取 SSH 状态（返回键值：isActive/autoStart/port/listenAddress/passwordAuthentication/pubkeyAuthentication/permitRootLogin/useDNS 等） |
 | getSshConfig | C# -> Dart | 读 | 获取 SSH 配置（返回原始配置文本） |
 | getDeviceSnapshot | C# -> Dart | 读 | 获取设备快照（返回键值：hostname/systemName/systemVersion/localTime/timeZone/ntp/dns/swapMemoryTotal 等 + users 列表） |
+| getOperationLogs | C# -> Dart | 读 | 获取操作日志分页列表（{page?, pageSize?}；失败返回空列表） |
+| getLoginLogs | C# -> Dart | 读 | 获取登录日志分页列表（{page?, pageSize?}；失败返回空列表） |
+| getSystemLogContent | C# -> Dart | 读 | 获取系统日志文件内容（{fileName 必填, useCoreLogs?}；返回 {lines, totalLines}） |
+| getOpenrestySnapshot | C# -> Dart | 读 | 获取 OpenResty 快照（返回 status/modules/https/configContent） |
 | connectServer | C# -> Dart | 写 | 连接指定服务器（`id` 参数） |
 | addServer / deleteServer | C# -> Dart | 写 | 服务器新增 / 删除 |
 | updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
@@ -136,6 +144,7 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | operateSsh | C# -> Dart | 写 | SSH 服务操作（{operation ∈ start/stop/restart}；返回 {success: bool}） |
 | saveSshConfig | C# -> Dart | 写 | 保存 SSH 配置（{value 非空}；返回 {success: bool}） |
 | verifyToolboxDns | C# -> Dart | 写 | 校验 DNS 可用性（{dns 非空}；返回 {success: bool}） |
+| updateOpenrestyConfig | C# -> Dart | 写 | 保存 OpenResty 配置源（{content 非空}；返回 {success: bool}） |
 
 > 备注：AI 域名绑定（bindDomain）需 appInstallID 发现流，属后续批次。
 > 备注：Terminal 走 websocket 双向通道，属范围外（EventChannel 明确不做），登记后续批次。
@@ -271,7 +280,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 13 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 15 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -288,6 +297,8 @@ ModulePageBase : Page
 | BackupsPage | ModulePageBase | 备份记录列表 + 恢复/删除 |
 | HostPage | ModulePageBase | SSH 状态/服务操作/配置查看编辑 |
 | ToolboxPage | ModulePageBase | 设备快照卡 + DNS 校验 |
+| LogsPage | ModulePageBase | 操作/登录/系统日志只读三页签 |
+| OpenRestyPage | ModulePageBase | 状态快照 + 配置源查看保存 |
 
 ### 状态控件
 
@@ -337,7 +348,7 @@ flutter test test/core/channel/ test/core/platform/
 ### 导航功能
 
 - NavigationView 菜单切换经单例页面 + `Frame.Content` 直赋显示对应页面
-- 15 项导航模块均显示实际内容页面
+- 17 项导航模块均显示实际内容页面
 - 页面切换时实例保留（`_pageCache` 单例缓存），`ActivatePage()` 触发数据刷新
 
 ### 四态切换
@@ -392,7 +403,7 @@ OnePanelNativeHost.exe（单进程）
 │     ├── MainWindow（NavigationView / Frame.Content 直赋）
 │     ├── WindowsBridge（持有 AddRef 后的 messenger，
 │     │    MethodChannel 调用编解码均在此线程发起）
-│     └── 15 项导航模块页（ModulePageBase 四态）
+│     └── 17 项导航模块页（ModulePageBase 四态）
 └── Flutter 引擎 platform 线程（flutter_headless_host 内创建）
       ├── Dart task runner：NativeChannelManager handler 分发
       │    -> Provider/Service/Repository -> API/Infra
