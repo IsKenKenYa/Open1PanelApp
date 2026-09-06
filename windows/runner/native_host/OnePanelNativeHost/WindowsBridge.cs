@@ -190,6 +190,20 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    public static async Task<bool> CreateFolderAsync(string path)
+    {
+        var result = await InvokeAsync("createFolder",
+            new Dictionary<string, object?> { ["path"] = path });
+        return IsSuccess(result);
+    }
+
+    public static async Task<bool> DeleteFileAsync(string path)
+    {
+        var result = await InvokeAsync("deleteFile",
+            new Dictionary<string, object?> { ["path"] = path });
+        return IsSuccess(result);
+    }
+
     public static async Task<JsonElement?> GetFirewallRulesAsync()
     {
         return await InvokeWithRetryAsync("getFirewallRules");
@@ -250,6 +264,19 @@ public static class WindowsBridge
             new Dictionary<string, object?> { ["id"] = id });
         return IsSuccess(result);
     }
+
+    /// <summary>应用窗口底衬（Mica/云母Alt/亚克力/无）并持久化偏好。</summary>
+    public static void ApplyWindowBackdrop(AppBackdropKind kind)
+    {
+        WindowBackdrop.SavePreferred(kind);
+        if (App.MainWindow is { } window)
+        {
+            WindowBackdrop.Apply(window, kind);
+        }
+    }
+
+    /// <summary>读取当前底衬偏好。</summary>
+    public static AppBackdropKind LoadWindowBackdrop() => WindowBackdrop.LoadPreferred();
 
     private static bool IsSuccess(JsonElement? result)
     {

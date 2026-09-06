@@ -6,6 +6,9 @@ public partial class App : Application
 {
     private Window? _window;
 
+    /// <summary>供设置页等对主窗口施加视效（底衬）。</summary>
+    public static Window? MainWindow { get; private set; }
+
     public App()
     {
         InitializeComponent();
@@ -38,6 +41,7 @@ public partial class App : Application
         }
 
         _window = new MainWindow();
+        MainWindow = _window;
         _window.Activate();
     }
 }
