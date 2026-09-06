@@ -7,7 +7,7 @@
     mc:Ignorable="d"
     Title="1Panel Client">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <NavigationView x:Name="RootNavigationView"
                         IsBackButtonVisible="Collapsed"
                         PaneDisplayMode="Left"

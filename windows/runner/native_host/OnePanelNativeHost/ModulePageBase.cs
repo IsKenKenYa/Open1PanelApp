@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 
 namespace OnePanelNativeHost;
 
@@ -112,7 +113,17 @@ public class ModulePageBase : Page
         rootGrid.Children.Add(_emptyPanel);
         rootGrid.Children.Add(_errorPanel);
 
-        Content = rootGrid;
+        // Mica/亚克力底衬上的分层内容表面（Windows 设置应用同款视觉语言）。
+        var layerBorder = new Border
+        {
+            Background = (Brush)Application.Current.Resources["LayerFillColorDefaultBrush"],
+            BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(8),
+            Margin = new Thickness(8, 8, 8, 8),
+        };
+        layerBorder.Child = rootGrid;
+        Content = layerBorder;
         SetState(PageState.Loading);
     }
 

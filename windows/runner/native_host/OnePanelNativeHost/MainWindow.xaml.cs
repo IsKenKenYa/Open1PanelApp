@@ -22,6 +22,7 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        WindowBackdrop.Apply(this, WindowBackdrop.LoadPreferred());
         RootNavigationView.SelectionChanged += OnNavigationSelectionChanged;
         // 导航必须在模板应用(Frame 就绪)后触发，构造期间赋值会触发 native 崩溃。
         RootNavigationView.Loaded += (sender, _) =>
