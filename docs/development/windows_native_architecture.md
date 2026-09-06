@@ -119,9 +119,13 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | handleCronJobOnce | C# -> Dart | 写 | 立即执行一次（{id}；返回 {success: bool}） |
 | createFolder / deleteFile | C# -> Dart | 写 | 文件系统新建目录 / 删除 |
 | addFirewallRule / deleteFirewallRule | C# -> Dart | 写 | 防火墙规则新增 / 删除 |
+| createAIModel | C# -> Dart | 写 | 创建（拉取）Ollama 模型（{name 必填}，taskID 时间戳；返回 {success: bool}） |
+| recreateAIModel | C# -> Dart | 写 | 重建 Ollama 模型（{name 必填}；返回 {success: bool}） |
 | deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
 | deleteBackup | C# -> Dart | 写 | 删除备份记录（{id, name, type, status}；返回 {success: bool}） |
 | restoreBackup | C# -> Dart | 写 | 恢复备份记录（{id, name, type 必填, detailName?, fileName 必填, fileDir?, downloadAccountID?=0}，file=fileDir/fileName 拼接；返回 {success: bool}） |
+
+> 备注：AI 域名绑定（bindDomain）需 appInstallID 发现流，属后续批次。
 
 ### Codec 锁定
 
@@ -265,7 +269,7 @@ ModulePageBase : Page
 | WebsitesPage | ModulePageBase | 网站列表 + 启停/删除 |
 | DatabasePage | ModulePageBase | 数据库列表 + 新建/删除/改描述/改密码 |
 | CronJobsPage | ModulePageBase | 任务列表 + 新建/编辑(shell)/启停/删除/立即执行 |
-| AIPage | ModulePageBase | AI 模型列表 + 删除 |
+| AIPage | ModulePageBase | 模型列表 + 创建/重建/删除 |
 | SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
 | SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
 | BackupsPage | ModulePageBase | 备份记录列表 + 恢复/删除 |
