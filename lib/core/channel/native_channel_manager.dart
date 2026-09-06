@@ -66,6 +66,16 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelReadHandlers.getUIRenderMode();
 
       // ── Read: 新增 ─────────────────────────────────────────────────────
+      case 'getCommands':
+        return NativeChannelWriteHandlers.getCommands(arguments);
+      case 'createCommand':
+        return NativeChannelWriteHandlers.createCommand(arguments);
+      case 'deleteCommand':
+        return NativeChannelWriteHandlers.deleteCommand(arguments);
+      case 'getGroups':
+        return NativeChannelWriteHandlers.getGroups(arguments);
+      case 'getOllamaContext':
+        return NativeChannelWriteHandlers.getOllamaContext(arguments);
       case 'getOperationLogs':
         return NativeChannelReadHandlers.getOperationLogs(arguments);
       case 'getLoginLogs':

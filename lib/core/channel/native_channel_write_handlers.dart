@@ -1,11 +1,14 @@
 import '../../features/ai/ai_repository.dart';
 import '../../features/apps/app_service.dart';
+import '../../features/commands/services/command_service.dart';
+import '../../features/group/services/group_service.dart';
 import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../features/ssh/services/ssh_service.dart';
 import '../../features/openresty/services/openresty_service.dart';
 import '../../features/toolbox/services/toolbox_device_service.dart';
+import '../../data/models/common_models.dart';
 import '../../data/models/cronjob_list_models.dart';
 import '../../data/repositories/cronjob_repository.dart';
 import '../../data/repositories/cronjob_form_repository.dart';
@@ -469,6 +472,113 @@ class NativeChannelWriteHandlers {
     } catch (e) {
       appLogger.e('updateOpenrestyConfig failed: $e');
       return _err(e);
+    }
+  }
+
+  // ── 命令库（B17）────────────────────────────────────────────────────────
+
+  /// 命令库列表。参数：`{type?: String 默认 'command'}`
+  static Future<dynamic> getCommands(dynamic arguments) async {
+    try {
+      final type = arguments?['type'] as String? ?? 'command';
+      final commands = await CommandService().listCommands(type: type);
+      return commands
+          .map((c) => {
+                'id': c.id ?? 0,
+                'name': c.name ?? '',
+                'command': c.command ?? '',
+                'groupID': c.groupID ?? 0,
+                'groupBelong': c.groupBelong ?? '',
+              })
+          .toList();
+    } catch (e) {
+      appLogger.e('Failed to get commands for native: $e');
+      return [];
+    }
+  }
+
+  /// 新建命令。参数：`{name: String 必填, command: String 必填, groupID?: int}`
+  static Future<Map<String, dynamic>> createCommand(dynamic arguments) async {
+    try {
+      final name = (arguments['name'] as String? ?? '').trim();
+      final command = (arguments['command'] as String? ?? '').trim();
+      if (name.isEmpty || command.isEmpty) {
+        return {'success': false, 'error': 'name and command are required'};
+      }
+      await CommandService().createCommand(
+        CommandOperate(
+          name: name,
+          command: command,
+          groupID: int.tryParse('${arguments['groupID'] ?? 0}') ?? 0,
+          type: 'command',
+        ),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('createCommand failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 删除命令。参数：`{id: int}`
+  static Future<Map<String, dynamic>> deleteCommand(dynamic arguments) async {
+    try {
+      final id = int.tryParse('${arguments['id'] ?? ''}');
+      if (id == null) {
+        return {'success': false, 'error': 'id is required'};
+      }
+      await CommandService().deleteCommands([id]);
+      return _ok();
+    } catch (e) {
+      appLogger.e('deleteCommand failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 分组列表（命令库下拉数据源）。参数：`{type: String 默认 'command'}`
+  static Future<dynamic> getGroups(dynamic arguments) async {
+    try {
+      final type = arguments?['type'] as String? ?? 'command';
+      final groups = await GroupService().listGroups(type);
+      return groups
+          .map((g) => {'id': g.id, 'name': g.name})
+          .toList();
+    } catch (e) {
+      appLogger.e('Failed to get groups for native: $e');
+      return [];
+    }
+  }
+
+  // ── AI 发现流（B17，域名绑定前置）───────────────────────────────────────
+
+  /// 发现 Ollama 安装实例（appInstallID 供域名绑定使用）。
+  /// 返回：`{found: bool, appInstallId?: int, name?, status?, candidates?: [int]}`
+  static Future<dynamic> getOllamaContext(dynamic arguments) async {
+    try {
+      final apps = await AppService().getInstalledApps();
+      final hits = apps
+          .where((a) => (a.appKey ?? '') == 'ollama')
+          .toList()
+        ..sort((x, y) {
+          final xr = x.status == 'Running' ? 0 : 1;
+          final yr = y.status == 'Running' ? 0 : 1;
+          if (xr != yr) return xr - yr;
+          return (x.id ?? 0).compareTo(y.id ?? 0);
+        });
+      if (hits.isEmpty) {
+        return {'found': false};
+      }
+      final first = hits.first;
+      return {
+        'found': true,
+        'appInstallId': first.id ?? 0,
+        'name': first.name,
+        'status': first.status,
+        'candidates': hits.map((x) => x.id ?? 0).toList(),
+      };
+    } catch (e) {
+      appLogger.e('getOllamaContext failed: $e');
+      return {'found': false};
     }
   }
 

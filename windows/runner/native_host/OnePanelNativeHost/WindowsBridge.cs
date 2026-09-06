@@ -39,6 +39,8 @@ public static class WindowsBridge
         "getOperationLogs",
         "getLoginLogs",
         "getOpenrestySnapshot",
+        "getCommands",
+        "getGroups",
     };
 
     public static void Initialize(IntPtr messengerHandle)
@@ -474,6 +476,44 @@ public static class WindowsBridge
         var result = await InvokeAsync("verifyToolboxDns",
             new Dictionary<string, object?> { ["dns"] = dns });
         return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetCommandsAsync()
+    {
+        return await InvokeWithRetryAsync("getCommands");
+    }
+
+    /// <summary>新建命令库条目。</summary>
+    public static async Task<bool> CreateCommandAsync(
+        string name, string command, long groupID)
+    {
+        var result = await InvokeAsync("createCommand", new Dictionary<string, object?>
+        {
+            ["name"] = name,
+            ["command"] = command,
+            ["groupID"] = groupID,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>删除命令库条目。</summary>
+    public static async Task<bool> DeleteCommandAsync(long id)
+    {
+        var result = await InvokeAsync("deleteCommand",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetGroupsAsync(string type)
+    {
+        return await InvokeAsync("getGroups",
+            new Dictionary<string, object?> { ["type"] = type });
+    }
+
+    /// <summary>发现 Ollama 安装实例（AI 域名绑定前置）。</summary>
+    public static async Task<JsonElement?> GetOllamaContextAsync()
+    {
+        return await InvokeAsync("getOllamaContext");
     }
 
     public static async Task<JsonElement?> GetBackupsAsync()
