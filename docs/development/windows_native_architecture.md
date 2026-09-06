@@ -111,6 +111,9 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | deleteDatabase | C# -> Dart | 写 | 删除数据库（{id}，OperateByID 链路；返回 {success: bool}） |
 | updateDatabaseDescription | C# -> Dart | 写 | 修改描述（{scope, lookupName?|name, engine?, source?, id?, description}，Dart 侧重建最小条目覆盖各引擎分支；返回 {success: bool}） |
 | changeDatabasePassword | C# -> Dart | 写 | 修改密码（同上字段 + password 必填；返回 {success: bool}） |
+| createCronJob | C# -> Dart | 写 | 新建 shell 定时任务（{name, spec(原生 cron 表达式), script?, groupID?=0}；返回 {success: bool}） |
+| updateCronJob | C# -> Dart | 写 | 编辑 shell 定时任务（同上 + {id}；返回 {success: bool}） |
+| handleCronJobOnce | C# -> Dart | 写 | 立即执行一次（{id}；返回 {success: bool}） |
 | createFolder / deleteFile | C# -> Dart | 写 | 文件系统新建目录 / 删除 |
 | addFirewallRule / deleteFirewallRule | C# -> Dart | 写 | 防火墙规则新增 / 删除 |
 | deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
@@ -246,7 +249,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 9 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 10 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -256,6 +259,7 @@ ModulePageBase : Page
 | AppsPage | ModulePageBase | 应用列表 |
 | WebsitesPage | ModulePageBase | 网站列表 + 启停/删除 |
 | DatabasePage | ModulePageBase | 数据库列表 + 新建/删除/改描述/改密码 |
+| CronJobsPage | ModulePageBase | 任务列表 + 新建/编辑(shell)/启停/删除/立即执行 |
 | AIPage | ModulePageBase | AI 模型列表 + 删除 |
 | SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
 | SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
