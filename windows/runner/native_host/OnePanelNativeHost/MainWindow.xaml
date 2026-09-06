@@ -57,6 +57,13 @@
                 <NavigationViewItem Content="Containers" Icon="AllApps" />
                 <NavigationViewItem Content="Apps" Icon="Library" />
                 <NavigationViewItem Content="Websites" Icon="World" />
+                <!-- HardDrive (EDA2) is the closest Segoe Fluent Icons glyph for databases;
+                     E8B7 is actually "Folder" and E7F4 is "TVMonitor", so neither fits. -->
+                <NavigationViewItem Content="Databases">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEDA2;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Monitoring">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC4A;" />
