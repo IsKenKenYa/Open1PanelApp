@@ -85,6 +85,22 @@
                         <FontIcon Glyph="&#xE777;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!-- E7F8 verified against the official Segoe Fluent Icons table: it is
+                     "DeviceLaptopNoPic", the laptop/host-machine device glyph and the
+                     closest match for a host ("System" is actually E770, "Component"
+                     E950 reads as a hardware part, "TVMonitor" E7F4 is a plain screen). -->
+                <NavigationViewItem Content="Host">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7F8;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!-- E90F verified against the official Segoe Fluent Icons table: it is
+                     "Repair" (wrench), the closest tool/maintenance glyph for Toolbox. -->
+                <NavigationViewItem Content="Toolbox">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE90F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Monitoring">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC4A;" />
