@@ -14,6 +14,7 @@ public sealed partial class MainWindow : Window
         { "Containers", () => new ContainersPage() },
         { "Apps", () => new AppsPage() },
         { "Websites", () => new WebsitesPage() },
+        { "OpenResty", () => new OpenRestyPage() },
         { "Databases", () => new DatabasePage() },
         { "CronJobs", () => new CronJobsPage() },
         { "Backups", () => new BackupsPage() },
@@ -21,6 +22,7 @@ public sealed partial class MainWindow : Window
         { "Toolbox", () => new ToolboxPage() },
         { "Monitoring", () => new MonitoringPage() },
         { "AI", () => new AIPage() },
+        { "Logs", () => new LogsPage() },
         { "Security", () => new SecurityPage() },
         { "Settings", () => new SettingsPage() },
     };

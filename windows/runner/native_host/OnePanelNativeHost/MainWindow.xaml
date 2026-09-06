@@ -57,6 +57,18 @@
                 <NavigationViewItem Content="Containers" Icon="AllApps" />
                 <NavigationViewItem Content="Apps" Icon="Library" />
                 <NavigationViewItem Content="Websites" Icon="World" />
+                <!-- E968 verified against the official Segoe Fluent Icons table: it is
+                     "Network" (connected nodes), the closest web-server/infrastructure glyph
+                     for OpenResty as the reverse-proxy foundation of Websites. Also checked
+                     and rejected: E946 is actually "Info" (not a server glyph), E774 "Globe"
+                     / E909 "World" visually collide with Websites' globe icon, and EB41
+                     "Website" semantically duplicates the Websites entry; the font has no
+                     literal "Server" glyph. -->
+                <NavigationViewItem Content="OpenResty">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE968;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <!-- HardDrive (EDA2) is the closest Segoe Fluent Icons glyph for databases;
                      E8B7 is actually "Folder" and E7F4 is "TVMonitor", so neither fits. -->
                 <NavigationViewItem Content="Databases">
@@ -108,6 +120,15 @@
                 </NavigationViewItem>
                 <NavigationViewItemSeparator />
                 <NavigationViewItem Content="AI" Icon="PreviewLink" />
+                <!-- E9D9 verified against the official Segoe Fluent Icons table: it is
+                     "Diagnostic", matching the log-review semantics of the 1Panel web
+                     "日志" group (system/operation/login/website logs). E7C3 was also
+                     verified ("Page") but is a plain document glyph with no log meaning. -->
+                <NavigationViewItem Content="Logs">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D9;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Security">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE72E;" />
