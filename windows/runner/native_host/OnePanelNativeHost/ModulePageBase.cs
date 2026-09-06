@@ -114,13 +114,13 @@ public class ModulePageBase : Page
         rootGrid.Children.Add(_errorPanel);
 
         // Mica/亚克力底衬上的分层内容表面（Windows 设置应用同款视觉语言）。
+        // Breathing space is owned by the shell (ContentFrame margin) to avoid double margins.
         var layerBorder = new Border
         {
             Background = (Brush)Application.Current.Resources["LayerFillColorDefaultBrush"],
             BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
             BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(8),
-            Margin = new Thickness(8, 8, 8, 8),
         };
         layerBorder.Child = rootGrid;
         Content = layerBorder;
@@ -144,6 +144,11 @@ public class ModulePageBase : Page
     /// 页面被宿主切换显示时调用（直赋 Content 模式不触发 OnNavigatedTo）。
     /// </summary>
     public void ActivatePage() => OnPageShown();
+
+    /// <summary>
+    /// Public refresh entry for host-level shortcuts (e.g. F5 in the shell).
+    /// </summary>
+    public void RefreshPage() => OnRefreshClicked();
 
     protected virtual void OnPageShown()
     {

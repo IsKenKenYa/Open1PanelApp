@@ -7,26 +7,74 @@
     mc:Ignorable="d"
     Title="1Panel Client">
 
+    <!-- Window-level shortcuts: F5 refreshes the hosted page, Ctrl+1..8 selects the Nth nav item. -->
     <Grid>
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Key="F5" Invoked="OnRefreshAccelerator" />
+            <KeyboardAccelerator Key="Number1" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number2" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number3" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number4" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number5" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number6" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number7" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+            <KeyboardAccelerator Key="Number8" Modifiers="Control" Invoked="OnNavIndexAccelerator" />
+        </Grid.KeyboardAccelerators>
+
+        <Grid.RowDefinitions>
+            <!-- Caption-height row (48px): client-drawn title bar / drag region. -->
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Title bar drawn into the client area; system caption buttons overlay its right edge. -->
+        <Grid x:Name="AppTitleBar" Background="Transparent">
+            <TextBlock Text="1Panel Client"
+                       Style="{ThemeResource CaptionTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       Margin="16,0,0,0" />
+        </Grid>
+
         <NavigationView x:Name="RootNavigationView"
+                        Grid.Row="1"
                         IsBackButtonVisible="Collapsed"
+                        IsTitleBarAutoPaddingEnabled="False"
+                        IsPaneToggleButtonVisible="True"
                         PaneDisplayMode="Left"
                         IsSettingsVisible="False">
             <NavigationView.MenuItems>
+                <!-- Workspace groups aligned with the 1Panel web sidebar semantics. -->
                 <NavigationViewItem Content="Servers" Icon="Globe" />
                 <NavigationViewItem Content="Files" Icon="Folder" />
+                <NavigationViewItemSeparator />
                 <NavigationViewItem Content="Containers" Icon="AllApps" />
                 <NavigationViewItem Content="Apps" Icon="Library" />
                 <NavigationViewItem Content="Websites" Icon="World" />
+                <NavigationViewItemSeparator />
                 <NavigationViewItem Content="AI" Icon="PreviewLink" />
                 <NavigationViewItem Content="Security">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE72E;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Settings" Icon="Setting" />
             </NavigationView.MenuItems>
-            <Frame x:Name="ContentFrame" />
+            <NavigationView.FooterMenuItems>
+                <!-- Bottom standalone group. -->
+                <NavigationViewItem Content="Settings" Icon="Setting" />
+            </NavigationView.FooterMenuItems>
+            <NavigationView.PaneFooter>
+                <StackPanel Margin="16,4,8,12" Spacing="2">
+                    <TextBlock Text="1Panel Client"
+                               Style="{ThemeResource BodyStrongTextBlockStyle}"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="WinUI3 Native"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </NavigationView.PaneFooter>
+            <!-- Shell owns the 8px breathing space around the Mica card
+                 (ModulePageBase carries no margin of its own to avoid double margins). -->
+            <Frame x:Name="ContentFrame" Margin="8,8,8,8" />
         </NavigationView>
     </Grid>
 </Window>
