@@ -138,6 +138,10 @@ class NativeChannelManager implements NativeChannelPort {
       case 'deleteFirewallRule':
         return NativeChannelWriteHandlers.deleteFirewallRule(arguments);
 
+      // ── Write: 设置 ─────────────────────────────────────────────────────
+      case 'updateSetting':
+        return NativeChannelWriteHandlers.updateSetting(arguments);
+
       // ── Write: 缓存 ─────────────────────────────────────────────────────
       case 'clearCache':
         return NativeChannelWriteHandlers.clearCache(arguments);

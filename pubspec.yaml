@@ -63,6 +63,9 @@ dependencies:
   equatable: ^2.0.8  # Equality checking (Updated from 2.0.5)
   file_picker: ^8.0.0  # File picker for file upload
   path_provider: ^2.1.0  # Path provider for file download
+  path_provider_platform_interface: ^2.1.2 # WinUI3 host: align support dir with runner
+  shared_preferences_platform_interface: ^2.4.0 # WinUI3 host: store platform handle
+  shared_preferences_windows: ^2.4.1 # WinUI3 host: override its bundled path provider
   permission_handler: ^11.0.0  # Permission handler for Android storage
   
   window_manager: ^0.4.3

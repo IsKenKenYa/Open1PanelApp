@@ -9,6 +9,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:onepanel_client/config/app_router.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:onepanel_client/core/platform/runner_data_path.dart';
 import 'package:onepanel_client/core/services/app_settings_controller.dart';
 import 'package:onepanel_client/core/services/logger/logger_service.dart';
 import 'package:onepanel_client/core/platform/platform_capabilities.dart';
@@ -48,8 +50,6 @@ void main() async {
   final isAndroid = capabilities.supportsBackgroundDownloader;
   final isDesktopHost =
       !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
-  final prefs = AppPreferencesService();
-  var uiRenderMode = await prefs.loadUIRenderMode();
 
   // Windows native mode requires a WinUI3 host process; if it's absent or the
   // bootstrap launcher explicitly requests MD3, fall back to Flutter rendering.
@@ -59,6 +59,38 @@ void main() async {
   final forceMd3ByBootstrap = !kIsWeb &&
       Platform.isWindows &&
       Platform.environment['ONEPANEL_FORCE_MD3'] == '1';
+
+  if (windowsNativeHostActive) {
+    // headless 引擎寄生在宿主进程内，应用支持目录必须与 Flutter runner
+    // 对齐，否则服务器配置等数据读不到（见 RunnerDataPath 文档）。
+    // 必须在任何存储读取（loadUIRenderMode 等）之前完成覆盖。
+    final runnerSupportDir = RunnerDataPath.resolveRunnerSupportDirectory(
+      appDataDir: Platform.environment['APPDATA'],
+    );
+    if (runnerSupportDir != null) {
+      RunnerDataPath.alignAllPathProviders(
+        fallback: PathProviderPlatform.instance,
+        supportPath: runnerSupportDir,
+      );
+    }
+  }
+
+  final prefs = AppPreferencesService();
+  var uiRenderMode = await prefs.loadUIRenderMode();
+
+  if (windowsNativeHostActive) {
+    // headless 引擎寄生在宿主进程内，应用支持目录必须与 Flutter runner
+    // 对齐，否则服务器配置等数据读不到（见 RunnerDataPath 文档）。
+    final runnerSupportDir = RunnerDataPath.resolveRunnerSupportDirectory(
+      appDataDir: Platform.environment['APPDATA'],
+    );
+    if (runnerSupportDir != null) {
+      RunnerDataPath.alignAllPathProviders(
+        fallback: PathProviderPlatform.instance,
+        supportPath: runnerSupportDir,
+      );
+    }
+  }
 
   if (!kIsWeb &&
       Platform.isWindows &&

@@ -9,10 +9,13 @@ import '../../features/firewall/firewall_service.dart';
 import '../../features/server/server_repository.dart';
 import '../../features/websites/services/websites_service.dart';
 import '../../core/config/api_config.dart';
+import '../../core/services/app_preferences_service.dart';
+import '../../core/theme/ui_render_mode.dart';
 import '../../data/models/backup_account_models.dart';
 import '../../data/models/firewall_models.dart';
 import '../services/logger/logger_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui' show Locale;
 
 /// 统一返回结构：成功 `{success: true}`，失败 `{success: false, error: String}`。
 Map<String, dynamic> _ok() => {'success': true};
@@ -370,6 +373,35 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('clearCache failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 设置 ────────────────────────────────────────────────────────────────
+
+  /// 写客户端偏好（供 WinUI3 原生宿主切换渲染模式/语言）。
+  /// 参数：`{key: 'renderMode'|'language', value: String}`
+  static Future<Map<String, dynamic>> updateSetting(dynamic arguments) async {
+    try {
+      final key = arguments['key'] as String;
+      final value = arguments['value'] as String?;
+      final prefs = AppPreferencesService();
+      switch (key) {
+        case 'renderMode':
+          await prefs.saveUIRenderMode(
+            value == 'native' ? UIRenderMode.native : UIRenderMode.md3,
+          );
+          return _ok();
+        case 'language':
+          await prefs.saveLocale(
+            value == null || value == 'system' ? null : Locale(value),
+          );
+          return _ok();
+        default:
+          return {'success': false, 'error': 'Unknown setting key: $key'};
+      }
+    } catch (e) {
+      appLogger.e('updateSetting failed: $e');
       return _err(e);
     }
   }
