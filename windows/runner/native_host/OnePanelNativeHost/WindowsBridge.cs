@@ -317,6 +317,64 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    public static async Task<JsonElement?> GetCronJobsAsync()
+    {
+        return await InvokeWithRetryAsync("getCronJobs");
+    }
+
+    /// <summary>启停定时任务（Dart 侧按 currentStatus 取反）。</summary>
+    public static async Task<bool> ToggleCronJobStatusAsync(long id, string currentStatus)
+    {
+        var result = await InvokeAsync("toggleCronJobStatus",
+            new Dictionary<string, object?> { ["id"] = id, ["currentStatus"] = currentStatus });
+        return IsSuccess(result);
+    }
+
+    /// <summary>删除定时任务。</summary>
+    public static async Task<bool> DeleteCronJobAsync(long id)
+    {
+        var result = await InvokeAsync("deleteCronJob",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    /// <summary>新建 shell 定时任务（spec 为原生 cron 表达式）。</summary>
+    public static async Task<bool> CreateCronJobAsync(
+        string name, string spec, string? script, long groupID)
+    {
+        var result = await InvokeAsync("createCronJob", new Dictionary<string, object?>
+        {
+            ["name"] = name,
+            ["spec"] = spec,
+            ["script"] = script,
+            ["groupID"] = groupID,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>编辑 shell 定时任务。</summary>
+    public static async Task<bool> UpdateCronJobAsync(
+        long id, string name, string spec, string? script, long groupID)
+    {
+        var result = await InvokeAsync("updateCronJob", new Dictionary<string, object?>
+        {
+            ["id"] = id,
+            ["name"] = name,
+            ["spec"] = spec,
+            ["script"] = script,
+            ["groupID"] = groupID,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>立即执行一次定时任务。</summary>
+    public static async Task<bool> HandleCronJobOnceAsync(long id)
+    {
+        var result = await InvokeAsync("handleCronJobOnce",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
     public static async Task<JsonElement?> GetAIModelsAsync()
     {
         return await InvokeWithRetryAsync("getAIModels");
