@@ -64,6 +64,15 @@
                         <FontIcon Glyph="&#xEDA2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!-- E823 verified against the official Segoe Fluent Icons table: it is "Recent"
+                     (clock face with counter-clockwise arrow), the closest clock/schedule glyph
+                     for cron jobs; Calendar is actually E787 and pure Clock is E917, so E823's
+                     clock-dial semantics best matches periodic scheduled tasks. -->
+                <NavigationViewItem Content="CronJobs">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE823;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Monitoring">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC4A;" />
