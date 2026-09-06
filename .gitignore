@@ -125,3 +125,6 @@ graphify-out/
 .codegraph
 architecture-review-*
 .zcode/screenshots/
+
+# Golden test failure diff artifacts (binary, regenerated per run)
+test/widget_test/failures/
