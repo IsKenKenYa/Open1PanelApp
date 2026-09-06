@@ -1,17 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media;
 
 namespace OnePanelNativeHost;
 
+/// <summary>
+/// Native Files module page: directory listing with an editable address bar,
+/// folder creation and delete operations. All data flows through WindowsBridge
+/// (Dart business core over the method channel); no direct HTTP from the native layer.
+///
+/// Upstream semantic reference: 1Panel web frontend "host/file-management":
+/// - Address bar shows the current path and can be edited to jump (breadcrumb ⇄ input),
+///   flanked by "up" and "refresh" buttons.
+/// - "Create" toolbar action opens a name-input dialog anchored at the current directory.
+/// - Row delete opens a destructive confirmation dialog before calling deleteFile.
+/// </summary>
 public sealed class FilesPage : ModulePageBase
 {
+    private const double SizeColumnWidth = 100;
+    private const double DateColumnWidth = 150;
+    private const double RowActionColumnWidth = 44;
+
     private string _currentPath = "/";
     private ListView? _listView;
+    private TextBox? _addressBox;
+    private readonly ErrorToast _errorToast = new();
 
     public FilesPage()
     {
@@ -30,7 +48,7 @@ public sealed class FilesPage : ModulePageBase
         await LoadFilesAsync(_currentPath);
     }
 
-    private async System.Threading.Tasks.Task LoadFilesAsync(string path)
+    private async Task LoadFilesAsync(string path)
     {
         _currentPath = path;
         var result = await WindowsBridge.GetFilesAsync(path);
@@ -71,6 +89,7 @@ public sealed class FilesPage : ModulePageBase
             }
         }
 
+        // Directories first, then by name (upstream table sorts the same way).
         files.Sort((a, b) =>
         {
             if (a.IsDir != b.IsDir) return a.IsDir ? -1 : 1;
@@ -82,18 +101,152 @@ public sealed class FilesPage : ModulePageBase
 
     private void BuildFileList(List<FileEntry> files)
     {
-        var rootPanel = new StackPanel
+        var root = new Grid();
+        var layout = new StackPanel { Orientation = Orientation.Vertical };
+
+        layout.Children.Add(BuildCommandBar());
+        layout.Children.Add(BuildAddressBar());
+        layout.Children.Add(BuildListHeader());
+        layout.Children.Add(BuildFileListView(files));
+
+        root.Children.Add(layout);
+
+        // Transient feedback toast overlaid at the bottom of the content card.
+        root.Children.Add(_errorToast);
+
+        ModuleContentPresenter.Content = root;
+    }
+
+    private CommandBar BuildCommandBar()
+    {
+        var bar = new CommandBar
         {
-            Orientation = Orientation.Vertical,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            DefaultLabelPosition = CommandBarDefaultLabelPosition.Right,
+            Background = null, // Stay transparent on the LayerFill card surface.
         };
 
-        var breadcrumbBar = BuildBreadcrumbBar();
-        rootPanel.Children.Add(breadcrumbBar);
+        var newFolderButton = new AppBarButton
+        {
+            Label = "New folder",
+            Icon = new FontIcon { Glyph = "\uE8B7" },
+        };
+        newFolderButton.Click += (s, e) => _ = ShowCreateFolderDialogAsync(_currentPath);
+        bar.PrimaryCommands.Add(newFolderButton);
+
+        var refreshButton = new AppBarButton
+        {
+            Label = "Refresh",
+            Icon = new FontIcon { Glyph = "\uE72C" },
+        };
+        refreshButton.Click += (s, e) => _ = RefreshCurrentAsync();
+        bar.PrimaryCommands.Add(refreshButton);
+
+        return bar;
+    }
+
+    private FrameworkElement BuildAddressBar()
+    {
+        var row = new Grid { Margin = new Thickness(16, 4, 16, 8) };
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        // Up (parent directory); disabled at root, mirroring upstream ":disabled".
+        var upButton = new Button
+        {
+            Content = new FontIcon { Glyph = "\uE74A", FontSize = 14 },
+            Margin = new Thickness(0, 0, 8, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            IsEnabled = _currentPath != "/",
+        };
+        upButton.Click += OnNavigateUp;
+        Grid.SetColumn(upButton, 0);
+        row.Children.Add(upButton);
+
+        // Editable address bar: shows the current path, Enter jumps to it.
+        _addressBox = new TextBox
+        {
+            Text = _currentPath,
+            PlaceholderText = "Enter a path and press Enter",
+            VerticalAlignment = VerticalAlignment.Center,
+            MinWidth = 120,
+        };
+        _addressBox.KeyDown += OnAddressKeyDown;
+        Grid.SetColumn(_addressBox, 1);
+        row.Children.Add(_addressBox);
+
+        var refreshButton = new Button
+        {
+            Content = new FontIcon { Glyph = "\uE72C", FontSize = 14 },
+            Margin = new Thickness(8, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        refreshButton.Click += (s, e) => _ = RefreshCurrentAsync();
+        Grid.SetColumn(refreshButton, 2);
+        row.Children.Add(refreshButton);
+
+        return row;
+    }
+
+    private FrameworkElement BuildListHeader()
+    {
+        var header = CreateColumnGrid();
+        header.Padding = new Thickness(12, 6, 12, 6);
+        header.Margin = new Thickness(16, 0, 16, 4);
+        header.BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
+        header.BorderThickness = new Thickness(0, 0, 0, 1);
+
+        var nameHeader = new TextBlock
+        {
+            Text = "Name",
+            FontSize = 12,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(8, 0, 0, 0),
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray),
+        };
+        Grid.SetColumn(nameHeader, 1);
+        header.Children.Add(nameHeader);
+
+        var sizeHeader = new TextBlock
+        {
+            Text = "Size",
+            FontSize = 12,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Center,
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray),
+        };
+        Grid.SetColumn(sizeHeader, 2);
+        header.Children.Add(sizeHeader);
+
+        var dateHeader = new TextBlock
+        {
+            Text = "Modified",
+            FontSize = 12,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Center,
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray),
+        };
+        Grid.SetColumn(dateHeader, 3);
+        header.Children.Add(dateHeader);
+
+        return header;
+    }
+
+    private FrameworkElement BuildFileListView(List<FileEntry> files)
+    {
+        var scrollViewer = new ScrollViewer
+        {
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            VerticalScrollMode = ScrollMode.Enabled,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            HorizontalScrollMode = ScrollMode.Disabled,
+        };
 
         _listView = new ListView
         {
             SelectionMode = ListViewSelectionMode.Single,
-            Margin = new Thickness(8, 0, 8, 8),
+            Margin = new Thickness(16, 0, 16, 8),
         };
 
         _listView.DoubleTapped += OnFileDoubleTapped;
@@ -104,104 +257,27 @@ public sealed class FilesPage : ModulePageBase
             _listView.Items.Add(item);
         }
 
-        rootPanel.Children.Add(_listView);
-        ModuleContentPresenter.Content = rootPanel;
+        scrollViewer.Content = _listView;
+        return scrollViewer;
     }
 
-    private StackPanel BuildBreadcrumbBar()
+    /// <summary>Shared column layout so the header and every row stay aligned.</summary>
+    private static Grid CreateColumnGrid()
     {
-        var bar = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Padding = new Thickness(16, 12, 16, 8),
-            Spacing = 4,
-        };
-
-        var upButton = new Button
-        {
-            Content = new FontIcon { Glyph = "\uE72B", FontSize = 14 },
-            Margin = new Thickness(0, 0, 8, 0),
-            IsEnabled = _currentPath != "/",
-        };
-        upButton.Click += OnNavigateUp;
-        bar.Children.Add(upButton);
-
-        var rootButton = new HyperlinkButton
-        {
-            Content = new TextBlock { Text = "/", FontSize = 14 },
-            Padding = new Thickness(4, 0, 4, 0),
-            Tag = "/",
-        };
-        rootButton.Click += OnBreadcrumbClick;
-        bar.Children.Add(rootButton);
-
-        if (_currentPath == "/") return bar;
-
-        var segments = _currentPath.TrimStart('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var accumulated = "";
-
-        for (int i = 0; i < segments.Length; i++)
-        {
-            accumulated += "/" + segments[i];
-            var isLast = i == segments.Length - 1;
-            var segmentPath = accumulated;
-
-            var separator = new TextBlock
-            {
-                Text = " \uE76C ",
-                FontSize = 10,
-                VerticalAlignment = VerticalAlignment.Center,
-                Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray),
-            };
-            bar.Children.Add(separator);
-
-            if (isLast)
-            {
-                var currentBlock = new TextBlock
-                {
-                    Text = segments[i],
-                    FontSize = 14,
-                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                bar.Children.Add(currentBlock);
-            }
-            else
-            {
-                var segmentButton = new HyperlinkButton
-                {
-                    Content = new TextBlock { Text = segments[i], FontSize = 14 },
-                    Padding = new Thickness(4, 0, 4, 0),
-                    Tag = segmentPath,
-                };
-                segmentButton.Click += OnBreadcrumbClick;
-                bar.Children.Add(segmentButton);
-            }
-        }
-
-        return bar;
-    }
-
-    private async void OnBreadcrumbClick(object? sender, RoutedEventArgs e)
-    {
-        if (sender is not HyperlinkButton button) return;
-        var targetPath = button.Tag as string ?? "/";
-        SetState(PageState.Loading);
-        await LoadFilesAsync(targetPath);
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(SizeColumnWidth) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(DateColumnWidth) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(RowActionColumnWidth) });
+        return grid;
     }
 
     private Grid CreateFileItem(FileEntry file)
     {
-        var grid = new Grid
-        {
-            Padding = new Thickness(12, 6, 12, 6),
-            Tag = file,
-        };
-
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        var grid = CreateColumnGrid();
+        grid.Padding = new Thickness(12, 6, 12, 6);
+        grid.Tag = file;
 
         var icon = new FontIcon
         {
@@ -210,8 +286,8 @@ public sealed class FilesPage : ModulePageBase
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             Foreground = file.IsDir
-                ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Goldenrod)
-                : new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.DimGray),
+                ? new SolidColorBrush(Microsoft.UI.Colors.Goldenrod)
+                : new SolidColorBrush(Microsoft.UI.Colors.DimGray),
         };
         Grid.SetColumn(icon, 0);
         grid.Children.Add(icon);
@@ -221,7 +297,8 @@ public sealed class FilesPage : ModulePageBase
             Text = file.Name,
             FontSize = 14,
             VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(8, 0, 0, 0),
+            Margin = new Thickness(8, 0, 8, 0),
+            TextTrimming = TextTrimming.CharacterEllipsis,
         };
         Grid.SetColumn(nameBlock, 1);
         grid.Children.Add(nameBlock);
@@ -233,9 +310,7 @@ public sealed class FilesPage : ModulePageBase
             FontSize = 12,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Right,
-            Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray),
-            Margin = new Thickness(16, 0, 0, 0),
-            MinWidth = 80,
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray),
         };
         Grid.SetColumn(sizeBlock, 2);
         grid.Children.Add(sizeBlock);
@@ -250,14 +325,138 @@ public sealed class FilesPage : ModulePageBase
             FontSize = 12,
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Right,
-            Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray),
-            Margin = new Thickness(16, 0, 0, 0),
-            MinWidth = 120,
+            Foreground = new SolidColorBrush(Microsoft.UI.Colors.Gray),
         };
         Grid.SetColumn(dateBlock, 3);
         grid.Children.Add(dateBlock);
 
+        // Per-row "more" actions (upstream: row dropdown menu).
+        var moreButton = new Button
+        {
+            Content = new FontIcon { Glyph = "\uE712", FontSize = 14 },
+            Background = null,
+            BorderThickness = new Thickness(0),
+            Padding = new Thickness(6, 2, 6, 2),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        moreButton.Flyout = BuildRowFlyout(file);
+        Grid.SetColumn(moreButton, 4);
+        grid.Children.Add(moreButton);
+
         return grid;
+    }
+
+    private MenuFlyout BuildRowFlyout(FileEntry file)
+    {
+        var flyout = new MenuFlyout();
+
+        // Folder rows expose quick "New folder" inside that folder.
+        if (file.IsDir)
+        {
+            var newFolderItem = new MenuFlyoutItem
+            {
+                Text = "New folder",
+                Icon = new FontIcon { Glyph = "\uE8B7" },
+            };
+            newFolderItem.Click += (s, e) => _ = ShowCreateFolderDialogAsync(ResolvePath(file));
+            flyout.Items.Add(newFolderItem);
+        }
+
+        var deleteItem = new MenuFlyoutItem
+        {
+            Text = "Delete",
+            Icon = new FontIcon { Glyph = "\uE74D" },
+        };
+        deleteItem.Click += (s, e) => _ = DeleteEntryAsync(file);
+        flyout.Items.Add(deleteItem);
+
+        return flyout;
+    }
+
+    /// <summary>
+    /// Name-input dialog (upstream "create" drawer) followed by createFolder.
+    /// From the CommandBar the target is the current directory (refresh in place);
+    /// from a folder row the target is that folder (navigate into it afterwards).
+    /// </summary>
+    private async Task ShowCreateFolderDialogAsync(string targetDir)
+    {
+        var nameBox = new TextBox
+        {
+            PlaceholderText = "Folder name",
+        };
+
+        var dialog = new ContentDialog
+        {
+            Title = "New folder",
+            Content = nameBox,
+            PrimaryButtonText = "Create",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = XamlRoot,
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result != ContentDialogResult.Primary) return;
+
+        var name = nameBox.Text.Trim();
+        if (name.Length == 0)
+        {
+            _errorToast.Show("Folder name cannot be empty.");
+            return;
+        }
+
+        var success = await WindowsBridge.CreateFolderAsync(JoinPath(targetDir, name));
+        if (!success)
+        {
+            _errorToast.Show($"Failed to create folder \"{name}\".");
+            return;
+        }
+
+        SetState(PageState.Loading);
+        await LoadFilesAsync(targetDir);
+    }
+
+    /// <summary>Destructive confirmation (upstream delete dialog) followed by deleteFile.</summary>
+    private async Task DeleteEntryAsync(FileEntry file)
+    {
+        var confirmed = await ConfirmDialog.ShowAsync(
+            XamlRoot,
+            "Delete",
+            $"Delete \"{file.Name}\"?\n\n{(file.IsDir ? "Folder" : "File")}: {ResolvePath(file)}\nThis action cannot be undone.",
+            "Delete",
+            "Cancel",
+            isDestructive: true);
+
+        if (!confirmed) return;
+
+        var success = await WindowsBridge.DeleteFileAsync(ResolvePath(file));
+        if (!success)
+        {
+            _errorToast.Show($"Failed to delete \"{file.Name}\".");
+            return;
+        }
+
+        SetState(PageState.Loading);
+        await LoadFilesAsync(_currentPath);
+    }
+
+    private async Task RefreshCurrentAsync()
+    {
+        SetState(PageState.Loading);
+        await LoadFilesAsync(_currentPath);
+    }
+
+    private async void OnAddressKeyDown(object? sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key != Windows.System.VirtualKey.Enter) return;
+        e.Handled = true;
+
+        var target = NormalizePath(_addressBox?.Text ?? string.Empty);
+        if (target == _currentPath) return;
+
+        SetState(PageState.Loading);
+        await LoadFilesAsync(target);
     }
 
     private async void OnFileDoubleTapped(object? sender, DoubleTappedRoutedEventArgs e)
@@ -267,7 +466,7 @@ public sealed class FilesPage : ModulePageBase
         if (!file.IsDir) return;
 
         SetState(PageState.Loading);
-        await LoadFilesAsync(string.IsNullOrEmpty(file.Path) ? $"/{file.Name}" : file.Path);
+        await LoadFilesAsync(ResolvePath(file));
     }
 
     private async void OnNavigateUp(object? sender, RoutedEventArgs e)
@@ -280,6 +479,29 @@ public sealed class FilesPage : ModulePageBase
 
         SetState(PageState.Loading);
         await LoadFilesAsync(parentPath);
+    }
+
+    /// <summary>Item path: prefer the path returned by the API, fall back to joining the current directory.</summary>
+    private string ResolvePath(FileEntry file)
+    {
+        return string.IsNullOrEmpty(file.Path) ? JoinPath(_currentPath, file.Name) : file.Path;
+    }
+
+    /// <summary>Join a directory and a child name without producing "//".</summary>
+    private static string JoinPath(string dir, string name)
+    {
+        if (string.IsNullOrEmpty(dir) || dir == "/") return "/" + name;
+        return dir.TrimEnd('/') + "/" + name;
+    }
+
+    /// <summary>Normalize typed input: leading slash, no trailing slash, "/" for empty.</summary>
+    private static string NormalizePath(string input)
+    {
+        var path = input.Trim();
+        if (path.Length == 0) return "/";
+        if (!path.StartsWith('/')) path = "/" + path;
+        while (path.Length > 1 && path.EndsWith('/')) path = path[..^1];
+        return path;
     }
 
     private static string FormatFileSize(long bytes)
