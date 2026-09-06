@@ -375,6 +375,43 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    public static async Task<JsonElement?> GetBackupsAsync()
+    {
+        return await InvokeWithRetryAsync("getBackups");
+    }
+
+    /// <summary>删除备份记录（行字典整行回传，Dart 侧重建记录）。</summary>
+    public static async Task<bool> DeleteBackupAsync(
+        long id, string name, string type, string status)
+    {
+        var result = await InvokeAsync("deleteBackup", new Dictionary<string, object?>
+        {
+            ["id"] = id,
+            ["name"] = name,
+            ["type"] = type,
+            ["status"] = status,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>恢复备份记录（行字典整行回传，含 fileName/fileDir）。</summary>
+    public static async Task<bool> RestoreBackupAsync(
+        long id, string name, string type, string? detailName,
+        string fileName, string? fileDir, long downloadAccountID)
+    {
+        var result = await InvokeAsync("restoreBackup", new Dictionary<string, object?>
+        {
+            ["id"] = id,
+            ["name"] = name,
+            ["type"] = type,
+            ["detailName"] = detailName,
+            ["fileName"] = fileName,
+            ["fileDir"] = fileDir,
+            ["downloadAccountID"] = downloadAccountID,
+        });
+        return IsSuccess(result);
+    }
+
     public static async Task<JsonElement?> GetAIModelsAsync()
     {
         return await InvokeWithRetryAsync("getAIModels");

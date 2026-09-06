@@ -142,6 +142,8 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.deleteCronJob(arguments);
 
       // ── Write: 备份 ─────────────────────────────────────────────────────
+      case 'restoreBackup':
+        return NativeChannelWriteHandlers.restoreBackup(arguments);
       case 'deleteBackup':
         return NativeChannelWriteHandlers.deleteBackup(arguments);
 

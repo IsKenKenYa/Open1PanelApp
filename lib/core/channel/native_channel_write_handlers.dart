@@ -18,6 +18,8 @@ import '../../core/services/app_preferences_service.dart';
 import '../../core/theme/ui_render_mode.dart';
 import '../../data/models/backup_account_models.dart';
 import '../../data/models/firewall_models.dart';
+import '../../features/backups/services/backup_recover_service.dart';
+import '../../data/models/backup_request_models.dart';
 import '../../data/models/database_models.dart';
 import '../services/logger/logger_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -247,6 +249,37 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('toggleCronJobStatus failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 恢复备份记录。参数（字段与 getBackups 行一致，整行回传）：
+  /// `{id: int, name: String, type: String, detailName?: String,
+  ///   fileName: String, fileDir?: String, downloadAccountID?: int}`
+  static Future<Map<String, dynamic>> restoreBackup(dynamic arguments) async {
+    try {
+      final fileName = (arguments['fileName'] as String? ?? '').trim();
+      final type = arguments['type'] as String? ?? '';
+      if (fileName.isEmpty || type.isEmpty) {
+        return {'success': false, 'error': 'fileName and type are required'};
+      }
+      final fileDir = arguments['fileDir'] as String? ?? '';
+      final recordId = int.tryParse('${arguments['id'] ?? ''}');
+      await BackupRecoverService().recover(
+        BackupRecoverRequest(
+          downloadAccountID:
+              int.tryParse('${arguments['downloadAccountID'] ?? 0}') ?? 0,
+          type: type,
+          name: arguments['name'] as String? ?? '',
+          detailName: arguments['detailName'] as String? ?? '',
+          file: fileDir.isEmpty ? fileName : '$fileDir/$fileName',
+          taskID: DateTime.now().millisecondsSinceEpoch.toString(),
+          backupRecordID: recordId,
+        ),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('restoreBackup failed: $e');
       return _err(e);
     }
   }

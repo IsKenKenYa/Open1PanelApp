@@ -288,6 +288,11 @@ class NativeChannelReadHandlers {
                 'status': item.record.status,
                 'createdAt': item.record.createdAt ?? '',
                 'backupTime': item.record.backupTime ?? '',
+                // 恢复操作所需字段（B13）：
+                'detailName': item.record.detailName ?? '',
+                'fileName': item.record.fileName ?? '',
+                'fileDir': item.record.fileDir ?? '',
+                'downloadAccountID': item.record.downloadAccountID ?? 0,
               })
           .toList();
     } catch (e) {
