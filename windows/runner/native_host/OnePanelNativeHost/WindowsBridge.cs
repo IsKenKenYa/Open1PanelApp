@@ -478,6 +478,19 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    /// <summary>把 InvokeAsync 的 JSON 文本解析为 JsonElement（null 透传）。</summary>
+    private static async Task<JsonElement?> InvokeJsonAsync(
+        string method, object? args = null)
+    {
+        var json = await InvokeAsync(method, args);
+        if (json == null)
+        {
+            return null;
+        }
+        using var doc = JsonDocument.Parse(json);
+        return doc.RootElement.Clone();
+    }
+
     public static async Task<JsonElement?> GetCommandsAsync()
     {
         return await InvokeWithRetryAsync("getCommands");
@@ -506,14 +519,14 @@ public static class WindowsBridge
 
     public static async Task<JsonElement?> GetGroupsAsync(string type)
     {
-        return await InvokeAsync("getGroups",
+        return await InvokeJsonAsync("getGroups",
             new Dictionary<string, object?> { ["type"] = type });
     }
 
     /// <summary>发现 Ollama 安装实例（AI 域名绑定前置）。</summary>
     public static async Task<JsonElement?> GetOllamaContextAsync()
     {
-        return await InvokeAsync("getOllamaContext");
+        return await InvokeJsonAsync("getOllamaContext");
     }
 
     public static async Task<JsonElement?> GetBackupsAsync()
