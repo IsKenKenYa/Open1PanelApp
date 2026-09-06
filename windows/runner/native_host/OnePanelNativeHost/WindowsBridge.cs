@@ -176,6 +176,20 @@ public static class WindowsBridge
         return await InvokeWithRetryAsync("getWebsites");
     }
 
+    /// <summary>新建网站（deployment 缺省路径；Dart 侧 createWebsite）。</summary>
+    public static async Task<bool> CreateWebsiteAsync(
+        string primaryDomain, string alias, long port, string? remark)
+    {
+        var result = await InvokeAsync("createWebsite", new Dictionary<string, object?>
+        {
+            ["primaryDomain"] = primaryDomain,
+            ["alias"] = alias,
+            ["port"] = port,
+            ["remark"] = remark,
+        });
+        return IsSuccess(result);
+    }
+
     public static async Task<bool> ToggleWebsiteStatusAsync(long id, string currentStatus)
     {
         var result = await InvokeAsync("toggleWebsiteStatus",

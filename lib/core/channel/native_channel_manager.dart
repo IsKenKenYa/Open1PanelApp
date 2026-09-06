@@ -90,6 +90,8 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.deleteServer(arguments);
 
       // ── Write: 网站 ─────────────────────────────────────────────────────
+      case 'createWebsite':
+        return NativeChannelWriteHandlers.createWebsite(arguments);
       case 'toggleWebsiteStatus':
         return NativeChannelWriteHandlers.toggleWebsiteStatus(arguments);
       case 'deleteWebsite':

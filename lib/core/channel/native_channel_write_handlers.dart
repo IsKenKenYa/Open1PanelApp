@@ -8,6 +8,8 @@ import '../../features/files/services/file_browser_service.dart';
 import '../../features/firewall/firewall_service.dart';
 import '../../features/server/server_repository.dart';
 import '../../features/websites/services/websites_service.dart';
+import '../../data/models/website_models.dart';
+import '../../data/repositories/website_repository.dart';
 import '../../core/config/api_config.dart';
 import '../../core/services/app_preferences_service.dart';
 import '../../core/theme/ui_render_mode.dart';
@@ -402,6 +404,49 @@ class NativeChannelWriteHandlers {
       }
     } catch (e) {
       appLogger.e('updateSetting failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 新建网站（WinUI3 网站页新建表单，最小字段集对齐 Flutter 建站向导
+  /// 的 deployment 缺省路径）。参数：
+  /// `{primaryDomain: String, alias?: String, port?: int|String(default 80),
+  ///   type?: String(default 'deployment'), remark?: String}`
+  static Future<Map<String, dynamic>> createWebsite(dynamic arguments) async {
+    try {
+      final primaryDomain =
+          (arguments['primaryDomain'] as String? ?? '').trim();
+      if (primaryDomain.isEmpty) {
+        return {'success': false, 'error': 'primaryDomain is required'};
+      }
+      final alias =
+          (arguments['alias'] as String? ?? '').trim().isNotEmpty
+              ? (arguments['alias'] as String).trim()
+              : primaryDomain.replaceAll('.', '_');
+      final port = int.tryParse('${arguments['port'] ?? 80}') ?? 80;
+      final type = arguments['type'] as String? ?? 'deployment';
+      final remark = (arguments['remark'] as String? ?? '').trim();
+
+      // 与 Flutter 建站向导同序：先 preCheck 再 create。
+      await WebsiteRepository().preCheckWebsite({});
+      await WebsiteRepository().createWebsite(
+        WebsiteCreate(
+          alias: alias,
+          name: primaryDomain,
+          remark: remark.isEmpty ? null : remark,
+          type: type,
+          webSiteGroupId: 0,
+          port: port,
+          domains: [
+            WebsiteDomain(domain: primaryDomain, port: port, ssl: false),
+          ],
+          taskId: DateTime.now().millisecondsSinceEpoch.toString(),
+          ipv6: false,
+        ),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('createWebsite failed: $e');
       return _err(e);
     }
   }
