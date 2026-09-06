@@ -3,6 +3,8 @@ import '../../features/apps/app_service.dart';
 import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
 import '../../features/databases/databases_service.dart';
+import '../../features/ssh/services/ssh_service.dart';
+import '../../features/toolbox/services/toolbox_device_service.dart';
 import '../../data/models/cronjob_list_models.dart';
 import '../../data/repositories/cronjob_repository.dart';
 import '../../data/repositories/cronjob_form_repository.dart';
@@ -396,6 +398,57 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('recreateAIModel failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 主机 SSH（B15）──────────────────────────────────────────────────────
+
+  static const Set<String> _sshOperations = {'start', 'stop', 'restart'};
+
+  /// SSH 服务操作。参数：`{operation: 'start'|'stop'|'restart'}`
+  static Future<Map<String, dynamic>> operateSsh(dynamic arguments) async {
+    try {
+      final operation = arguments['operation'] as String? ?? '';
+      if (!_sshOperations.contains(operation)) {
+        return {'success': false, 'error': 'Unsupported operation: $operation'};
+      }
+      await SSHService().operate(operation);
+      return _ok();
+    } catch (e) {
+      appLogger.e('operateSsh failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 保存 SSH 原始配置。参数：`{value: String}`
+  static Future<Map<String, dynamic>> saveSshConfig(dynamic arguments) async {
+    try {
+      final value = arguments['value'] as String? ?? '';
+      if (value.trim().isEmpty) {
+        return {'success': false, 'error': 'config value is required'};
+      }
+      await SSHService().saveRawConfig(value);
+      return _ok();
+    } catch (e) {
+      appLogger.e('saveSshConfig failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 工具箱（B15）────────────────────────────────────────────────────────
+
+  /// DNS 连通性校验（非破坏）。参数：`{dns: String}`
+  static Future<Map<String, dynamic>> verifyToolboxDns(dynamic arguments) async {
+    try {
+      final dns = (arguments['dns'] as String? ?? '').trim();
+      if (dns.isEmpty) {
+        return {'success': false, 'error': 'dns is required'};
+      }
+      await ToolboxDeviceService().verifyDns(dns);
+      return _ok();
+    } catch (e) {
+      appLogger.e('verifyToolboxDns failed: $e');
       return _err(e);
     }
   }

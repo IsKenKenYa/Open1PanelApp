@@ -66,6 +66,12 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelReadHandlers.getUIRenderMode();
 
       // ── Read: 新增 ─────────────────────────────────────────────────────
+      case 'getSshInfo':
+        return NativeChannelReadHandlers.getSshInfo(arguments);
+      case 'getSshConfig':
+        return NativeChannelReadHandlers.getSshConfig(arguments);
+      case 'getDeviceSnapshot':
+        return NativeChannelReadHandlers.getDeviceSnapshot(arguments);
       case 'getDashboard':
         return NativeChannelReadHandlers.getDashboard(arguments);
       case 'getDatabases':
@@ -118,6 +124,14 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.deleteFile(arguments);
       case 'createFolder':
         return NativeChannelWriteHandlers.createFolder(arguments);
+
+      // ── Write: 主机/工具箱 ──────────────────────────────────────────────
+      case 'operateSsh':
+        return NativeChannelWriteHandlers.operateSsh(arguments);
+      case 'saveSshConfig':
+        return NativeChannelWriteHandlers.saveSshConfig(arguments);
+      case 'verifyToolboxDns':
+        return NativeChannelWriteHandlers.verifyToolboxDns(arguments);
 
       // ── Write: 数据库 ───────────────────────────────────────────────────
       case 'createDatabase':

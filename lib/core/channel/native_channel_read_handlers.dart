@@ -13,6 +13,8 @@ import '../../features/dashboard/services/dashboard_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../features/files/services/file_browser_service.dart';
 import '../../features/firewall/firewall_service.dart';
+import '../../features/ssh/services/ssh_service.dart';
+import '../../features/toolbox/services/toolbox_device_service.dart';
 import '../../features/monitoring/monitoring_service.dart';
 import '../../features/server/server_repository.dart';
 import '../../features/websites/services/websites_service.dart';
@@ -226,6 +228,68 @@ class NativeChannelReadHandlers {
       }
     }
     return result;
+  }
+
+
+  /// SSH 服务信息（B15）。
+  static Future<dynamic> getSshInfo(dynamic arguments) async {
+    try {
+      final info = await SSHService().loadInfo();
+      return {
+        'autoStart': info.autoStart,
+        'isExist': info.isExist,
+        'isActive': info.isActive,
+        'message': info.message,
+        'port': info.port,
+        'listenAddress': info.listenAddress,
+        'passwordAuthentication': info.passwordAuthentication,
+        'pubkeyAuthentication': info.pubkeyAuthentication,
+        'permitRootLogin': info.permitRootLogin,
+        'useDNS': info.useDNS,
+        'currentUser': info.currentUser,
+      };
+    } catch (e) {
+      appLogger.e('Failed to get ssh info for native: $e');
+      return <String, dynamic>{};
+    }
+  }
+
+  /// SSH 原始配置文本（B15）。
+  static Future<dynamic> getSshConfig(dynamic arguments) async {
+    try {
+      return await SSHService().loadRawConfig();
+    } catch (e) {
+      appLogger.e('Failed to get ssh config for native: $e');
+      return '';
+    }
+  }
+
+  /// 工具箱设备快照（B15）。
+  static Future<dynamic> getDeviceSnapshot(dynamic arguments) async {
+    try {
+      final snapshot = await ToolboxDeviceService().loadSnapshot();
+      final base = snapshot.baseInfo;
+      return {
+        'dns': base.dns ?? '',
+        'hostname': base.hostname ?? '',
+        'localTime': base.localTime ?? '',
+        'ntp': base.ntp ?? '',
+        'productName': base.productName ?? '',
+        'productVersion': base.productVersion ?? '',
+        'systemName': base.systemName ?? '',
+        'systemVersion': base.systemVersion ?? '',
+        'timeZone': base.timeZone ?? '',
+        'swapMemoryTotal': base.swapMemoryTotal ?? 0,
+        'users': snapshot.users,
+      };
+    } catch (e) {
+      if (e.toString().contains('No API config available')) {
+        appLogger.i('getDeviceSnapshot skipped: No active server configured.');
+      } else {
+        appLogger.e('Failed to get device snapshot for native: $e');
+      }
+      return <String, dynamic>{};
+    }
   }
 
   /// 防火墙：返回端口规则列表。

@@ -33,6 +33,9 @@ public static class WindowsBridge
         "getAIModels",
         "getDashboard",
         "getMonitoring",
+        "getSshInfo",
+        "getSshConfig",
+        "getDeviceSnapshot",
     };
 
     public static void Initialize(IntPtr messengerHandle)
@@ -388,6 +391,45 @@ public static class WindowsBridge
     {
         var result = await InvokeAsync("recreateAIModel",
             new Dictionary<string, object?> { ["name"] = name });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetSshInfoAsync()
+    {
+        return await InvokeWithRetryAsync("getSshInfo");
+    }
+
+    public static async Task<JsonElement?> GetSshConfigAsync()
+    {
+        return await InvokeWithRetryAsync("getSshConfig");
+    }
+
+    public static async Task<JsonElement?> GetDeviceSnapshotAsync()
+    {
+        return await InvokeWithRetryAsync("getDeviceSnapshot");
+    }
+
+    /// <summary>SSH 服务操作（start/stop/restart）。</summary>
+    public static async Task<bool> OperateSshAsync(string operation)
+    {
+        var result = await InvokeAsync("operateSsh",
+            new Dictionary<string, object?> { ["operation"] = operation });
+        return IsSuccess(result);
+    }
+
+    /// <summary>保存 SSH 原始配置。</summary>
+    public static async Task<bool> SaveSshConfigAsync(string value)
+    {
+        var result = await InvokeAsync("saveSshConfig",
+            new Dictionary<string, object?> { ["value"] = value });
+        return IsSuccess(result);
+    }
+
+    /// <summary>DNS 连通性校验（非破坏）。</summary>
+    public static async Task<bool> VerifyToolboxDnsAsync(string dns)
+    {
+        var result = await InvokeAsync("verifyToolboxDns",
+            new Dictionary<string, object?> { ["dns"] = dns });
         return IsSuccess(result);
     }
 
