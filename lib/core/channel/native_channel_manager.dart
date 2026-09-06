@@ -74,6 +74,8 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.deleteCommand(arguments);
       case 'getGroups':
         return NativeChannelWriteHandlers.getGroups(arguments);
+      case 'bindAIDomain':
+        return NativeChannelWriteHandlers.bindAIDomain(arguments);
       case 'getOllamaContext':
         return NativeChannelWriteHandlers.getOllamaContext(arguments);
       case 'getOperationLogs':

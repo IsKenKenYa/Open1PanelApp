@@ -582,6 +582,34 @@ class NativeChannelWriteHandlers {
     }
   }
 
+  // ── AI 域名绑定（B17，消费 getOllamaContext 发现流）─────────────────────
+
+  /// 绑定 AI 服务域名。参数：
+  /// `{appInstallID: int(>0，来自 getOllamaContext), domain: String 必填,
+  ///   ipList?: String 逗号分隔原样传}`
+  static Future<Map<String, dynamic>> bindAIDomain(dynamic arguments) async {
+    try {
+      final appInstallID = int.tryParse('${arguments['appInstallID'] ?? 0}') ?? 0;
+      final domain = (arguments['domain'] as String? ?? '').trim();
+      if (appInstallID <= 0) {
+        return {'success': false, 'error': 'appInstallID is required'};
+      }
+      if (domain.isEmpty) {
+        return {'success': false, 'error': 'domain is required'};
+      }
+      final ipList = (arguments['ipList'] as String? ?? '').trim();
+      await AIRepository().bindDomain(
+        appInstallID: appInstallID,
+        domain: domain,
+        ipList: ipList.isEmpty ? null : ipList,
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('bindAIDomain failed: $e');
+      return _err(e);
+    }
+  }
+
   // ── 备份 ─────────────────────────────────────────────────────────────────
 
   /// 删除备份记录。参数：`{id: int, name: String, type: String, status: String}`

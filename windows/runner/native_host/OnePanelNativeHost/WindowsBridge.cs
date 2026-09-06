@@ -346,6 +346,19 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    /// <summary>绑定 AI 服务域名（消费 getOllamaContext 的 appInstallId）。</summary>
+    public static async Task<bool> BindAIDomainAsync(
+        long appInstallID, string domain, string? ipList)
+    {
+        var result = await InvokeAsync("bindAIDomain", new Dictionary<string, object?>
+        {
+            ["appInstallID"] = appInstallID,
+            ["domain"] = domain,
+            ["ipList"] = ipList,
+        });
+        return IsSuccess(result);
+    }
+
     /// <summary>新建 shell 定时任务（spec 为原生 cron 表达式）。</summary>
     public static async Task<bool> CreateCronJobAsync(
         string name, string spec, string? script, long groupID)

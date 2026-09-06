@@ -10,16 +10,23 @@ using Windows.UI;
 namespace OnePanelNativeHost;
 
 /// <summary>
-/// Native AI module page: local model list (Ollama).
+/// Native AI module page: local model list (Ollama) plus a connection card.
 /// Mirrors upstream 1Panel AI model list semantics (name, size, modified
 /// date, create by model name, recreate of an existing model, delete with
-/// confirmation naming the model).
+/// confirmation naming the model) and the AI domain tab semantics for the
+/// connection card (Ollama discovery with domain binding).
 /// </summary>
 public sealed class AIPage : ModulePageBase
 {
     private readonly List<AIModelEntry> _models = new();
     private readonly ErrorToast _errorToast = new();
     private bool _isBusy;
+
+    // Connection card state: null until the discovery payload arrives; the
+    // card falls back to a neutral "--" placeholder while unknown.
+    private OllamaContextEntry? _connection;
+    private StackPanel? _connectionCardBody;
+    private InfoBar? _bindInfoBar;
 
     public AIPage()
     {
@@ -38,7 +45,11 @@ public sealed class AIPage : ModulePageBase
 
     private async System.Threading.Tasks.Task RefreshAsync()
     {
+        // The page state machine stays owned by the model list; the
+        // connection context loads right after so both bridge calls share
+        // the _isBusy guard.
         await LoadModelsAsync(showLoadingState: true);
+        await LoadConnectionAsync();
     }
 
     /// <summary>
@@ -89,6 +100,58 @@ public sealed class AIPage : ModulePageBase
         }
     }
 
+    /// <summary>
+    /// Loads the Ollama discovery context for the connection card. A null
+    /// bridge result stays silent by design: the card falls back to the "--"
+    /// placeholder instead of surfacing an error (found=false is the neutral
+    /// "not installed" information state).
+    /// </summary>
+    private async System.Threading.Tasks.Task LoadConnectionAsync()
+    {
+        if (_isBusy) return;
+        _isBusy = true;
+
+        try
+        {
+            var result = await WindowsBridge.GetOllamaContextAsync();
+            _connection = result == null ? null : ParseOllamaContext(result.Value);
+            RenderConnectionCard();
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    private static OllamaContextEntry? ParseOllamaContext(JsonElement json)
+    {
+        if (json.ValueKind != JsonValueKind.Object) return null;
+
+        var entry = new OllamaContextEntry
+        {
+            Found = TryGetBool(json, "found"),
+            Name = TryGetString(json, "name") ?? "",
+            Status = TryGetString(json, "status") ?? "",
+            HasAppInstallId = json.TryGetProperty("appInstallId", out var idProp) &&
+                              idProp.ValueKind == JsonValueKind.Number,
+            AppInstallId = TryGetInt64(json, "appInstallId"),
+        };
+
+        if (json.TryGetProperty("candidates", out var candidates) &&
+            candidates.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in candidates.EnumerateArray())
+            {
+                if (item.ValueKind == JsonValueKind.Number && item.TryGetInt64(out var value))
+                {
+                    entry.Candidates.Add(value);
+                }
+            }
+        }
+
+        return entry;
+    }
+
     private List<AIModelEntry> ParseModels(JsonElement json)
     {
         var models = new List<AIModelEntry>();
@@ -130,7 +193,7 @@ public sealed class AIPage : ModulePageBase
             Icon = new FontIcon { Glyph = "\uE72C" },
             Label = "Refresh",
         };
-        refreshButton.Click += async (s, e) => await LoadModelsAsync(showLoadingState: true);
+        refreshButton.Click += async (s, e) => await RefreshAsync();
 
         var commandBar = new CommandBar
         {
@@ -153,7 +216,6 @@ public sealed class AIPage : ModulePageBase
         var list = new ListView
         {
             SelectionMode = ListViewSelectionMode.None,
-            Margin = new Thickness(8, 0, 8, 0),
             IsItemClickEnabled = false,
         };
 
@@ -162,7 +224,18 @@ public sealed class AIPage : ModulePageBase
             list.Items.Add(CreateModelItem(model));
         }
 
-        scrollViewer.Content = list;
+        // Connection card on top, model list below; the wrapper owns the
+        // page gutter so both children stay edge-aligned.
+        var content = new StackPanel
+        {
+            Orientation = Orientation.Vertical,
+            Margin = new Thickness(8, 0, 8, 0),
+            Spacing = 12,
+        };
+        content.Children.Add(BuildConnectionCard());
+        content.Children.Add(list);
+
+        scrollViewer.Content = content;
         root.Children.Add(scrollViewer);
 
         // Failure toast floats above the list, bottom-aligned (kept in the
@@ -172,6 +245,282 @@ public sealed class AIPage : ModulePageBase
         root.Children.Add(_errorToast);
 
         ModuleContentPresenter.Content = root;
+    }
+
+    /// <summary>
+    /// Connection card shown above the model list: Ollama discovery details
+    /// (instance id, name, status) with the domain binding entry point. Card
+    /// chrome matches the dashboard cards (stroke border + faint tinted fill).
+    /// </summary>
+    private FrameworkElement BuildConnectionCard()
+    {
+        var card = new Border
+        {
+            CornerRadius = new CornerRadius(8),
+            Padding = new Thickness(16, 12, 16, 12),
+            BorderBrush = TryGetThemeBrush("CardStrokeColorDefaultBrush", Microsoft.UI.Colors.Gray),
+            BorderThickness = new Thickness(1),
+            Background = CreateSubtleFill(),
+        };
+
+        _connectionCardBody = new StackPanel
+        {
+            Orientation = Orientation.Vertical,
+            Spacing = 10,
+        };
+
+        RenderConnectionCard();
+        card.Child = _connectionCardBody;
+        return card;
+    }
+
+    /// <summary>
+    /// Rebuilds the connection card body from the current discovery state:
+    /// "--" placeholder while unknown or after a bridge failure, a neutral
+    /// note when Ollama is not installed, otherwise the instance details
+    /// plus the bind-domain entry point and the bind result hint.
+    /// </summary>
+    private void RenderConnectionCard()
+    {
+        var body = _connectionCardBody;
+        if (body == null) return;
+
+        body.Children.Clear();
+
+        body.Children.Add(new TextBlock
+        {
+            Text = "Connection",
+            FontSize = 14,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+        });
+
+        var context = _connection;
+        if (context == null)
+        {
+            // Bridge failure or not loaded yet: neutral placeholder.
+            body.Children.Add(new TextBlock
+            {
+                Text = "--",
+                FontSize = 13,
+                Foreground = TryGetThemeBrush("TextFillColorSecondaryBrush", Microsoft.UI.Colors.Gray),
+            });
+            return;
+        }
+
+        if (!context.Found)
+        {
+            // Neutral information state, not an error: Ollama is optional.
+            body.Children.Add(new TextBlock
+            {
+                Text = "Ollama not detected on this server.",
+                FontSize = 13,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = TryGetThemeBrush("TextFillColorSecondaryBrush", Microsoft.UI.Colors.Gray),
+            });
+            return;
+        }
+
+        var bag = new Grid();
+        bag.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        bag.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        bag.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        bag.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        bag.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        AddConnectionRow(bag, 0, "App Install ID",
+            context.HasAppInstallId ? context.AppInstallId.ToString(CultureInfo.InvariantCulture) : "");
+        AddConnectionRow(bag, 1, "Name", context.Name);
+        AddConnectionRow(bag, 2, "Status", context.Status);
+        body.Children.Add(bag);
+
+        if (context.Candidates.Count > 1)
+        {
+            body.Children.Add(new TextBlock
+            {
+                Text = $"Multiple Ollama instances detected: {string.Join(", ", context.Candidates)} (using first/running)",
+                FontSize = 11,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = TryGetThemeBrush("TextFillColorSecondaryBrush", Microsoft.UI.Colors.Gray),
+            });
+        }
+
+        // Result placeholder for this batch: no read handler exists for the
+        // current binding yet, so a successful bind only surfaces this hint.
+        _bindInfoBar = new InfoBar
+        {
+            Severity = InfoBarSeverity.Success,
+            Message = "Domain bound. Refresh to see connection details.",
+            IsClosable = true,
+            IsOpen = false,
+        };
+        body.Children.Add(_bindInfoBar);
+
+        if (context.HasAppInstallId)
+        {
+            var bindButton = new Button { Content = "Bind domain" };
+            bindButton.Click += (s, e) => _ = ShowBindDomainDialogAsync();
+            body.Children.Add(bindButton);
+        }
+    }
+
+    /// <summary>Places one label+value row into the connection details grid,
+    /// matching the dashboard InfoBag look ("--" for missing data).</summary>
+    private static void AddConnectionRow(Grid bag, int row, string label, string value)
+    {
+        var labelBlock = new TextBlock
+        {
+            Text = label,
+            FontSize = 12,
+            Foreground = TryGetThemeBrush("TextFillColorSecondaryBrush", Microsoft.UI.Colors.Gray),
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(0, 0, 12, 0),
+        };
+        Grid.SetRow(labelBlock, row);
+        Grid.SetColumn(labelBlock, 0);
+        bag.Children.Add(labelBlock);
+
+        var valueBlock = new TextBlock
+        {
+            Text = string.IsNullOrWhiteSpace(value) ? "--" : value,
+            FontSize = 13,
+            TextWrapping = TextWrapping.Wrap,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(0, 0, 0, 8),
+        };
+        Grid.SetRow(valueBlock, row);
+        Grid.SetColumn(valueBlock, 1);
+        bag.Children.Add(valueBlock);
+    }
+
+    /// <summary>Opens the success hint after a completed domain bind.</summary>
+    private void ShowBindSuccessInfo()
+    {
+        if (_bindInfoBar != null)
+        {
+            _bindInfoBar.IsOpen = true;
+        }
+    }
+
+    /// <summary>
+    /// Bind-domain form dialog, mirroring the upstream AI domain tab: a
+    /// required domain plus an optional comma-separated IP allowlist passed
+    /// through as-is. Domain binding is an overwriting write, so a
+    /// ConfirmDialog runs between the form and the bridge call. The dialog
+    /// instance is rebuilt for every attempt (a ContentDialog instance can
+    /// only be shown once) and previous input is carried over, keeping the
+    /// form editable after a failed submit. _isBusy is held across the whole
+    /// dialog lifetime so page operations stay blocked.
+    /// </summary>
+    private async System.Threading.Tasks.Task ShowBindDomainDialogAsync()
+    {
+        var context = _connection;
+        if (_isBusy || context == null || !context.Found || !context.HasAppInstallId) return;
+        _isBusy = true;
+
+        try
+        {
+            string? pendingDomain = null;
+            string? pendingIpList = null;
+            string? pendingError = null;
+
+            while (true)
+            {
+                var domainBox = new TextBox
+                {
+                    Header = "Domain",
+                    PlaceholderText = "ai.example.com",
+                    Text = pendingDomain ?? "",
+                };
+
+                var ipListBox = new TextBox
+                {
+                    Header = "IP allowlist (optional, comma-separated)",
+                    Text = pendingIpList ?? "",
+                };
+
+                var errorText = new TextBlock
+                {
+                    FontSize = 12,
+                    TextWrapping = TextWrapping.Wrap,
+                    Foreground = TryGetThemeBrush("SystemFillColorCriticalBrush", Microsoft.UI.Colors.Red),
+                    Visibility = Visibility.Collapsed,
+                };
+
+                // Any edit clears the pending inline validation error.
+                domainBox.TextChanged += (s, e) => SetFormError(errorText, null);
+
+                var form = new StackPanel { Orientation = Orientation.Vertical, Spacing = 12 };
+                form.Children.Add(domainBox);
+                form.Children.Add(ipListBox);
+                form.Children.Add(errorText);
+
+                var dialog = new ContentDialog
+                {
+                    Title = "Bind domain",
+                    Content = form,
+                    PrimaryButtonText = "Bind",
+                    CloseButtonText = "Cancel",
+                    DefaultButton = ContentDialogButton.Primary,
+                    XamlRoot = XamlRoot,
+                };
+
+                dialog.Closing += (s, args) =>
+                {
+                    if (args.Result != ContentDialogResult.Primary) return;
+
+                    // Inline validation: on an empty domain cancel the close
+                    // so the dialog stays open and the error shows next to
+                    // the field.
+                    if (string.IsNullOrWhiteSpace(domainBox.Text))
+                    {
+                        args.Cancel = true;
+                        SetFormError(errorText, "Domain is required.");
+                    }
+                };
+
+                if (pendingError != null)
+                {
+                    SetFormError(errorText, pendingError);
+                    pendingError = null;
+                }
+
+                var result = await dialog.ShowAsync();
+                if (result != ContentDialogResult.Primary) return; // Cancelled.
+
+                var domain = domainBox.Text.Trim();
+                var ipList = string.IsNullOrWhiteSpace(ipListBox.Text) ? null : ipListBox.Text;
+                pendingDomain = domainBox.Text;
+                pendingIpList = ipListBox.Text;
+
+                // Overwriting write: require an explicit second confirmation
+                // naming the target instance before touching the bridge.
+                var confirmed = await ConfirmDialog.ShowAsync(
+                    XamlRoot,
+                    "Bind Domain",
+                    $"Bind \"{domain}\" to Ollama instance #{context.AppInstallId}?\nThe existing domain binding will be overwritten.",
+                    "Bind",
+                    "Cancel",
+                    isDestructive: false);
+
+                if (!confirmed) continue; // Back to the form; input carried over.
+
+                var success = await WindowsBridge.BindAIDomainAsync(context.AppInstallId, domain, ipList);
+                if (success)
+                {
+                    ShowBindSuccessInfo();
+                    return;
+                }
+
+                _errorToast.Show("Failed to bind domain.");
+                pendingError = "Bind failed. Adjust the input and try again.";
+                // Loop reopens the form so the failure stays editable.
+            }
+        }
+        finally
+        {
+            _isBusy = false;
+        }
     }
 
     private FrameworkElement CreateModelItem(AIModelEntry model)
@@ -496,6 +845,17 @@ public sealed class AIPage : ModulePageBase
     }
 
     /// <summary>
+    /// Translucent card fill derived from the theme card stroke (~4% alpha),
+    /// matching the dashboard card visual language over Mica/LayerFill.
+    /// </summary>
+    private Brush CreateSubtleFill()
+    {
+        var stroke = TryGetThemeBrush("CardStrokeColorDefaultBrush", Microsoft.UI.Colors.Gray);
+        var color = stroke is SolidColorBrush solid ? solid.Color : Microsoft.UI.Colors.Gray;
+        return new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(10, color.R, color.G, color.B));
+    }
+
+    /// <summary>
     /// Formats an ISO-style date string for display; falls back to the raw
     /// value when unparsable (handles Go-style 9-digit fractional seconds).
     /// </summary>
@@ -544,6 +904,24 @@ public sealed class AIPage : ModulePageBase
             return prop.TryGetInt64(out var value) ? value : (long)prop.GetDouble();
         }
         return 0;
+    }
+
+    private static bool TryGetBool(JsonElement element, string property)
+    {
+        return element.ValueKind == JsonValueKind.Object &&
+               element.TryGetProperty(property, out var prop) &&
+               prop.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>View over the Ollama discovery payload from the bridge.</summary>
+    private sealed class OllamaContextEntry
+    {
+        public bool Found { get; set; }
+        public bool HasAppInstallId { get; set; }
+        public long AppInstallId { get; set; }
+        public string Name { get; set; } = "";
+        public string Status { get; set; } = "";
+        public List<long> Candidates { get; set; } = new();
     }
 
     private sealed class AIModelEntry
