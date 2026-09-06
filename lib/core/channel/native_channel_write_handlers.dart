@@ -362,6 +362,44 @@ class NativeChannelWriteHandlers {
     }
   }
 
+  // ── AI 模型生命周期（B14 扩展；域名绑定需 appInstallID 发现流，后续批次） ──
+
+  /// 创建（拉取）Ollama 模型。参数：`{name: String}`
+  static Future<Map<String, dynamic>> createAIModel(dynamic arguments) async {
+    try {
+      final name = (arguments['name'] as String? ?? '').trim();
+      if (name.isEmpty) {
+        return {'success': false, 'error': 'name is required'};
+      }
+      await AIRepository().createOllamaModel(
+        name: name,
+        taskID: DateTime.now().millisecondsSinceEpoch.toString(),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('createAIModel failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 重建 Ollama 模型。参数：`{name: String}`
+  static Future<Map<String, dynamic>> recreateAIModel(dynamic arguments) async {
+    try {
+      final name = (arguments['name'] as String? ?? '').trim();
+      if (name.isEmpty) {
+        return {'success': false, 'error': 'name is required'};
+      }
+      await AIRepository().recreateOllamaModel(
+        name: name,
+        taskID: DateTime.now().millisecondsSinceEpoch.toString(),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('recreateAIModel failed: $e');
+      return _err(e);
+    }
+  }
+
   // ── 备份 ─────────────────────────────────────────────────────────────────
 
   /// 删除备份记录。参数：`{id: int, name: String, type: String, status: String}`

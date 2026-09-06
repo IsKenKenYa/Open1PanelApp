@@ -375,6 +375,22 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    /// <summary>创建（拉取）Ollama 模型。</summary>
+    public static async Task<bool> CreateAIModelAsync(string name)
+    {
+        var result = await InvokeAsync("createAIModel",
+            new Dictionary<string, object?> { ["name"] = name });
+        return IsSuccess(result);
+    }
+
+    /// <summary>重建 Ollama 模型。</summary>
+    public static async Task<bool> RecreateAIModelAsync(string name)
+    {
+        var result = await InvokeAsync("recreateAIModel",
+            new Dictionary<string, object?> { ["name"] = name });
+        return IsSuccess(result);
+    }
+
     public static async Task<JsonElement?> GetBackupsAsync()
     {
         return await InvokeWithRetryAsync("getBackups");
