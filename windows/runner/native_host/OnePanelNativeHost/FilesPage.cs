@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace OnePanelNativeHost;
@@ -17,9 +18,8 @@ public sealed class FilesPage : ModulePageBase
         PageTitle = "Files";
     }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnPageShown()
     {
-        base.OnNavigatedTo(e);
         SetState(PageState.Loading);
         await LoadFilesAsync(_currentPath);
     }

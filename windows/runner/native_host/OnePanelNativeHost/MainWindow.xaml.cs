@@ -1,28 +1,40 @@
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace OnePanelNativeHost;
 
 public sealed partial class MainWindow : Window
 {
-    private static readonly Dictionary<string, Type> _pageMap = new()
+    private static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     {
-        { "Servers", typeof(ServersPage) },
-        { "Files", typeof(FilesPage) },
-        { "Containers", typeof(ContainersPage) },
-        { "Apps", typeof(AppsPage) },
-        { "Websites", typeof(WebsitesPage) },
-        { "AI", typeof(AIPage) },
-        { "Security", typeof(SecurityPage) },
-        { "Settings", typeof(SettingsPage) },
+        { "Servers", () => new ServersPage() },
+        { "Files", () => new FilesPage() },
+        { "Containers", () => new ContainersPage() },
+        { "Apps", () => new AppsPage() },
+        { "Websites", () => new WebsitesPage() },
+        { "AI", () => new AIPage() },
+        { "Security", () => new SecurityPage() },
+        { "Settings", () => new SettingsPage() },
     };
+
+    private readonly Dictionary<string, Page> _pageCache = new();
 
     public MainWindow()
     {
         InitializeComponent();
         RootNavigationView.SelectionChanged += OnNavigationSelectionChanged;
-        RootNavigationView.SelectedItem = RootNavigationView.MenuItems[0];
+        // 导航必须在模板应用(Frame 就绪)后触发，构造期间赋值会触发 native 崩溃。
+        RootNavigationView.Loaded += (sender, _) =>
+        {
+            if (RootNavigationView.SelectedItem == null)
+            {
+                RootNavigationView.SelectedItem = RootNavigationView.MenuItems[0];
+            }
+        };
     }
 
+    // 本环境(self-contained unpackaged)下 Frame.Navigate 存在 native 崩溃缺陷，
+    // 采用单例页面 + Content 直赋：桌面左导航场景无需 back stack，页面自身缓存。
     private void OnNavigationSelectionChanged(
         NavigationView sender,
         NavigationViewSelectionChangedEventArgs args)
@@ -33,10 +45,21 @@ public sealed partial class MainWindow : Window
         }
 
         var tag = item.Content?.ToString();
-
-        if (tag is not null && _pageMap.TryGetValue(tag, out var pageType))
+        if (tag is null || !_pageFactories.TryGetValue(tag, out var factory))
         {
-            ContentFrame.Navigate(pageType);
+            return;
+        }
+
+        if (!_pageCache.TryGetValue(tag, out var page))
+        {
+            page = factory();
+            _pageCache[tag] = page;
+        }
+
+        ContentFrame.Content = page;
+        if (page is ModulePageBase modulePage)
+        {
+            modulePage.ActivatePage();
         }
     }
 }

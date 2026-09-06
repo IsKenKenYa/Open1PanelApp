@@ -23,7 +23,7 @@ public class ModulePageBase : Page
 
     public ModulePageBase()
     {
-        NavigationCacheMode = NavigationCacheMode.Enabled;
+        NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
 
         var rootGrid = new Grid();
 
@@ -126,6 +126,15 @@ public class ModulePageBase : Page
     }
 
     protected virtual void OnRefreshClicked()
+    {
+    }
+
+    /// <summary>
+    /// 页面被宿主切换显示时调用（直赋 Content 模式不触发 OnNavigatedTo）。
+    /// </summary>
+    public void ActivatePage() => OnPageShown();
+
+    protected virtual void OnPageShown()
     {
     }
 }

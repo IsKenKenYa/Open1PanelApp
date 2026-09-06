@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Shapes;
 
 namespace OnePanelNativeHost;
 
@@ -18,9 +19,8 @@ public sealed class ServersPage : ModulePageBase
         PageTitle = "Servers";
     }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnPageShown()
     {
-        base.OnNavigatedTo(e);
         SetState(PageState.Loading);
         await LoadServersAsync();
     }

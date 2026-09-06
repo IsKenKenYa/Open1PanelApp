@@ -16,9 +16,8 @@ public sealed class SettingsPage : ModulePageBase
         PageTitle = "Settings";
     }
 
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnPageShown()
     {
-        base.OnNavigatedTo(e);
         SetState(PageState.Loading);
         await LoadSettingsAsync();
     }
@@ -31,7 +30,7 @@ public sealed class SettingsPage : ModulePageBase
 
     private async System.Threading.Tasks.Task LoadSettingsAsync()
     {
-        var result = await WindowsBridge.GetSettingsSummaryAsync();
+        var result = await WindowsBridge.GetSettingsAsync();
 
         if (result == null)
         {

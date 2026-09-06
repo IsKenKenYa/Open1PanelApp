@@ -19,7 +19,11 @@
                 <NavigationViewItem Content="Apps" Icon="Library" />
                 <NavigationViewItem Content="Websites" Icon="World" />
                 <NavigationViewItem Content="AI" Icon="PreviewLink" />
-                <NavigationViewItem Content="Security" Icon="Protect" />
+                <NavigationViewItem Content="Security">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE72E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Settings" Icon="Setting" />
             </NavigationView.MenuItems>
             <Frame x:Name="ContentFrame" />
