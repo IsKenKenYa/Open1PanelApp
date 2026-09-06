@@ -65,6 +65,7 @@ dependencies:
   path_provider: ^2.1.0  # Path provider for file download
   path_provider_platform_interface: ^2.1.2 # WinUI3 host: align support dir with runner
   shared_preferences_platform_interface: ^2.4.0 # WinUI3 host: store platform handle
+  path_provider_windows: ^2.3.0 # WinUI3 host: fixed support-path provider override
   shared_preferences_windows: ^2.4.1 # WinUI3 host: override its bundled path provider
   permission_handler: ^11.0.0  # Permission handler for Android storage
   

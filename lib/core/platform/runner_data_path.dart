@@ -66,6 +66,9 @@ class RunnerDataPath {
     );
     final target = store ?? SharedPreferencesStorePlatform.instance;
     if (target is SharedPreferencesWindows) {
+      // The field is the package's only injection seam for the support path
+      // (annotated visible-for-testing upstream); required for host alignment.
+      // ignore: invalid_use_of_visible_for_testing_member
       target.pathProvider = _FixedSupportPathWindows(supportPath);
     }
   }
