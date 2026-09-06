@@ -2,6 +2,8 @@
 
 ## 1. 首批模块范围
 
+> 本节为首批（Servers/Files/Settings）立项时的范围记录。当前批次已扩展为 8 页全部接入真实数据与 CRUD（见第 2、6 节），范围登记以 `docs/development/modules/阶段总计划.md` 批次台账为准。
+
 | 模块 | 功能 | 说明 |
 |------|------|------|
 | Servers | 服务器列表、切换当前服务器 | 展示已注册服务器，支持一键切换当前活跃服务器 |
@@ -29,61 +31,83 @@ NavigationView 菜单项与 1Panel 模块一一对应：
 |--------|------|----------|
 | Servers | Globe | 是 |
 | Files | Folder | 是 |
-| Containers | AllApps | 否 |
-| Apps | Library | 否 |
-| Websites | World | 否 |
-| AI | PreviewLink | 否 |
-| Security | Protect | 否 |
+| Containers | AllApps | 是 |
+| Apps | Library | 是 |
+| Websites | World | 是 |
+| AI | PreviewLink | 是 |
+| Security | FontIcon Glyph E72E | 是 |
 | Settings | Setting | 是 |
 
-非首批模块在导航中保留占位，点击后显示"即将支持"提示页面。
+全部 8 个模块页均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
 
 ### 内容路由
 
-- NavigationView `SelectionChanged` 事件触发 `Frame.Navigate(typeof(ModulePage))`
-- 每个模块对应一个独立 Page 类型
-- 页面注册映射表：
+> 本环境（CLI 构建 + self-contained unpackaged）下 `Frame.Navigate` 会触发 native AV（详见「环境约束与规避」），导航采用「单例页面 + Frame.Content 直赋」：
+
+- NavigationView `SelectionChanged` 事件触发页面切换
+- 页面工厂映射表（单例缓存 by tag）：
 
 ```csharp
-static readonly Dictionary<string, Type> _pageMap = new()
+static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 {
-    ["Servers"] = typeof(ServersPage),
-    ["Files"] = typeof(FilesPage),
-    ["Containers"] = typeof(PlaceholderPage),
-    ["Apps"] = typeof(PlaceholderPage),
-    ["Websites"] = typeof(PlaceholderPage),
-    ["AI"] = typeof(PlaceholderPage),
-    ["Security"] = typeof(PlaceholderPage),
-    ["Settings"] = typeof(SettingsPage),
+    { "Servers", () => new ServersPage() },
+    { "Files", () => new FilesPage() },
+    { "Containers", () => new ContainersPage() },
+    { "Apps", () => new AppsPage() },
+    { "Websites", () => new WebsitesPage() },
+    { "AI", () => new AIPage() },
+    { "Security", () => new SecurityPage() },
+    { "Settings", () => new SettingsPage() },
 };
 ```
 
 ### 页面缓存
 
-- 页面设置 `NavigationCacheMode.Enabled`，保持页面状态
-- 切换菜单项时页面实例保留，避免重复创建和重复数据拉取
-- 页面 `OnNavigatedTo` 时拉取最新数据刷新视图
+- 首次进入时经工厂创建页面实例，存入 `_pageCache`；再次进入直接复用，避免重复创建和重复数据拉取
+- 切换时执行 `ContentFrame.Content = page` 直赋
+- 页面实现 `ActivatePage()` / `OnPageShown()` 契约：每次切到该页时触发数据刷新（等价于旧 `OnNavigatedTo` 语义）
+- 桌面左导航场景无需 back stack，不使用 `Frame.Navigate`
 
 ## 3. C# 与 Dart 桥接边界
 
 ### 桥接方式
 
-- 使用 MethodChannel `com.openpanel.windows/shell_bridge`
+- 使用 MethodChannel `com.onepanel.client/method`（与 iOS/macOS 原生轨道同源命名）
 - 与现有窗口管理通道 `onepanel/windows_bridge`（[windows_shell_bridge.dart](../../lib/core/channel/windows/windows_shell_bridge.dart)）并行，职责分离
 - `onepanel/windows_bridge`：窗口管理、托盘、通知等系统级能力
-- `com.openpanel.windows/shell_bridge`：业务数据获取与渲染模式控制
+- `com.onepanel.client/method`：业务数据获取与写入操作（handler 注册在 Dart `NativeChannelManager`）
+
+> 历史通道名 `com.openpanel.windows/shell_bridge` 已废弃，当前代码中不得再出现。
 
 ### 命令集
 
-| 命令 | 方向 | 参数 | 返回值 | 说明 |
-|------|------|------|--------|------|
-| getServers | C# -> Dart | 无 | `List<ServerInfo>` | 获取服务器列表 |
-| getCurrentServer | C# -> Dart | 无 | `ServerInfo` | 获取当前活跃服务器 |
-| switchServer | C# -> Dart | `id: String` | `bool` | 切换当前服务器 |
-| getFiles | C# -> Dart | `path: String` | `List<FileEntry>` | 获取指定路径下的文件列表 |
-| getSettingsSummary | C# -> Dart | 无 | `SettingsSummary` | 获取设置摘要 |
-| setRenderMode | C# -> Dart | `mode: String` | `bool` | 切换渲染模式（native/mdui3） |
-| getRenderMode | C# -> Dart | 无 | `String` | 获取当前渲染模式 |
+命令集与 Dart 侧 `NativeChannelManager` handler 一一对齐，读命令 + 写命令两类：
+
+| 命令 | 方向 | 类型 | 说明 |
+|------|------|------|------|
+| getServers | C# -> Dart | 读 | 获取服务器列表 |
+| getFiles | C# -> Dart | 读 | 获取指定路径下的文件列表（`path` 参数） |
+| getSettings | C# -> Dart | 读 | 获取系统设置 |
+| getContainers | C# -> Dart | 读 | 获取容器列表 |
+| getApps | C# -> Dart | 读 | 获取应用列表 |
+| getWebsites | C# -> Dart | 读 | 获取网站列表 |
+| getFirewallRules | C# -> Dart | 读 | 获取防火墙规则 |
+| getAIModels | C# -> Dart | 读 | 获取 AI 模型列表 |
+| getDashboard | C# -> Dart | 读 | 获取仪表盘数据 |
+| getMonitoring | C# -> Dart | 读 | 获取监控数据 |
+| connectServer | C# -> Dart | 写 | 连接指定服务器（`id` 参数） |
+| addServer / deleteServer | C# -> Dart | 写 | 服务器新增 / 删除 |
+| updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
+| toggleContainerState / deleteContainer | C# -> Dart | 写 | 容器启停 / 删除 |
+| toggleWebsiteStatus / deleteWebsite | C# -> Dart | 写 | 网站启停 / 删除 |
+| createFolder / deleteFile | C# -> Dart | 写 | 文件系统新建目录 / 删除 |
+| addFirewallRule / deleteFirewallRule | C# -> Dart | 写 | 防火墙规则新增 / 删除 |
+| deleteAIModel | C# -> Dart | 写 | 删除 AI 模型 |
+
+### Codec 锁定
+
+- 编解码使用 Dart `StandardMethodCodec`，C# 端实现同构 codec
+- 以 Dart golden 向量双向锁定：`test/core/channel/winui_codec_golden_test.dart`（Dart 侧）与 `OnePanelNativeHost.Tests`（C# 侧）共享同一组向量，任一侧编解码偏差即测试失败
 
 ### 数据格式
 
@@ -109,6 +133,8 @@ static readonly Dictionary<string, Type> _pageMap = new()
 - 违反此规则的代码不得合并
 
 ## 4. 状态同步策略
+
+> 当前实现状态：MethodChannel 请求/响应已落地；EventChannel 推送为本节设计目标，代码中尚未实现，状态刷新当前由页面 `ActivatePage()` 驱动。
 
 ### Dart -> C#（推送）
 
@@ -150,6 +176,8 @@ Dart Provider/Service
 ```
 
 ## 5. 异常回退与降级策略
+
+> 当前实现状态：失败重试（C# 侧 `InvokeWithRetryAsync`）与错误态/空态/加载态组件已落地；「连续失败提示切换 MDUI3」为本节设计目标，且渲染模式切换已收敛到 runner 侧 `render_mode_bootstrap`（见第 7 节），不再经 MethodChannel 命令。
 
 ### 桥接超时
 
@@ -207,12 +235,18 @@ ModulePageBase : Page
 
 ### 具体页面
 
+本批次交付 8 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
-| ServersPage | ModulePageBase | 服务器列表（ListView），当前服务器高亮，点击切换 |
-| SettingsPage | ModulePageBase | 设置摘要分组（StackPanel + ToggleSwitch），布尔项可切换 |
-| FilesPage | ModulePageBase | 文件/目录列表（ListView），目录项可点击进入子目录 |
-| PlaceholderPage | Page | "即将支持"提示文字 |
+| ServersPage | ModulePageBase | 服务器列表，当前服务器高亮，支持连接/新增/删除 |
+| FilesPage | ModulePageBase | 文件/目录列表，目录导航 + 新建目录/删除 |
+| ContainersPage | ModulePageBase | 容器列表 + 启停/删除 |
+| AppsPage | ModulePageBase | 应用列表 |
+| WebsitesPage | ModulePageBase | 网站列表 + 启停/删除 |
+| AIPage | ModulePageBase | AI 模型列表 + 删除 |
+| SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
+| SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
 
 ### 状态控件
 
@@ -243,17 +277,27 @@ ModulePageBase : Page
 
 ## 7. 验收标准
 
-### 构建门禁
+### 构建门禁（可重复执行）
 
-- `dotnet build windows/runner/native_host/OnePanelNativeHost/OnePanelNativeHost.csproj -c Debug` 可通过
-- 无编译错误，无编译警告（除第三方依赖警告外）
+```bash
+# 宿主构建（0 错误）
+dotnet build windows/runner/native_host/OnePanelNativeHost/OnePanelNativeHost.csproj -c Debug
+
+# 宿主 xUnit 测试（含 codec golden 双向锁定）
+dotnet test windows/runner/native_host/OnePanelNativeHost.Tests/OnePanelNativeHost.Tests.csproj -c Debug
+
+# Flutter runner 构建（产出为宿主的引擎/插件资源源）
+flutter build windows --debug
+
+# Dart 侧通道与平台测试
+flutter test test/core/channel/ test/core/platform/
+```
 
 ### 导航功能
 
-- NavigationView 菜单切换可显示对应页面
-- 首批模块（Servers/Files/Settings）显示实际内容页面
-- 非首批模块显示 PlaceholderPage
-- 页面切换时状态保留（NavigationCacheMode.Enabled）
+- NavigationView 菜单切换经单例页面 + `Frame.Content` 直赋显示对应页面
+- 8 个模块页均显示实际内容页面
+- 页面切换时实例保留（`_pageCache` 单例缓存），`ActivatePage()` 触发数据刷新
 
 ### 四态切换
 
@@ -264,18 +308,76 @@ ModulePageBase : Page
 
 ### 桥接调用
 
-- 桥接调用可返回数据（需 Flutter 引擎运行）
-- 数据 JSON 序列化/反序列化正确
+- 桥接调用可返回数据（headless Flutter 引擎运行）
+- 数据经 StandardMethodCodec 编解码，golden 向量双向测试通过
 - 超时和异常处理符合降级策略
 
-### 渲染模式切换
+### 渲染模式（native/MDUI3 双模式）
 
-- `setRenderMode("mdui3")` 可切换到 MDUI3 模式
-- `setRenderMode("native")` 可切换回原生模式
-- `getRenderMode` 可正确返回当前模式
+- 双模式由 runner 侧 `render_mode_bootstrap` 承载：读取 `flutter\.app_ui_render_mode` 配置
+- `native` 模式下 detached 启动 `OnePanelNativeHost.exe`；其余走 MDUI3 Flutter 壳
+- MDUI3 基线不因原生轨道开发而降级
+
+### 端到端冒烟
+
+- 启动 `OnePanelNativeHost.exe` → ServersPage 渲染真实服务器列表
 
 ### 架构合规
 
 - C# 端无直接 HTTP 调用
 - 所有数据通过 MethodChannel 从 Dart 端获取
 - 页面组件继承体系符合 ModulePageBase 规范
+
+## 8. headless 引擎宿主模型
+
+### 进程与组件
+
+- WinUI3 宿主 `OnePanelNativeHost`（WindowsAppSDK 2.4.0 stable、`WindowsAppSDKSelfContained=true`、`win-x64`、`WindowsPackageType=None` unpackaged）
+- 胶水 DLL `flutter_headless_host`（[windows/runner/CMakeLists.txt](../../windows/runner/CMakeLists.txt) CMake target，链接 `flutter_wrapper_app`），以无 view 方式运行 headless Flutter 引擎
+- Dart 业务核心（NativeChannelManager handler、Provider/Service/Repository）与 MDUI3 轨道完全同源复用
+
+### 启动时序
+
+1. C# `FlutterEngineHost` 经 `DllImport("flutter_headless_host.dll", "StartHeadlessEngine")` 定位 runner 输出目录（`flutter build windows --debug` 产物为资源源）并加载 DLL
+2. DLL 侧 `FlutterDesktopEngineCreate` 创建引擎 → **先注册插件**（`RegisterPlugins`）→ `FlutterDesktopEngineRun` 启动
+3. `FlutterDesktopEngineGetMessenger` 取 messenger → `FlutterDesktopMessengerAddRef` 后移交 C# `WindowsBridge.Initialize`
+4. C# 侧基于该 messenger 建立 `com.onepanel.client/method` MethodChannel 收发
+
+### 进程图（线程模型）
+
+```
+OnePanelNativeHost.exe（单进程）
+├── WinUI3 UI 线程
+│     ├── MainWindow（NavigationView / Frame.Content 直赋）
+│     ├── WindowsBridge（持有 AddRef 后的 messenger，
+│     │    MethodChannel 调用编解码均在此线程发起）
+│     └── 8 个模块页（ModulePageBase 四态）
+└── Flutter 引擎 platform 线程（flutter_headless_host 内创建）
+      ├── Dart task runner：NativeChannelManager handler 分发
+      │    -> Provider/Service/Repository -> API/Infra
+      ├── 消息泵：platform channel 消息循环
+      └── 无 view 渲染（headless，无 FlutterWindow/surface）
+```
+
+- messenger 交接：engine messenger 由 DLL 侧 AddRef 后交 C#，保证引擎生命周期独立于 view 存在；C# 调用与 Dart handler 响应经引擎 platform 线程消息泵往返
+- 插件注册先于 `Run`：path_provider / shared_preferences 等插件在引擎启动前完成注册，避免 Dart 侧首帧前访问插件通道失败
+
+## 9. 环境约束与规避
+
+本节记录本环境（CLI 构建 + WindowsAppSDK self-contained unpackaged）实测踩坑与已采用的规避方案。后续在此环境下开发必须遵守：
+
+| 约束现象 | 规避方案 |
+|----------|----------|
+| `Frame.Navigate` 触发 native AV（access violation） | 导航采用「单例页面 + `Frame.Content` 直赋 + `ActivatePage()`/`OnPageShown()` 契约」；桌面左导航场景无 back stack，页面自身缓存（见 [MainWindow.xaml.cs](../../windows/runner/native_host/OnePanelNativeHost/MainWindow.xaml.cs)） |
+| `Icon="Protect"` 等非 Symbol 枚举值抛 `XamlParseException` | 菜单图标只使用 Symbol 枚举合法值；非枚举图标改用显式 `<FontIcon Glyph="..." />` |
+| XAML 资源解析失败 | App.xaml 必须挂 `XamlControlsResources`（[App.xaml](../../windows/runner/native_host/OnePanelNativeHost/App.xaml)） |
+| packaged 时代遗留的 `PRIResource`/禁用属性导致 `resources.pri` 缺失崩溃 | 清理 packaged-era PRI 禁用属性，保证 resources.pri 正常生成 |
+| 宿主进程身份与数据目录 | 宿主 VERSIONINFO（Company=IsKenKenYa, Product=1Panel Client）使 path_provider 与 runner 数据目录同源；Dart 侧再经 `RunnerDataPath` 显式覆盖（详见下节） |
+
+## 10. 数据目录对齐
+
+- **同源机制**：宿主 exe 的 VERSIONINFO（`CompanyName=IsKenKenYa`、`ProductName=1Panel Client`）使 path_provider 计算出的 AppData 目录与 Flutter runner 数据目录同源，宿主与 MDUI3 轨道共享同一份服务器配置与偏好。
+- **显式覆盖**：Dart 侧 [runner_data_path.dart](../../lib/core/platform/runner_data_path.dart) 不依赖隐式同源，显式覆盖数据路径。两个消费方必须同时覆盖，缺一即分叉：
+  - `PathProviderPlatform.instance`（path_provider 系插件）
+  - `SharedPreferencesWindows.pathProvider`（shared_preferences 内部独立解析路径）
+- 验证：`flutter test test/core/platform/runner_data_path_test.dart`。
