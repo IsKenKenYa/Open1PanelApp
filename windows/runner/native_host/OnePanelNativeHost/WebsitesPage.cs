@@ -11,9 +11,8 @@ namespace OnePanelNativeHost;
 
 /// <summary>
 /// Native Websites module page.
-/// Mirrors upstream 1Panel website list semantics (domain, status toggle,
-/// delete with confirmation). Create-site wizard is intentionally out of
-/// scope for this batch (no Dart-side create handler).
+/// Mirrors upstream 1Panel website list semantics (create with deployment
+/// defaults, domain, status toggle, delete with confirmation).
 /// </summary>
 public sealed class WebsitesPage : ModulePageBase
 {
@@ -118,6 +117,13 @@ public sealed class WebsitesPage : ModulePageBase
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
+        var addButton = new AppBarButton
+        {
+            Icon = new FontIcon { Glyph = "\uE710" },
+            Label = "Add website",
+        };
+        addButton.Click += (s, e) => _ = ShowAddWebsiteDialogAsync();
+
         var refreshButton = new AppBarButton
         {
             Icon = new FontIcon { Glyph = "\uE72C" },
@@ -130,6 +136,7 @@ public sealed class WebsitesPage : ModulePageBase
             DefaultLabelPosition = CommandBarDefaultLabelPosition.Right,
             Margin = new Thickness(4, 0, 4, 0),
         };
+        commandBar.PrimaryCommands.Add(addButton);
         commandBar.PrimaryCommands.Add(refreshButton);
         Grid.SetRow(commandBar, 0);
         root.Children.Add(commandBar);
@@ -373,6 +380,160 @@ public sealed class WebsitesPage : ModulePageBase
         finally
         {
             _isBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Add-website form dialog with inline validation, matching the upstream
+    /// create-site form (primary domain required, port defaults to 80, alias
+    /// auto-derived Dart-side when empty, deployment type fixed).
+    /// _isBusy is held across the whole dialog lifetime so the CommandBar
+    /// button cannot open a second dialog and row operations stay blocked.
+    /// The dialog stays open while the bridge call runs and only closes on
+    /// success; on failure the toast shows and the form stays editable.
+    /// </summary>
+    private async System.Threading.Tasks.Task ShowAddWebsiteDialogAsync()
+    {
+        if (_isBusy) return;
+        _isBusy = true;
+
+        try
+        {
+            var domainBox = new TextBox { Header = "Primary domain", PlaceholderText = "e.g. example.com" };
+            var aliasBox = new TextBox { Header = "Alias", PlaceholderText = "Auto-derived from domain if empty" };
+            var portBox = new TextBox { Header = "Port", Text = "80" };
+            var remarkBox = new TextBox { Header = "Remark", PlaceholderText = "Optional" };
+
+            var errorText = new TextBlock
+            {
+                FontSize = 12,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = TryGetThemeBrush("SystemFillColorCriticalBrush", Microsoft.UI.Colors.Red),
+                Visibility = Visibility.Collapsed,
+            };
+
+            // Any edit clears the pending inline validation error.
+            void ClearError() => SetFormError(errorText, null);
+            domainBox.TextChanged += (s, e) => ClearError();
+            aliasBox.TextChanged += (s, e) => ClearError();
+            portBox.TextChanged += (s, e) => ClearError();
+            remarkBox.TextChanged += (s, e) => ClearError();
+
+            var form = new StackPanel { Orientation = Orientation.Vertical, Spacing = 12 };
+            form.Children.Add(domainBox);
+            form.Children.Add(aliasBox);
+            form.Children.Add(portBox);
+            form.Children.Add(remarkBox);
+            form.Children.Add(errorText);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Add website",
+                Content = form,
+                PrimaryButtonText = "Add",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = XamlRoot,
+            };
+
+            bool submitting = false;
+            bool createSucceeded = false;
+
+            async System.Threading.Tasks.Task SubmitCreateAsync()
+            {
+                // Validation already guaranteed a numeric 1-65535 port.
+                var success = await WindowsBridge.CreateWebsiteAsync(
+                    domainBox.Text.Trim(),
+                    aliasBox.Text.Trim(),
+                    long.Parse(portBox.Text.Trim(), CultureInfo.InvariantCulture),
+                    string.IsNullOrWhiteSpace(remarkBox.Text) ? null : remarkBox.Text.Trim());
+                if (success)
+                {
+                    createSucceeded = true;
+                    dialog.Hide(); // Closing lets this programmatic close pass.
+                }
+                else
+                {
+                    submitting = false;
+                    _errorToast.Show("Failed to add website.");
+                    SetFormError(errorText, "Create failed. Adjust the inputs and try again.");
+                }
+            }
+
+            dialog.Closing += (s, args) =>
+            {
+                // Programmatic close after a successful create passes through.
+                if (createSucceeded) return;
+
+                // Swallow every close attempt while the bridge call is in
+                // flight so the dialog cannot outlive the submit result.
+                if (submitting)
+                {
+                    args.Cancel = true;
+                    return;
+                }
+
+                if (args.Result != ContentDialogResult.Primary) return;
+
+                // Inline validation: on invalid input cancel the close so the
+                // dialog stays open and the error shows next to the fields.
+                var error = ValidateCreateWebsiteInput(domainBox.Text, portBox.Text);
+                if (error != null)
+                {
+                    args.Cancel = true;
+                    SetFormError(errorText, error);
+                    return;
+                }
+
+                // Keep the dialog open during submission; close only on success.
+                args.Cancel = true;
+                submitting = true;
+                _ = SubmitCreateAsync();
+            };
+
+            await dialog.ShowAsync();
+            if (!createSucceeded) return;
+
+            // The dialog is closed; release the dialog-lifetime guard so the
+            // _isBusy-guarded silent refresh below can actually run.
+            _isBusy = false;
+            await LoadWebsitesAsync(showLoadingState: false);
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    /// <summary>Returns the first create-website validation error, or null when the input is valid.</summary>
+    private static string? ValidateCreateWebsiteInput(string domain, string port)
+    {
+        if (string.IsNullOrWhiteSpace(domain)) return "Primary domain is required.";
+
+        var trimmedPort = port.Trim();
+        if (trimmedPort.Length == 0) return "Port is required.";
+        foreach (var ch in trimmedPort)
+        {
+            if (!char.IsDigit(ch)) return "Port must be a number.";
+        }
+        if (!long.TryParse(trimmedPort, out var value) || value < 1 || value > 65535)
+        {
+            return "Port must be between 1 and 65535.";
+        }
+        return null;
+    }
+
+    private static void SetFormError(TextBlock target, string? message)
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            target.Text = string.Empty;
+            target.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            target.Text = message;
+            target.Visibility = Visibility.Visible;
         }
     }
 
