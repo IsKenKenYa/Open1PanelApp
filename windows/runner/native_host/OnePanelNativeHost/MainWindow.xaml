@@ -73,6 +73,18 @@
                         <FontIcon Glyph="&#xE823;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!-- E777 verified against the official Segoe Fluent Icons table: it is
+                     "UpdateRestore", the only glyph carrying restore/point-in-time-recovery
+                     semantics, the closest match for backups (no glyph is literally named
+                     "Backup" or "Archive"). Alternatives rejected: E8B7 is "Folder" and
+                     already taken by Files; E753 is "Cloud" (Sync is actually E895, a
+                     directional file-sync glyph); E81C "History" is a clock that visually
+                     collides with CronJobs' E823 "Recent". -->
+                <NavigationViewItem Content="Backups">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE777;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Monitoring">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC4A;" />

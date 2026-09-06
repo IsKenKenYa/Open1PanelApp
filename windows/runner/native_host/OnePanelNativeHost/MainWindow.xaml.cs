@@ -16,6 +16,7 @@ public sealed partial class MainWindow : Window
         { "Websites", () => new WebsitesPage() },
         { "Databases", () => new DatabasePage() },
         { "CronJobs", () => new CronJobsPage() },
+        { "Backups", () => new BackupsPage() },
         { "Monitoring", () => new MonitoringPage() },
         { "AI", () => new AIPage() },
         { "Security", () => new SecurityPage() },
