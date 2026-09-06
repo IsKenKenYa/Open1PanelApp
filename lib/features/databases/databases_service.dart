@@ -45,6 +45,10 @@ class DatabasesService {
     return _repository.loadBaseInfo(item);
   }
 
+  Future<void> deleteDatabase(int id) {
+    return _repository.deleteDatabase(id);
+  }
+
   Future<void> updateDescription(DatabaseListItem item, String description) {
     return _repository.updateDescription(item, description);
   }

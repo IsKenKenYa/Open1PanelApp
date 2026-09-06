@@ -218,6 +218,68 @@ public static class WindowsBridge
         return IsSuccess(result);
     }
 
+    /// <summary>新建数据库（本地部署最小集；remote 需连接信息）。</summary>
+    public static async Task<bool> CreateDatabaseAsync(
+        string name, string type, string? description,
+        string? address, long? port, string? username, string? password)
+    {
+        var result = await InvokeAsync("createDatabase", new Dictionary<string, object?>
+        {
+            ["name"] = name,
+            ["type"] = type,
+            ["description"] = description,
+            ["address"] = address,
+            ["port"] = port,
+            ["username"] = username,
+            ["password"] = password,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>删除数据库。</summary>
+    public static async Task<bool> DeleteDatabaseAsync(long id)
+    {
+        var result = await InvokeAsync("deleteDatabase",
+            new Dictionary<string, object?> { ["id"] = id });
+        return IsSuccess(result);
+    }
+
+    /// <summary>修改数据库描述（行字典字段回传，供 Dart 侧重建条目）。</summary>
+    public static async Task<bool> UpdateDatabaseDescriptionAsync(
+        string scope, string? lookupName, string? name,
+        string? engine, string? source, long? id, string description)
+    {
+        var result = await InvokeAsync("updateDatabaseDescription", new Dictionary<string, object?>
+        {
+            ["scope"] = scope,
+            ["lookupName"] = lookupName,
+            ["name"] = name,
+            ["engine"] = engine,
+            ["source"] = source,
+            ["id"] = id,
+            ["description"] = description,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>修改数据库密码（行字典字段回传）。</summary>
+    public static async Task<bool> ChangeDatabasePasswordAsync(
+        string scope, string? lookupName, string? name,
+        string? engine, string? source, long? id, string password)
+    {
+        var result = await InvokeAsync("changeDatabasePassword", new Dictionary<string, object?>
+        {
+            ["scope"] = scope,
+            ["lookupName"] = lookupName,
+            ["name"] = name,
+            ["engine"] = engine,
+            ["source"] = source,
+            ["id"] = id,
+            ["password"] = password,
+        });
+        return IsSuccess(result);
+    }
+
     public static async Task<JsonElement?> GetFirewallRulesAsync()
     {
         return await InvokeWithRetryAsync("getFirewallRules");

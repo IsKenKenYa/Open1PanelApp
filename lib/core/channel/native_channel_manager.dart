@@ -119,6 +119,16 @@ class NativeChannelManager implements NativeChannelPort {
       case 'createFolder':
         return NativeChannelWriteHandlers.createFolder(arguments);
 
+      // ── Write: 数据库 ───────────────────────────────────────────────────
+      case 'createDatabase':
+        return NativeChannelWriteHandlers.createDatabase(arguments);
+      case 'deleteDatabase':
+        return NativeChannelWriteHandlers.deleteDatabase(arguments);
+      case 'updateDatabaseDescription':
+        return NativeChannelWriteHandlers.updateDatabaseDescription(arguments);
+      case 'changeDatabasePassword':
+        return NativeChannelWriteHandlers.changeDatabasePassword(arguments);
+
       // ── Write: 定时任务 ─────────────────────────────────────────────────
       case 'toggleCronJobStatus':
         return NativeChannelWriteHandlers.toggleCronJobStatus(arguments);

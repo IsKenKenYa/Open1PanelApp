@@ -2,6 +2,7 @@ import '../../features/ai/ai_repository.dart';
 import '../../features/apps/app_service.dart';
 import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
+import '../../features/databases/databases_service.dart';
 import '../../data/models/cronjob_list_models.dart';
 import '../../data/repositories/cronjob_repository.dart';
 import '../../features/files/services/file_browser_service.dart';
@@ -15,6 +16,7 @@ import '../../core/services/app_preferences_service.dart';
 import '../../core/theme/ui_render_mode.dart';
 import '../../data/models/backup_account_models.dart';
 import '../../data/models/firewall_models.dart';
+import '../../data/models/database_models.dart';
 import '../services/logger/logger_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' show Locale;
@@ -447,6 +449,112 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('createWebsite failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 数据库 ────────────────────────────────────────────────────────────────
+
+  /// 新建数据库（本地部署最小集；remote 需连接信息）。
+  /// 参数：`{name: String, type?: String(scope, 默认 mysql), description?: String,
+  ///        address?: String, port?: int|String, username?: String, password?: String}`
+  static Future<Map<String, dynamic>> createDatabase(dynamic arguments) async {
+    try {
+      final name = (arguments['name'] as String? ?? '').trim();
+      if (name.isEmpty) {
+        return {'success': false, 'error': 'name is required'};
+      }
+      final type = arguments['type'] as String? ?? 'mysql';
+      final scope = DatabaseScope.values.firstWhere(
+        (s) => s.value == type,
+        orElse: () => DatabaseScope.mysql,
+      );
+      final isRemote = scope == DatabaseScope.remote || type == 'remote';
+      final port = int.tryParse('${arguments['port'] ?? ''}');
+      await DatabasesService().submitForm(
+        DatabaseFormInput(
+          scope: scope,
+          name: name,
+          engine: type,
+          source: isRemote ? 'remote' : 'local',
+          description: (arguments['description'] as String? ?? '').trim(),
+          address: arguments['address'] as String?,
+          port: port,
+          username: arguments['username'] as String?,
+          password: arguments['password'] as String?,
+        ),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('createDatabase failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 删除数据库。参数：`{id: int|String}`
+  static Future<Map<String, dynamic>> deleteDatabase(dynamic arguments) async {
+    try {
+      final id = int.tryParse('${arguments['id'] ?? ''}');
+      if (id == null) {
+        return {'success': false, 'error': 'id is required'};
+      }
+      await DatabasesService().deleteDatabase(id);
+      return _ok();
+    } catch (e) {
+      appLogger.e('deleteDatabase failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 重建供改写操作使用的最小条目（字段覆盖 repository 各分支所需）。
+  static DatabaseListItem _rebuildDatabaseItem(dynamic arguments) {
+    final lookupName =
+        (arguments['lookupName'] as String? ?? '').trim();
+    final name = (arguments['name'] as String? ?? '').trim();
+    if (lookupName.isEmpty && name.isEmpty) {
+      throw ArgumentError('lookupName or name is required');
+    }
+    final type = arguments['scope'] as String? ?? 'mysql';
+    return DatabaseListItem(
+      scope: DatabaseScope.values.firstWhere(
+        (s) => s.value == type,
+        orElse: () => DatabaseScope.mysql,
+      ),
+      id: int.tryParse('${arguments['id'] ?? ''}'),
+      name: name,
+      engine: arguments['engine'] as String? ?? type,
+      source: arguments['source'] as String? ?? 'local',
+      database: lookupName.isEmpty ? null : lookupName,
+    );
+  }
+
+  /// 修改数据库描述。参数：`{scope, lookupName?|name, engine?, source?, id?, description}`
+  static Future<Map<String, dynamic>> updateDatabaseDescription(
+      dynamic arguments) async {
+    try {
+      final description = arguments['description'] as String? ?? '';
+      final item = _rebuildDatabaseItem(arguments);
+      await DatabasesService().updateDescription(item, description);
+      return _ok();
+    } catch (e) {
+      appLogger.e('updateDatabaseDescription failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 修改数据库密码。参数：`{scope, lookupName?|name, engine?, source?, id?, password}`
+  static Future<Map<String, dynamic>> changeDatabasePassword(
+      dynamic arguments) async {
+    try {
+      final password = arguments['password'] as String? ?? '';
+      if (password.isEmpty) {
+        return {'success': false, 'error': 'password is required'};
+      }
+      final item = _rebuildDatabaseItem(arguments);
+      await DatabasesService().changePassword(item, password);
+      return _ok();
+    } catch (e) {
+      appLogger.e('changeDatabasePassword failed: $e');
       return _err(e);
     }
   }

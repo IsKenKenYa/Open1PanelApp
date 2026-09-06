@@ -295,6 +295,11 @@ class DatabaseRepository {
     }
   }
 
+  Future<void> deleteDatabase(int id) async {
+    final api = await _getApi();
+    await api.deleteDatabase(OperateByID(id: id));
+  }
+
   Future<void> updateDescription(
       DatabaseListItem item, String description) async {
     final api = await _getApi();
