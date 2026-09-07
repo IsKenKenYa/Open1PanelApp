@@ -23,10 +23,13 @@ namespace OnePanelNativeHost;
 ///   Down takes the containers down keeping the files behind a non-destructive
 ///   confirmation, and Delete removes the compose plus its containers behind a
 ///   destructive confirmation naming the compose.
-/// Batch boundary: compose creation/import (upstream create dialog, template
-/// and path sources) is deferred to a later batch; this page is read + operate
-/// only. All data flows through WindowsBridge (method channel to the Dart
-/// core); no direct HTTP from the native layer.
+/// Create opens the new-compose dialog (name + "From path"/"From content"
+/// source + editor; the upstream template source is deferred) and Edit opens
+/// a full-replacement config editor: the list payload carries no compose
+/// content, so the editor starts empty and the pasted content replaces the
+/// whole file behind an explicit confirmation. All data flows through
+/// WindowsBridge (method channel to the Dart core); no direct HTTP from the
+/// native layer.
 /// </summary>
 public sealed class OrchestrationPage : ModulePageBase
 {
@@ -181,7 +184,15 @@ public sealed class OrchestrationPage : ModulePageBase
             Background = null, // Stay transparent on the LayerFill card surface.
         };
 
-        // Create/import arrive in a later batch; refresh is the only command.
+        // Primary create command (upstream toolbar "create" button), then refresh.
+        var createButton = new AppBarButton
+        {
+            Label = "Create compose",
+            Icon = new FontIcon { Glyph = "\uE710" }, // Add.
+        };
+        createButton.Click += (s, e) => _ = ShowCreateComposeDialogAsync();
+        bar.PrimaryCommands.Add(createButton);
+
         var refreshButton = new AppBarButton
         {
             Label = "Refresh",
@@ -354,6 +365,17 @@ public sealed class OrchestrationPage : ModulePageBase
         flyout.Items.Add(downItem);
 
         flyout.Items.Add(new MenuFlyoutSeparator());
+
+        // Edit opens the config editor. The list payload has no compose
+        // content, so the dialog works in full-replacement mode (see
+        // ShowEditComposeDialogAsync for the contract boundary).
+        var editItem = new MenuFlyoutItem
+        {
+            Text = "Edit",
+            Icon = new FontIcon { Glyph = "\uE70F" }, // Edit pencil.
+        };
+        editItem.Click += (s, e) => _ = ShowEditComposeDialogAsync(compose);
+        flyout.Items.Add(editItem);
 
         var deleteItem = new MenuFlyoutItem
         {
@@ -528,6 +550,301 @@ public sealed class OrchestrationPage : ModulePageBase
         "down" => "take down",
         _ => action.ToLowerInvariant(),
     };
+
+    /// <summary>
+    /// New-compose form dialog mirroring the upstream create form (name +
+    /// source selector + editor, template source dropped): "From path" takes
+    /// an existing compose file path, "From content" takes the YAML inline.
+    /// _isBusy is held across the whole dialog lifetime so no other flow can
+    /// start meanwhile. Closing is intercepted for inline validation; the
+    /// dialog stays open while the bridge call runs and only closes on
+    /// success, after which the guard is released before the silent refresh
+    /// (DatabasePage paradigm).
+    /// </summary>
+    private async Task ShowCreateComposeDialogAsync()
+    {
+        if (_isBusy) return;
+        _isBusy = true;
+
+        try
+        {
+            var nameBox = new TextBox { Header = "Name", PlaceholderText = "e.g. my-app" };
+
+            var sourceCombo = new ComboBox { Header = "Create from", SelectedIndex = 0, MinWidth = 200 };
+            sourceCombo.Items.Add("From path");
+            sourceCombo.Items.Add("From content");
+
+            var pathBox = new TextBox
+            {
+                Header = "Compose file path",
+                PlaceholderText = "e.g. /opt/1panel/docker/compose/my-app/docker-compose.yml",
+            };
+
+            var contentBox = new TextBox
+            {
+                Header = "Compose content (YAML)",
+                PlaceholderText = "services:\n  web:\n    image: nginx",
+                AcceptsReturn = true,
+                Height = 220,
+                FontFamily = new FontFamily("Consolas"),
+                IsSpellCheckEnabled = false,
+                TextWrapping = TextWrapping.NoWrap,
+                Visibility = Visibility.Collapsed,
+            };
+            ScrollViewer.SetVerticalScrollBarVisibility(contentBox, ScrollBarVisibility.Auto);
+
+            var errorText = new TextBlock
+            {
+                FontSize = 12,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = TryGetThemeBrush("SystemFillColorCriticalBrush", Microsoft.UI.Colors.Red),
+                Visibility = Visibility.Collapsed,
+            };
+
+            // Any edit clears the pending inline validation error; switching
+            // the source toggles the path field / editor visibility.
+            void ClearError() => SetFormError(errorText, null);
+            nameBox.TextChanged += (s, e) => ClearError();
+            pathBox.TextChanged += (s, e) => ClearError();
+            contentBox.TextChanged += (s, e) => ClearError();
+            sourceCombo.SelectionChanged += (s, e) =>
+            {
+                ClearError();
+                var fromContent = sourceCombo.SelectedIndex == 1;
+                pathBox.Visibility = fromContent ? Visibility.Collapsed : Visibility.Visible;
+                contentBox.Visibility = fromContent ? Visibility.Visible : Visibility.Collapsed;
+            };
+
+            var form = new StackPanel { Orientation = Orientation.Vertical, Spacing = 12 };
+            form.Children.Add(nameBox);
+            form.Children.Add(sourceCombo);
+            form.Children.Add(pathBox);
+            form.Children.Add(contentBox);
+            form.Children.Add(errorText);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Create compose",
+                Content = form,
+                PrimaryButtonText = "Create",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = XamlRoot,
+            };
+
+            bool submitting = false;
+            bool createSucceeded = false;
+
+            async Task SubmitCreateAsync()
+            {
+                var fromContent = sourceCombo.SelectedIndex == 1;
+                var success = await WindowsBridge.CreateComposeAsync(
+                    nameBox.Text.Trim(),
+                    fromContent ? "raw" : "path",
+                    fromContent ? null : pathBox.Text.Trim(),
+                    fromContent ? contentBox.Text : null);
+                if (success)
+                {
+                    createSucceeded = true;
+                    dialog.Hide(); // Closing lets this programmatic close pass.
+                }
+                else
+                {
+                    submitting = false;
+                    _errorToast.Show("Failed to create compose.");
+                    SetFormError(errorText, "Create failed. Adjust the inputs and try again.");
+                }
+            }
+
+            dialog.Closing += (s, args) =>
+            {
+                // Programmatic close after a successful create passes through.
+                if (createSucceeded) return;
+
+                // Swallow close attempts while the bridge call is in flight
+                // so the dialog cannot outlive the submit result.
+                if (submitting)
+                {
+                    args.Cancel = true;
+                    return;
+                }
+
+                if (args.Result != ContentDialogResult.Primary) return;
+
+                // Inline validation: cancel the close so the dialog stays
+                // open and the error shows next to the fields.
+                var fromContent = sourceCombo.SelectedIndex == 1;
+                var error = ValidateCreateInput(
+                    nameBox.Text, fromContent ? "raw" : "path", pathBox.Text, contentBox.Text);
+                if (error != null)
+                {
+                    args.Cancel = true;
+                    SetFormError(errorText, error);
+                    return;
+                }
+
+                // Keep the dialog open during submission; close only on success.
+                args.Cancel = true;
+                submitting = true;
+                _ = SubmitCreateAsync();
+            };
+
+            await dialog.ShowAsync();
+            if (!createSucceeded) return;
+
+            // Dialog closed: release the dialog-lifetime guard so the guarded
+            // silent refresh below can actually run.
+            _isBusy = false;
+            await LoadComposesAsync(showLoadingState: false);
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    /// <summary>
+    /// Config editor dialog for one compose. Contract boundary: the list
+    /// payload carries no compose content, so the editor starts empty and the
+    /// update is a full replacement — the placeholder says so, empty content
+    /// is rejected, and the row path (read-only, monospace) locates the file.
+    /// Because two ContentDialogs cannot stack, a valid save first closes this
+    /// dialog, an explicit confirmation states the full-replacement semantics
+    /// (upstream onSubmitEdit), and a declined confirmation or a failed update
+    /// reopens the same form with the pasted content intact.
+    /// </summary>
+    private async Task ShowEditComposeDialogAsync(ComposeEntry compose)
+    {
+        if (_isBusy) return;
+        _isBusy = true;
+
+        try
+        {
+            // The path locates the compose for the update call, so it is
+            // shown read-only instead of being editable alongside the content.
+            var pathBox = new TextBox
+            {
+                Header = "Compose file path",
+                Text = compose.Path,
+                IsReadOnly = true,
+                FontFamily = new FontFamily("Consolas"),
+                IsSpellCheckEnabled = false,
+            };
+            ToolTipService.SetToolTip(pathBox, compose.Path);
+
+            var contentBox = new TextBox
+            {
+                Header = "New compose content (YAML)",
+                PlaceholderText = "Full replacement: paste the complete new config; empty content will be rejected",
+                AcceptsReturn = true,
+                Height = 260,
+                FontFamily = new FontFamily("Consolas"),
+                IsSpellCheckEnabled = false,
+                TextWrapping = TextWrapping.NoWrap,
+            };
+            ScrollViewer.SetVerticalScrollBarVisibility(contentBox, ScrollBarVisibility.Auto);
+
+            var errorText = new TextBlock
+            {
+                FontSize = 12,
+                TextWrapping = TextWrapping.Wrap,
+                Foreground = TryGetThemeBrush("SystemFillColorCriticalBrush", Microsoft.UI.Colors.Red),
+                Visibility = Visibility.Collapsed,
+            };
+
+            // Any edit clears the pending inline validation error.
+            contentBox.TextChanged += (s, e) => SetFormError(errorText, null);
+
+            var form = new StackPanel { Orientation = Orientation.Vertical, Spacing = 12 };
+            form.Children.Add(pathBox);
+            form.Children.Add(contentBox);
+            form.Children.Add(errorText);
+
+            var dialog = new ContentDialog
+            {
+                Title = $"Edit compose \"{compose.Name}\"",
+                Content = form,
+                PrimaryButtonText = "Save",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = XamlRoot,
+            };
+
+            bool confirmPending = false;
+
+            dialog.Closing += (s, args) =>
+            {
+                // Programmatic close on the way to the confirmation passes through.
+                if (confirmPending) return;
+                if (args.Result != ContentDialogResult.Primary) return;
+
+                // Inline validation: empty content means "nothing to save".
+                if (string.IsNullOrWhiteSpace(contentBox.Text))
+                {
+                    args.Cancel = true;
+                    SetFormError(errorText, "Compose content is required.");
+                    return;
+                }
+
+                // Close first so the confirmation dialog can open on top.
+                args.Cancel = true;
+                confirmPending = true;
+                dialog.Hide();
+            };
+
+            while (true)
+            {
+                confirmPending = false;
+                await dialog.ShowAsync();
+                if (!confirmPending) return; // Closed via Cancel.
+
+                var confirmed = await ConfirmDialog.ShowAsync(
+                    XamlRoot,
+                    "Edit Compose",
+                    $"Replace the whole config of compose \"{compose.Name}\" with the pasted content?\nThe compose file will be fully overwritten. This action cannot be undone.",
+                    "Replace",
+                    "Cancel",
+                    isDestructive: true);
+                if (!confirmed) continue; // Back to the editor, content kept.
+
+                var success = await WindowsBridge.UpdateComposeAsync(
+                    compose.Name, compose.Path, contentBox.Text);
+                if (success)
+                {
+                    // Release the dialog-lifetime guard so the guarded silent
+                    // refresh below can actually run.
+                    _isBusy = false;
+                    await LoadComposesAsync(showLoadingState: false);
+                    return;
+                }
+
+                _errorToast.Show($"Failed to save the config of \"{compose.Name}\".");
+                SetFormError(errorText, "Save failed. The editor reopens with your content; try again.");
+            }
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    /// <summary>Returns the first create-compose validation error, or null when the input is valid.</summary>
+    private static string? ValidateCreateInput(string name, string from, string path, string file)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "Name is required.";
+        if (from == "path" && string.IsNullOrWhiteSpace(path)) return "Compose file path is required.";
+        if (from == "raw" && string.IsNullOrWhiteSpace(file)) return "Compose content is required.";
+        return null;
+    }
+
+    /// <summary>Shows or clears the inline form error text under the fields.</summary>
+    private static void SetFormError(TextBlock target, string? message)
+    {
+        target.Text = message ?? string.Empty;
+        target.Visibility = string.IsNullOrEmpty(message)
+            ? Visibility.Collapsed
+            : Visibility.Visible;
+    }
 
     private static Brush TryGetThemeBrush(string key, Color fallback)
     {
