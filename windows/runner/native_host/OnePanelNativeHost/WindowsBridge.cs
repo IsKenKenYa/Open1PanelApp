@@ -573,6 +573,45 @@ public static class WindowsBridge
         return await InvokeWithRetryAsync("getWebsiteCertificates");
     }
 
+    /// <summary>新建 Compose（from=path 需 path；from=raw 需 file 内容）。</summary>
+    public static async Task<bool> CreateComposeAsync(
+        string name, string from, string? path, string? file)
+    {
+        var result = await InvokeAsync("createCompose", new Dictionary<string, object?>
+        {
+            ["name"] = name,
+            ["from"] = from,
+            ["path"] = path,
+            ["file"] = file,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>编辑 Compose 配置。</summary>
+    public static async Task<bool> UpdateComposeAsync(
+        string name, string path, string content)
+    {
+        var result = await InvokeAsync("updateCompose", new Dictionary<string, object?>
+        {
+            ["name"] = name,
+            ["path"] = path,
+            ["content"] = content,
+        });
+        return IsSuccess(result);
+    }
+
+    /// <summary>OpenResty 默认 HTTPS 跳转开关。</summary>
+    public static async Task<bool> UpdateOpenrestyHttpsAsync(
+        string operate, bool? sslRejectHandshake)
+    {
+        var result = await InvokeAsync("updateOpenrestyHttps", new Dictionary<string, object?>
+        {
+            ["operate"] = operate,
+            ["sslRejectHandshake"] = sslRejectHandshake,
+        });
+        return IsSuccess(result);
+    }
+
     public static async Task<JsonElement?> GetBackupsAsync()
     {
         return await InvokeWithRetryAsync("getBackups");

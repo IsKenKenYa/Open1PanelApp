@@ -152,6 +152,12 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.createFolder(arguments);
 
       // ── Write: 主机/工具箱 ──────────────────────────────────────────────
+      case 'createCompose':
+        return NativeChannelWriteHandlers.createCompose(arguments);
+      case 'updateCompose':
+        return NativeChannelWriteHandlers.updateCompose(arguments);
+      case 'updateOpenrestyHttps':
+        return NativeChannelWriteHandlers.updateOpenrestyHttps(arguments);
       case 'updateOpenrestyConfig':
         return NativeChannelWriteHandlers.updateOpenrestyConfig(arguments);
       case 'composeOperate':

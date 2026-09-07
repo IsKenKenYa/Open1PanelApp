@@ -693,6 +693,87 @@ class NativeChannelWriteHandlers {
     }
   }
 
+  // ── Compose 建/改（B19）──────────────────────────────────────────────────
+
+  /// 新建 Compose。参数：
+  /// `{name: String 必填, from?: 'path'|'raw' 默认 'path', path?: String(from=path 必填), file?: String(内容)}`
+  static Future<Map<String, dynamic>> createCompose(dynamic arguments) async {
+    try {
+      final name = (arguments['name'] as String? ?? '').trim();
+      if (name.isEmpty) {
+        return {'success': false, 'error': 'name is required'};
+      }
+      final from = arguments['from'] as String? ?? 'path';
+      final path = (arguments['path'] as String? ?? '').trim();
+      if (from == 'path' && path.isEmpty) {
+        return {'success': false, 'error': 'path is required when from=path'};
+      }
+      await OrchestrationService().createCompose(
+        ContainerComposeCreate(
+          from: from,
+          name: name,
+          path: path.isEmpty ? null : path,
+          file: arguments['file'] as String?,
+          taskID: DateTime.now().millisecondsSinceEpoch.toString(),
+        ),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('createCompose failed: $e');
+      return _err(e);
+    }
+  }
+
+  /// 编辑 Compose 配置。参数：
+  /// `{name: String 必填, path: String 必填, content: String 必填}`
+  static Future<Map<String, dynamic>> updateCompose(dynamic arguments) async {
+    try {
+      final name = (arguments['name'] as String? ?? '').trim();
+      final path = (arguments['path'] as String? ?? '').trim();
+      final content = arguments['content'] as String? ?? '';
+      if (name.isEmpty || path.isEmpty || content.trim().isEmpty) {
+        return {'success': false, 'error': 'name, path and content are required'};
+      }
+      await OrchestrationService().updateCompose(
+        ContainerComposeUpdateRequest(
+          name: name,
+          path: path,
+          content: content,
+          taskID: DateTime.now().millisecondsSinceEpoch.toString(),
+        ),
+      );
+      return _ok();
+    } catch (e) {
+      appLogger.e('updateCompose failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 网关 HTTPS 开关（B19）────────────────────────────────────────────────
+
+  static const Set<String> _httpsOperates = {'enable', 'disable'};
+
+  /// OpenResty 默认 HTTPS 跳转开关。参数：
+  /// `{operate: 'enable'|'disable', sslRejectHandshake?: bool}`
+  static Future<Map<String, dynamic>> updateOpenrestyHttps(
+      dynamic arguments) async {
+    try {
+      final operate = (arguments['operate'] as String? ?? '').trim();
+      if (!_httpsOperates.contains(operate)) {
+        return {'success': false, 'error': 'Unsupported operate: $operate'};
+      }
+      await OpenRestyService().updateHttps({
+        'operate': operate,
+        if (arguments['sslRejectHandshake'] != null)
+          'sslRejectHandshake': arguments['sslRejectHandshake'],
+      });
+      return _ok();
+    } catch (e) {
+      appLogger.e('updateOpenrestyHttps failed: $e');
+      return _err(e);
+    }
+  }
+
   // ── 备份 ─────────────────────────────────────────────────────────────────
 
   /// 删除备份记录。参数：`{id: int, name: String, type: String, status: String}`
