@@ -41,6 +41,7 @@
 - 日志与 OpenResty 模块（B16）已接入：操作/登录/系统日志只读三页签、OpenResty 快照与配置源保存；Processes/Terminal 走 websocket 登记范围外；导航 17 项。
 - 命令库与 AI 发现流（B17）已接入：命令库 CRUD、分组下拉、getOllamaContext 发现流消费与域名绑定表单；导航 18 项。
 - 编排与安全网关模块（B18）已接入：Compose 列表与六动作操作、面板 SSL/网站证书/OpenResty 状态只读聚合；Compose 创建/编辑与网关写操作属后续批次；导航 20 项。
+- Compose 建/改与网关开关（B19）已接入：编排新建（path/raw 两形态）与配置全量替换编辑、OpenResty 默认 HTTPS 跳转开关；导航项数不变。
 
 ## 构建门禁命令
 

@@ -157,8 +157,11 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | saveSshConfig | C# -> Dart | 写 | 保存 SSH 配置（{value 非空}；返回 {success: bool}） |
 | verifyToolboxDns | C# -> Dart | 写 | 校验 DNS 可用性（{dns 非空}；返回 {success: bool}） |
 | updateOpenrestyConfig | C# -> Dart | 写 | 保存 OpenResty 配置源（{content 非空}；返回 {success: bool}） |
+| updateOpenrestyHttps | C# -> Dart | 写 | OpenResty 默认 HTTPS 跳转开关（{operate∈enable/disable, sslRejectHandshake?}；返回 {success: bool}） |
 | createCommand | C# -> Dart | 写 | 新建命令库条目（{name, command 必填, groupID?}；返回 {success: bool}） |
 | deleteCommand | C# -> Dart | 写 | 删除命令库条目（{id}；返回 {success: bool}） |
+| createCompose | C# -> Dart | 写 | 新建 Compose（{name 必填, from 默认 path（此时 path 必填）, file 内容}；返回 {success: bool}） |
+| updateCompose | C# -> Dart | 写 | 编辑 Compose 配置（{name/path/content 三必填}；返回 {success: bool}） |
 | composeOperate | C# -> Dart | 写 | 编排操作（{id, name 必填, action ∈ up/down/start/stop/restart/delete}，重建最小 ContainerCompose；返回 {success: bool}） |
 
 > 备注：AI 域名绑定（bindDomain）发现流已实现（getOllamaContext），绑定写操作已接入。
@@ -315,8 +318,8 @@ ModulePageBase : Page
 | LogsPage | ModulePageBase | 操作/登录/系统日志只读三页签 |
 | OpenRestyPage | ModulePageBase | 状态快照 + 配置源查看保存 |
 | CommandsPage | ModulePageBase | 命令库列表 + 新建/删除 + 分组下拉 |
-| OrchestrationPage | ModulePageBase | Compose 列表 + 六动作操作 |
-| SecurityGatewayPage | ModulePageBase | 面板 SSL/证书/OpenResty 状态只读聚合 |
+| OrchestrationPage | ModulePageBase | Compose 列表 + 六动作操作 + 新建/编辑表单 |
+| SecurityGatewayPage | ModulePageBase | 面板 SSL/证书/OpenResty 状态 + HTTPS 跳转开关 |
 
 ### 状态控件
 
