@@ -55,6 +55,22 @@
                 <NavigationViewItem Content="Files" Icon="Folder" />
                 <NavigationViewItemSeparator />
                 <NavigationViewItem Content="Containers" Icon="AllApps" />
+                <!-- EF90 verified against the official Segoe Fluent Icons table and
+                     rendered from the local font: it is "Flow" (connected nodes), the
+                     closest glyph for container orchestration (multiple containers
+                     scheduled as one connected unit). Suggestions checked and rejected:
+                     E9A9 is actually "PasswordKeyHide" (a hidden-key glyph; the real
+                     "DeveloperTools" is EC7A, a wrench+screwdriver that collides with
+                     Toolbox's E90F) and E756 is "CommandPrompt", a terminal glyph
+                     already rejected for Commands. Also rendered and rejected:
+                     E9F3 "Process" is a dashed circular arrow (reads as in-progress),
+                     EEA3 "VirtualMachineGroup" reads as grouped machines colliding
+                     with the multi-host Servers semantics. -->
+                <NavigationViewItem Content="Orchestration">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEF90;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Apps" Icon="Library" />
                 <NavigationViewItem Content="Websites" Icon="World" />
                 <!-- E968 verified against the official Segoe Fluent Icons table: it is
@@ -144,6 +160,21 @@
                 <NavigationViewItem Content="Security">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE72E;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!-- EA18 verified against the official Segoe Fluent Icons table and
+                     rendered from the local font: it is "Shield", the protection/
+                     policy-enforcement glyph closest to a security gateway. Checked
+                     and rejected: E72E is "Lock" and already used by Security;
+                     F5B4 "ShieldLock" embeds a padlock and visually collides with
+                     Security; EB77 is literally "GatewayRouter" but renders as a
+                     router with signal waves (network hardware, colliding with the
+                     network infrastructure glyphs); E8D7 is actually "Permissions"
+                     (a key glyph, credentials semantics), not a privacy/gateway
+                     glyph as its position in the table might suggest. -->
+                <NavigationViewItem Content="Gateway">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA18;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

@@ -12,6 +12,7 @@ public sealed partial class MainWindow : Window
         { "Servers", () => new ServersPage() },
         { "Files", () => new FilesPage() },
         { "Containers", () => new ContainersPage() },
+        { "Orchestration", () => new OrchestrationPage() },
         { "Apps", () => new AppsPage() },
         { "Websites", () => new WebsitesPage() },
         { "OpenResty", () => new OpenRestyPage() },
@@ -25,6 +26,7 @@ public sealed partial class MainWindow : Window
         { "Commands", () => new CommandsPage() },
         { "Logs", () => new LogsPage() },
         { "Security", () => new SecurityPage() },
+        { "Gateway", () => new SecurityGatewayPage() },
         { "Settings", () => new SettingsPage() },
     };
 
