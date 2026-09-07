@@ -11,18 +11,22 @@ using Windows.UI;
 namespace OnePanelNativeHost;
 
 /// <summary>
-/// Native Security Gateway page: a read-only minimal set that aggregates
-/// three security-related views of the active server - the panel SSL info
-/// map, the website certificate expiry overview and the OpenResty load
-/// status. This is a client enhancement module without a single direct
-/// upstream page: the 1Panel web frontend surfaces these facts across the
-/// panel settings (SSL info), the website certificate list and the website
+/// Native Security Gateway page: a compact set that aggregates three
+/// security-related views of the active server - the panel SSL info map,
+/// the website certificate expiry overview and the OpenResty load status.
+/// This is a client enhancement module without a single direct upstream
+/// page: the 1Panel web frontend surfaces these facts across the panel
+/// settings (SSL info), the website certificate list and the website
 /// OpenResty views, and the client joins them into one security overview.
 ///
-/// READ-ONLY BOUNDARY: this batch intentionally exposes no write actions -
-/// the CommandBar carries only Refresh. Gateway policy write operations
-/// (creating/updating/deleting gateway policies, enforcement toggles,
-/// certificate upload and binding) belong to a later batch.
+/// WRITE BOUNDARY: the single write action is the OpenResty "default HTTPS
+/// redirect" toggle inside the OpenResty status card. Toggling shows a
+/// confirmation dialog and then calls UpdateOpenrestyHttpsAsync
+/// ("enable"/"disable") through the bridge; success silently refreshes the
+/// status and failure shows the error toast and rolls the toggle back. The
+/// CommandBar itself still carries only Refresh, and gateway policy write
+/// operations (creating/updating/deleting gateway policies, enforcement
+/// toggles, certificate upload and binding) belong to a later batch.
 ///
 /// Data flows through WindowsBridge (Dart business core over the method
 /// channel); no direct HTTP from the native layer. The three sources are
@@ -35,7 +39,8 @@ namespace OnePanelNativeHost;
 /// the empty state (same rules as DashboardPage). Secondary sources degrade
 /// per card instead of failing the whole page: unavailable certificates or
 /// status collapse their card, and an OpenResty snapshot is reused for its
-/// status map only.
+/// status map plus its top-level "https" object (the redirect toggle's
+/// initial-state probe).
 ///
 /// Certificate rows show the primary domain, the provider as a neutral tag
 /// pill and the validity range (startDate to expireDate). The expiry pill
@@ -52,6 +57,13 @@ public sealed class SecurityGatewayPage : ModulePageBase
 
     /// <summary>Re-entrancy guard shared by loads and refresh.</summary>
     private bool _isBusy;
+
+    /// <summary>
+    /// Suppresses the HTTPS redirect switch Toggled handler while the state
+    /// is changed programmatically (confirm-cancel revert, failure rollback,
+    /// busy debounce).
+    /// </summary>
+    private bool _suppressHttpsToggleEvents;
 
     /// <summary>Expiry badge states for one website certificate.</summary>
     private enum CertificateExpiryState
@@ -111,7 +123,12 @@ public sealed class SecurityGatewayPage : ModulePageBase
 
         var panelSsl = panelSslTask.Result;
         var certificates = ParseCertificates(certificatesTask.Result);
-        var openrestyStatus = GetMapProperty(openrestyTask.Result ?? default, "status");
+        var openrestySnapshot = openrestyTask.Result ?? default;
+        var openrestyStatus = GetMapProperty(openrestySnapshot, "status");
+        // The redirect flag lives under the snapshot's top-level "https"
+        // object ("https"/"sslRejectHandshake" booleans), not in "status";
+        // it only feeds the defensive initial-state probe of the toggle.
+        var openrestyHttps = GetMapProperty(openrestySnapshot, "https");
 
         if (panelSsl == null)
         {
@@ -137,14 +154,15 @@ public sealed class SecurityGatewayPage : ModulePageBase
             return;
         }
 
-        BuildContent(panelSsl.Value, certificates, openrestyStatus);
+        BuildContent(panelSsl.Value, certificates, openrestyStatus, openrestyHttps);
         SetState(PageState.Content);
     }
 
     private void BuildContent(
         JsonElement panelSslMap,
         List<CertificateEntry>? certificates,
-        JsonElement openrestyStatusMap)
+        JsonElement openrestyStatusMap,
+        JsonElement openrestyHttpsMap)
     {
         // Root layout: CommandBar on top, scrollable content below (relative rows).
         var root = new Grid();
@@ -171,7 +189,7 @@ public sealed class SecurityGatewayPage : ModulePageBase
         };
         content.Children.Add(BuildPanelSslCard(panelSslMap));
         content.Children.Add(BuildCertificatesCard(certificates));
-        content.Children.Add(BuildOpenRestyStatusCard(openrestyStatusMap));
+        content.Children.Add(BuildOpenRestyStatusCard(openrestyStatusMap, openrestyHttpsMap));
         scrollViewer.Content = content;
         root.Children.Add(scrollViewer);
 
@@ -193,8 +211,9 @@ public sealed class SecurityGatewayPage : ModulePageBase
             Background = null, // Stay transparent on the LayerFill card surface.
         };
 
-        // Read-only batch: Refresh is the only command; policy write actions
-        // are deferred to a later batch (see the class header).
+        // The bar carries only Refresh; the single write action (default
+        // HTTPS redirect) lives inline in the OpenResty card (see class
+        // header). Policy write actions are deferred to a later batch.
         var refreshButton = new AppBarButton
         {
             Label = "Refresh",
@@ -265,10 +284,11 @@ public sealed class SecurityGatewayPage : ModulePageBase
     /// <summary>
     /// OpenResty status card: reuses the OpenResty snapshot bridge and takes
     /// only its status map, rendered as an InfoBag grid like the upstream
-    /// website views. The whole card collapses when the map is empty or the
-    /// snapshot was unavailable.
+    /// website views. Above the read-only counters sits the "default HTTPS
+    /// redirect" control row - the page's single write action. The whole
+    /// card collapses when the map is empty or the snapshot was unavailable.
     /// </summary>
-    private FrameworkElement BuildOpenRestyStatusCard(JsonElement statusMap)
+    private FrameworkElement BuildOpenRestyStatusCard(JsonElement statusMap, JsonElement httpsMap)
     {
         var card = CreateCard("OpenResty Status", out var panel);
 
@@ -278,8 +298,204 @@ public sealed class SecurityGatewayPage : ModulePageBase
             return card;
         }
 
+        // Write action first (upstream website settings place the switch
+        // above the raw facts), then the read-only status grid.
+        panel.Children.Add(BuildHttpsRedirectRow(statusMap, httpsMap));
         panel.Children.Add(BuildInfoBag(statusMap));
         return card;
+    }
+
+    /// <summary>
+    /// "Default HTTPS redirect" control row: a header with a caption on the
+    /// leading edge and the ToggleSwitch (On=Enable / Off=Disable) trailing.
+    /// The initial switch state comes from the defensive probe; when the
+    /// state cannot be derived the switch stays Off and an extra
+    /// "Current state unknown" caption says so explicitly.
+    /// </summary>
+    private FrameworkElement BuildHttpsRedirectRow(JsonElement statusMap, JsonElement httpsMap)
+    {
+        var initialState = ProbeHttpsRedirectState(statusMap, httpsMap);
+
+        var textPanel = new StackPanel { Orientation = Orientation.Vertical, Spacing = 2 };
+        textPanel.Children.Add(new TextBlock
+        {
+            Text = "Default HTTPS redirect",
+            FontSize = 13,
+            FontWeight = Microsoft.UI.Text.FontWeights.Medium,
+            TextWrapping = TextWrapping.Wrap,
+        });
+        textPanel.Children.Add(new TextBlock
+        {
+            Text = "Redirect HTTP to HTTPS for all websites",
+            FontSize = 12,
+            Foreground = TryGetThemeBrush("TextFillColorSecondaryBrush", Microsoft.UI.Colors.Gray),
+            TextWrapping = TextWrapping.Wrap,
+        });
+        if (initialState == null)
+        {
+            textPanel.Children.Add(new TextBlock
+            {
+                Text = "Current state unknown",
+                FontSize = 12,
+                Foreground = TryGetThemeBrush("TextFillColorTertiaryBrush", Microsoft.UI.Colors.Gray),
+                TextWrapping = TextWrapping.Wrap,
+            });
+        }
+
+        var toggle = new ToggleSwitch
+        {
+            OnContent = "Enable",
+            OffContent = "Disable",
+            IsOn = initialState == true,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(12, 0, 0, 0),
+        };
+        toggle.Toggled += OnHttpsRedirectToggled;
+
+        var row = new Grid { ColumnSpacing = 8 };
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        Grid.SetColumn(textPanel, 0);
+        Grid.SetColumn(toggle, 1);
+        row.Children.Add(textPanel);
+        row.Children.Add(toggle);
+        return row;
+    }
+
+    /// <summary>
+    /// Defensively locates the current redirect state. The real snapshot
+    /// keeps it under the top-level "https" object ("https": bool,
+    /// "sslRejectHandshake": bool) while the "status" map carries only stub
+    /// counters - so both are probed: the https object's "https" boolean
+    /// first, then a literal "https" boolean on the status map, then any
+    /// boolean status key whose name mentions "https". Returns null when
+    /// nothing matches (unknown state).
+    /// </summary>
+    private static bool? ProbeHttpsRedirectState(JsonElement statusMap, JsonElement httpsMap)
+    {
+        if (httpsMap.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in httpsMap.EnumerateObject())
+            {
+                if (property.Name.Equals("https", StringComparison.OrdinalIgnoreCase) &&
+                    TryGetBool(property.Value, out var value))
+                {
+                    return value;
+                }
+            }
+        }
+
+        if (statusMap.ValueKind != JsonValueKind.Object) return null;
+
+        // Literal "https" key on the status map (contract evolution safety).
+        if (statusMap.TryGetProperty("https", out var direct) &&
+            TryGetBool(direct, out var directValue))
+        {
+            return directValue;
+        }
+
+        // Fallback: first boolean key whose name mentions https.
+        foreach (var property in statusMap.EnumerateObject())
+        {
+            if (property.Name.IndexOf("https", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                TryGetBool(property.Value, out var value))
+            {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool TryGetBool(JsonElement element, out bool value)
+    {
+        if (element.ValueKind == JsonValueKind.True) { value = true; return true; }
+        if (element.ValueKind == JsonValueKind.False) { value = false; return true; }
+        value = false;
+        return false;
+    }
+
+    /// <summary>
+    /// Toggled handler for the default HTTPS redirect switch: confirm the
+    /// action, write through the bridge, then silently refresh the status
+    /// on success or show the error toast and roll the switch back on
+    /// failure. Cancel and programmatic changes (state suppression and the
+    /// busy debounce) never reach the bridge.
+    /// </summary>
+    private async void OnHttpsRedirectToggled(object? sender, RoutedEventArgs e)
+    {
+        if (_suppressHttpsToggleEvents) return;
+        if (sender is not ToggleSwitch toggle) return;
+
+        // Debounce: the switch is disabled while a write is in flight; any
+        // event slipping through during a busy window reverts instead of
+        // stacking a second operation.
+        if (_isBusy)
+        {
+            SetToggleSilently(toggle, !toggle.IsOn);
+            return;
+        }
+
+        var enable = toggle.IsOn;
+        var confirmed = await ConfirmDialog.ShowAsync(
+            XamlRoot,
+            enable ? "Enable Default HTTPS Redirect" : "Disable Default HTTPS Redirect",
+            enable
+                ? "Enable HTTP\u2192HTTPS redirect for all websites?"
+                : "Disable HTTP\u2192HTTPS redirect?",
+            enable ? "Enable" : "Disable",
+            "Cancel");
+
+        if (!confirmed)
+        {
+            // User backed out: restore the pre-toggle state.
+            SetToggleSilently(toggle, !enable);
+            return;
+        }
+
+        _isBusy = true;
+        toggle.IsEnabled = false;
+        bool success;
+        try
+        {
+            success = await WindowsBridge.UpdateOpenrestyHttpsAsync(
+                enable ? "enable" : "disable", sslRejectHandshake: null);
+            if (!success)
+            {
+                _errorToast.Show(enable
+                    ? "Failed to enable the default HTTPS redirect."
+                    : "Failed to disable the default HTTPS redirect.");
+                // Roll the switch back; the content is not rebuilt on failure.
+                SetToggleSilently(toggle, !enable);
+            }
+        }
+        finally
+        {
+            _isBusy = false;
+            toggle.IsEnabled = true;
+        }
+
+        if (success)
+        {
+            // Success stays silent: rebuild the snapshot (and this switch
+            // with the fresh state) without the loading spinner. The load
+            // owns the busy guard, hence the release above.
+            await LoadSnapshotAsync(showLoadingState: false);
+        }
+    }
+
+    /// <summary>Applies a switch state without re-triggering Toggled.</summary>
+    private void SetToggleSilently(ToggleSwitch toggle, bool isOn)
+    {
+        _suppressHttpsToggleEvents = true;
+        try
+        {
+            toggle.IsOn = isOn;
+        }
+        finally
+        {
+            _suppressHttpsToggleEvents = false;
+        }
     }
 
     /// <summary>
