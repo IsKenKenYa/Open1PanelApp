@@ -84,6 +84,8 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelReadHandlers.getPanelSslInfo(arguments);
       case 'getWebsiteCertificates':
         return NativeChannelReadHandlers.getWebsiteCertificates(arguments);
+      case 'getScripts':
+        return NativeChannelReadHandlers.getScripts(arguments);
       case 'getOperationLogs':
         return NativeChannelReadHandlers.getOperationLogs(arguments);
       case 'getLoginLogs':
@@ -160,6 +162,8 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.updateOpenrestyHttps(arguments);
       case 'updateOpenrestyConfig':
         return NativeChannelWriteHandlers.updateOpenrestyConfig(arguments);
+      case 'deleteScripts':
+        return NativeChannelWriteHandlers.deleteScripts(arguments);
       case 'composeOperate':
         return NativeChannelWriteHandlers.composeOperate(arguments);
       case 'operateSsh':

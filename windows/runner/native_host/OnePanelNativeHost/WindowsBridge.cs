@@ -44,6 +44,7 @@ public static class WindowsBridge
         "getComposes",
         "getPanelSslInfo",
         "getWebsiteCertificates",
+        "getScripts",
     };
 
     public static void Initialize(IntPtr messengerHandle)
@@ -608,6 +609,21 @@ public static class WindowsBridge
         {
             ["operate"] = operate,
             ["sslRejectHandshake"] = sslRejectHandshake,
+        });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetScriptsAsync()
+    {
+        return await InvokeWithRetryAsync("getScripts");
+    }
+
+    /// <summary>批量删除脚本。</summary>
+    public static async Task<bool> DeleteScriptsAsync(IReadOnlyList<long> ids)
+    {
+        var result = await InvokeAsync("deleteScripts", new Dictionary<string, object?>
+        {
+            ["ids"] = ids,
         });
         return IsSuccess(result);
     }

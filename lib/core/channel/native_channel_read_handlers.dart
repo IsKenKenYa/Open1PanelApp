@@ -17,6 +17,8 @@ import '../../features/logs/services/logs_service.dart';
 import '../../data/models/logs_models.dart';
 import '../../features/openresty/services/openresty_service.dart';
 import '../../features/orchestration/services/orchestration_service.dart';
+import '../../features/script_library/services/script_library_service.dart';
+import '../../data/models/script_library_models.dart';
 import '../../features/settings/panel_ssl/services/panel_ssl_service.dart';
 import '../../features/websites/services/website_certificate_service.dart';
 import '../../features/ssh/services/ssh_service.dart';
@@ -447,6 +449,37 @@ class NativeChannelReadHandlers {
           .toList();
     } catch (e) {
       appLogger.e('Failed to get website certificates for native: $e');
+      return [];
+    }
+  }
+
+
+  /// 脚本库列表（B20，只读；运行/同步走脚本执行通道属范围外）。
+  static Future<dynamic> getScripts(dynamic arguments) async {
+    try {
+      final service = ScriptLibraryService();
+      final page = await service.searchScripts(ScriptLibraryQuery(
+        page: int.tryParse('${arguments?['page'] ?? 1}') ?? 1,
+        pageSize: int.tryParse('${arguments?['pageSize'] ?? 100}') ?? 100,
+      ));
+      return page.items
+          .map((s) => {
+                'id': s.id,
+                'name': s.name,
+                'label': s.label,
+                'isInteractive': s.isInteractive,
+                'isSystem': s.isSystem,
+                'description': s.description,
+                'groupBelong': s.groupBelong,
+                'createdAt': s.createdAt,
+              })
+          .toList();
+    } catch (e) {
+      if (e.toString().contains('No API config available')) {
+        appLogger.i('getScripts skipped: No active server configured.');
+      } else {
+        appLogger.e('Failed to get scripts for native: $e');
+      }
       return [];
     }
   }

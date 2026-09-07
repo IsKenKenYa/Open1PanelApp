@@ -1,6 +1,7 @@
 import '../../features/ai/ai_repository.dart';
 import '../../features/apps/app_service.dart';
 import '../../features/commands/services/command_service.dart';
+import '../../features/script_library/services/script_library_service.dart';
 import '../../features/group/services/group_service.dart';
 import '../../features/backups/services/backup_record_service.dart';
 import '../../features/containers/container_service.dart';
@@ -770,6 +771,32 @@ class NativeChannelWriteHandlers {
       return _ok();
     } catch (e) {
       appLogger.e('updateOpenrestyHttps failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 脚本库（B20）────────────────────────────────────────────────────────
+
+  /// 批量删除脚本。参数：`{ids: [int,...]}`（单选/多选均可）
+  static Future<Map<String, dynamic>> deleteScripts(dynamic arguments) async {
+    try {
+      final raw = arguments['ids'];
+      final ids = <int>[];
+      if (raw is List) {
+        for (final v in raw) {
+          final id = int.tryParse('$v');
+          if (id != null) {
+            ids.add(id);
+          }
+        }
+      }
+      if (ids.isEmpty) {
+        return {'success': false, 'error': 'ids is required'};
+      }
+      await ScriptLibraryService().deleteScripts(ids);
+      return _ok();
+    } catch (e) {
+      appLogger.e('deleteScripts failed: $e');
       return _err(e);
     }
   }
