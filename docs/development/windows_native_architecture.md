@@ -42,12 +42,13 @@ NavigationView 菜单项与 1Panel 模块一一对应：
 | Toolbox | FontIcon Glyph E90F (Repair) | 是（B15） |
 | Monitoring | FontIcon Glyph EC4A (SpeedHigh) | 是（B10） |
 | AI | PreviewLink | 是 |
+| Commands | FontIcon Glyph E945 (LightningBolt) | 是（B17） |
 | Security | FontIcon Glyph E72E | 是 |
 | Logs | FontIcon Glyph E9D9 (Diagnostic) | 是（B16） |
 | OpenResty | FontIcon Glyph E968 (Network) | 是（B16） |
 | Settings | Setting（Footer 组） | 是 |
 
-全部 17 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
+全部 18 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
 
 ### 内容路由
 
@@ -72,6 +73,7 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     { "Apps", () => new AppsPage() },
     { "Websites", () => new WebsitesPage() },
     { "AI", () => new AIPage() },
+    { "Commands", () => new CommandsPage() },
     { "Security", () => new SecurityPage() },
     { "Logs", () => new LogsPage() },
     { "OpenResty", () => new OpenRestyPage() },
@@ -121,6 +123,9 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | getLoginLogs | C# -> Dart | 读 | 获取登录日志分页列表（{page?, pageSize?}；失败返回空列表） |
 | getSystemLogContent | C# -> Dart | 读 | 获取系统日志文件内容（{fileName 必填, useCoreLogs?}；返回 {lines, totalLines}） |
 | getOpenrestySnapshot | C# -> Dart | 读 | 获取 OpenResty 快照（返回 status/modules/https/configContent） |
+| getCommands | C# -> Dart | 读 | 获取命令库列表（{type?} 过滤；返回命令列表） |
+| getGroups | C# -> Dart | 读 | 获取分组列表（{type}，命令库下拉传 command） |
+| getOllamaContext | C# -> Dart | 读 | Ollama 安装发现流（返回 {found, appInstallId?, candidates?}，AI 域名绑定前置） |
 | connectServer | C# -> Dart | 写 | 连接指定服务器（`id` 参数） |
 | addServer / deleteServer | C# -> Dart | 写 | 服务器新增 / 删除 |
 | updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
@@ -145,8 +150,10 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | saveSshConfig | C# -> Dart | 写 | 保存 SSH 配置（{value 非空}；返回 {success: bool}） |
 | verifyToolboxDns | C# -> Dart | 写 | 校验 DNS 可用性（{dns 非空}；返回 {success: bool}） |
 | updateOpenrestyConfig | C# -> Dart | 写 | 保存 OpenResty 配置源（{content 非空}；返回 {success: bool}） |
+| createCommand | C# -> Dart | 写 | 新建命令库条目（{name, command 必填, groupID?}；返回 {success: bool}） |
+| deleteCommand | C# -> Dart | 写 | 删除命令库条目（{id}；返回 {success: bool}） |
 
-> 备注：AI 域名绑定（bindDomain）需 appInstallID 发现流，属后续批次。
+> 备注：AI 域名绑定（bindDomain）发现流已实现（getOllamaContext），绑定写操作已接入。
 > 备注：Terminal 走 websocket 双向通道，属范围外（EventChannel 明确不做），登记后续批次。
 
 ### Codec 锁定
@@ -280,7 +287,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 15 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 16 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -291,7 +298,7 @@ ModulePageBase : Page
 | WebsitesPage | ModulePageBase | 网站列表 + 启停/删除 |
 | DatabasePage | ModulePageBase | 数据库列表 + 新建/删除/改描述/改密码 |
 | CronJobsPage | ModulePageBase | 任务列表 + 新建/编辑(shell)/启停/删除/立即执行 |
-| AIPage | ModulePageBase | 模型列表 + 创建/重建/删除 |
+| AIPage | ModulePageBase | 模型列表 + 创建/重建/删除 + 连接信息与域名绑定 |
 | SecurityPage | ModulePageBase | 防火墙规则列表 + 新增/删除 |
 | SettingsPage | ModulePageBase | 设置项展示 + 布尔项切换 |
 | BackupsPage | ModulePageBase | 备份记录列表 + 恢复/删除 |
@@ -299,6 +306,7 @@ ModulePageBase : Page
 | ToolboxPage | ModulePageBase | 设备快照卡 + DNS 校验 |
 | LogsPage | ModulePageBase | 操作/登录/系统日志只读三页签 |
 | OpenRestyPage | ModulePageBase | 状态快照 + 配置源查看保存 |
+| CommandsPage | ModulePageBase | 命令库列表 + 新建/删除 + 分组下拉 |
 
 ### 状态控件
 
@@ -348,7 +356,7 @@ flutter test test/core/channel/ test/core/platform/
 ### 导航功能
 
 - NavigationView 菜单切换经单例页面 + `Frame.Content` 直赋显示对应页面
-- 17 项导航模块均显示实际内容页面
+- 18 项导航模块均显示实际内容页面
 - 页面切换时实例保留（`_pageCache` 单例缓存），`ActivatePage()` 触发数据刷新
 
 ### 四态切换
@@ -403,7 +411,7 @@ OnePanelNativeHost.exe（单进程）
 │     ├── MainWindow（NavigationView / Frame.Content 直赋）
 │     ├── WindowsBridge（持有 AddRef 后的 messenger，
 │     │    MethodChannel 调用编解码均在此线程发起）
-│     └── 17 项导航模块页（ModulePageBase 四态）
+│     └── 18 项导航模块页（ModulePageBase 四态）
 └── Flutter 引擎 platform 线程（flutter_headless_host 内创建）
       ├── Dart task runner：NativeChannelManager handler 分发
       │    -> Provider/Service/Repository -> API/Infra

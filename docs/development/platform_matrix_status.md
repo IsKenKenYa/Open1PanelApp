@@ -11,7 +11,7 @@
 | Android | MDUI3 | 已完成 | 已完成 | 已完成 | 已完成 |
 | iOS | Native/MDUI3 | 已完成 | 已完成（只读） | 部分完成 | 待 xcodebuild 验证 |
 | macOS | Native/MDUI3 | 已完成 | 已完成 | 部分完成 | 待 xcodebuild 验证 |
-| Windows | Native/MDUI3 双模式 | 已完成（单例页面直赋，导航 17 项） | 已完成（17 页（+LogsPage/OpenRestyPage）） | 已完成（CRUD） | 已完成（dotnet build 0 错误 + xUnit 26/26） |
+| Windows | Native/MDUI3 双模式 | 已完成（单例页面直赋，导航 18 项） | 已完成（18 页（+LogsPage/OpenRestyPage/CommandsPage）） | 已完成（CRUD） | 已完成（dotnet build 0 错误 + xUnit 26/26） |
 | Linux | MDUI3 | 已完成 | 已完成 | 已完成 | 已完成 |
 | HarmonyOS | 占位 | 占位 | 占位 | 占位 | 未启动 |
 
@@ -39,6 +39,7 @@
 - AI 模块扩展（B14）已接入：模型创建（拉取）/重建/删除生命周期；AI 域名绑定需 appInstallID 发现流属后续批次；导航项数不变（AI 已在第 10 项）。
 - 主机与工具箱模块（B15）已接入：SSH 状态/服务操作/配置编辑、设备快照卡、DNS 校验；Terminal（websocket 双向）登记范围外；导航 15 项。
 - 日志与 OpenResty 模块（B16）已接入：操作/登录/系统日志只读三页签、OpenResty 快照与配置源保存；Processes/Terminal 走 websocket 登记范围外；导航 17 项。
+- 命令库与 AI 发现流（B17）已接入：命令库 CRUD、分组下拉、getOllamaContext 发现流消费与域名绑定表单；导航 18 项。
 
 ## 构建门禁命令
 
