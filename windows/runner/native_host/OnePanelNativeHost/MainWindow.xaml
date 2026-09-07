@@ -120,6 +120,18 @@
                 </NavigationViewItem>
                 <NavigationViewItemSeparator />
                 <NavigationViewItem Content="AI" Icon="PreviewLink" />
+                <!-- E945 verified against the official Segoe Fluent Icons table: it is
+                     "LightningBolt", matching the quick-command/one-shot execution
+                     semantics of the command library, which sits in the AI/automation
+                     neighborhood. Also checked and rejected: E756 is actually
+                     "CommandPrompt" (an interactive terminal glyph, not a command
+                     library — "Switch" is actually E8AB) and would read as a terminal
+                     entry; E943 "Code" is a plain source-code glyph. -->
+                <NavigationViewItem Content="Commands">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE945;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <!-- E9D9 verified against the official Segoe Fluent Icons table: it is
                      "Diagnostic", matching the log-review semantics of the 1Panel web
                      "日志" group (system/operation/login/website logs). E7C3 was also

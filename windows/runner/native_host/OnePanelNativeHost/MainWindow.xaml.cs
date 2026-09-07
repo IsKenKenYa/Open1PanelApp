@@ -22,6 +22,7 @@ public sealed partial class MainWindow : Window
         { "Toolbox", () => new ToolboxPage() },
         { "Monitoring", () => new MonitoringPage() },
         { "AI", () => new AIPage() },
+        { "Commands", () => new CommandsPage() },
         { "Logs", () => new LogsPage() },
         { "Security", () => new SecurityPage() },
         { "Settings", () => new SettingsPage() },
