@@ -7,6 +7,9 @@ import '../../features/containers/container_service.dart';
 import '../../features/databases/databases_service.dart';
 import '../../features/ssh/services/ssh_service.dart';
 import '../../features/openresty/services/openresty_service.dart';
+import '../../features/orchestration/services/orchestration_service.dart';
+import '../../features/settings/panel_ssl/services/panel_ssl_service.dart';
+import '../../features/websites/services/website_certificate_service.dart';
 import '../../features/toolbox/services/toolbox_device_service.dart';
 import '../../data/models/common_models.dart';
 import '../../data/models/cronjob_list_models.dart';
@@ -27,6 +30,7 @@ import '../../data/models/firewall_models.dart';
 import '../../features/backups/services/backup_recover_service.dart';
 import '../../data/models/backup_request_models.dart';
 import '../../data/models/database_models.dart';
+import '../../data/models/container_compose_models.dart';
 import '../services/logger/logger_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' show Locale;
@@ -607,6 +611,85 @@ class NativeChannelWriteHandlers {
     } catch (e) {
       appLogger.e('bindAIDomain failed: $e');
       return _err(e);
+    }
+  }
+
+  // ── 编排 Compose（B18，操作最小集）──────────────────────────────────────
+
+  static const Set<String> _composeActions = {
+    'up', 'down', 'start', 'stop', 'restart', 'delete',
+  };
+
+  /// Compose 项目操作。参数：
+  /// `{id: String, name: String, action: up|down|start|stop|restart|delete}`
+  static Future<Map<String, dynamic>> composeOperate(dynamic arguments) async {
+    try {
+      final id = (arguments['id'] as String? ?? '').trim();
+      final name = (arguments['name'] as String? ?? '').trim();
+      final action = (arguments['action'] as String? ?? '').trim();
+      if (id.isEmpty || name.isEmpty) {
+        return {'success': false, 'error': 'id and name are required'};
+      }
+      if (!_composeActions.contains(action)) {
+        return {'success': false, 'error': 'Unsupported action: $action'};
+      }
+      final compose = ContainerCompose(id: id, name: name);
+      final service = OrchestrationService();
+      switch (action) {
+        case 'up':
+          await service.upCompose(compose);
+        case 'down':
+          await service.downCompose(compose);
+        case 'start':
+          await service.startCompose(compose);
+        case 'stop':
+          await service.stopCompose(compose);
+        case 'restart':
+          await service.restartCompose(compose);
+        case 'delete':
+          await service.deleteCompose(compose);
+      }
+      return _ok();
+    } catch (e) {
+      appLogger.e('composeOperate failed: $e');
+      return _err(e);
+    }
+  }
+
+  // ── 安全网关（B18，只读最小集）──────────────────────────────────────────
+
+  /// 面板 SSL 信息。
+  static Future<dynamic> getPanelSslInfo(dynamic arguments) async {
+    try {
+      return await PanelSslService().getSslInfo();
+    } catch (e) {
+      if (e.toString().contains('No API config available')) {
+        appLogger.i('getPanelSslInfo skipped: No active server configured.');
+      } else {
+        appLogger.e('Failed to get panel ssl info for native: $e');
+      }
+      return <String, dynamic>{};
+    }
+  }
+
+  /// 网站证书列表（核心字段）。
+  static Future<dynamic> getWebsiteCertificates(dynamic arguments) async {
+    try {
+      final certs = await WebsiteCertificateService().searchCertificates(
+        pageSize: 50,
+      );
+      return certs
+          .map((c) => {
+                'id': c.id ?? 0,
+                'primaryDomain': c.primaryDomain ?? '',
+                'provider': c.provider ?? '',
+                'startDate': c.startDate ?? '',
+                'expireDate': c.expireDate ?? '',
+              })
+          .toList();
+    } catch (e) {
+      appLogger.e('Failed to get website certificates for native: $e');
+      return [];
     }
   }
 

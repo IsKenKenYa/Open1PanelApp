@@ -41,6 +41,9 @@ public static class WindowsBridge
         "getOpenrestySnapshot",
         "getCommands",
         "getGroups",
+        "getComposes",
+        "getPanelSslInfo",
+        "getWebsiteCertificates",
     };
 
     public static void Initialize(IntPtr messengerHandle)
@@ -540,6 +543,34 @@ public static class WindowsBridge
     public static async Task<JsonElement?> GetOllamaContextAsync()
     {
         return await InvokeJsonAsync("getOllamaContext");
+    }
+
+    public static async Task<JsonElement?> GetComposesAsync()
+    {
+        return await InvokeWithRetryAsync("getComposes");
+    }
+
+    /// <summary>Compose 项目操作（up/down/start/stop/restart/delete）。</summary>
+    public static async Task<bool> ComposeOperateAsync(
+        string id, string name, string action)
+    {
+        var result = await InvokeAsync("composeOperate", new Dictionary<string, object?>
+        {
+            ["id"] = id,
+            ["name"] = name,
+            ["action"] = action,
+        });
+        return IsSuccess(result);
+    }
+
+    public static async Task<JsonElement?> GetPanelSslInfoAsync()
+    {
+        return await InvokeWithRetryAsync("getPanelSslInfo");
+    }
+
+    public static async Task<JsonElement?> GetWebsiteCertificatesAsync()
+    {
+        return await InvokeWithRetryAsync("getWebsiteCertificates");
     }
 
     public static async Task<JsonElement?> GetBackupsAsync()

@@ -78,6 +78,12 @@ class NativeChannelManager implements NativeChannelPort {
         return NativeChannelWriteHandlers.bindAIDomain(arguments);
       case 'getOllamaContext':
         return NativeChannelWriteHandlers.getOllamaContext(arguments);
+      case 'getComposes':
+        return NativeChannelReadHandlers.getComposes(arguments);
+      case 'getPanelSslInfo':
+        return NativeChannelReadHandlers.getPanelSslInfo(arguments);
+      case 'getWebsiteCertificates':
+        return NativeChannelReadHandlers.getWebsiteCertificates(arguments);
       case 'getOperationLogs':
         return NativeChannelReadHandlers.getOperationLogs(arguments);
       case 'getLoginLogs':
@@ -148,6 +154,8 @@ class NativeChannelManager implements NativeChannelPort {
       // ── Write: 主机/工具箱 ──────────────────────────────────────────────
       case 'updateOpenrestyConfig':
         return NativeChannelWriteHandlers.updateOpenrestyConfig(arguments);
+      case 'composeOperate':
+        return NativeChannelWriteHandlers.composeOperate(arguments);
       case 'operateSsh':
         return NativeChannelWriteHandlers.operateSsh(arguments);
       case 'saveSshConfig':

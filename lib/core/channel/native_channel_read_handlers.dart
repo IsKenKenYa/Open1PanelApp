@@ -16,6 +16,9 @@ import '../../features/firewall/firewall_service.dart';
 import '../../features/logs/services/logs_service.dart';
 import '../../data/models/logs_models.dart';
 import '../../features/openresty/services/openresty_service.dart';
+import '../../features/orchestration/services/orchestration_service.dart';
+import '../../features/settings/panel_ssl/services/panel_ssl_service.dart';
+import '../../features/websites/services/website_certificate_service.dart';
 import '../../features/ssh/services/ssh_service.dart';
 import '../../features/toolbox/services/toolbox_device_service.dart';
 import '../../features/monitoring/monitoring_service.dart';
@@ -384,6 +387,67 @@ class NativeChannelReadHandlers {
         appLogger.e('Failed to get openresty snapshot for native: $e');
       }
       return <String, dynamic>{};
+    }
+  }
+
+
+  /// Compose 项目列表（B18）。
+  static Future<dynamic> getComposes(dynamic arguments) async {
+    try {
+      final service = OrchestrationService();
+      final composes = await service.loadComposes(pageSize: 100);
+      return composes
+          .map((c) => {
+                'id': c.id,
+                'name': c.name,
+                'path': c.path ?? '',
+                'version': c.version ?? '',
+                'status': c.status ?? '',
+                'createTime': c.createTime ?? '',
+              })
+          .toList();
+    } catch (e) {
+      if (e.toString().contains('No API config available')) {
+        appLogger.i('getComposes skipped: No active server configured.');
+      } else {
+        appLogger.e('Failed to get composes for native: $e');
+      }
+      return [];
+    }
+  }
+
+  /// 面板 SSL 信息（B18）。
+  static Future<dynamic> getPanelSslInfo(dynamic arguments) async {
+    try {
+      return await PanelSslService().getSslInfo();
+    } catch (e) {
+      if (e.toString().contains('No API config available')) {
+        appLogger.i('getPanelSslInfo skipped: No active server configured.');
+      } else {
+        appLogger.e('Failed to get panel ssl info for native: $e');
+      }
+      return <String, dynamic>{};
+    }
+  }
+
+  /// 网站证书列表（B18，核心字段）。
+  static Future<dynamic> getWebsiteCertificates(dynamic arguments) async {
+    try {
+      final certs = await WebsiteCertificateService().searchCertificates(
+        pageSize: 50,
+      );
+      return certs
+          .map((c) => {
+                'id': c.id ?? 0,
+                'primaryDomain': c.primaryDomain ?? '',
+                'provider': c.provider ?? '',
+                'startDate': c.startDate ?? '',
+                'expireDate': c.expireDate ?? '',
+              })
+          .toList();
+    } catch (e) {
+      appLogger.e('Failed to get website certificates for native: $e');
+      return [];
     }
   }
 
