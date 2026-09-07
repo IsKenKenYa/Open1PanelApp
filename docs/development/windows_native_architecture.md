@@ -46,9 +46,11 @@ NavigationView 菜单项与 1Panel 模块一一对应：
 | Security | FontIcon Glyph E72E | 是 |
 | Logs | FontIcon Glyph E9D9 (Diagnostic) | 是（B16） |
 | OpenResty | FontIcon Glyph E968 (Network) | 是（B16） |
+| Orchestration | FontIcon Glyph EF90 (Flow) | 是（B18） |
+| Gateway | FontIcon Glyph EA18 (Shield) | 是（B18） |
 | Settings | Setting（Footer 组） | 是 |
 
-全部 18 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
+全部 20 项导航模块均已接入真实数据。注意：`Icon="Protect"` 等非 Symbol 枚举值会在 XAML 解析期抛 `XamlParseException`，Security 菜单项改用 `<FontIcon Glyph="&#xE72E;" />` 显式声明。
 
 ### 内容路由
 
@@ -77,6 +79,8 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
     { "Security", () => new SecurityPage() },
     { "Logs", () => new LogsPage() },
     { "OpenResty", () => new OpenRestyPage() },
+    { "Orchestration", () => new OrchestrationPage() },
+    { "Gateway", () => new SecurityGatewayPage() },
     { "Settings", () => new SettingsPage() },
 };
 ```
@@ -126,6 +130,9 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | getCommands | C# -> Dart | 读 | 获取命令库列表（{type?} 过滤；返回命令列表） |
 | getGroups | C# -> Dart | 读 | 获取分组列表（{type}，命令库下拉传 command） |
 | getOllamaContext | C# -> Dart | 读 | Ollama 安装发现流（返回 {found, appInstallId?, candidates?}，AI 域名绑定前置） |
+| getComposes | C# -> Dart | 读 | 获取编排列表（分页 100 返回编排列表；失败返回空列表） |
+| getPanelSslInfo | C# -> Dart | 读 | 获取面板 SSL 信息（返回键值 map，失败返回空对象） |
+| getWebsiteCertificates | C# -> Dart | 读 | 获取网站证书列表（返回证书核心字段列表；失败返回空列表） |
 | connectServer | C# -> Dart | 写 | 连接指定服务器（`id` 参数） |
 | addServer / deleteServer | C# -> Dart | 写 | 服务器新增 / 删除 |
 | updateSetting | C# -> Dart | 写 | 更新设置项（`key` / `value` 参数） |
@@ -152,6 +159,7 @@ static readonly Dictionary<string, Func<Page>> _pageFactories = new()
 | updateOpenrestyConfig | C# -> Dart | 写 | 保存 OpenResty 配置源（{content 非空}；返回 {success: bool}） |
 | createCommand | C# -> Dart | 写 | 新建命令库条目（{name, command 必填, groupID?}；返回 {success: bool}） |
 | deleteCommand | C# -> Dart | 写 | 删除命令库条目（{id}；返回 {success: bool}） |
+| composeOperate | C# -> Dart | 写 | 编排操作（{id, name 必填, action ∈ up/down/start/stop/restart/delete}，重建最小 ContainerCompose；返回 {success: bool}） |
 
 > 备注：AI 域名绑定（bindDomain）发现流已实现（getOllamaContext），绑定写操作已接入。
 > 备注：Terminal 走 websocket 双向通道，属范围外（EventChannel 明确不做），登记后续批次。
@@ -287,7 +295,7 @@ ModulePageBase : Page
 
 ### 具体页面
 
-本批次交付 16 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
+本批次交付 18 个模块页，全部继承 `ModulePageBase` 并接入真实数据与 CRUD：
 
 | 页面 | 基类 | 渲染内容 |
 |------|------|----------|
@@ -307,6 +315,8 @@ ModulePageBase : Page
 | LogsPage | ModulePageBase | 操作/登录/系统日志只读三页签 |
 | OpenRestyPage | ModulePageBase | 状态快照 + 配置源查看保存 |
 | CommandsPage | ModulePageBase | 命令库列表 + 新建/删除 + 分组下拉 |
+| OrchestrationPage | ModulePageBase | Compose 列表 + 六动作操作 |
+| SecurityGatewayPage | ModulePageBase | 面板 SSL/证书/OpenResty 状态只读聚合 |
 
 ### 状态控件
 
@@ -356,7 +366,7 @@ flutter test test/core/channel/ test/core/platform/
 ### 导航功能
 
 - NavigationView 菜单切换经单例页面 + `Frame.Content` 直赋显示对应页面
-- 18 项导航模块均显示实际内容页面
+- 20 项导航模块均显示实际内容页面
 - 页面切换时实例保留（`_pageCache` 单例缓存），`ActivatePage()` 触发数据刷新
 
 ### 四态切换
@@ -411,7 +421,7 @@ OnePanelNativeHost.exe（单进程）
 │     ├── MainWindow（NavigationView / Frame.Content 直赋）
 │     ├── WindowsBridge（持有 AddRef 后的 messenger，
 │     │    MethodChannel 调用编解码均在此线程发起）
-│     └── 18 项导航模块页（ModulePageBase 四态）
+│     └── 20 项导航模块页（ModulePageBase 四态）
 └── Flutter 引擎 platform 线程（flutter_headless_host 内创建）
       ├── Dart task runner：NativeChannelManager handler 分发
       │    -> Provider/Service/Repository -> API/Infra
